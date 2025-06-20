@@ -2,6 +2,8 @@
 
 <img src="assets/icon.png" alt="NativeMind Logo" width="32" height="32">
 
+[中文版本](./README-zh.md) 
+
 # NativeMind - Private, on-device AI Assistant, no cloud dependencies
 
 **The Future of Private AI is Here, Running Entirely on Your Device**
