@@ -15,7 +15,10 @@
             >
               <IconTab class="w-4 h-4" />
               <span>
-                All open tabs ({{ allTabs.length }})
+                {{ t('chat.input.tab_selector.all_tabs') }}
+              </span>
+              <span>
+                ({{ allTabs.length }})
               </span>
             </div>
           </div>
@@ -117,12 +120,14 @@ import IconClose from '@/assets/icons/tag-close.svg?component'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import Tag from '@/components/Tag.vue'
 import Button from '@/components/ui/Button.vue'
+import { useI18n } from '@/utils/i18n'
 import { registerContentScriptRpcEvent } from '@/utils/rpc'
 import { getTabStore } from '@/utils/tab-store'
 
 import { getValidTabs, TabInfo } from '../utils/tabs'
 import ExternalImage from './ExternalImage.vue'
 
+const { t } = useI18n()
 const tabStore = await getTabStore()
 
 const cleanUpTabUpdatedListener = registerContentScriptRpcEvent('tabUpdated', async () => {

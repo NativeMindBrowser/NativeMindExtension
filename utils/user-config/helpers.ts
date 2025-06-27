@@ -1,4 +1,4 @@
-import { customRef, ref, toRaw, watch } from 'vue'
+import { customRef, Ref, ref, toRaw, watch } from 'vue'
 import { storage, StorageItemKey } from 'wxt/utils/storage'
 
 const getItem = async <T>(key: StorageItemKey) => {
@@ -15,6 +15,8 @@ export class ValidateError extends Error {
     super(displayMessage)
   }
 }
+
+export type ExtendedRef<T, D> = Ref<T> & { defaultValue: D }
 
 export class Config<Value, DefaultValue extends Value | undefined> {
   defaultValue?: DefaultValue
@@ -88,7 +90,8 @@ export class Config<Value, DefaultValue extends Value | undefined> {
           trigger()
         },
       }
-    })
+    }) as ExtendedRef<Value | DefaultValue, DefaultValue>
+    r.defaultValue = structuredClone(defaultValue) as DefaultValue
 
     storage.watch(this.areaKey, async (newValue, oldValue) => {
       newValue = newValue ?? undefined

@@ -1,0 +1,131 @@
+{
+  "chat": {
+    "messages": {
+      "thought_for_seconds": "Gedanken für {Second} Second | \nGedanken für {zweite} Sekunden",
+      "thinking": "Denken...",
+      "reading": "Lektüre",
+      "search_locally": "Lokal im Browser suchen…"
+    },
+    "quick_actions": {
+      "title": "Schnelle Aktionen"
+    },
+    "input": {
+      "placeholder": {
+        "ask_anything": "Fragen Sie alles ...",
+        "ask_follow_up": "Fragen Sie nach Follow -up ..."
+      },
+      "tab_selector": {
+        "all_tabs": "Alle öffnen Registerkarten"
+      }
+    }
+  },
+  "onboarding": {
+    "banner": {
+      "description": "Privat und sicher, mit leistungsstarken Funktionen, die vollständig in Ihrem Gerät ausgeführt werden.",
+      "title": "KI On-Device, nur für Sie gebaut"
+    },
+    "guide": {
+      "alread_installed": "Bereits installiert und Ollama laufen?",
+      "features": {
+        "1": "Führen Sie fortschrittliche Modelle wie Deepseek, Qwen, Lama aus",
+        "2": "Passen Sie die Modelle mit voller Steuerung an und wechseln Sie sie",
+        "3": "Ihre Daten bleiben privat auf Ihrem Gerät"
+      },
+      "follow_our_tutorial": "Folgen Sie unserem Installationshandbuch",
+      "get_ollama": "Holen Sie sich Ollama",
+      "install_desc": "Installieren Sie Ollama, um Ihre lokale KI einzurichten.",
+      "need_help": "Benötigen Sie Hilfe?",
+      "ollama_desc": "Mit Ollama die volle lokale KI -Macht freischalten.",
+      "setup": "Aufstellen",
+      "step1": "Schritt 1"
+    },
+    "webllm_tutorial": {
+      "desc": "Verwenden Sie ein leichtes Modell (QWEN 0,6B) direkt in Ihrem Browser - kein Setup, kein Warten.",
+      "not_support_webllm": "Webllm wird auf Ihrem Gerät nicht unterstützt",
+      "start_with_webllm": "Beginnen Sie mit dem Webmodell",
+      "title": "Nicht bereit zu installieren? \nVersuchen Sie es sofort."
+    },
+    "welcome_msg": {
+      "title": "👋 Willkommen bei **NativeMind**",
+      "body": "NATIVEMIND ist eine Datenschutz-AI-Browser-Erweiterung, die Ihnen hilft, zu chatten, zu suchen und zu übersetzen-alles mit Sprachmodellen für das Gerät.\n\n\nFolgendes können Sie mit Nativemind machen:\n\n\n\n- Chatten Sie über mehrere Registerkarten hinweg, um verschiedene Seiten im Auge zu behalten.\n\n- Durchsuchen Sie das Web direkt im Chat, um einen weiteren Kontext zu erhalten.\n\n- Klicken Sie mit der rechten Maustaste, um einen Teil der Seite sofort zu übersetzen.\n\n- Modelle jederzeit in Einstellungen wechseln oder herunterladen.\n\n\nSie können zunächst die schnellen Aktionen unten ausprobieren."
+    }
+  },
+  "settings": {
+    "advanced": {
+      "title": "Fortschrittlich"
+    },
+    "choose_model": "Wählen Sie Modell",
+    "download": "Herunterladen",
+    "feedback": {
+      "contact_msg": "📧Questions oder Feedback? \nSchließen Sie sich unserem {Discord} an oder senden Sie uns eine E-Mail unter {email}.",
+      "join_waitlist": "💼Want, um es bei der Arbeit zu verwenden? \n{Join_waitlist_link} für Unternehmensaktualisierungen.",
+      "join_waitlist_link": "Treten Sie der Warteliste bei",
+      "discord": "Zwietracht"
+    },
+    "get_ollama": "Holen Sie sich Ollama",
+    "models": {
+      "title": "Aktives Modell"
+    },
+    "ollama": {
+      "already_installed": "Bereits installiert und Ollama laufen?",
+      "connected": "Verbunden",
+      "connection_error": "Verbindungsfehler",
+      "downloadable_model": "Herunterladbares Modell",
+      "follow_guide": "Folgen Sie unserem Installationshandbuch",
+      "learn_more_about_models": "Erfahren Sie mehr über Models",
+      "need_help": "Benötigen Sie Hilfe?",
+      "re_scan": "Neu scan",
+      "server_address": "Serveradresse",
+      "setup": "Aufstellen",
+      "unconnected": "Nicht miteinander verbunden"
+    },
+    "prompts": {
+      "chat_system_prompt": "Chat -System Eingabeaufforderung",
+      "title": "Prompt",
+      "translation_system_prompt": "Übersetzungssystem Eingabeaufforderung"
+    },
+    "provider": {
+      "title": "Modellanbieter"
+    },
+    "provider_model": {
+      "title": "Anbieter"
+    },
+    "quick_actions": {
+      "description": "Richten Sie schnelle Aktionen ein, um Ihre bevorzugten Eingabeaufforderungen schneller auszuführen-aus dem neuen Chat oder dem Rechtsklickmenü.",
+      "edit": {
+        "cancel": "Stornieren",
+        "prompt": "Prompt",
+        "reset": "Zurücksetzen",
+        "save": "Speichern",
+        "show_in_context_menu": "In der rechten Maustaste anzeigen",
+        "title": "Titel"
+      },
+      "title": "Schnelle Aktionen anpassen"
+    },
+    "test": "Prüfen",
+    "translation": {
+      "title": "Übersetzungssprache"
+    },
+    "webllm-desc": "Verwenden Sie WebllM für einen schnellen Versuch. \nFür die volle Modellunterstützung und eine bessere Leistung installieren Sie bitte Ollama.",
+    "general": {
+      "system_language": "Systemsprache",
+      "title": "Allgemein"
+    }
+  },
+  "context_menu": {
+    "quick_actions": {
+      "title": "Schnelle Aktionen"
+    },
+    "translation": {
+      "show_original": "Original zeigen",
+      "translate_page_into": "Übersetzen Sie diese Seite in {Sprache}"
+    }
+  },
+  "errors": {
+    "model_not_found": "Hoppla! \nEtwas lief schief. \nBitte überprüfen Sie Ihre Ollama -Verbindung in Einstellungen und versuchen Sie es erneut.",
+    "model_request_error": "Hoppla! \nEtwas lief schief. \nBitte überprüfen Sie Ihre Ollama -Verbindung in Einstellungen und versuchen Sie es erneut.",
+    "model_request_timeout": "\"Anfordern Sie eine Zeitüberschreitung, überprüfen Sie bitte Ihre Ollama -Verbindung oder in Betracht, eine neue Sitzung zu starten, da lange Kontexte die Antwortzeiten beeinflussen können.\"",
+    "timeout_error": "Operation zeitlich ausgegeben: {message}",
+    "unknown_error": "Es ist ein unerwarteter Fehler aufgetreten: {message}"
+  }
+}

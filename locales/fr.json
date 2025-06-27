@@ -1,0 +1,131 @@
+{
+  "chat": {
+    "messages": {
+      "thought_for_seconds": "Pensé pour {second} seconde | \nPensé pendant {seconde} secondes",
+      "thinking": "Pensée...",
+      "reading": "En lisant",
+      "search_locally": "Recherche localement dans le navigateur…"
+    },
+    "quick_actions": {
+      "title": "Actions rapides"
+    },
+    "input": {
+      "placeholder": {
+        "ask_anything": "Demandez n'importe quoi ...",
+        "ask_follow_up": "Demandez le suivi ..."
+      },
+      "tab_selector": {
+        "all_tabs": "Tous les onglets ouverts"
+      }
+    }
+  },
+  "onboarding": {
+    "banner": {
+      "description": "Privé et sécurisé, avec des fonctionnalités puissantes qui fonctionnent entièrement dans votre appareil.",
+      "title": "Sur disvise AI, construite juste pour vous"
+    },
+    "guide": {
+      "alread_installed": "Déjà installé et exécuter Olllama?",
+      "features": {
+        "1": "Exécuter des modèles avancés comme Deepseek, Qwen, Llama",
+        "2": "Personnaliser et changer de modèles avec un contrôle complet",
+        "3": "Vos données restent privées, sur votre appareil"
+      },
+      "follow_our_tutorial": "Suivez notre guide d'installation",
+      "get_ollama": "Obtenez Olllama",
+      "install_desc": "Installez Olllama pour configurer votre IA locale.",
+      "need_help": "Besoin d'aide?",
+      "ollama_desc": "Déverrouillez la puissance complète de l'IA locale avec Olllama.",
+      "setup": "Installation",
+      "step1": "Étape 1"
+    },
+    "webllm_tutorial": {
+      "desc": "Utilisez un modèle léger (Qwen 0.6b) dans votre navigateur - pas de configuration, pas d'attente.",
+      "not_support_webllm": "Webllm n'est pas pris en charge sur votre appareil",
+      "start_with_webllm": "Commencez par le modèle Web",
+      "title": "Pas prêt à installer? \nEssayez-le instantanément."
+    },
+    "welcome_msg": {
+      "title": "👋 Bienvenue à **NativeMind**",
+      "body": "NativeMind est une extension de navigateur AI en matière de confidentialité d'abord qui vous aide à discuter, rechercher et traduire - tous alimentés par des modèles de langage à disque.\n\n\nVoici ce que vous pouvez faire avec NativeMind:\n\n\n\n- discuter entre plusieurs onglets pour garder une trace de différentes pages.\n\n- Recherchez le Web directement dans le chat pour plus de contexte.\n\n- Cliquez avec le bouton droit pour traduire une partie de la page instantanément.\n\n- Communiquez ou téléchargez des modèles à tout moment dans les paramètres.\n\n\nVous pouvez commencer par essayer les actions rapides ci-dessous."
+    }
+  },
+  "settings": {
+    "advanced": {
+      "title": "Avancé"
+    },
+    "choose_model": "Choisir le modèle",
+    "download": "Télécharger",
+    "feedback": {
+      "contact_msg": "Les questions ou les commentaires? \nRejoignez notre {Discord} ou envoyez-nous un e-mail à {email}.",
+      "join_waitlist": "💼want pour l'utiliser au travail? \n{join_waitlist_link} pour les mises à jour d'entreprise.",
+      "join_waitlist_link": "Rejoignez la liste d'attente",
+      "discord": "Discorde"
+    },
+    "get_ollama": "Obtenez Olllama",
+    "models": {
+      "title": "Modèle actif"
+    },
+    "ollama": {
+      "already_installed": "Déjà installé et exécuter Olllama?",
+      "connected": "Connecté",
+      "connection_error": "Erreur de connexion",
+      "downloadable_model": "Modèle téléchargeable",
+      "follow_guide": "Suivez notre guide d'installation",
+      "learn_more_about_models": "En savoir plus sur les modèles",
+      "need_help": "Besoin d'aide?",
+      "re_scan": "Rediffuser",
+      "server_address": "Adresse du serveur",
+      "setup": "Installation",
+      "unconnected": "Sans rapport"
+    },
+    "prompts": {
+      "chat_system_prompt": "Invite du système de chat",
+      "title": "Rapide",
+      "translation_system_prompt": "Invite du système de traducteur"
+    },
+    "provider": {
+      "title": "Fournisseur de modèles"
+    },
+    "provider_model": {
+      "title": "Fournisseur"
+    },
+    "quick_actions": {
+      "description": "Configurez des actions rapides pour exécuter vos invites préférées plus rapidement - à partir du nouveau chat ou du menu avec le bouton droit.",
+      "edit": {
+        "cancel": "Annuler",
+        "prompt": "Rapide",
+        "reset": "Réinitialiser",
+        "save": "Sauvegarder",
+        "show_in_context_menu": "Afficher dans le menu avec un clic droit",
+        "title": "Titre"
+      },
+      "title": "Personnaliser les actions rapides"
+    },
+    "test": "Test",
+    "translation": {
+      "title": "Langue de traduction"
+    },
+    "webllm-desc": "Utilisation de Webllm pour un essai rapide. \nPour une prise en charge complète du modèle et de meilleures performances, veuillez installer Olllama.",
+    "general": {
+      "system_language": "Langue du système",
+      "title": "Général"
+    }
+  },
+  "context_menu": {
+    "quick_actions": {
+      "title": "Actions rapides"
+    },
+    "translation": {
+      "show_original": "Montrer l'original",
+      "translate_page_into": "Traduire cette page en {langue}"
+    }
+  },
+  "errors": {
+    "model_not_found": "Oups! \nQuelque chose s'est mal passé. \nVeuillez vérifier votre connexion Olllama dans les paramètres et réessayer.",
+    "model_request_error": "Oups! \nQuelque chose s'est mal passé. \nVeuillez vérifier votre connexion Olllama dans les paramètres et réessayer.",
+    "timeout_error": "Opération expirée: {message}",
+    "unknown_error": "Une erreur inattendue s'est produite: {message}",
+    "model_request_timeout": "«Demandez le délai d'expiration, veuillez vérifier votre connexion Olllama ou envisager de démarrer une nouvelle session car les contextes longs peuvent affecter les temps de réponse.»"
+  }
+}

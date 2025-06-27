@@ -65,8 +65,8 @@
               type="text"
               :placeholder="chat.historyManager.onlyHasDefaultMessages() ||
                 chat.historyManager.isEmpty()
-                ? 'Ask anything...'
-                : 'Ask follow up...'
+                ? t('chat.input.placeholder.ask_anything')
+                : t('chat.input.placeholder.ask_follow_up')
               "
               class="w-full block outline-none border-none resize-none field-sizing-content leading-5 text-sm wrap-anywhere"
               @keydown="onKeydown"
@@ -117,6 +117,7 @@ import {
   Chat,
   initChatSideEffects,
 } from '@/entrypoints/content/utils/chat/index'
+import { useI18n } from '@/utils/i18n'
 
 import { showSettings } from '../../utils/settings'
 import MarkdownViewer from '../MarkdownViewer.vue'
@@ -130,6 +131,7 @@ const sendButtonContainerRef = ref<HTMLDivElement>()
 const { height: inputContainerHeight } = useElementBounding(inputContainerRef)
 const { width: sendButtonContainerWidth } = useElementBounding(sendButtonContainerRef)
 
+const { t } = useI18n()
 const userInput = ref('')
 const isComposing = ref(false)
 const chat = await Chat.getInstance()
@@ -180,14 +182,6 @@ const ask = async () => {
   chat.ask(userInput.value)
   userInput.value = ''
 }
-
-// const displayTimestamp = (timestamp: number) => {
-//   return dayjs(timestamp).tz(dayjs.tz.guess()).format('hh:mm a')
-// }
-
-// const displayFullTime = (timestamp: number) => {
-//   return dayjs(timestamp).tz(dayjs.tz.guess()).format('YYYY-MM-DD hh:mm a')
-// }
 
 onMounted(() => {
   scrollContainerRef.value?.snapToBottom()

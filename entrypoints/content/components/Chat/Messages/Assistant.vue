@@ -31,7 +31,7 @@
           >
             <Loading :size="16" />
             <Text color="placeholder">
-              Thinking...
+              {{ t('chat.messages.thinking') }}
             </Text>
           </div>
           <div

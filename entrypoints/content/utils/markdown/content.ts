@@ -4,7 +4,9 @@ import IconFileSuccess from '@/assets/icons/md-file-success.svg?raw'
 import IconFind from '@/assets/icons/md-find.svg?raw'
 import IconHighlightBoxed from '@/assets/icons/md-highlight-boxed.svg?raw'
 import IconLink from '@/assets/icons/md-link.svg?raw'
+import IconQuickModified from '@/assets/icons/md-quick-action-modified.svg?raw'
 import IconSearch from '@/assets/icons/md-search.svg?raw'
+import IconSearchBoxed from '@/assets/icons/md-search-boxed.svg?raw'
 import IconSearchColored from '@/assets/icons/md-search-colored.svg?raw'
 import IconStar from '@/assets/icons/md-star.svg?raw'
 import IconSummarizeBoxed from '@/assets/icons/md-summarize-boxed.svg?raw'
@@ -32,6 +34,8 @@ const iconMap = {
   writingBoxed: IconWritingBoxed,
   highlightBoxed: IconHighlightBoxed,
   edit: IconEdit,
+  quickActionModifiedBoxed: IconQuickModified,
+  searchBoxed: IconSearchBoxed,
 }
 
 export type IconName = keyof typeof iconMap

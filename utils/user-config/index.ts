@@ -1,4 +1,5 @@
 import { lazyInitialize } from '../cache'
+import { SupportedLocaleCode } from '../i18n/constants'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
 import { Config } from './helpers'
@@ -99,7 +100,7 @@ Examples of good emoji usage:
 
 export const TARGET_ONBOARDING_VERSION = 1
 
-export const DEFAULT_QUICK_ACTIONS = [
+export const DEFAULT_QUICK_ACTIONS = async () => [
   { title: 'Summarize the page', prompt: 'Please summarize the main content of this page in a clear and concise manner.', showInContextMenu: false },
   { title: 'Highlight key insights', prompt: 'Identify and highlight the key insights, important points, and takeaways from this content.', showInContextMenu: false },
   { title: 'Search for more content like this', prompt: 'Help me find more content similar to this topic and provide relevant search suggestions.', showInContextMenu: false },
@@ -109,6 +110,9 @@ type OnlineSearchStatus = 'force' | 'disable' | 'auto'
 
 async function _getUserConfig() {
   return {
+    locale: {
+      current: await new Config<SupportedLocaleCode, undefined>('locale.current').build(),
+    },
     llm: {
       endpointType: await new Config('llm.endpointType').default('web-llm' as LLMEndpointType).build(),
       baseUrl: await new Config('llm.baseUrl').default('http://localhost:11434/api').build(),
@@ -129,7 +133,7 @@ async function _getUserConfig() {
         pageReadCount: await new Config('chat.onlineSearch.pageReadCount').default(5).build(), // how many pages to read when online search is enabled
       },
       quickActions: {
-        actions: await new Config('chat.quickActions.actions_2').default(DEFAULT_QUICK_ACTIONS).build(),
+        actions: await new Config('chat.quickActions.actions_2').default(await DEFAULT_QUICK_ACTIONS()).build(),
       },
     },
     translation: {

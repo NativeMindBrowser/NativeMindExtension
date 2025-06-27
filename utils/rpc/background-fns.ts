@@ -6,7 +6,7 @@ import { z } from 'zod'
 
 import logger from '@/utils/logger'
 
-import { ContextMenuId } from '../context-menu'
+import { ContextMenuManager } from '../context-menu'
 import { AppError, ModelRequestError, UnknownError } from '../error'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
 import { deleteModel, getLocalModelList, pullModel } from '../llm/ollama'
@@ -270,21 +270,6 @@ const fetchAsText = async (url: string, initOptions?: RequestInit) => {
   }
 }
 
-const updateContextMenu = async (id: ContextMenuId, props: Omit<Browser.contextMenus.CreateProperties, 'id'>) => {
-  return browser.contextMenus.update(id, props)
-}
-
-const createContextMenu = async (id: ContextMenuId, props: Omit<Browser.contextMenus.CreateProperties, 'id'>) => {
-  return browser.contextMenus.create({
-    id,
-    ...props,
-  })
-}
-
-const deleteContextMenu = async (id: ContextMenuId) => {
-  return browser.contextMenus.remove(id)
-}
-
 const deleteOllamaModel = async (modelId: string) => {
   await deleteModel(modelId)
 }
@@ -495,9 +480,9 @@ export const backgroundFunctions = {
   fetchAsDataUrl,
   fetchAsText,
   streamObjectFromSchema,
-  updateContextMenu,
-  createContextMenu,
-  deleteContextMenu,
+  updateContextMenu: ContextMenuManager.getInstance().updateContextMenu.bind(ContextMenuManager.getInstance()),
+  createContextMenu: ContextMenuManager.getInstance().createContextMenu.bind(ContextMenuManager.getInstance()),
+  deleteContextMenu: ContextMenuManager.getInstance().deleteContextMenu.bind(ContextMenuManager.getInstance()),
   initWebLLMEngine,
   hasWebLLMModelInCache,
   deleteWebLLMModelInCache,

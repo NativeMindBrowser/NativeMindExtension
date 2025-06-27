@@ -1,3 +1,5 @@
+import { useGlobalI18n } from './i18n'
+
 export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound'
 
 export abstract class AppError<Code extends ErrorCode> extends Error {
@@ -13,7 +15,7 @@ export abstract class AppError<Code extends ErrorCode> extends Error {
     this.message = message ?? ''
   }
 
-  toLocaleMessage(_locale?: string): string {
+  async toLocaleMessage(_locale?: string): Promise<string> {
     return this.message
   }
 }
@@ -23,8 +25,9 @@ export class UnknownError extends AppError<'unknown'> {
     super('unknown', message)
   }
 
-  toLocaleMessage(): string {
-    return 'An unexpected error occurred: ' + this.message
+  async toLocaleMessage() {
+    const { t } = await useGlobalI18n()
+    return t('errors.unknown_error', { message: this.message })
   }
 }
 
@@ -33,8 +36,9 @@ export class ModelRequestError extends AppError<'requestError'> {
     super('requestError', message)
   }
 
-  toLocaleMessage(): string {
-    return 'Oops! Something went wrong. Please check your Ollama connection in settings and try again.'
+  async toLocaleMessage() {
+    const { t } = await useGlobalI18n()
+    return t('errors.model_request_error')
   }
 }
 
@@ -43,8 +47,9 @@ export class ModelNotFoundError extends AppError<'modelNotFound'> {
     super('modelNotFound')
   }
 
-  toLocaleMessage(): string {
-    return 'Oops! Something went wrong. Please check your Ollama connection in settings and try again.'
+  async toLocaleMessage() {
+    const { t } = await useGlobalI18n()
+    return t('errors.model_not_found')
   }
 }
 
@@ -53,8 +58,9 @@ export class ModelRequestTimeoutError extends AppError<'requestTimeout'> {
     super('requestTimeout')
   }
 
-  toLocaleMessage(): string {
-    return 'Request timeout, please check your Ollama connection or consider starting a new session as long contexts may affect response times.'
+  async toLocaleMessage() {
+    const { t } = await useGlobalI18n()
+    return t('errors.model_request_timeout')
   }
 }
 
@@ -63,7 +69,7 @@ export class AbortError extends AppError<'abortError'> {
     super('abortError', message)
   }
 
-  toLocaleMessage(): string {
+  async toLocaleMessage() {
     return 'Request aborted: ' + this.message
   }
 }
@@ -74,8 +80,9 @@ export class TimeoutError extends AppError<'timeoutError'> {
     super('timeoutError', message)
   }
 
-  toLocaleMessage(): string {
-    return 'Operation timed out: ' + this.message
+  async toLocaleMessage() {
+    const { t } = await useGlobalI18n()
+    return t('errors.timeout_error', { message: this.message })
   }
 }
 

@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "NativeMind: Your fully private, open-source, on-device AI assistant"
+  },
+  "extDesc": {
+    "message": "NativeMind connects to local LLMs via Ollama to bring powerful AI into your browser — with zero data sent to the cloud."
+  }
+}

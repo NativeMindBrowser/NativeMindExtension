@@ -1,5 +1,4 @@
-// this module is forked from wxt-modules/auto-icons and fixed to work
-// ref: https://github.com/wxt-dev/wxt/pull/1616
+// this module is used to expose matched web resources into web_accessible_resources
 
 import 'wxt'
 

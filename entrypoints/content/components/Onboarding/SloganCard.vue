@@ -3,14 +3,14 @@
     <div class="text-center">
       <ImageElements />
       <div class="font-semibold text-sm mt-5">
-        On-device AI, built just for you
+        {{ t('onboarding.banner.title') }}
       </div>
       <div class="max-w-64 mt-1">
         <Text
           color="secondary"
           class="text-xs"
         >
-          Private and secure, with powerful features that run entirely in your device.
+          {{ t('onboarding.banner.description') }}
         </Text>
       </div>
     </div>
@@ -20,5 +20,7 @@
 <script setup lang="ts">
 import ImageElements from '@/assets/images/onboarding/elements.svg'
 import Text from '@/components/ui/Text.vue'
+import { useI18n } from '@/utils/i18n'
 
+const { t } = useI18n()
 </script>

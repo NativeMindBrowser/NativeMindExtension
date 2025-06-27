@@ -1,0 +1,131 @@
+{
+  "chat": {
+    "messages": {
+      "thought_for_seconds": "{Second} Second |에 대한 생각 \n{두 번째} 초에 대한 생각",
+      "thinking": "생각...",
+      "reading": "독서",
+      "search_locally": "브라우저에서 로컬 검색…"
+    },
+    "quick_actions": {
+      "title": "빠른 행동"
+    },
+    "input": {
+      "placeholder": {
+        "ask_anything": "뭐든지 물어봐 ...",
+        "ask_follow_up": "후속 조치 ..."
+      },
+      "tab_selector": {
+        "all_tabs": "모든 열린 탭"
+      }
+    }
+  },
+  "onboarding": {
+    "banner": {
+      "description": "전적으로 장치에서 실행되는 강력한 기능으로 개인적이고 안전합니다.",
+      "title": "당신을 위해 만들어진 기기 AI"
+    },
+    "guide": {
+      "alread_installed": "이미 설치하고 Ollama를 실행합니까?",
+      "features": {
+        "1": "DeepSeek, Qwen, Llama와 같은 고급 모델을 실행하십시오",
+        "2": "전체 제어로 모델을 사용자 정의하고 전환합니다",
+        "3": "귀하의 데이터는 장치에 비공개로 유지됩니다"
+      },
+      "follow_our_tutorial": "설치 안내서를 따르십시오",
+      "get_ollama": "올라마를 얻으십시오",
+      "install_desc": "Ollama를 설치하여 지역 AI를 설정하십시오.",
+      "need_help": "도움이 필요하십니까?",
+      "ollama_desc": "Ollama와 함께 전체 지역 AI 파워 잠금을 해제하십시오.",
+      "setup": "설정",
+      "step1": "1 단계"
+    },
+    "webllm_tutorial": {
+      "desc": "브라우저에서 바로 가벼운 모델 (Qwen 0.6B)을 사용하십시오.",
+      "not_support_webllm": "Webllm은 장치에서 지원되지 않습니다",
+      "start_with_webllm": "웹 모델로 시작하십시오",
+      "title": "설치할 준비가되지 않았습니까? \n즉시 시도하십시오."
+    },
+    "welcome_msg": {
+      "title": "**NativeMind** 에 오신 것을 환영합니다",
+      "body": "NativeMind는 개인 정보 보호 우선 AI 브라우저 확장으로 채팅, 검색 및 번역에 도움이됩니다.\n\n\nNativeMind와 함께 할 수있는 일은 다음과 같습니다.\n\n\n\n- 여러 페이지를 추적하기 위해 여러 탭에서 채팅하십시오.\n\n- 더 많은 컨텍스트를 위해 채팅 내에서 직접 웹을 검색하십시오.\n\n- 마우스 오른쪽 버튼을 클릭하여 페이지의 일부를 즉시 번역하십시오.\n\n- 설정에서 언제든지 모델을 전환하거나 다운로드합니다.\n\n\n아래의 빠른 작업을 시도하면서 시작할 수 있습니다."
+    }
+  },
+  "settings": {
+    "advanced": {
+      "title": "고급의"
+    },
+    "choose_model": "모델을 선택하십시오",
+    "download": "다운로드",
+    "feedback": {
+      "contact_msg": "‘질문 또는 피드백? \n{discord}에 가입하거나 {email}에 이메일을 보내십시오.",
+      "join_waitlist": "직장에서 사용하고 싶습니까? \n{join_waitlist_link} 엔터프라이즈 업데이트의 경우.",
+      "join_waitlist_link": "대기자 명단에 가입하십시오",
+      "discord": "불화"
+    },
+    "get_ollama": "올라마를 얻으십시오",
+    "models": {
+      "title": "활성 모델"
+    },
+    "ollama": {
+      "already_installed": "이미 설치하고 Ollama를 실행합니까?",
+      "connected": "연결",
+      "connection_error": "연결 오류",
+      "downloadable_model": "다운로드 가능한 모델",
+      "follow_guide": "설치 안내서를 따르십시오",
+      "learn_more_about_models": "모델에 대해 자세히 알아보십시오",
+      "need_help": "도움이 필요하십니까?",
+      "re_scan": "다시 스캔",
+      "server_address": "서버 주소",
+      "setup": "설정",
+      "unconnected": "연결되지 않았습니다"
+    },
+    "prompts": {
+      "chat_system_prompt": "채팅 시스템 프롬프트",
+      "title": "즉각적인",
+      "translation_system_prompt": "번역기 시스템 프롬프트"
+    },
+    "provider": {
+      "title": "모델 제공 업체"
+    },
+    "provider_model": {
+      "title": "공급자"
+    },
+    "quick_actions": {
+      "description": "새 채팅이나 마우스 오른쪽 버튼 클릭 메뉴에서 좋아하는 프롬프트를 더 빨리 실행하기 위해 빠른 작업을 설정하십시오.",
+      "edit": {
+        "cancel": "취소",
+        "prompt": "즉각적인",
+        "reset": "다시 놓기",
+        "save": "구하다",
+        "show_in_context_menu": "마우스 오른쪽 버튼으로 표시하십시오",
+        "title": "제목"
+      },
+      "title": "빠른 작업을 사용자 정의하십시오"
+    },
+    "test": "시험",
+    "translation": {
+      "title": "번역 언어"
+    },
+    "webllm-desc": "빠른 시험을 위해 Webllm 사용. \n전체 모델 지원과 더 나은 성능을 보려면 Ollama를 설치하십시오.",
+    "general": {
+      "system_language": "시스템 언어",
+      "title": "일반적인"
+    }
+  },
+  "context_menu": {
+    "quick_actions": {
+      "title": "빠른 행동"
+    },
+    "translation": {
+      "show_original": "오리지널 표시",
+      "translate_page_into": "이 페이지를 {language}로 번역하십시오."
+    }
+  },
+  "errors": {
+    "timeout_error": "연산 시간 시간 : {message}",
+    "unknown_error": "예기치 않은 오류가 발생했습니다. {message}",
+    "model_not_found": "죄송합니다! \n뭔가 잘못되었습니다. \n설정에서 Ollama 연결을 확인하고 다시 시도하십시오.",
+    "model_request_error": "죄송합니다! \n뭔가 잘못되었습니다. \n설정에서 Ollama 연결을 확인하고 다시 시도하십시오.",
+    "model_request_timeout": "'시간 초과 요청, Ollama 연결을 확인하거나 긴 컨텍스트가 응답 시간에 영향을 줄 수 있으므로 새 세션 시작을 고려하십시오.'"
+  }
+}

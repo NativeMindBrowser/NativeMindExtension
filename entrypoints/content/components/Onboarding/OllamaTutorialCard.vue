@@ -3,10 +3,10 @@
     class="px-4 py-4 flex flex-col gap-3 items-stretch"
   >
     <div class="text-[#24B960] font-medium text-xs">
-      STEP 1
+      {{ t('onboarding.guide.step1') }}
     </div>
     <div class="shrink-0 grow-0 text-[15px] font-semibold">
-      Install Ollama to set up your local AI.
+      {{ t('onboarding.guide.install_desc') }}
     </div>
     <Divider class="mb-2" />
     <div>
@@ -14,7 +14,7 @@
         color="secondary"
         class="text-[13px] font-semibold"
       >
-        Unlock full local AI power with Ollama.
+        {{ t('onboarding.guide.ollama_desc') }}
       </Text>
     </div>
     <ul class="space-y-1 text-xs">
@@ -26,7 +26,7 @@
           <IconTick class="w-4 h-4 inline-block mr-2" />
         </Text>
         <Text color="secondary">
-          Run advanced models like DeepSeek, Qwen, Llama
+          {{ t('onboarding.guide.features.1') }}
         </Text>
       </li>
       <li class="list-none flex items-center">
@@ -37,7 +37,7 @@
           <IconTick class="w-4 h-4 inline-block mr-2" />
         </Text>
         <Text color="secondary">
-          Customize and switch models with full control
+          {{ t('onboarding.guide.features.2') }}
         </Text>
       </li>
       <li class="list-none flex items-center">
@@ -48,7 +48,7 @@
           <IconTick class="w-4 h-4 inline-block mr-2" />
         </Text>
         <Text color="secondary">
-          Your data stays private, on your device
+          {{ t('onboarding.guide.features.3') }}
         </Text>
       </li>
     </ul>
@@ -63,7 +63,7 @@
           class="h-10 w-full"
           variant="primary"
         >
-          Get Ollama
+          {{ t('onboarding.guide.get_ollama') }}
         </Button>
       </a>
       <div class="flex flex-col items-center justify-center mt-1">
@@ -72,22 +72,22 @@
           class="font-normal text-[11px] leading-5"
         >
           <div class="flex gap-1">
-            <span>Already installed and run Ollama?</span>
+            <span>{{ t('onboarding.guide.alread_installed') }}</span>
             <button
               class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
               @click="onClickOpenSettings"
             >
-              Setup
+              {{ t('onboarding.guide.setup') }}
             </button>
           </div>
           <div class="flex gap-1">
-            <span>Need help?</span>
+            <span>{{ t('onboarding.guide.need_help') }}</span>
             <a
               :href="tutorialUrl"
               target="_blank"
               class="underline whitespace-nowrap hover:text-gray-800 cursor-pointer"
             >
-              Follow our installation guide
+              {{ t('onboarding.guide.follow_our_tutorial') }}
             </a>
           </div>
         </Text>
@@ -105,6 +105,7 @@ import Button from '@/components/ui/Button.vue'
 import Divider from '@/components/ui/Divider.vue'
 import Text from '@/components/ui/Text.vue'
 import { OLLAMA_HOMEPAGE_URL, OLLAMA_TUTORIAL_URL } from '@/utils/constants'
+import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
 
 import { useOllamaStatusStore } from '../../store'
@@ -112,6 +113,7 @@ import { useOllamaStatusStore } from '../../store'
 const log = logger.child('OllamaTutorialCard')
 const emit = defineEmits(['installed', 'settings'])
 const ollamaStatusStore = useOllamaStatusStore()
+const { t } = useI18n()
 
 const tutorialUrl = OLLAMA_TUTORIAL_URL
 

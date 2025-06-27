@@ -3,11 +3,11 @@
     class="p-6 flex flex-col gap-[10px] items-stretch bg-[#F2F2F2] rounded-lg m-[11px]"
   >
     <div class="text-[15px] font-semibold flex items-center gap-1">
-      Not ready to install? Try it instantly.
+      {{ t('onboarding.webllm_tutorial.title') }}
     </div>
     <div class="text-[13px] text-center">
       <Text>
-        Use a lightweight model (Qwen 0.6b)right in your browser — no setup, no wait.
+        {{ t('onboarding.webllm_tutorial.desc') }}
       </Text>
     </div>
     <Modal
@@ -31,7 +31,7 @@
         size="small"
         class="font-medium"
       >
-        Start with Web Model
+        {{ t('onboarding.webllm_tutorial.start_with_webllm') }}
       </Text>
     </Button>
     <div
@@ -39,7 +39,7 @@
       class="text-red-500 text-[10px] flex items-center gap-2 justify-start"
     >
       <IconWarning class="w-3 h-3" />
-      WebLLM not supported on your {{ supportWebLLM.reason === 'browser' ? 'browser' : 'device' }}.
+      {{ t('onboarding.webllm_tutorial.not_support_webllm') }}
     </div>
   </div>
 </template>
@@ -51,6 +51,7 @@ import IconWarning from '@/assets/icons/warning.svg?component'
 import Modal from '@/components/Modal.vue'
 import Button from '@/components/ui/Button.vue'
 import Text from '@/components/ui/Text.vue'
+import { useI18n } from '@/utils/i18n'
 import { c2bRpc } from '@/utils/rpc'
 
 import DownloadWebLLMModel from '../WebLLMDownloadModal.vue'
@@ -58,6 +59,7 @@ import DownloadWebLLMModel from '../WebLLMDownloadModal.vue'
 const emit = defineEmits(['installed'])
 
 const supportWebLLM = await c2bRpc.checkSupportWebLLM()
+const { t } = useI18n()
 
 const isShowDownloadWebLLMModal = ref(false)
 

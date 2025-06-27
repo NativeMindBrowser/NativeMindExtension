@@ -1,0 +1,131 @@
+{
+  "settings": {
+    "webllm-desc": "使用WebLLM快速体验。如需完整的模型支持和更好的性能，请安装Ollama。",
+    "translation": {
+      "title": "翻译语言"
+    },
+    "get_ollama": "获取Ollama",
+    "test": "测试",
+    "ollama": {
+      "already_installed": "已安装并运行Ollama？",
+      "need_help": "需要帮助？",
+      "follow_guide": "查看我们的安装指南",
+      "re_scan": "重新扫描",
+      "setup": "设置",
+      "connected": "已连接",
+      "connection_error": "连接错误",
+      "downloadable_model": "可下载的模型",
+      "learn_more_about_models": "了解更多模型信息",
+      "server_address": "服务器地址",
+      "unconnected": "未连接"
+    },
+    "choose_model": "选择模型",
+    "download": "下载",
+    "prompts": {
+      "title": "提示词",
+      "translation_system_prompt": "翻译系统提示词",
+      "chat_system_prompt": "聊天系统提示词"
+    },
+    "models": {
+      "title": "当前模型"
+    },
+    "quick_actions": {
+      "title": "自定义快捷操作",
+      "description": "设置快捷操作，通过新建聊天或右键菜单快速运行您常用的提示词。",
+      "edit": {
+        "title": "标题",
+        "prompt": "提示词",
+        "show_in_context_menu": "在右键菜单中显示",
+        "cancel": "取消",
+        "reset": "重置",
+        "save": "保存"
+      }
+    },
+    "feedback": {
+      "contact_msg": "📧有问题或反馈？加入我们的{discord}或发送邮件至{email}。",
+      "join_waitlist": "💼想在工作中使用？{join_waitlist_link}获取企业版更新。",
+      "join_waitlist_link": "加入等待名单",
+      "discord": "Discord"
+    },
+    "provider": {
+      "title": "模型提供商"
+    },
+    "provider_model": {
+      "title": "提供商与模型"
+    },
+    "advanced": {
+      "title": "高级设置"
+    },
+    "general": {
+      "system_language": "系统语言",
+      "title": "常规设置"
+    }
+  },
+  "chat": {
+    "messages": {
+      "thought_for_seconds": "思考了{second}秒 | 思考了{second}秒",
+      "thinking": "正在思考...",
+      "reading": "正在阅读",
+      "search_locally": "正在浏览器中本地搜索..."
+    },
+    "quick_actions": {
+      "title": "快捷操作"
+    },
+    "input": {
+      "placeholder": {
+        "ask_anything": "有什么想问的...",
+        "ask_follow_up": "继续提问..."
+      },
+      "tab_selector": {
+        "all_tabs": "所有已打开标签页"
+      }
+    }
+  },
+  "onboarding": {
+    "banner": {
+      "description": "私密且安全，所有强大功能完全在本地设备上运行。",
+      "title": "为您打造的本地AI助手"
+    },
+    "guide": {
+      "alread_installed": "已安装并运行Ollama？",
+      "features": {
+        "1": "运行DeepSeek、Qwen、Llama等高级模型",
+        "2": "完全掌控模型的自定义和切换",
+        "3": "您的数据始终保持在本地设备上"
+      },
+      "follow_our_tutorial": "查看我们的安装指南",
+      "get_ollama": "获取Ollama",
+      "install_desc": "安装Ollama以设置您的本地AI助手。",
+      "need_help": "需要帮助？",
+      "ollama_desc": "借助Ollama释放AI的全部潜力。",
+      "setup": "开始设置",
+      "step1": "步骤1"
+    },
+    "webllm_tutorial": {
+      "desc": "在浏览器中使用轻量级模型（Qwen 0.6B）- 无需设置，即刻体验。",
+      "not_support_webllm": "您的设备不支持WebLLM",
+      "start_with_webllm": "立即尝试网页模型",
+      "title": "还没准备好安装？\n立即体验。"
+    },
+    "welcome_msg": {
+      "body": "NativeMind是一款注重隐私的AI浏览器扩展，可帮助您聊天、搜索和翻译 — 所有功能均由本地设备上的语言模型提供支持。\n\n通过NativeMind，您可以：\n- 在多个标签页之间聊天，轻松跟踪不同页面内容。\n- 直接在聊天中搜索网页获取更多信息。\n- 右键点击即可立即翻译页面任何部分。\n- 在设置中随时切换或下载新模型。\n\n您可以从下方的快捷操作开始体验。",
+      "title": "👋欢迎使用 **NativeMind**"
+    }
+  },
+  "context_menu": {
+    "quick_actions": {
+      "title": "快捷操作"
+    },
+    "translation": {
+      "show_original": "显示原始页面",
+      "translate_page_into": "将此页面翻译成{language}"
+    }
+  },
+  "errors": {
+    "model_not_found": "哎呀！\n出了点问题。\n请在设置中检查您的Ollama连接，然后重试。",
+    "model_request_error": "哎呀！\n出了点问题。\n请在设置中检查您的Ollama连接，然后重试。",
+    "timeout_error": "操作计时：{message}",
+    "unknown_error": "发生意外错误：{message}",
+    "model_request_timeout": "“请求超时，请检查您的Ollama连接或考虑启动新会话，因为长上下文可能会影响响应时间。”"
+  }
+}

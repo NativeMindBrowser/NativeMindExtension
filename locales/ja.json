@@ -1,0 +1,131 @@
+{
+  "chat": {
+    "messages": {
+      "thought_for_seconds": "{second} second |の考え方\n{second}秒の考え方",
+      "thinking": "考え...",
+      "reading": "読む",
+      "search_locally": "ブラウザでローカルに検索する…"
+    },
+    "quick_actions": {
+      "title": "クイックアクション"
+    },
+    "input": {
+      "placeholder": {
+        "ask_anything": "何でも尋ねる...",
+        "ask_follow_up": "フォローアップを尋ねる..."
+      },
+      "tab_selector": {
+        "all_tabs": "すべての開いたタブ"
+      }
+    }
+  },
+  "onboarding": {
+    "banner": {
+      "description": "プライベートで安全で、デバイスで完全に実行される強力な機能を備えています。",
+      "title": "あなたのためだけに構築されたデバイスAI"
+    },
+    "guide": {
+      "alread_installed": "すでにインストールしてオラマを実行しますか？",
+      "features": {
+        "1": "Deepseek、Qwen、Llamaなどの高度なモデルを実行します",
+        "2": "完全な制御を備えたモデルをカスタマイズして切り替えます",
+        "3": "データはデバイス上でプライベートのままです"
+      },
+      "follow_our_tutorial": "インストールガイドに従ってください",
+      "get_ollama": "オラマを手に入れましょう",
+      "install_desc": "オラマをインストールして、地元のAIをセットアップします。",
+      "need_help": "助けが必要ですか？",
+      "ollama_desc": "オラマとの完全なローカルAIパワーのロックを解除します。",
+      "setup": "設定",
+      "step1": "ステップ1"
+    },
+    "webllm_tutorial": {
+      "desc": "ブラウザでは、軽量モデル（QWEN 0.6B）を使用してください。セットアップなし、待機なし。",
+      "not_support_webllm": "Webllmはデバイスではサポートされていません",
+      "start_with_webllm": "Webモデルから始めます",
+      "title": "インストールする準備ができていませんか？\nすぐに試してみてください。"
+    },
+    "welcome_msg": {
+      "title": "**NativeMind** へようこそ",
+      "body": "Nativemindは、プライバシーファーストAIブラウザ拡張機能であり、チャット、検索、翻訳を支援します。\n\n\nこれがあなたがnativemindでできることです：\n\n\n\n - 複数のタブでチャットして、異なるページを追跡します。\n\n - チャット内でウェブを直接検索して、その他のコンテキストを確認してください。\n\n - 右クリックして、ページの任意の部分を即座に翻訳します。\n\n - 設定でいつでもモデルを切り替えるかダウンロードします。\n\n\n以下のクイックアクションを試すことから始めることができます。"
+    }
+  },
+  "settings": {
+    "advanced": {
+      "title": "高度な"
+    },
+    "choose_model": "モデルを選択します",
+    "download": "ダウンロード",
+    "feedback": {
+      "contact_msg": "📧質問またはフィードバック？ \n{discord}に参加するか、{email}にメールしてください。",
+      "join_waitlist": "work職場で使用することをお勧めしますか？ \n{join_waitlist_link}エンタープライズアップデート用。",
+      "join_waitlist_link": "WaitListに参加してください",
+      "discord": "不和"
+    },
+    "get_ollama": "オラマを手に入れましょう",
+    "models": {
+      "title": "アクティブモデル"
+    },
+    "ollama": {
+      "already_installed": "すでにインストールしてオラマを実行しますか？",
+      "connected": "接続",
+      "connection_error": "接続エラー",
+      "downloadable_model": "ダウンロード可能なモデル",
+      "follow_guide": "インストールガイドに従ってください",
+      "learn_more_about_models": "モデルの詳細をご覧ください",
+      "need_help": "助けが必要ですか？",
+      "re_scan": "再スキャン",
+      "server_address": "サーバーアドレス",
+      "setup": "設定",
+      "unconnected": "接続されていません"
+    },
+    "prompts": {
+      "chat_system_prompt": "チャットシステムプロンプト",
+      "title": "プロンプト",
+      "translation_system_prompt": "翻訳システムプロンプト"
+    },
+    "provider": {
+      "title": "モデルプロバイダー"
+    },
+    "provider_model": {
+      "title": "プロバイダー"
+    },
+    "quick_actions": {
+      "description": "新しいチャットや右クリックメニューから、お気に入りのプロンプトをより速く実行するためのクイックアクションを設定します。",
+      "edit": {
+        "cancel": "キャンセル",
+        "prompt": "プロンプト",
+        "reset": "リセット",
+        "save": "保存",
+        "show_in_context_menu": "右クリックメニューで表示します",
+        "title": "タイトル"
+      },
+      "title": "クイックアクションをカスタマイズします"
+    },
+    "test": "テスト",
+    "translation": {
+      "title": "翻訳言語"
+    },
+    "webllm-desc": "クイックトライアウトのためにwebllmを使用します。\n完全なモデルサポートとパフォーマンスの向上については、Ollamaをインストールしてください。",
+    "general": {
+      "system_language": "システム言語",
+      "title": "一般的な"
+    }
+  },
+  "context_menu": {
+    "quick_actions": {
+      "title": "クイックアクション"
+    },
+    "translation": {
+      "show_original": "オリジナルを表示します",
+      "translate_page_into": "このページを{language}に翻訳します"
+    }
+  },
+  "errors": {
+    "model_not_found": "おっと！\n何かがうまくいかなかった。\n設定のOllama接続を確認して、もう一度お試しください。",
+    "timeout_error": "操作タイムアウト：{message}",
+    "unknown_error": "予期しないエラーが発生しました：{message}",
+    "model_request_error": "おっと！\n何かがうまくいかなかった。\n設定のOllama接続を確認して、もう一度お試しください。",
+    "model_request_timeout": "「タイムアウトをリクエストして、Ollama接続を確認するか、長いコンテキストが応答時間に影響を与える可能性があるため、新しいセッションの開始を検討してください。」"
+  }
+}

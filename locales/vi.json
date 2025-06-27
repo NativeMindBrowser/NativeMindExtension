@@ -1,0 +1,131 @@
+{
+  "chat": {
+    "messages": {
+      "thought_for_seconds": "Suy nghĩ trong {second} giây | Suy nghĩ trong {second} giây",
+      "thinking": "Đang suy nghĩ...",
+      "reading": "Đang đọc...",
+      "search_locally": "Đang tìm kiếm trong trình duyệt..."
+    },
+    "quick_actions": {
+      "title": "Thao tác nhanh"
+    },
+    "input": {
+      "placeholder": {
+        "ask_anything": "Hỏi bất cứ điều gì...",
+        "ask_follow_up": "Hỏi tiếp theo..."
+      },
+      "tab_selector": {
+        "all_tabs": "Tất cả các tab mở"
+      }
+    }
+  },
+  "onboarding": {
+    "banner": {
+      "description": "Riêng tư và an toàn, với các tính năng mạnh mẽ chạy hoàn toàn trong thiết bị của bạn.",
+      "title": "AI trên thiết bị, được xây dựng chỉ dành cho bạn"
+    },
+    "guide": {
+      "alread_installed": "Bạn đã cài đặt và chạy Ollama?",
+      "features": {
+        "1": "Chạy các mô hình nâng cao như Deepseek, Qwen, Llama",
+        "2": "Tùy chỉnh và chuyển đổi các mô hình với toàn bộ điều khiển",
+        "3": "Dữ liệu của bạn vẫn riêng tư, trên thiết bị của bạn"
+      },
+      "follow_our_tutorial": "Thực hiện theo hướng dẫn cài đặt của chúng tôi",
+      "get_ollama": "Nhận Ollama",
+      "install_desc": "Cài đặt Ollama để thiết lập AI cục bộ của bạn.",
+      "need_help": "Cần giúp đỡ?",
+      "ollama_desc": "Mở khóa toàn bộ sức mạnh của AI trên thiết bị với Ollama.",
+      "setup": "Cài đặt",
+      "step1": "Bước 1"
+    },
+    "webllm_tutorial": {
+      "desc": "Sử dụng mô hình nhẹ (QWEN 0,6B) ngay trong trình duyệt của bạn - không thiết lập, không chờ đợi.",
+      "not_support_webllm": "WEBLLM không được hỗ trợ trên thiết bị của bạn",
+      "start_with_webllm": "Bắt đầu với mô hình web",
+      "title": "Chưa sẵn sàng cài đặt? \nHãy thử ngay bây giờ."
+    },
+    "welcome_msg": {
+      "title": "👋 Chào mừng bạn đến với **NativeMind**",
+      "body": "NativeMind là tiện ích mở rộng trình duyệt AI đầu tiên riêng tư giúp bạn trò chuyện, tìm kiếm và dịch - tất cả được cung cấp bởi các mô hình ngôn ngữ trên thiết bị.\n\nĐây là những gì bạn có thể làm với NativeMind:\n\n- Trò chuyện qua nhiều tab để theo dõi các trang khác nhau.\n- Tìm kiếm web trực tiếp trong trò chuyện để biết thêm bối cảnh.\n- Nhấp chuột phải để dịch bất kỳ phần nào của trang ngay lập tức.\n- Chuyển đổi hoặc tải xuống mô hình bất cứ lúc nào trong cài đặt.\n\nBạn có thể bắt đầu bằng cách thử các thao tác nhanh dưới đây."
+    }
+  },
+  "settings": {
+    "advanced": {
+      "title": "Nâng cao"
+    },
+    "choose_model": "Chọn mô hình",
+    "download": "Tải xuống",
+    "feedback": {
+      "contact_msg": "Có câu hỏi hay phản hồi? Tham gia {discord} của chúng tôi hoặc gửi email cho chúng tôi tại {email}.",
+      "join_waitlist": "💼 Muốn sử dụng tại nơi làm việc? {join_waitlist_link} để nhận cập nhật doanh nghiệp.",
+      "join_waitlist_link": "Tham gia danh sách chờ",
+      "discord": "Discord"
+    },
+    "get_ollama": "Nhận Ollama",
+    "models": {
+      "title": "Mô hình đang hoạt động"
+    },
+    "ollama": {
+      "already_installed": "Bạn đã cài đặt và chạy Ollama?",
+      "connected": "Kết nối",
+      "connection_error": "Lỗi kết nối",
+      "downloadable_model": "Mô hình có thể tải xuống",
+      "follow_guide": "Thực hiện theo hướng dẫn cài đặt của chúng tôi",
+      "learn_more_about_models": "Tìm hiểu thêm về các mô hình",
+      "need_help": "Cần giúp đỡ?",
+      "re_scan": "Quét lại",
+      "server_address": "Địa chỉ máy chủ",
+      "setup": "Cài đặt",
+      "unconnected": "Không kết nối"
+    },
+    "prompts": {
+      "chat_system_prompt": "Nhắc hệ thống trò chuyện",
+      "title": "Nhắc nhở",
+      "translation_system_prompt": "Lời nhắc hệ thống dịch"
+    },
+    "provider": {
+      "title": "Nhà cung cấp mô hình"
+    },
+    "provider_model": {
+      "title": "Nhà cung cấp"
+    },
+    "quick_actions": {
+      "description": "Thiết lập các thao tác nhanh để chạy lời nhắc yêu thích của bạn nhanh hơn - từ trò chuyện mới hoặc menu chuột phải.",
+      "edit": {
+        "cancel": "Hủy bỏ",
+        "prompt": "Lời nhắc",
+        "reset": "Đặt lại",
+        "save": "Lưu",
+        "show_in_context_menu": "Hiển thị trong menu chuột phải",
+        "title": "Tiêu đề"
+      },
+      "title": "Tùy chỉnh thao tác nhanh"
+    },
+    "test": "Bài kiểm tra",
+    "translation": {
+      "title": "Ngôn ngữ dịch"
+    },
+    "webllm-desc": "Sử dụng WEBLLM để thử nhanh. Để hỗ trợ mô hình đầy đủ và có hiệu suất tốt hơn, vui lòng cài đặt Ollama.",
+    "general": {
+      "system_language": "Ngôn ngữ hệ thống",
+      "title": "Tổng quan"
+    }
+  },
+  "context_menu": {
+    "quick_actions": {
+      "title": "Thao tác nhanh"
+    },
+    "translation": {
+      "show_original": "Hiển thị bản gốc",
+      "translate_page_into": "Dịch trang này thành {language}"
+    }
+  },
+  "errors": {
+    "model_not_found": "Ối! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối Ollama của bạn trong cài đặt và thử lại.",
+    "model_request_error": "Ối! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối Ollama của bạn trong cài đặt và thử lại.",
+    "model_request_timeout": "Yêu cầu đã hết thời gian. Vui lòng kiểm tra kết nối Ollama của bạn hoặc xem xét bắt đầu một phiên mới, vì bối cảnh dài có thể ảnh hưởng đến thời gian phản hồi.",
+    "timeout_error": "Thao tác đã hết thời gian: {message}",
+    "unknown_error": "Đã xảy ra lỗi không xác định: {message}"
+  }
+}

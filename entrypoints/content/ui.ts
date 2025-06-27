@@ -6,7 +6,7 @@ import { createShadowRootUi } from 'wxt/utils/content-script-ui/shadow-root'
 
 import { initToast } from '@/composables/useToast'
 import { convertPropertiesIntoSimpleVariables, extractFontFace, loadContentScriptCss, scopeStyleIntoShadowRoot } from '@/utils/css'
-import { i18n } from '@/utils/i18n'
+import { createI18nInstance } from '@/utils/i18n/index'
 
 async function loadStyleSheet(shadowRoot: ShadowRoot) {
   const contentScriptCss = await loadContentScriptCss(import.meta.env.ENTRYPOINT)
@@ -37,7 +37,7 @@ export async function createShadowRootOverlay(ctx: ContentScriptContext, compone
       shadowHost.style.setProperty('z-index', 'calc(infinity)')
       const pinia = createPinia()
       const app = createApp(component, { rootElement })
-      app.use(i18n)
+      app.use(await createI18nInstance())
       app.use(initToast(toastRoot))
       app.use(pinia)
       app.mount(rootElement)

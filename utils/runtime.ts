@@ -22,3 +22,13 @@ export function only<T>(entrypoints: Entrypoint[], fn: () => T) {
   }
   return undefined as T
 }
+
+export function forRuntimes<T>(runtimesFn: Partial<Record<Entrypoint, () => T>>) {
+  const currentEntrypointName = import.meta.env.ENTRYPOINT
+  const currentEntrypoint = Object.entries(entrypointNames).find(
+    ([, names]) => names.some((n) => n === currentEntrypointName),
+  )?.[0] as Entrypoint | undefined
+  if (currentEntrypoint && runtimesFn[currentEntrypoint]) {
+    return runtimesFn[currentEntrypoint]()
+  }
+}

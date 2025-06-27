@@ -5,7 +5,7 @@ import { browser } from 'wxt/browser'
 import { defineBackground } from 'wxt/utils/define-background'
 
 import { INVALID_URLS } from '@/utils/constants'
-import { CONTEXT_MENU, CONTEXT_MENU_ITEM_TRANSLATE_PAGE } from '@/utils/context-menu'
+import { CONTEXT_MENU, CONTEXT_MENU_ITEM_TRANSLATE_PAGE, ContextMenuManager } from '@/utils/context-menu'
 import logger from '@/utils/logger'
 import { bgBroadcastRpc } from '@/utils/rpc'
 import { isTabValid } from '@/utils/tab'
@@ -50,7 +50,7 @@ export default defineBackground(() => {
 
   browser.tabs.onActivated.addListener(async ({ tabId }) => {
     // reset the translate context menu to default
-    await browser.contextMenus.update(CONTEXT_MENU_ITEM_TRANSLATE_PAGE.id, {
+    await ContextMenuManager.getInstance().updateContextMenu(CONTEXT_MENU_ITEM_TRANSLATE_PAGE.id, {
       title: CONTEXT_MENU_ITEM_TRANSLATE_PAGE.title,
       contexts: CONTEXT_MENU_ITEM_TRANSLATE_PAGE.contexts,
     })
@@ -82,16 +82,15 @@ export default defineBackground(() => {
     })
   })
 
+  for (const menu of CONTEXT_MENU) {
+    ContextMenuManager.getInstance().createContextMenu(menu.id, {
+      title: menu.title,
+      contexts: menu.contexts,
+    })
+  }
+
   browser.runtime.onInstalled.addListener(async () => {
     logger.debug('Extension Installed')
-    await browser.contextMenus.removeAll()
-    for (const menu of CONTEXT_MENU) {
-      browser.contextMenus.create({
-        id: menu.id,
-        title: menu.title,
-        contexts: menu.contexts,
-      })
-    }
     // inject content script into all tabs which are opened before the extension is installed
     const tabs = await browser.tabs.query({})
     for (const tab of tabs) {

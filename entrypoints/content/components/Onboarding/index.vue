@@ -70,6 +70,7 @@ import IconUnPin from '@/assets/icons/unpin.svg?component'
 import ExhaustiveError from '@/components/ExhaustiveError.vue'
 import Logo from '@/components/Logo.vue'
 import ScrollContainer from '@/components/ScrollContainer.vue'
+import { useI18n } from '@/utils/i18n'
 import { getUserConfig, TARGET_ONBOARDING_VERSION } from '@/utils/user-config'
 
 import { useOllamaStatusStore } from '../../store'
@@ -81,6 +82,7 @@ import OllamaTutorialCard from './OllamaTutorialCard.vue'
 import SloganCard from './SloganCard.vue'
 import WebLLMTutorialCard from './WebLLMTutorialCard.vue'
 
+const { t } = useI18n()
 const userConfig = await getUserConfig()
 const chat = await Chat.getInstance()
 const ollamaStatusStore = useOllamaStatusStore()
@@ -123,18 +125,9 @@ const onWebLLMInstalled = () => {
 
 const setWelcomeChatMessage = () => {
   const msg = chat.historyManager.appendAssistantMessage(`
-${makeParagraph(`👋 Welcome to **NativeMind**`, { class: 'text-base font-normal' })}
+${makeParagraph(t('onboarding.welcome_msg.title'), { class: 'text-base font-normal' })}
 
-${makeContainer(`NativeMind is a privacy-first AI browser extension that helps you chat, search, and translate — all powered by on-device language models.
-
-Here’s what you can do with NativeMind:
-
-- Chat across multiple tabs to keep track of different pages.
-- Search the web directly within the chat for more context.
-- Right-click to translate any part of the page instantly.
-- Switch or download models anytime in Settings.
-
-You can start by trying out the quick actions below.`, { class: 'text-xs text-[#596066]' })}
+${makeContainer(t('onboarding.welcome_msg.body'), { class: 'text-xs text-[#596066]' })}
 `.trim())
   msg.style = {
     backgroundColor: 'transparent',

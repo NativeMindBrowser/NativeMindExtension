@@ -1,0 +1,131 @@
+{
+  "chat": {
+    "messages": {
+      "thought_for_seconds": "Pensamiento para {segundo} segundo | \nPensamiento por {segundo} segundos",
+      "thinking": "Pensamiento...",
+      "reading": "Lectura",
+      "search_locally": "Buscando localmente en el navegador ..."
+    },
+    "quick_actions": {
+      "title": "Acciones rápidas"
+    },
+    "input": {
+      "placeholder": {
+        "ask_anything": "Pregunta cualquier cosa ...",
+        "ask_follow_up": "Pregunte de seguimiento ..."
+      },
+      "tab_selector": {
+        "all_tabs": "Todas las pestañas abiertas"
+      }
+    }
+  },
+  "onboarding": {
+    "banner": {
+      "description": "Privado y seguro, con características potentes que se ejecutan completamente en su dispositivo.",
+      "title": "AI en el dispositivo, construido solo para ti"
+    },
+    "guide": {
+      "alread_installed": "¿Ya instalado y ejecutado Ollama?",
+      "features": {
+        "1": "Ejecutar modelos avanzados como Deepseek, Qwen, Llama",
+        "2": "Personalizar y cambiar modelos con control completo",
+        "3": "Sus datos permanecen privados, en su dispositivo"
+      },
+      "follow_our_tutorial": "Siga nuestra guía de instalación",
+      "get_ollama": "Obtener Ollama",
+      "install_desc": "Instale Ollama para configurar su IA local.",
+      "need_help": "¿Necesitar ayuda?",
+      "ollama_desc": "Desbloquee el poder de IA local completo con Ollama.",
+      "setup": "Configuración",
+      "step1": "Paso 1"
+    },
+    "webllm_tutorial": {
+      "desc": "Use un modelo liviano (qwen 0.6b) justo en su navegador, sin configuración, sin espera.",
+      "not_support_webllm": "WEBLLM no es compatible con su dispositivo",
+      "start_with_webllm": "Comience con el modelo web",
+      "title": "¿No está listo para instalar? \nPruébalo instantáneamente."
+    },
+    "welcome_msg": {
+      "title": "👋 Bienvenido a **NativeMind**",
+      "body": "Nativemind es una extensión del navegador AI de privacidad que lo ayuda a chatear, buscar y traducir, todo impulsado por modelos de idiomas en el dispositivo.\n\n\nEsto es lo que puedes hacer con Nativemind:\n\n\n\n- Chatea en múltiples pestañas para realizar un seguimiento de diferentes páginas.\n\n- Busque en la web directamente dentro del chat para obtener más contexto.\n\n- Haga clic derecho para traducir cualquier parte de la página al instante.\n\n- Cambie o descargue modelos en cualquier momento en la configuración.\n\n\nPuede comenzar probando las acciones rápidas a continuación."
+    }
+  },
+  "settings": {
+    "advanced": {
+      "title": "Avanzado"
+    },
+    "choose_model": "Elija modelo",
+    "download": "Descargar",
+    "feedback": {
+      "contact_msg": "📧Los cuestiones o comentarios? \nÚnase a nuestro {Discord} o envíenos un correo electrónico a {email}.",
+      "join_waitlist": "💼 ¡¿Lo usa en el trabajo? \n{Join_waitlist_link} para actualizaciones empresariales.",
+      "join_waitlist_link": "Únete a la lista de espera",
+      "discord": "Discordia"
+    },
+    "get_ollama": "Obtener Ollama",
+    "models": {
+      "title": "Modelo activo"
+    },
+    "ollama": {
+      "already_installed": "¿Ya instalado y ejecutado Ollama?",
+      "connected": "Conectado",
+      "connection_error": "Error de conexión",
+      "downloadable_model": "Modelo descargable",
+      "follow_guide": "Siga nuestra guía de instalación",
+      "learn_more_about_models": "Obtenga más información sobre los modelos",
+      "need_help": "¿Necesitar ayuda?",
+      "re_scan": "Volver a escanear",
+      "server_address": "Dirección del servidor",
+      "setup": "Configuración",
+      "unconnected": "Desconectado"
+    },
+    "prompts": {
+      "chat_system_prompt": "Solicitante del sistema de chat",
+      "title": "Inmediato",
+      "translation_system_prompt": "Solicitante del sistema de traductor"
+    },
+    "provider": {
+      "title": "Proveedor de modelos"
+    },
+    "provider_model": {
+      "title": "Proveedor"
+    },
+    "quick_actions": {
+      "description": "Configure acciones rápidas para ejecutar sus indicaciones favoritas más rápido, desde el nuevo chat o el menú de clic derecho.",
+      "edit": {
+        "cancel": "Cancelar",
+        "prompt": "Inmediato",
+        "reset": "Reiniciar",
+        "save": "Ahorrar",
+        "show_in_context_menu": "Mostrar en el menú de clic derecho",
+        "title": "Título"
+      },
+      "title": "Personalizar acciones rápidas"
+    },
+    "test": "Prueba",
+    "translation": {
+      "title": "Lenguaje de traducción"
+    },
+    "webllm-desc": "Usar WEBLLM para una prueba rápida. \nPara obtener soporte de modelo completo y mejor rendimiento, instale Ollama.",
+    "general": {
+      "system_language": "Lenguaje del sistema",
+      "title": "General"
+    }
+  },
+  "context_menu": {
+    "quick_actions": {
+      "title": "Acciones rápidas"
+    },
+    "translation": {
+      "show_original": "Mostrar original",
+      "translate_page_into": "Traducir esta página en {idioma}"
+    }
+  },
+  "errors": {
+    "model_not_found": "¡Ups! \nAlgo salió mal. \nConsulte su conexión Ollama en la configuración y vuelva a intentarlo.",
+    "model_request_error": "¡Ups! \nAlgo salió mal. \nConsulte su conexión Ollama en la configuración y vuelva a intentarlo.",
+    "model_request_timeout": "\"Solicite tiempo de espera, consulte su conexión Ollama o considere comenzar una nueva sesión, ya que los contextos largos pueden afectar los tiempos de respuesta\".",
+    "timeout_error": "Operación Tiempo de tiempo fuera: {message}",
+    "unknown_error": "Se produjo un error inesperado: {message}"
+  }
+}
