@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.3.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.3.0-beta.8...v1.3.0-beta.9)
+
+### 🩹 Fixes
+
+- **i18n:** Welcome message i18n and add max length limit for quick action content ([22839c2](https://github.com/NativeMindBrowser/NativeMindExtension/commit/22839c2))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.3.0-beta.8
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.3.0-beta.7...v1.3.0-beta.8)
