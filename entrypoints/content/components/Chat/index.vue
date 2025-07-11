@@ -125,6 +125,7 @@ import {
 } from '@/entrypoints/content/utils/chat/index'
 import { useI18n } from '@/utils/i18n'
 import { registerContentScriptRpcEvent } from '@/utils/rpc'
+import { getTabStore } from '@/utils/tab-store'
 
 import { showSettings } from '../../utils/settings'
 import AttachmentSelector from '../AttachmentSelector.vue'
@@ -146,6 +147,7 @@ const chat = await Chat.getInstance()
 const scrollContainerRef = ref<InstanceType<typeof ScrollContainer>>()
 const contextAttachments = chat.contextAttachments
 const logger = useLogger()
+const tabStore = await getTabStore()
 
 initChatSideEffects()
 registerContentScriptRpcEvent('contextMenuClicked', async (event) => {
@@ -161,6 +163,7 @@ registerContentScriptRpcEvent('contextMenuClicked', async (event) => {
     logger.warn(`Unsupported image type: ${blob.type}`)
     return
   }
+  tabStore.showContainer.value = true
   let imageFileName = `image.${extension}`
   if (srcUrl.endsWith(`.${extension}`)) {
     // If the URL already has the correct extension, use it as is

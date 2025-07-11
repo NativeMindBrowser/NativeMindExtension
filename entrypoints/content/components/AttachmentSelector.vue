@@ -126,7 +126,7 @@
                 v-if="attachment.type === 'tab'"
                 :src="attachment.value.faviconUrl"
                 alt=""
-                class="flex items-center justify-center w-3 h-4 rounded-full shrink-0 grow-0 bg-gray-300 ml-[2px]"
+                class="flex items-center justify-center w-4 h-4 rounded-full shrink-0 grow-0 bg-gray-300 ml-[2px]"
                 fallbackClass="bg-transparent"
               >
                 <template #fallback>
@@ -135,7 +135,7 @@
               </ExternalImage>
               <div
                 v-else-if="attachment.type === 'image'"
-                class="flex items-center justify-center w-3 h-4 shrink-0 grow-0 ml-[2px]"
+                class="flex items-center justify-center w-4 h-4 shrink-0 grow-0 ml-[2px]"
               >
                 <IconAttachmentImage class="w-3 h-3 text-[#52525B]" />
               </div>
@@ -283,10 +283,10 @@ const appendAttachmentsFromFiles = async (files: File[]) => {
 }
 
 const appendAttachments = (appendedAttachments: ContextAttachment[]) => {
-  const newAttachmentsMaybeOverflow = [...attachments.value, ...appendedAttachments]
+  const newAttachmentsMaybeOverflow = [...appendedAttachments.toReversed(), ...attachments.value]
   const newAttachments: ContextAttachment[] = []
   let imageCount = 0
-  for (let i = newAttachmentsMaybeOverflow.length - 1; i >= 0; i--) {
+  for (let i = 0; i < newAttachmentsMaybeOverflow.length; i++) {
     const cur = newAttachmentsMaybeOverflow[i]
     if (cur.type === 'image') {
       imageCount++
@@ -294,10 +294,10 @@ const appendAttachments = (appendedAttachments: ContextAttachment[]) => {
         showErrorMessage(t('chat.input.attachment_selector.too_many_images', { max: MAX_IMAGES }))
         continue // Skip this image if we have reached the maximum number of images
       }
-      newAttachments.unshift(cur)
+      newAttachments.push(cur)
     }
     else {
-      newAttachments.unshift(cur)
+      newAttachments.push(cur)
     }
   }
   attachments.value = newAttachments
