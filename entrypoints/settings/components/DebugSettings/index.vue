@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="enabledDebug"
     class="flex flex-col gap-1 font-bold rounded-lg bg-white mx-4"
   >
     <div class="p-4 flex flex-col gap-4">
@@ -405,7 +404,6 @@ defineProps<{
 }>()
 
 const userConfig = await getUserConfig()
-const enabledDebug = userConfig.debug.enabled.toRef()
 const numCtx = userConfig.llm.numCtx.toRef()
 const enableNumCtx = userConfig.llm.enableNumCtx.toRef()
 const translationSystemPrompt = userConfig.translation.systemPrompt.toRef()

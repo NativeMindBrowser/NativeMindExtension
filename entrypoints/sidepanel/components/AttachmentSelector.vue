@@ -185,7 +185,7 @@
 
 <script setup lang="ts">
 import { useEventListener, useFileDialog, useVModel } from '@vueuse/core'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, toRef } from 'vue'
 import { browser } from 'wxt/browser'
 
 import IconAdd from '@/assets/icons/add.svg?component'
@@ -206,17 +206,15 @@ import Text from '@/components/ui/Text.vue'
 import { useExtensionEventListener } from '@/composables/useExtensionEventListener'
 import { useLogger } from '@/composables/useLogger'
 import { useTimeoutValue } from '@/composables/useTimeoutValue'
-import { AttachmentItem, ContextAttachment, LoadingAttachment } from '@/types/chat'
+import { AttachmentItem, ContextAttachment, ContextAttachmentStorage, LoadingAttachment } from '@/types/chat'
 import { TabInfo } from '@/types/tab'
 import { nonNullable } from '@/utils/array'
-import { fileToBase64 } from '@/utils/base64'
 import { FileGetter, PdfTextFile } from '@/utils/file'
 import { hashFile } from '@/utils/hash'
 import { useI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { convertImageFileToJpegBase64 } from '@/utils/image'
 import { extractPdfText, getPdfPageCount } from '@/utils/pdf'
-import { c2bRpc } from '@/utils/rpc'
 import { s2bRpc } from '@/utils/rpc'
 import { ByteSize } from '@/utils/sizes'
 import { getUserConfig } from '@/utils/user-config'
@@ -236,13 +234,15 @@ useExtensionEventListener(browser.tabs.onRemoved, async () => {
 })
 
 const props = defineProps<{
-  attachments: ContextAttachment[]
+  attachmentStorage: ContextAttachmentStorage
 }>()
 
 const emit = defineEmits<{
   (e: 'update:attachments', images: ContextAttachment[]): void
 }>()
 
+const attachmentStorage = useVModel(props, 'attachmentStorage', emit)
+const attachments = toRef(attachmentStorage.value, 'attachments')
 const isShowSelector = ref(false)
 const { value: errorMessages, setValue: setErrorMessages } = useTimeoutValue<string[] | undefined>(undefined, undefined, 5000)
 
@@ -262,7 +262,6 @@ const getTabIdOfAttachment = (attachment: ContextAttachment) => {
 const selectorListContainer = ref<HTMLDivElement>()
 const tabsContainerRef = ref<HTMLDivElement>()
 
-const attachments = useVModel(props, 'attachments', emit)
 const allTabs = ref<TabInfo[]>([])
 
 const selectedTabs = computed(() => attachments.value.map((attachment) => {
@@ -335,13 +334,7 @@ const SUPPORTED_ATTACHMENT_TYPES: AttachmentItem[] = [
         pageCount = file.pageCount
       }
       else {
-        // TODO: remove after side panel refactor
-        if (import.meta.env.FIREFOX) {
-          pageCount = await c2bRpc.getPdfPageCount(await fileToBase64(file))
-        }
-        else {
-          pageCount = await getPdfPageCount(file)
-        }
+        pageCount = await getPdfPageCount(file)
       }
       if (pageCount > MAX_PDF_PAGE_COUNT) {
         // show error but allow this file
@@ -357,14 +350,7 @@ const SUPPORTED_ATTACHMENT_TYPES: AttachmentItem[] = [
         pageCount = file.pageCount
       }
       else {
-        let pdfText
-        // TODO: remove after side panel refactor
-        if (import.meta.env.FIREFOX) {
-          pdfText = await c2bRpc.extractPdfText(await fileToBase64(file), { pageRange: [1, MAX_PDF_PAGE_COUNT] })
-        }
-        else {
-          pdfText = await extractPdfText(file, { pageRange: [1, MAX_PDF_PAGE_COUNT] })
-        }
+        const pdfText = await extractPdfText(file, { pageRange: [1, MAX_PDF_PAGE_COUNT] })
         textContent = pdfText.mergedText
         pageCount = pdfText.pdfProxy.numPages
       }
@@ -444,7 +430,10 @@ function addAttachmentFromFile(fileGetter: FileGetter) {
 }
 
 defineExpose({
-  addAttachmentsFromFiles,
+  addAttachmentsFromFiles: (...args: Parameters<typeof addAttachmentsFromFiles>) => {
+    attachmentStorage.value.lastInteractedAt = Date.now()
+    addAttachmentsFromFiles(...args)
+  },
 })
 
 const userConfig = await getUserConfig()
@@ -453,6 +442,7 @@ const endpointType = userConfig.llm.endpointType.toRef()
 
 onChange(async (files) => {
   if (files && files.length) {
+    attachmentStorage.value.lastInteractedAt = Date.now()
     const fileList = Array.from(files)
     addAttachmentsFromFiles(fileList.map((f) => FileGetter.fromFile(f)))
   }
@@ -543,6 +533,7 @@ const appendTab = async (tab: TabInfo) => {
 }
 
 const toggleSelectTab = async (tab: TabInfo) => {
+  attachmentStorage.value.lastInteractedAt = Date.now()
   const index = attachments.value.findIndex((attachment) => {
     return getTabIdOfAttachment(attachment) === tab.tabId
   })

@@ -79,6 +79,9 @@
     },
     "writing_tools": {
       "title": "写作工具"
+    },
+    "chat": {
+      "title": "聊天"
     }
   },
   "chat": {

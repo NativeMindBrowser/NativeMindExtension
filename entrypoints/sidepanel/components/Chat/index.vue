@@ -52,7 +52,7 @@
       <div>
         <AttachmentSelector
           ref="attachmentSelectorRef"
-          v-model:attachments="contextAttachments"
+          v-model:attachmentStorage="contextAttachmentStorage"
         />
       </div>
       <div class="flex gap-1 relative">
@@ -147,7 +147,7 @@ defineExpose({
 })
 
 const chat = await Chat.getInstance()
-const contextAttachments = chat.contextAttachments
+const contextAttachmentStorage = chat.contextAttachmentStorage
 
 initChatSideEffects()
 

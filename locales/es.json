@@ -178,6 +178,9 @@
     },
     "writing_tools": {
       "title": "Herramientas de Escritura"
+    },
+    "chat": {
+      "title": "Chat"
     }
   },
   "common": {

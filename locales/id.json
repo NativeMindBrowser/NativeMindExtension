@@ -154,6 +154,9 @@
     },
     "writing_tools": {
       "title": "Alat Tulis"
+    },
+    "chat": {
+      "title": "Obrolan"
     }
   },
   "context_menu": {

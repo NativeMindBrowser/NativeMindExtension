@@ -67,6 +67,20 @@ export interface ActionMessageV1<ActionType extends ActionTypeV1 = ActionTypeV1>
 
 export type HistoryItemV1 = UserMessageV1 | AssistantMessageV1 | TaskMessageV1 | SystemMessageV1 | ActionMessageV1
 export type Role = HistoryItemV1['role']
+export type ChatHistoryV1 = {
+  id: string
+  title: string
+  lastInteractedAt?: number // last time user interacted with this chat(ask/click/select)
+  history: HistoryItemV1[]
+}
+
+export type ChatListItem = {
+  timestamp: number
+  id: string
+  title: string
+}
+
+export type ChatList = ChatListItem[]
 
 export function pickByRoles<R extends string, Item extends { role: string }>(arr: Item[], roles: R[]): (Item & { role: R })[] {
   return arr.filter((item) => roles.includes(item.role as R)) as (Item & { role: R })[]

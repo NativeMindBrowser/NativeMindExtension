@@ -154,6 +154,9 @@
     },
     "writing_tools": {
       "title": "Công cụ Viết"
+    },
+    "chat": {
+      "title": "Trò chuyện"
     }
   },
   "context_menu": {

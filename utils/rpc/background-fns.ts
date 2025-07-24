@@ -14,7 +14,7 @@ import { deleteModel, getLocalModelList, pullModel, showModelDetails } from '../
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
 import { selectTools, ToolName, ToolWithName } from '../llm/tools'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
-import { extractPdfText, getPdfPageCount, parsePdfFileOfUrl } from '../pdf'
+import { parsePdfFileOfUrl } from '../pdf'
 import { searchOnline } from '../search'
 import { showSettingsForBackground } from '../settings'
 import { getUserConfig } from '../user-config'
@@ -584,9 +584,5 @@ export const backgroundFunctions = {
   captureVisibleTab,
   showSidepanel,
   showSettings: showSettingsForBackground,
-
-  // only for firefox and should be removed after side panel refactor
-  getPdfPageCount: (...args: Parameters<typeof getPdfPageCount>) => getPdfPageCount(...args).then((ret) => ret),
-  extractPdfText: (...args: Parameters<typeof extractPdfText>) => extractPdfText(...args).then((ret) => ({ mergedText: ret.mergedText, texts: ret.texts, pdfProxy: { numPages: ret.pdfProxy.numPages } })),
 }
 ;(self as unknown as { backgroundFunctions: unknown }).backgroundFunctions = backgroundFunctions

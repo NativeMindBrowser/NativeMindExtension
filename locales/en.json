@@ -2,7 +2,7 @@
   "settings": {
     "webllm-desc": "You are now using WebLLM: qwen3:0.6b for quick tryout. For full model support and better performance, please install Ollama.",
     "translation": {
-      "title": "Translation Language"
+      "title": "Translation"
     },
     "get_ollama": "Get Ollama",
     "test": "Test",
@@ -79,6 +79,9 @@
     },
     "writing_tools": {
       "title": "Writing Tools"
+    },
+    "chat": {
+      "title": "Chat"
     }
   },
   "chat": {

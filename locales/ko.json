@@ -154,6 +154,9 @@
     },
     "writing_tools": {
       "title": "글쓰기 도구"
+    },
+    "chat": {
+      "title": "채팅"
     }
   },
   "context_menu": {

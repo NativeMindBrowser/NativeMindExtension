@@ -9,6 +9,7 @@ import { forRuntimes, only } from './runtime'
 
 interface Options {
   open?: boolean | ((open: boolean) => boolean)
+  type?: 'popup' | 'tab'
   scrollTarget?: SettingsScrollTarget
   downloadModel?: string
 }
@@ -26,19 +27,24 @@ export const showSettingsForBackground = only(['background'], () => async (optio
     const url = browser.runtime.getURL(`/settings.html${searchParams.toString() ? `?${searchParams.toString()}` : ''}`)
 
     if (!existTab) {
-      const displayInfo = await getCurrentDisplayInfo()
-      const { width, height, left, top } = displayInfo.bounds
-      const windowLeft = Math.min(left + (width - SETTINGS_PAGE_WINDOW_WIDTH) / 2, left + width - SETTINGS_PAGE_WINDOW_WIDTH)
-      const windowTop = Math.min(top + (height - SETTINGS_PAGE_WINDOW_HEIGHT) / 2, top + height - SETTINGS_PAGE_WINDOW_HEIGHT)
-      await browser.windows.create({ url, type: 'popup', width: SETTINGS_PAGE_WINDOW_WIDTH, height: SETTINGS_PAGE_WINDOW_HEIGHT, left: windowLeft, top: windowTop })
+      if (options?.type === 'popup') {
+        const displayInfo = await getCurrentDisplayInfo()
+        const { width, height, left, top } = displayInfo.bounds
+        const windowLeft = Math.min(left + (width - SETTINGS_PAGE_WINDOW_WIDTH) / 2, left + width - SETTINGS_PAGE_WINDOW_WIDTH)
+        const windowTop = Math.min(top + (height - SETTINGS_PAGE_WINDOW_HEIGHT) / 2, top + height - SETTINGS_PAGE_WINDOW_HEIGHT)
+        await browser.windows.create({ url, type: 'popup', width: SETTINGS_PAGE_WINDOW_WIDTH, height: SETTINGS_PAGE_WINDOW_HEIGHT, left: windowLeft, top: windowTop })
+      }
+      else {
+        await browser.tabs.create({ url })
+      }
     }
     else if (existTab.id) {
       await browser.windows.update(existTab.windowId, { focused: true })
-      await browser.tabs.update(existTab.id, { url })
+      await browser.tabs.update(existTab.id, { url, active: true })
     }
   }
-  else if (existTab) {
-    await browser.windows.remove(existTab.windowId)
+  else if (existTab.id) {
+    await browser.tabs.remove(existTab.id)
   }
 })
 

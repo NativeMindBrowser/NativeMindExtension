@@ -8,6 +8,7 @@ import RootProvider from '@/components/RootProvider.vue'
 import { createI18nInstance } from '@/utils/i18n'
 
 import App from './App.vue'
+import router from './router'
 
 const appMountEl = document.getElementById('app')!
 
@@ -17,6 +18,7 @@ const app = createApp(
   </RootProvider>,
 )
 
+app.use(router)
 app.use(createPinia())
 app.use(await createI18nInstance())
 app.mount(appMountEl)

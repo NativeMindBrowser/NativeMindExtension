@@ -1,20 +1,14 @@
 <template>
   <div
     ref="settingsRef"
-    class="flex flex-col shadow-2xl rounded-2xl font-inter"
+    class="flex flex-col font-inter"
   >
     <div class="items-center border-b border-gray-200">
-      <div class="px-4 h-13 grid-cols-3 grid items-center">
+      <div class="px-4 h-15 grid-cols-3 grid items-center">
         <div
           class="text-base"
         >
-          <Logo />
-        </div>
-        <div
-          class="justify-self-center font-medium text-[15px] cursor-default"
-          @click="onClickTitle"
-        >
-          {{ t('settings.title') }}
+          {{ t('settings.general.title') }}
         </div>
       </div>
     </div>
@@ -309,7 +303,6 @@
         <div />
       </div>
     </div>
-    <DebugSettings :scrollTarget="scrollTarget" />
   </div>
 </template>
 
@@ -320,7 +313,6 @@ import { onMounted, ref, toRef, watch } from 'vue'
 import IconOllama from '@/assets/icons/ollama.png'
 import Input from '@/components/Input.vue'
 import Loading from '@/components/Loading.vue'
-import Logo from '@/components/Logo.vue'
 import Modal from '@/components/Modal.vue'
 import ModelSelector from '@/components/ModelSelector.vue'
 import ScrollTarget from '@/components/ScrollTarget.vue'
@@ -339,12 +331,11 @@ import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { SettingsScrollTarget } from '@/utils/scroll-targets'
 import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, getUserConfig } from '@/utils/user-config'
 
-import DebugSettings from '../DebugSettings/index.vue'
+import Block from '../Block.vue'
 import DownloadConfirmModal from '../OllamaDownloadModal.vue'
-import EditCard from '../Settings/QuickAction/EditCard.vue'
+import Section from '../Section.vue'
 import DownloadWebLLMModel from '../WebLLMDownloadModal.vue'
-import Block from './Block.vue'
-import Section from './Section.vue'
+import EditCard from './QuickAction/EditCard.vue'
 
 const props = defineProps<{
   scrollTarget?: SettingsScrollTarget
@@ -358,7 +349,6 @@ const ollamaStatusStore = useOllamaStatusStore()
 
 const settingsRef = ref<HTMLElement | null>(null)
 const userConfig = await getUserConfig()
-const enabledDebug = userConfig.debug.enabled.toRef()
 const baseUrl = userConfig.llm.baseUrl.toRef()
 const targetLocale = userConfig.translation.targetLocale.toRef()
 const endpointType = userConfig.llm.endpointType.toRef()
@@ -398,20 +388,6 @@ const testConnection = async () => {
     await ollamaStatusStore.updateModelList()
   }
   return success
-}
-
-let clickCount = 0
-let clickTimeout: ReturnType<typeof setTimeout> | undefined
-const onClickTitle = () => {
-  clickCount++
-  clearTimeout(clickTimeout)
-  clickTimeout = setTimeout(() => {
-    clickCount = 0
-  }, 500)
-  if (clickCount > 5) {
-    clickCount = 0
-    enabledDebug.value = !enabledDebug.value
-  }
 }
 
 const { start: startCheckConnection, stop: stopCheckConnection, remaining: checkSignal } = useCountdown(600, { interval: 2000 })

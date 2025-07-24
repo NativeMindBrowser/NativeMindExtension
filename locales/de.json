@@ -154,6 +154,9 @@
     },
     "writing_tools": {
       "title": "Schreibwerkzeuge"
+    },
+    "chat": {
+      "title": "Chat"
     }
   },
   "context_menu": {

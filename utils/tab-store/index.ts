@@ -2,7 +2,7 @@ import { ref, toRaw, watch } from 'vue'
 import { browser } from 'wxt/browser'
 import { storage } from 'wxt/utils/storage'
 
-import { ContextAttachment } from '@/types/chat'
+import { PromiseOr } from '@/types/common'
 
 import { TAB_STORE_STORAGE_KEY_PREFIX } from '../constants'
 import { debounce } from '../debounce'
@@ -36,12 +36,19 @@ const getCurrentTabInfo = lazyInitialize(async () => {
 
 const storageKeys: string[] = []
 
-async function defineTabValue<T>(key: string, defaultValue: T) {
+async function defineTabValue<T>(key: string, defaultValueOrFn: T | (() => PromiseOr<T>)) {
+  const getDefaultValue = async () => {
+    if (defaultValueOrFn instanceof Function) {
+      return await defaultValueOrFn()
+    }
+    return defaultValueOrFn
+  }
+
   storageKeys.push(key)
   const currentTab = await getCurrentTabInfo()
   const sessionKey = constructStorageKey(currentTab.value.tabId, key)
   const valueInStorageStr = await storage.getItem<string>(sessionKey)
-  const valueInStorage = valueInStorageStr ? JSON.parse(valueInStorageStr) : defaultValue
+  const valueInStorage = valueInStorageStr ? JSON.parse(valueInStorageStr) : await getDefaultValue()
   const v = ref(valueInStorage)
 
   // avoid data race when tab is changed
@@ -54,7 +61,7 @@ async function defineTabValue<T>(key: string, defaultValue: T) {
     try {
       const sessionKey = constructStorageKey(tabId, key)
       const valueInStorageStr = await storage.getItem<string>(sessionKey)
-      const valueInStorage = valueInStorageStr ? JSON.parse(valueInStorageStr) : defaultValue
+      const valueInStorage = valueInStorageStr ? JSON.parse(valueInStorageStr) : await getDefaultValue()
       v.value = valueInStorage
     }
     finally {
@@ -79,8 +86,6 @@ export function registerTabStoreCleanupListener() {
   })
 }
 
-export type ChatHistory = HistoryItemV1[]
-
 export type PageSummary = {
   content: string
   summary: string
@@ -92,8 +97,7 @@ export type PageSummary = {
 async function _getTabStore() {
   const currentTabInfo = await getCurrentTabInfo()
   return {
-    chatHistory: await defineTabValue<ChatHistory>('chatHistory', []),
-    contextAttachments: await defineTabValue<ContextAttachment[]>('contextAttachments', [{ type: 'tab', value: { ...currentTabInfo.value, id: generateRandomId() } }]),
+    chatHistoryId: await defineTabValue<string>('chatHistoryId', () => generateRandomId()),
     currentTabInfo,
   }
 }

@@ -1,10 +1,11 @@
 import { CoreMessage } from 'ai'
 import EventEmitter from 'events'
-import { type Ref, ref } from 'vue'
+import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 
-import { ContextAttachment, PDFAttachment } from '@/types/chat'
+import { ContextAttachmentStorage, PDFAttachment } from '@/types/chat'
 import { PDFContentForModel } from '@/types/pdf'
 import { nonNullable } from '@/utils/array'
+import { debounce } from '@/utils/debounce'
 import { parseDocument } from '@/utils/document-parser'
 import { AbortError, AppError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
@@ -13,8 +14,9 @@ import logger from '@/utils/logger'
 import { chatWithPageContent, generateSearchKeywords, nextStep, Page, summarizeWithPageContent } from '@/utils/prompts'
 import { UserPrompt } from '@/utils/prompts/helpers'
 import { SearchingMessage } from '@/utils/search'
+import { ScopeStorage } from '@/utils/storage'
 import { getTabStore, type HistoryItemV1 } from '@/utils/tab-store'
-import { ActionMessageV1, ActionTypeV1, ActionV1, AssistantMessageV1, pickByRoles, TaskMessageV1, UserMessageV1 } from '@/utils/tab-store/history'
+import { ActionMessageV1, ActionTypeV1, ActionV1, AssistantMessageV1, ChatHistoryV1, ChatList, pickByRoles, TaskMessageV1, UserMessageV1 } from '@/utils/tab-store/history'
 import { getUserConfig } from '@/utils/user-config'
 
 import { generateObjectInBackground, initCurrentModel, isCurrentModelReady, streamTextInBackground } from '../llm'
@@ -27,9 +29,13 @@ const log = logger.child('chat')
 export type MessageIdScope = 'quickActions' | 'welcomeMessage'
 
 export class ReactiveHistoryManager extends EventEmitter {
-  constructor(public history: Ref<HistoryItemV1[]>, public systemMessage?: string) {
+  constructor(public chatHistory: Ref<ChatHistoryV1>, public systemMessage?: string) {
     super()
     this.cleanUp()
+  }
+
+  get history() {
+    return toRef(this.chatHistory.value, 'history')
   }
 
   private cleanUp(history: HistoryItemV1[] = this.history.value) {
@@ -218,6 +224,10 @@ export class ReactiveHistoryManager extends EventEmitter {
       this.emit('messageCleared')
     }
   }
+
+  cleanupLoadingMessages() {
+    this.cleanUp(this.chatHistory.value.history)
+  }
 }
 
 type ChatStatus = 'idle' | 'pending' | 'streaming'
@@ -234,16 +244,49 @@ export class Chat {
   private readonly status = ref<ChatStatus>('idle')
   private abortControllers: AbortController[] = []
   private searchScraper = new SearchScraper()
+  private static chatStorage = new ScopeStorage<{ timestamp: number, title: string }>('chat')
 
   static getInstance() {
-    if (!Chat.instance) {
-      Chat.instance = getTabStore().then(async (tabStore) => {
-        const history = tabStore.chatHistory
-        const contextAttachments = tabStore.contextAttachments
-        return new Chat(new ReactiveHistoryManager(history), contextAttachments)
+    if (!this.instance) {
+      this.instance = getTabStore().then(async (tabStore) => {
+        const chatHistoryId = tabStore.chatHistoryId
+        const chatHistory = ref<ChatHistoryV1>(await this.chatStorage.getItem<ChatHistoryV1>(`${chatHistoryId.value}`, 'chat') ?? { history: [], id: chatHistoryId.value, title: 'New Chat' })
+        const contextAttachments = ref<ContextAttachmentStorage>(await this.chatStorage.getItem<ContextAttachmentStorage>(`${chatHistoryId.value}`, 'context-attachments') ?? { attachments: [
+          { type: 'tab', value: { ...tabStore.currentTabInfo.value, id: generateRandomId() } },
+        ], id: chatHistoryId.value })
+        const chatList = ref<ChatList>([])
+        const updateChatList = async () => {
+          const chatMeta = await this.chatStorage.getAllMetadata()
+          chatList.value = chatMeta
+            ? Object.entries(chatMeta)
+                .map(([id, meta]) => ({ id, title: meta.metadata.title, timestamp: meta.metadata.timestamp }))
+                .toSorted((a, b) => b.timestamp - a.timestamp)
+            : []
+        }
+        const debounceSaveHistory = debounce(async () => {
+          if (!chatHistory.value.lastInteractedAt) return
+          await this.chatStorage.setItem(`${chatHistory.value.id}`, { chat: toRaw(chatHistory.value) }, { timestamp: Date.now(), title: chatHistory.value.title })
+        }, 1000)
+        const debounceSaveContextAttachment = debounce(async () => {
+          if (!contextAttachments.value.lastInteractedAt) return
+          await this.chatStorage.setItem(`${contextAttachments.value.id}`, { 'context-attachments': toRaw(contextAttachments.value) }, { timestamp: Date.now(), title: '' })
+        }, 1000)
+        watch(tabStore.chatHistoryId, async (newId) => {
+          instance.stop()
+          Object.assign(chatHistory.value, await this.chatStorage.getItem<ChatHistoryV1>(`${newId}`, 'chat') ?? { history: [], id: newId })
+          Object.assign(contextAttachments.value, await this.chatStorage.getItem<ContextAttachmentStorage>(`${newId}`, 'context-attachments')
+          ?? { attachments: [{ type: 'tab', value: { ...tabStore.currentTabInfo.value, id: generateRandomId() } }], id: newId })
+          instance.historyManager.cleanupLoadingMessages()
+        })
+        watch(chatHistory, async () => debounceSaveHistory(), { deep: true })
+        watch(contextAttachments, async () => debounceSaveContextAttachment(), { deep: true })
+        updateChatList()
+        this.chatStorage.onMetaChange(async () => await updateChatList())
+        const instance = new this(new ReactiveHistoryManager(chatHistory), contextAttachments, chatList)
+        return instance
       })
     }
-    return Chat.instance
+    return this.instance
   }
 
   static createActionEventDispatcher<ActionType extends ActionTypeV1>(action: ActionType) {
@@ -266,7 +309,11 @@ export class Chat {
     }
   }
 
-  constructor(public historyManager: ReactiveHistoryManager, public contextAttachments: Ref<ContextAttachment[]>) { }
+  constructor(public historyManager: ReactiveHistoryManager, public contextAttachmentStorage: Ref<ContextAttachmentStorage>, public chatList: Ref<ChatList>) { }
+
+  get contextAttachments() {
+    return toRef(this.contextAttachmentStorage.value, 'attachments')
+  }
 
   get contextTabs() {
     return this.contextAttachments.value.filter((attachment) => attachment.type === 'tab').map((attachment) => attachment.value)
@@ -506,6 +553,7 @@ export class Chat {
     this.abortControllers.push(abortController)
     const autoDeleteEmptyMsg = options.autoDeleteEmptyResponseMsg ?? true
 
+    this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
     const messages = this.historyManager.getLLMMessages({ system, lastUser: user })
     const response = streamTextInBackground({
       abortSignal: abortController.signal,

@@ -154,6 +154,9 @@
     },
     "writing_tools": {
       "title": "寫作工具"
+    },
+    "chat": {
+      "title": "聊天"
     }
   },
   "context_menu": {
