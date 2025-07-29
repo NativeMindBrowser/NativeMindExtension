@@ -68,6 +68,7 @@ export async function getModel(options: {
     model = ollama(options.model, {
       numCtx: options.enableNumCtx ? options.numCtx : undefined,
       structuredOutputs: true,
+      think: options.reasoning,
     })
   }
   else if (endpointType === 'web-llm') {
