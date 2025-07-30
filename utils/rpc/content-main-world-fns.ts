@@ -5,8 +5,7 @@ import { browser } from 'wxt/browser'
 import { readPortMessageIntoIterator } from '../async'
 import { UnsupportedEndpointType } from '../error'
 import { logger } from '../logger'
-import { SettingsScrollTarget } from '../scroll-targets'
-import { getTabStore } from '../tab-store'
+import { showSettings } from '../settings'
 import { getUserConfig } from '../user-config'
 import { c2bRpc } from '.'
 import { makeMessage, MessageSource } from './utils'
@@ -103,30 +102,8 @@ export async function checkBackendModelReady(model?: string): Promise<{ backend:
   }
 }
 
-export async function toggleContainer(show?: boolean) {
-  const tabStore = await getTabStore()
-  if (show === undefined) {
-    tabStore.showContainer.value = !tabStore.showContainer.value
-  }
-  else {
-    tabStore.showContainer.value = show
-  }
-}
-
-export async function toggleSetting(show?: boolean, scrollTarget?: SettingsScrollTarget) {
-  const tabStore = await getTabStore()
-  if (show === undefined) {
-    tabStore.showSetting.value = {
-      show: !tabStore.showSetting.value.show,
-      scrollTarget: scrollTarget,
-    }
-  }
-  else {
-    tabStore.showSetting.value = {
-      show: show,
-      scrollTarget: scrollTarget,
-    }
-  }
+export async function toggleContainer() {
+  c2bRpc.showSidepanel(true)
 }
 
 export const contentFnsForMainWorld = {
@@ -141,7 +118,7 @@ export const contentFnsForMainWorld = {
   checkBackendModelReady,
   getBrowserAIConfig,
   toggleContainer,
-  toggleSetting,
+  showSettings,
 }
 
 export function registerContentScriptRpcEventFromMainWorld<E extends EventKey>(ev: E, fn: (...args: Parameters<Events[E]>) => void) {
@@ -150,5 +127,3 @@ export function registerContentScriptRpcEventFromMainWorld<E extends EventKey>(e
     eventEmitter.off(ev, fn)
   }
 }
-
-;(self as unknown as { contentFnsForMainWorld: unknown }).contentFnsForMainWorld = contentFnsForMainWorld

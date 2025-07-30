@@ -1,13 +1,15 @@
+import '@/utils/rpc'
 import '@/utils/polyfill'
 import 'tailwindcss/index.css'
-import './utils/time'
-import './style.css'
+import '@/utils/time'
+import '@/styles/style.css'
 
 import { Suspense } from 'vue'
 import { defineContentScript } from 'wxt/utils/define-content-script'
 
+import RootProvider from '@/components/RootProvider.vue'
+
 import App from './App.vue'
-import RootProvider from './components/RootProvider.vue'
 import { createShadowRootOverlay } from './ui'
 
 export default defineContentScript({

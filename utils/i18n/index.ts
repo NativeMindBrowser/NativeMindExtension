@@ -17,7 +17,7 @@ import zhCN from '@/locales/zh-CN.json'
 import zhTW from '@/locales/zh-TW.json'
 
 import { lazyInitialize } from '../memo'
-import { Entrypoint, only } from '../runtime'
+import { only } from '../runtime'
 import { JsonPaths } from '../type-utils'
 import { getUserConfig } from '../user-config'
 import { getAcceptLanguages } from './browser-locale'
@@ -43,6 +43,33 @@ const messages = {
   'zh-TW': zhTW,
 }
 
+function formatDuration(t: ComposerTranslation, seconds: number) {
+  const years = Math.floor(seconds / 31536000)
+  const months = Math.floor(seconds / 2592000)
+  const days = Math.floor(seconds / 86400)
+  const hours = Math.floor((seconds % 86400) / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const seconds_ = Math.floor(seconds % 60)
+  if (years > 0) {
+    return t('common.duration.years', years, { named: { year: years } })
+  }
+  else if (months > 0) {
+    return t('common.duration.months', months, { named: { month: months } })
+  }
+  else if (days > 0) {
+    return t('common.duration.days', days, { named: { day: days } })
+  }
+  else if (hours > 0) {
+    return t('common.duration.hours', hours, { named: { hour: hours } })
+  }
+  else if (minutes > 0) {
+    return t('common.duration.minutes', minutes, { named: { minute: minutes } })
+  }
+  else {
+    return t('common.duration.seconds', seconds_, { named: { second: seconds_ } })
+  }
+}
+
 export const createI18nInstance = lazyInitialize(async () => {
   const userConfig = await getUserConfig()
   const localeInConfig = userConfig?.locale.current.toRef()
@@ -64,9 +91,13 @@ export const createI18nInstance = lazyInitialize(async () => {
   return i18n
 })
 
-export const useI18n = only([Entrypoint.content, Entrypoint.popup], () => {
+export const useI18n = only(['content', 'popup', 'sidepanel', 'settings'], () => {
   return () => {
-    return _useI18n<MessageSchema, SupportedLocaleCode>()
+    const i18n = _useI18n<MessageSchema, SupportedLocaleCode>()
+    return {
+      ...i18n,
+      formatDuration: (seconds: number) => formatDuration(i18n.t, seconds),
+    }
   }
 })
 
@@ -74,7 +105,10 @@ export const useI18n = only([Entrypoint.content, Entrypoint.popup], () => {
 export async function useGlobalI18n() {
   const i18n = await createI18nInstance()
   const composer = i18n.global as unknown as ReturnType<typeof useI18n>
-  return composer
+  return {
+    ...composer,
+    formatDuration: (seconds: number) => formatDuration(composer.t, seconds),
+  }
 }
 
 export type ComposerTranslation = OriginComposerTranslation<MessageSchema, SupportedLocaleCode>

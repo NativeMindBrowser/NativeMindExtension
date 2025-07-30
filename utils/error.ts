@@ -1,6 +1,6 @@
 import { useGlobalI18n } from './i18n'
 
-export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType'
+export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType' | 'fetchError'
 
 export abstract class AppError<Code extends ErrorCode> extends Error {
   private _appError = true
@@ -16,6 +16,16 @@ export abstract class AppError<Code extends ErrorCode> extends Error {
   }
 
   async toLocaleMessage(_locale?: string): Promise<string> {
+    return this.message
+  }
+}
+
+export class FetchError extends AppError<'fetchError'> {
+  constructor(message: string) {
+    super('fetchError', message)
+  }
+
+  async toLocaleMessage() {
     return this.message
   }
 }
@@ -126,6 +136,7 @@ const errors = {
   createTabStreamCaptureError: CreateTabStreamCaptureError,
   translateError: TranslateError,
   unsupportedEndpointType: UnsupportedEndpointType,
+  fetchError: FetchError,
 } satisfies Record<ErrorCode, typeof AppError<ErrorCode>>
 
 export function fromError(error: unknown): AppError<ErrorCode> {

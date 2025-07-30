@@ -1,4 +1,3 @@
-import './style.css'
 import '@/utils/rpc'
 
 import { createApp } from 'vue'

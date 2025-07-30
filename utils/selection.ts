@@ -1,4 +1,4 @@
-import { markdownToElement } from '@/entrypoints/content/utils/markdown/parser'
+import { markdownToElement } from '@/utils/markdown/parser'
 
 import { getCaretCoordinates } from './textarea'
 

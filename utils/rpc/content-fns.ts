@@ -5,7 +5,7 @@ import type { ContextMenuId } from '../context-menu'
 import { parseDocument } from '../document-parser'
 import { logger } from '../logger'
 import { memoFunction } from '../memo'
-import { extractPdfText } from '../pdf'
+import { parsePdfFileOfUrl } from '../pdf'
 
 const eventEmitter = new EventEmitter()
 
@@ -19,23 +19,7 @@ export type Events = {
 
 export type EventKey = keyof Events
 
-const parsePdfFileOfCurrentUrl = memoFunction(async (url: string) => {
-  const resp = await fetch(url)
-  const contentType = resp.headers.get('content-type')
-  if (contentType?.includes('application/pdf')) {
-    let fileName = resp.headers.get('content-disposition')?.split('filename=')[1] ?? location.href.split('/').pop() ?? ''
-    fileName = fileName.replace(/"/g, '')
-    if (!fileName.endsWith('.pdf')) fileName += '.pdf'
-    const arrayBuffer = await resp.arrayBuffer()
-    const textContent = await extractPdfText(arrayBuffer)
-    return {
-      texts: textContent.texts,
-      pageCount: textContent.pdfProxy.numPages,
-      fileSize: arrayBuffer.byteLength,
-      fileName,
-    } as const
-  }
-})
+const parsePdfFileOfCurrentUrl = memoFunction(parsePdfFileOfUrl)
 
 export async function getPageContentType(_: { _toTab?: number }) {
   return document.contentType

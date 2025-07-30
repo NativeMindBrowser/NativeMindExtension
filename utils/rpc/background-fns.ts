@@ -8,14 +8,17 @@ import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
 import { backgroundCacheService } from '../../entrypoints/background/cache-service'
+import { sleep } from '../async'
 import { ContextMenuManager } from '../context-menu'
-import { AppError, CreateTabStreamCaptureError, ModelRequestError, UnknownError } from '../error'
+import { AppError, CreateTabStreamCaptureError, FetchError, ModelRequestError, UnknownError } from '../error'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
-import { deleteModel, getLocalModelList, pullModel, showModelDetails } from '../llm/ollama'
+import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
 import { selectTools, ToolName, ToolWithName } from '../llm/tools'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
+import { parsePdfFileOfUrl } from '../pdf'
 import { searchOnline } from '../search'
+import { showSettingsForBackground } from '../settings'
 import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
 import { bgBroadcastRpc } from '.'
@@ -225,28 +228,47 @@ const getAllTabs = async () => {
   }))
 }
 
-const getDocumentContentOfTab = async (tabId: number) => {
+const getDocumentContentOfTab = async (tabId?: number) => {
+  if (!tabId) {
+    const currentTab = (await browser.tabs.query({ active: true, currentWindow: true }))[0]
+    tabId = currentTab.id
+  }
+  if (!tabId) throw new Error('No tab id provided')
   const article = await bgBroadcastRpc.getDocumentContent({ _toTab: tabId })
   return article
 }
 
 const getPagePDFContent = async (tabId: number) => {
-  const pdfInfo = await bgBroadcastRpc.getPagePDFContent({ _toTab: tabId })
-  return pdfInfo
+  if (import.meta.env.FIREFOX) {
+    const tabUrl = await browser.tabs.get(tabId).then((tab) => tab.url)
+    if (tabUrl) return parsePdfFileOfUrl(tabUrl)
+  }
+  return await bgBroadcastRpc.getPagePDFContent({ _toTab: tabId })
 }
 
 const getPageContentType = async (tabId: number) => {
-  const contentType = await bgBroadcastRpc.getPageContentType({ _toTab: tabId })
-  return contentType
+  const contentType = await browser.scripting.executeScript({
+    target: { tabId },
+    func: () => document.contentType,
+  }).then((result) => {
+    return result[0]?.result
+  }).catch(async (error) => {
+    logger.error('Failed to get page content type', error)
+    const tabUrl = await browser.tabs.get(tabId).then((tab) => tab.url)
+    if (tabUrl) {
+      const response = await fetch(tabUrl, { method: 'HEAD' })
+      return response.headers.get('content-type')?.split(';')[0]
+    }
+  }).catch((error) => {
+    logger.error('Failed to get page content type from HEAD request', error)
+  })
+  return contentType ?? 'text/html'
 }
 
 const fetchAsDataUrl = async (url: string, initOptions?: RequestInit) => {
   const response = await fetch(url, initOptions)
   if (!response.ok) {
-    return {
-      status: response.status,
-      error: `Failed to fetch ${url}: ${response.statusText}`,
-    }
+    throw new FetchError(`Failed to fetch ${url}: ${response.statusText}`)
   }
 
   const blob = await response.blob()
@@ -290,6 +312,18 @@ const fetchAsText = async (url: string, initOptions?: RequestInit) => {
 
 const deleteOllamaModel = async (modelId: string) => {
   await deleteModel(modelId)
+}
+
+const unloadOllamaModel = async (modelId: string) => {
+  await unloadModel(modelId)
+  const start = Date.now()
+  while (Date.now() - start < 10000) {
+    const modelList = await getRunningModelList()
+    if (!modelList.models.some((m) => m.model === modelId)) {
+      break
+    }
+    await sleep(1000)
+  }
 }
 
 const showOllamaModelDetails = async (modelId: string) => {
@@ -437,14 +471,13 @@ async function deleteWebLLMModelInCache(model: WebLLMSupportedModel) {
   }
 }
 
-async function isCurrentModelReady() {
+async function checkModelReady(modelId: string) {
   try {
     const userConfig = await getUserConfig()
     const endpointType = userConfig.llm.endpointType.get()
-    const model = userConfig.llm.model.get()
     if (endpointType === 'ollama') return true
     else if (endpointType === 'web-llm') {
-      return await hasWebLLMModelInCache(model as WebLLMSupportedModel)
+      return await hasWebLLMModelInCache(modelId as WebLLMSupportedModel)
     }
     else throw new Error('Unsupported endpoint type ' + endpointType)
   }
@@ -486,6 +519,16 @@ export function registerBackgroundRpcEvent<E extends EventKey>(ev: E, fn: (...ar
   }
 }
 
+export async function showSidepanel(onlyCurrentTab?: boolean) {
+  if (onlyCurrentTab) {
+    const currentTab = await browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => tabs[0])
+    const tabId = currentTab.id
+    browser.sidePanel.open({ tabId, windowId: currentTab.windowId })
+    return
+  }
+  browser.sidePanel.open({ windowId: browser.windows.WINDOW_ID_CURRENT })
+}
+
 function getTabCaptureMediaStreamId(tabId: number, consumerTabId?: number) {
   return new Promise<string | undefined>((resolve, reject) => {
     browser.tabCapture.getMediaStreamId(
@@ -507,6 +550,10 @@ function captureVisibleTab(windowId?: number, options?: Browser.tabs.CaptureVisi
   const wid = windowId ?? browser.windows.WINDOW_ID_CURRENT
   const screenCaptureBase64Url = browser.tabs.captureVisibleTab(wid, options ?? {})
   return screenCaptureBase64Url
+}
+
+function getTabInfoByTabId(tabId: number) {
+  return browser.tabs.get(tabId)
 }
 
 function ping() {
@@ -616,14 +663,17 @@ export const backgroundFunctions = {
   },
   ping,
   getTabInfo: (_tabInfo?: { tabId: number }) => _tabInfo as TabInfo, // a trick to get tabId
+  getTabInfoByTabId,
   generateText,
   generateTextAsync,
   streamText,
   getAllTabs,
   getLocalModelList,
+  getRunningModelList,
   deleteOllamaModel,
   pullOllamaModel,
   showOllamaModelDetails,
+  unloadOllamaModel,
   searchOnline,
   generateObjectFromSchema,
   getDocumentContentOfTab,
@@ -639,7 +689,7 @@ export const backgroundFunctions = {
   initWebLLMEngine,
   hasWebLLMModelInCache,
   deleteWebLLMModelInCache,
-  isCurrentModelReady,
+  checkModelReady,
   initCurrentModel,
   checkSupportWebLLM,
   getSystemMemoryInfo,
@@ -654,5 +704,7 @@ export const backgroundFunctions = {
   cacheUpdateConfig,
   cacheGetConfig,
   cacheGetDebugInfo,
+  showSidepanel,
+  showSettings: showSettingsForBackground,
 }
 ;(self as unknown as { backgroundFunctions: unknown }).backgroundFunctions = backgroundFunctions

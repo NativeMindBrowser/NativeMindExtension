@@ -3,6 +3,7 @@ export type TabInfo = {
   title?: string
   url: string
   faviconUrl?: string
+  windowId: number
 }
 
 export type TabContent = TabInfo & {

@@ -2,7 +2,18 @@
   "settings": {
     "webllm-desc": "You are now using WebLLM: qwen3:0.6b for quick tryout. For full model support and better performance, please install Ollama.",
     "translation": {
-      "title": "Translation Language"
+      "title": "Translation",
+      "description": "Configure translation functionality and target languages",
+      "basic_config": {
+        "title": "Basic Configuration",
+        "target_language": "Target Language",
+        "target_language_desc": "Select the target language for translation",
+        "translation_model": "Translation Model",
+        "translation_model_desc": "Select the AI model for translation tasks",
+        "translation_system_prompt": "Translation System Prompt",
+        "translation_system_prompt_desc": "Define AI behavior and output format during translation",
+        "translation_system_prompt_error": "system prompt must contain {'{{LANGUAGE}}'}"
+      }
     },
     "get_ollama": "Get Ollama",
     "test": "Test",
@@ -17,7 +28,15 @@
       "learn_more_about_models": "Learn more about models",
       "connected": "Connected",
       "unconnected": "Unconnected",
-      "connection_error": "Connection Error"
+      "connection_error": "Connection Error",
+      "server_address_desc": "Ollama server API endpoint",
+      "context_window_size": "Custom context window size",
+      "context_window_size_desc": "Enter custom context window size in tokens (minimum: 512)",
+      "context_window_size_error": "Context window size must be at least {min} tokens",
+      "running_models": "Running Models",
+      "unload": "Unload",
+      "running": "Running",
+      "expires_in": "Expires in {duration}"
     },
     "choose_model": "Choose Model",
     "download": "Download",
@@ -70,7 +89,16 @@
     },
     "general": {
       "title": "General",
-      "system_language": "System Language"
+      "system_language": "System Language",
+      "description": "Configure basic settings and server connection",
+      "refresh_status": "Refresh Status",
+      "discover_more_models": "Discover More Models",
+      "unload_model_confirm": "Are you sure you want to unload the model \"{model}\"?",
+      "running_models": {
+        "vram": "{size} VRAM",
+        "params": "{size} params",
+        "quant": "{level} quant"
+      }
     },
     "title": "Settings",
     "model_downloader": {
@@ -87,7 +115,61 @@
       "description": "To use Local mode, you need to download the {model} model ({size}). Would you like to download it now?"
     },
     "writing_tools": {
-      "title": "Writing Tools"
+      "title": "Writing Tools",
+      "description": "Configure various writing assistance features",
+      "basic_config": {
+        "title": "Basic Settings",
+        "enable": "Enable Writing Tools",
+        "enable_desc": "Show writing assistance options when text is selected"
+      },
+      "tool_config": {
+        "title": "Tool Configuration",
+        "at_least_one_tool_error": "At least one writing tool must be selected.",
+        "rewrite": {
+          "title": "Rewrite",
+          "description": "Improve text clarity and flow"
+        },
+        "proofread": {
+          "title": "Proofread",
+          "description": "Check grammar, spelling and punctuation errors"
+        },
+        "list": {
+          "title": "List",
+          "description": "Convert content into clear, organized lists"
+        },
+        "sparkle": {
+          "title": "Sparkle",
+          "description": "Add emojis and visual elements"
+        }
+      }
+    },
+    "chat": {
+      "title": "Chat",
+      "description": "Configure chat functionality and quick actions",
+      "basic_config": {
+        "title": "Basic Configuration",
+        "chat_model": "Chat Model",
+        "chat_model_description": "Select the AI model for chat conversations",
+        "chat_system_prompt": "Chat System Prompt",
+        "chat_system_prompt_description": "Define AI behavior and role during chat conversations"
+      },
+      "quick_actions": {
+        "title": "Quick Actions",
+        "reset_to_default": "Reset to Default",
+        "reset_to_default_confirm": "Are you sure you want to reset Quick Actions to default values?"
+      }
+    },
+    "common": {
+      "saved": "Saved"
+    },
+    "interface": {
+      "title": "Interface",
+      "interface_language": "Interface Language",
+      "interface_language_desc": "Choose the display language for NativeMind interface"
+    },
+    "header": {
+      "starts_on_github": "Stars on GitHub",
+      "goto_website": "Go to the Website"
     }
   },
   "chat": {
@@ -190,7 +272,16 @@
     "webllm_not_supported": "WebLLM not supported on your device."
   },
   "common": {
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "duration": {
+      "days": "{day} day | {day} days",
+      "hours": "{hour} hour | {hour} hours",
+      "minutes": "{minute} minute | {minute} minutes",
+      "seconds": "{second} second | {second} seconds",
+      "years": "{year} year | {year} years",
+      "months": "{month} month | {month} months"
+    },
+    "confirm": "Confirm"
   },
   "ollama": {
     "sites": {

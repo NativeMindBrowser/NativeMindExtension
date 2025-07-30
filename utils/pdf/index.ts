@@ -3,6 +3,7 @@ import { extractText, getDocumentProxy as originalGetDocumentProxy, renderPageAs
 import { isTypedArray, TypedArray } from '@/types/common'
 
 import { base64ToUint8Array } from '../base64'
+import { extractFileNameFromUrl } from '../url'
 
 type PDFDocumentProxy = Awaited<ReturnType<typeof originalGetDocumentProxy>>
 
@@ -115,4 +116,22 @@ export async function checkReadablePdf(pdfFile: PDFFile): Promise<boolean> {
     }
   }
   return true
+}
+
+export async function parsePdfFileOfUrl(url: string) {
+  const resp = await fetch(url)
+  const contentType = resp.headers.get('content-type')
+  if (contentType?.includes('application/pdf')) {
+    let fileName = resp.headers.get('content-disposition')?.split('filename=')[1] ?? extractFileNameFromUrl(url, 'document.pdf')
+    fileName = fileName.replace(/"/g, '')
+    if (!fileName.endsWith('.pdf')) fileName += '.pdf'
+    const arrayBuffer = await resp.arrayBuffer()
+    const textContent = await extractPdfText(arrayBuffer)
+    return {
+      texts: textContent.texts,
+      pageCount: textContent.pdfProxy.numPages,
+      fileSize: arrayBuffer.byteLength,
+      fileName,
+    } as const
+  }
 }

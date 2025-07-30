@@ -57,7 +57,7 @@
         v-if="isOpen"
         ref="dropdownRef"
         data-nativemind-selector-dropdown
-        class="absolute overflow-hidden z-10 bg-bg-component rounded-lg shadow-01"
+        class="fixed overflow-hidden z-10 bg-bg-component rounded-lg shadow-01"
         :style="{ top: `${dropdownPos.y}px`, left: `${dropdownPos.x}px`, width: dropdownPos.width ? `${dropdownPos.width}px` : undefined, zIndex: String(zIndex) }"
         :class="dropdownClass"
       >

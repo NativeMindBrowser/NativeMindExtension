@@ -104,12 +104,20 @@
       "re_scan": "Quét lại",
       "server_address": "Địa chỉ máy chủ",
       "setup": "Cài đặt",
-      "unconnected": "Không kết nối"
+      "unconnected": "Không kết nối",
+      "context_window_size": "Kích thước cửa sổ ngữ cảnh tùy chỉnh",
+      "context_window_size_desc": "Nhập kích thước cửa sổ ngữ cảnh tùy chỉnh theo token (tối thiểu: 512)",
+      "server_address_desc": "Điểm cuối API máy chủ Ollama",
+      "context_window_size_error": "Kích thước cửa sổ ngữ cảnh phải có ít nhất {min} token",
+      "unload": "Dỡ tải",
+      "expires_in": "Hết hạn trong {duration}",
+      "running": "Chạy",
+      "running_models": "Chạy Mô hình"
     },
     "prompts": {
       "chat_system_prompt": "Nhắc hệ thống trò chuyện",
       "title": "Nhắc nhở",
-      "translation_system_prompt": "Lời nhắc hệ thống dịch"
+      "translation_system_prompt": "Prompt hệ thống dịch thuật"
     },
     "provider": {
       "title": "Kết nối"
@@ -131,12 +139,32 @@
     },
     "test": "Bài kiểm tra",
     "translation": {
-      "title": "Ngôn ngữ dịch"
+      "title": "Ngôn ngữ dịch",
+      "description": "Cấu hình chức năng dịch thuật và ngôn ngữ đích",
+      "basic_config": {
+        "target_language": "Ngôn ngữ đích",
+        "target_language_desc": "Chọn ngôn ngữ đích để dịch",
+        "title": "Cấu hình cơ bản",
+        "translation_model": "Mô hình dịch thuật",
+        "translation_model_desc": "Chọn mô hình AI cho các tác vụ dịch thuật",
+        "translation_system_prompt": "Prompt hệ thống dịch thuật",
+        "translation_system_prompt_desc": "Xác định hành vi AI và định dạng đầu ra trong quá trình dịch thuật",
+        "translation_system_prompt_error": "lời nhắc hệ thống phải chứa {'{{LANGUAGE}}'}"
+      }
     },
     "webllm-desc": "Bạn hiện đang sử dụng WebLLM: qwen3:0.6b để dùng thử nhanh. Để có hỗ trợ mô hình đầy đủ và hiệu suất tốt hơn, vui lòng cài đặt Ollama.",
     "general": {
       "system_language": "Ngôn ngữ hệ thống",
-      "title": "Tổng quan"
+      "title": "Tổng quan",
+      "description": "Cấu hình cài đặt cơ bản và kết nối máy chủ",
+      "discover_more_models": "Khám phá thêm các mô hình",
+      "refresh_status": "Làm mới Trạng thái",
+      "unload_model_confirm": "Bạn có chắc chắn muốn gỡ bỏ mô hình \"{model}\" không?",
+      "running_models": {
+        "vram": "{size} VRAM",
+        "params": "{size} tham số",
+        "quant": "{level} định lượng"
+      }
     },
     "title": "Cài đặt",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "Để sử dụng chế độ Cục bộ, bạn cần tải xuống mô hình {model} ({size}). Bạn có muốn tải xuống ngay bây giờ không?"
     },
     "writing_tools": {
-      "title": "Công cụ Viết"
+      "title": "Công cụ Viết",
+      "basic_config": {
+        "enable": "Bật Công cụ Viết",
+        "enable_desc": "Hiển thị các tùy chọn hỗ trợ viết khi văn bản được chọn",
+        "title": "Cài đặt cơ bản"
+      },
+      "description": "Cấu hình các tính năng hỗ trợ viết khác nhau",
+      "tool_config": {
+        "at_least_one_tool_error": "Phải chọn ít nhất một công cụ viết.",
+        "list": {
+          "description": "Chuyển đổi nội dung thành các danh sách rõ ràng, có tổ chức",
+          "title": "Danh sách"
+        },
+        "proofread": {
+          "description": "Kiểm tra lỗi ngữ pháp, chính tả và dấu câu",
+          "title": "Đọc lại và sửa lỗi"
+        },
+        "rewrite": {
+          "description": "Cải thiện độ rõ ràng và tính mạch lạc của văn bản",
+          "title": "Viết lại"
+        },
+        "sparkle": {
+          "description": "Thêm emoji và các yếu tố hình ảnh",
+          "title": "Làm đẹp"
+        },
+        "title": "Cấu hình Công cụ"
+      }
+    },
+    "chat": {
+      "title": "Trò chuyện",
+      "description": "Cấu hình chức năng trò chuyện và các hành động nhanh",
+      "basic_config": {
+        "title": "Cấu hình cơ bản",
+        "chat_model": "Mô hình chat",
+        "chat_model_description": "Chọn mô hình AI cho các cuộc trò chuyện",
+        "chat_system_prompt": "Hệ thống Nhắc nhở Trò chuyện",
+        "chat_system_prompt_description": "Xác định hành vi và vai trò của AI trong các cuộc trò chuyện"
+      },
+      "quick_actions": {
+        "title": "Hành động nhanh",
+        "reset_to_default": "Đặt lại về Mặc định",
+        "reset_to_default_confirm": "Bạn có chắc chắn muốn đặt lại Thao tác Nhanh về giá trị mặc định không?"
+      }
+    },
+    "common": {
+      "saved": "\"Saved\" in Vietnamese is \"Đã lưu\""
+    },
+    "interface": {
+      "title": "Giao diện",
+      "interface_language": "Ngôn ngữ giao diện",
+      "interface_language_desc": "Chọn ngôn ngữ hiển thị cho giao diện NativeMind"
+    },
+    "header": {
+      "starts_on_github": "Stars on GitHub",
+      "goto_website": "Đi đến Trang web"
     }
   },
   "context_menu": {
@@ -181,7 +263,16 @@
     "webllm_not_supported": "WebLLM không được hỗ trợ trên thiết bị của bạn."
   },
   "common": {
-    "cancel": "Hủy"
+    "cancel": "Hủy",
+    "duration": {
+      "days": "{day} ngày | {day} ngày",
+      "seconds": "{second} giây | {second} giây",
+      "minutes": "{minute} phút | {minute} phút",
+      "hours": "{hour} giờ | {hour} giờ",
+      "years": "{year} năm | {year} năm",
+      "months": "{month} tháng | {month} tháng"
+    },
+    "confirm": "Xác nhận"
   },
   "ollama": {
     "sites": {

@@ -3,11 +3,12 @@ import { browser } from 'wxt/browser'
 import { c2bRpc } from '@/utils/rpc'
 
 import { SupportedLocaleCode } from '../i18n/constants'
+import { generateRandomId } from '../id'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
 import logger from '../logger'
 import { lazyInitialize } from '../memo'
-import { Entrypoint, forRuntimes } from '../runtime'
+import { forRuntimes } from '../runtime'
 import { ByteSize } from '../sizes'
 import { Config } from './helpers'
 
@@ -221,9 +222,8 @@ export async function _getUserConfig() {
   // baseUrl detection logic runs when user changes baseUrl in settings, so we only need to check system memory here
   if (!import.meta.env.FIREFOX) {
     const systemMemoryInfo = await forRuntimes({
-      [Entrypoint.background]: () => browser.system.memory.getInfo(),
-      [Entrypoint.content]: () => c2bRpc.getSystemMemoryInfo(),
-      [Entrypoint.popup]: () => browser.system.memory.getInfo(),
+      content: () => c2bRpc.getSystemMemoryInfo(),
+      default: () => browser.system.memory.getInfo(),
     })
     if (!systemMemoryInfo) log.error('getUserConfig is used in an unknown runtime')
     else {
@@ -256,6 +256,9 @@ export async function _getUserConfig() {
       },
     },
     chat: {
+      history: {
+        currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
+      },
       onlineSearch: {
         enable: await new Config('chat.onlineSearch.enable').default('auto' as OnlineSearchStatus).build(),
         pageReadCount: await new Config('chat.onlineSearch.pageReadCount').default(5).build(), // how many pages to read when online search is enabled
@@ -265,6 +268,7 @@ export async function _getUserConfig() {
       },
     },
     translation: {
+      model: await new Config<string, undefined>('translation.model').build(),
       targetLocale: await new Config('translation.targetLocale').default('zh' as LanguageCode).build(),
       systemPrompt: await new Config('translation.systemPrompt').default(DEFAULT_TRANSLATOR_SYSTEM_PROMPT).build(),
       cache: {
@@ -286,15 +290,19 @@ export async function _getUserConfig() {
     writingTools: {
       enable: await new Config('writingTools.enable_1').default(true).build(),
       rewrite: {
+        enable: await new Config('writingTools.rewrite.enable').default(true).build(),
         systemPrompt: await new Config('writingTools.rewrite.systemPrompt').default(DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT).build(),
       },
       proofread: {
+        enable: await new Config('writingTools.proofread.enable').default(true).build(),
         systemPrompt: await new Config('writingTools.proofread.systemPrompt').default(DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT).build(),
       },
       list: {
+        enable: await new Config('writingTools.list.enable').default(true).build(),
         systemPrompt: await new Config('writingTools.list.systemPrompt').default(DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT).build(),
       },
       sparkle: {
+        enable: await new Config('writingTools.sparkle.enable').default(true).build(),
         systemPrompt: await new Config('writingTools.sparkle.systemPrompt').default(DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT).build(),
       },
     },

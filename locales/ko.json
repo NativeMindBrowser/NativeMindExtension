@@ -104,7 +104,15 @@
       "re_scan": "다시 스캔하기",
       "server_address": "서버 주소",
       "setup": "설정",
-      "unconnected": "연결되지 않음"
+      "unconnected": "연결되지 않음",
+      "context_window_size": "사용자 정의 컨텍스트 윈도우 크기",
+      "context_window_size_desc": "토큰 단위로 사용자 정의 컨텍스트 윈도우 크기를 입력하세요 (최소: 512)",
+      "server_address_desc": "Ollama 서버 API 엔드포인트",
+      "context_window_size_error": "컨텍스트 윈도우 크기는 최소 {min} 토큰이어야 합니다",
+      "unload": "내리다",
+      "expires_in": "{duration} 후 만료",
+      "running": "실행 중",
+      "running_models": "모델 실행"
     },
     "prompts": {
       "chat_system_prompt": "채팅 시스템 프롬프트",
@@ -131,12 +139,32 @@
     },
     "test": "테스트",
     "translation": {
-      "title": "번역 언어"
+      "title": "번역 언어",
+      "description": "번역 기능 및 대상 언어 구성",
+      "basic_config": {
+        "target_language": "대상 언어",
+        "target_language_desc": "번역할 대상 언어를 선택하세요",
+        "title": "기본 구성",
+        "translation_model": "번역 모델",
+        "translation_model_desc": "번역 작업을 위한 AI 모델을 선택하세요",
+        "translation_system_prompt": "번역 시스템 프롬프트",
+        "translation_system_prompt_desc": "AI 번역 중 행동과 출력 형식 정의",
+        "translation_system_prompt_error": "시스템 프롬프트는 반드시 {'{{LANGUAGE}}'}를 포함해야 합니다"
+      }
     },
     "webllm-desc": "지금 빠른 체험을 위해 WebLLM: qwen3:0.6b를 사용하고 있습니다. 전체 모델 지원과 더 나은 성능을 위해서는 Ollama를 설치해 주세요.",
     "general": {
       "system_language": "시스템 언어",
-      "title": "일반"
+      "title": "일반",
+      "description": "기본 설정 및 서버 연결 구성",
+      "discover_more_models": "더 많은 모델 살펴보기",
+      "refresh_status": "상태 새로고침",
+      "unload_model_confirm": "모델 \"{model}\"을 언로드하시겠습니까?",
+      "running_models": {
+        "vram": "{size} VRAM",
+        "params": "{size} 매개변수",
+        "quant": "{level} 퀀트"
+      }
     },
     "title": "설정",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "로컬 모드를 사용하려면 {model} 모델({size})을 다운로드해야 합니다. 지금 다운로드하시겠습니까?"
     },
     "writing_tools": {
-      "title": "글쓰기 도구"
+      "title": "글쓰기 도구",
+      "basic_config": {
+        "enable": "쓰기 도구 활성화",
+        "enable_desc": "텍스트가 선택되었을 때 작성 도움 옵션 표시",
+        "title": "기본 설정"
+      },
+      "description": "다양한 작성 지원 기능 구성",
+      "tool_config": {
+        "at_least_one_tool_error": "최소 하나의 작성 도구를 선택해야 합니다.",
+        "list": {
+          "description": "콘텐츠를 명확하고 체계적인 목록으로 변환하세요",
+          "title": "목록"
+        },
+        "proofread": {
+          "description": "문법, 맞춤법 및 구두점 오류를 확인하세요",
+          "title": "교정하다"
+        },
+        "rewrite": {
+          "description": "텍스트의 명확성과 흐름 개선",
+          "title": "다시 쓰기"
+        },
+        "sparkle": {
+          "description": "이모지와 시각적 요소 추가",
+          "title": "미화"
+        },
+        "title": "도구 구성"
+      }
+    },
+    "chat": {
+      "title": "채팅",
+      "description": "채팅 기능 및 빠른 작업 구성",
+      "basic_config": {
+        "title": "기본 구성",
+        "chat_model": "I'd be happy to help you translate from English to Korean! However, I don't see any English text provided for translation. Could you please share the English text you'd like me to translate into Korean?",
+        "chat_model_description": "채팅 대화를 위한 AI 모델을 선택하세요",
+        "chat_system_prompt": "채팅 시스템 프롬프트",
+        "chat_system_prompt_description": "채팅 대화 중 AI의 행동과 역할을 정의하세요"
+      },
+      "quick_actions": {
+        "title": "빠른 작업",
+        "reset_to_default": "기본값으로 재설정",
+        "reset_to_default_confirm": "빠른 작업을 기본값으로 재설정하시겠습니까?"
+      }
+    },
+    "common": {
+      "saved": "저장됨"
+    },
+    "interface": {
+      "title": "인터페이스",
+      "interface_language": "인터페이스 언어",
+      "interface_language_desc": "NativeMind 인터페이스의 표시 언어를 선택하세요"
+    },
+    "header": {
+      "starts_on_github": "Stars on GitHub",
+      "goto_website": "웹사이트로 이동"
     }
   },
   "context_menu": {
@@ -181,7 +263,16 @@
     "webllm_not_supported": "WebLLM이 귀하의 기기에서 지원되지 않습니다."
   },
   "common": {
-    "cancel": "취소"
+    "cancel": "취소",
+    "duration": {
+      "days": "{day}일 | {day}일",
+      "seconds": "{second}초 | {second}초",
+      "minutes": "{minute}분 | {minute}분",
+      "hours": "{hour}시간 | {hour}시간",
+      "years": "{year}년 | {year}년",
+      "months": "{month}개월 | {month}개월"
+    },
+    "confirm": "확인"
   },
   "ollama": {
     "sites": {

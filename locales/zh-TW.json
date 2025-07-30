@@ -104,7 +104,15 @@
       "re_scan": "重新掃描",
       "server_address": "伺服器地址",
       "setup": "設定",
-      "unconnected": "未連線"
+      "unconnected": "未連線",
+      "context_window_size": "自訂內容視窗大小",
+      "context_window_size_desc": "輸入自訂上下文視窗大小（以 token 為單位，最小值：512）",
+      "server_address_desc": "Ollama 伺服器 API 端點",
+      "context_window_size_error": "上下文視窗大小必須至少為 {min} 個標記",
+      "unload": "卸載",
+      "expires_in": "於 {duration} 後到期",
+      "running": "運行中",
+      "running_models": "執行模型"
     },
     "prompts": {
       "chat_system_prompt": "聊天系統提示詞",
@@ -131,12 +139,32 @@
     },
     "test": "測試",
     "translation": {
-      "title": "翻譯語言"
+      "title": "翻譯語言",
+      "description": "配置翻譯功能和目標語言",
+      "basic_config": {
+        "target_language": "目標語言",
+        "target_language_desc": "選擇翻譯的目標語言",
+        "title": "基本設定",
+        "translation_model": "翻譯模型",
+        "translation_model_desc": "選擇用於翻譯任務的AI模型",
+        "translation_system_prompt": "翻譯系統提示詞",
+        "translation_system_prompt_desc": "定義AI在翻譯過程中的行為和輸出格式",
+        "translation_system_prompt_error": "系統提示必須包含 {'{{LANGUAGE}}'}"
+      }
     },
     "webllm-desc": "您現在正在使用 WebLLM: qwen3:0.6b 進行快速試用。如需完整模型支援和更佳效能，請安裝 Ollama。",
     "general": {
       "system_language": "系統語言",
-      "title": "一般"
+      "title": "一般",
+      "description": "設定基本設定和伺服器連線",
+      "discover_more_models": "探索更多模型",
+      "refresh_status": "重新整理狀態",
+      "unload_model_confirm": "您確定要卸載模型「{model}」嗎？",
+      "running_models": {
+        "vram": "{size} 顯示記憶體",
+        "params": "{size} 個參數",
+        "quant": "{level} 量化"
+      }
     },
     "title": "設定",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "要使用本機模式，您需要下載 {model} 模型（{size}）。您現在要下載嗎？"
     },
     "writing_tools": {
-      "title": "寫作工具"
+      "title": "寫作工具",
+      "basic_config": {
+        "enable": "啟用寫作工具",
+        "enable_desc": "選取文字時顯示寫作輔助選項",
+        "title": "基本設定"
+      },
+      "description": "設定各種寫作輔助功能",
+      "tool_config": {
+        "at_least_one_tool_error": "至少必須選擇一個書寫工具。",
+        "list": {
+          "description": "將內容轉換為清晰、有條理的清單",
+          "title": "清單"
+        },
+        "proofread": {
+          "description": "檢查文法、拼字和標點符號錯誤",
+          "title": "校對"
+        },
+        "rewrite": {
+          "description": "改善文字清晰度和流暢性",
+          "title": "重寫"
+        },
+        "sparkle": {
+          "description": "添加表情符號和視覺元素",
+          "title": "美化"
+        },
+        "title": "工具配置"
+      }
+    },
+    "chat": {
+      "title": "聊天",
+      "description": "設定聊天功能和快速操作",
+      "basic_config": {
+        "title": "基本設定",
+        "chat_model": "聊天模型",
+        "chat_model_description": "選擇聊天對話的AI模型",
+        "chat_system_prompt": "聊天系統提示",
+        "chat_system_prompt_description": "定義AI在聊天對話中的行為和角色"
+      },
+      "quick_actions": {
+        "title": "快速動作",
+        "reset_to_default": "重設為預設值",
+        "reset_to_default_confirm": "您確定要將快速動作重設為預設值嗎？"
+      }
+    },
+    "common": {
+      "saved": "已儲存"
+    },
+    "interface": {
+      "title": "介面",
+      "interface_language": "介面語言",
+      "interface_language_desc": "選擇 NativeMind 介面的顯示語言"
+    },
+    "header": {
+      "starts_on_github": "Stars on GitHub",
+      "goto_website": "前往網站"
     }
   },
   "context_menu": {
@@ -181,7 +263,16 @@
     "webllm_not_supported": "WebLLM 在您的裝置上不受支援。"
   },
   "common": {
-    "cancel": "取消"
+    "cancel": "取消",
+    "duration": {
+      "days": "{day} 天 | {day} 天",
+      "seconds": "{second} 秒 | {second} 秒",
+      "minutes": "{minute} 分鐘 | {minute} 分鐘",
+      "hours": "{hour} 小時 | {hour} 小時",
+      "years": "{year} 年 | {year} 年",
+      "months": "{month} 個月 | {month} 個月"
+    },
+    "confirm": "確認"
   },
   "ollama": {
     "sites": {

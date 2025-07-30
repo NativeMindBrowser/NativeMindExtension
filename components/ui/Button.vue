@@ -1,7 +1,8 @@
 <template>
   <button
     ref="buttonRef"
-    :class="classNames(buttonClass, props.class)"
+    :class="[disabled && 'pointer-events-none', classNames(buttonClass, props.class)]"
+    @click="emit('click', $event)"
   >
     <slot />
   </button>
@@ -22,6 +23,10 @@ const props = withDefaults(defineProps<{
   variant: 'primary',
   hoverStyle: true,
 })
+
+const emit = defineEmits<{
+  (e: 'click', ev: MouseEvent): void
+}>()
 
 const classMapping = {
   primary: classNames('bg-[#24B960] text-white shadow-[0px_0px_0px_1px_#24B960,0px_1px_2px_0px_#00000066,0px_0.75px_0px_0px_#FFFFFF33_inset]', props.hoverStyle ? 'hover:bg-[#089641]' : ''),

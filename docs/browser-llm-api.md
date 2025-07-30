@@ -22,6 +22,20 @@ The API extends the native `navigator` object, making it available globally in a
 
 ## Usage Examples
 
+### Feature Detection
+
+Before using the API, it's recommended to check if the NativeMind extension is available and the API is accessible:
+
+```javascript
+// Check if the NativeMind LLM API is available
+if (navigator.llm?.responses?.create) {
+  // NativeMind extension is available, proceed with API usage
+} else {
+  // Show message to user about installing the extension
+  // or provide alternative functionality
+}
+```
+
 ### Basic Non-Streaming Request
 
 ```javascript

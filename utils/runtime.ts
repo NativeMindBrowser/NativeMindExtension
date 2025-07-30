@@ -1,34 +1,31 @@
-export enum Entrypoint {
-  background = 'background',
-  content = 'content',
-  popup = 'popup',
-  unlisted = 'unlisted',
-  mainWorld = 'main-world',
-}
+import { getAppMetadata } from './app-metadata'
 
-export const entrypointNames = {
-  [Entrypoint.background]: ['background'],
-  [Entrypoint.content]: ['content'],
-  [Entrypoint.popup]: [undefined, 'html'], // entrypoint of popup is not undefined
-  [Entrypoint.unlisted]: ['content-injected'],
-  [Entrypoint.mainWorld]: ['main-world-injected'],
-}
+type EntrypointName = AppMetadata['entrypoint']
 
-export function only<T>(entrypoints: Entrypoint[], fn: () => T) {
-  const currentEntrypointName = import.meta.env.ENTRYPOINT
-  const names = entrypoints.map((ep) => entrypointNames[ep]).flat()
-  if (names.includes(currentEntrypointName)) {
+export function only<T>(entrypoints: EntrypointName[], fn: () => T) {
+  const appMetadata = getAppMetadata()
+  const currentEntrypointName = appMetadata.entrypoint
+  if (entrypoints.includes(currentEntrypointName)) {
     return fn()
   }
   return undefined as T
 }
 
-export function forRuntimes<T>(runtimesFn: Partial<Record<Entrypoint, () => T>>) {
-  const currentEntrypointName = import.meta.env.ENTRYPOINT
-  const currentEntrypoint = Object.entries(entrypointNames).find(
-    ([, names]) => names.some((n) => n === currentEntrypointName),
-  )?.[0] as Entrypoint | undefined
-  if (currentEntrypoint && runtimesFn[currentEntrypoint]) {
-    return runtimesFn[currentEntrypoint]()
+type EntrypointFn<T> = Partial<Record<EntrypointName, () => T>>
+type EntrypointWithDefaultFn<T> = EntrypointFn<T> & { default: () => T }
+type EntrypointWithOptionalDefaultFn<T> = EntrypointFn<T> & { default?: () => T }
+
+export function forRuntimes<T>(runtimesFn: EntrypointFn<T>): T | undefined
+export function forRuntimes<T>(runtimesFn: EntrypointWithDefaultFn<T>): T
+export function forRuntimes<T>(runtimesFn: EntrypointWithOptionalDefaultFn<T>) {
+  const appMetadata = getAppMetadata()
+  const currentEntrypointName = appMetadata.entrypoint
+  if (currentEntrypointName && runtimesFn[currentEntrypointName]) {
+    return runtimesFn[currentEntrypointName]()
   }
+  return runtimesFn.default?.()
+}
+
+export function isRuntime(entrypointName: EntrypointName) {
+  return getAppMetadata().entrypoint === entrypointName
 }

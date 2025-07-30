@@ -1,9 +1,14 @@
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 
-import { nextStep } from '.'
+import { resetFakeEntrypoint } from '@/tests/utils/fake-browser'
+
 import { ConditionBuilder, renderPrompt, TagBuilder, TextBuilder } from './helpers'
 
 describe('prompt builder', () => {
+  beforeAll(() => {
+    resetFakeEntrypoint()
+  })
+
   it('should build a proper prompt', async () => {
     const searchResultsBuilder = new TagBuilder('search_results')
     for (let i = 0; i < 2; i++) {
@@ -149,6 +154,8 @@ this is inner2 content
   })
 
   it('should generate next step prompt', async () => {
+    const { nextStep } = await import('.')
+
     const prompt = await nextStep([
       { role: 'user', content: 'What is the weather today?' },
       { role: 'assistant', content: 'The weather is sunny.' },

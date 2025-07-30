@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { analyzer } from 'vite-bundle-analyzer'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgLoader from 'vite-svg-loader'
 import { defineConfig } from 'wxt'
 
@@ -44,7 +45,7 @@ svgLoaderPlugin.name = 'svg-loader'
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   imports: false,
-  modules: ['@wxt-dev/module-vue', './wxt-modules/auto-icons/index.mjs', './wxt-modules/expose-web-resources/index.mjs'],
+  modules: ['@wxt-dev/module-vue'],
   webExt: {
     chromiumArgs: ['--user-data-dir=./.wxt/chrome-data'],
   },
@@ -54,44 +55,33 @@ export default defineConfig({
   exposeWebResources: {
     paths: ['/assets/*.woff2', '/content-scripts/*.css', '/main-world-injected.js'],
   },
-  hooks: {
-    // replace the default svg-loader plugin provided by wxt with our custom one
-    'vite:build:extendConfig': (_entrypoint, config) => {
-      const idx = config.plugins?.findIndex((plugin) => plugin && 'name' in plugin && plugin.name === 'svg-loader')
-      if (idx === undefined || idx === -1) {
-        config.plugins = config.plugins || []
-        config.plugins.push(svgLoaderPlugin)
-        return
-      }
-      else {
-        config.plugins?.splice(idx, 1, svgLoaderPlugin)
-      }
-    },
-  },
   vite: (_env) => {
     return {
       build: {
         target: ['chrome124', 'firefox120', 'safari16'],
         // firefox does't support js file larger than 5MB, so we exclude @mlc-ai/web-llm from the bundle (which firefox does not use)
-        rollupOptions: { external: IS_FIREFOX ? ['@mlc-ai/web-llm'] : undefined },
+        rollupOptions: { external: IS_FIREFOX ? ['@mlc-ai/web-llm', '@huggingface/transformers'] : undefined },
       },
       plugins: [
+        nodePolyfills(),
         analyzer({ enabled: ENABLE_BUNDLE_ANALYZER }),
         vueJsx({ babelPlugins: ['@babel/plugin-proposal-explicit-resource-management'] }),
         tailwindcss(),
+        svgLoaderPlugin,
       ],
     }
   },
   manifest: {
     name: IS_FIREFOX ? '__MSG_extNameFirefox__' : '__MSG_extName__',
+    short_name: 'NativeMind',
     description: IS_FIREFOX ? '__MSG_extDescFirefox__' : '__MSG_extDesc__',
     version: VERSION,
     default_locale: 'en',
-    permissions: ['declarativeNetRequest', 'tabs', 'storage', 'scripting', 'contextMenus', ...extraPermissions],
+    permissions: ['declarativeNetRequest', 'tabs', 'storage', 'scripting', 'contextMenus', 'sidePanel', 'system.display', 'unlimitedStorage', ...extraPermissions],
     minimum_chrome_version: '124',
     declarative_net_request: IS_FIREFOX ? { rule_resources: [{ id: 'ruleset_1', enabled: true, path: 'rules.json' }] } : undefined,
     content_security_policy: {
-      extension_pages: 'script-src \'self\' \'wasm-unsafe-eval\'; object-src \'self\';',
+      extension_pages: `script-src 'self' 'wasm-unsafe-eval'; object-src 'self';`,
     },
     browser_specific_settings: IS_FIREFOX ? { gecko: { id: FIREFOX_EXTENSION_ID } } : undefined,
     content_scripts: [

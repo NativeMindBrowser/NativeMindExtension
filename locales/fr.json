@@ -104,12 +104,20 @@
       "re_scan": "Scanner à nouveau",
       "server_address": "Adresse du serveur",
       "setup": "Configuration",
-      "unconnected": "Non connecté"
+      "unconnected": "Non connecté",
+      "context_window_size": "Taille de fenêtre de contexte personnalisée",
+      "context_window_size_desc": "Saisissez la taille personnalisée de la fenêtre de contexte en tokens (minimum : 512)",
+      "server_address_desc": "Point de terminaison de l'API du serveur Ollama",
+      "context_window_size_error": "La taille de la fenêtre de contexte doit être d'au moins {min} jetons",
+      "unload": "Décharger",
+      "expires_in": "Expire dans {duration}",
+      "running": "En cours d'exécution",
+      "running_models": "Exécution de modèles"
     },
     "prompts": {
       "chat_system_prompt": "Instruction système de chat",
       "title": "Instructions",
-      "translation_system_prompt": "Instruction système de traduction"
+      "translation_system_prompt": "Prompt système de traduction"
     },
     "provider": {
       "title": "Connexion"
@@ -131,12 +139,32 @@
     },
     "test": "Test",
     "translation": {
-      "title": "Langue de traduction"
+      "title": "Langue de traduction",
+      "description": "Configurer la fonctionnalité de traduction et les langues cibles",
+      "basic_config": {
+        "target_language": "Langue cible",
+        "target_language_desc": "Sélectionnez la langue cible pour la traduction",
+        "title": "Configuration de base",
+        "translation_model": "Modèle de traduction",
+        "translation_model_desc": "Sélectionnez le modèle d'IA pour les tâches de traduction",
+        "translation_system_prompt": "Prompt système de traduction",
+        "translation_system_prompt_desc": "Définir le comportement de l'IA et le format de sortie pendant la traduction",
+        "translation_system_prompt_error": "Le prompt système doit contenir {'{{LANGUAGE}}'}"
+      }
     },
     "webllm-desc": "Vous utilisez maintenant WebLLM : qwen3:0.6b pour un essai rapide. Pour un support complet des modèles et de meilleures performances, veuillez installer Ollama.",
     "general": {
       "system_language": "Langue du système",
-      "title": "Général"
+      "title": "Général",
+      "description": "Configurer les paramètres de base et la connexion au serveur",
+      "discover_more_models": "Découvrez Plus de Modèles",
+      "refresh_status": "Actualiser le statut",
+      "unload_model_confirm": "Êtes-vous sûr de vouloir décharger le modèle \"{model}\" ?",
+      "running_models": {
+        "vram": "{size} VRAM",
+        "params": "{size} paramètres",
+        "quant": "{level} quant"
+      }
     },
     "title": "Paramètres",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "Pour utiliser le mode Local, vous devez télécharger le modèle {model} ({size}). Souhaitez-vous le télécharger maintenant ?"
     },
     "writing_tools": {
-      "title": "Outils de rédaction"
+      "title": "Outils de rédaction",
+      "basic_config": {
+        "enable": "Activer les outils d'écriture",
+        "enable_desc": "Afficher les options d'assistance à l'écriture lorsque le texte est sélectionné",
+        "title": "Paramètres de base"
+      },
+      "description": "Configurer diverses fonctionnalités d'assistance à la rédaction",
+      "tool_config": {
+        "at_least_one_tool_error": "Au moins un outil d'écriture doit être sélectionné.",
+        "list": {
+          "description": "Convertir le contenu en listes claires et organisées",
+          "title": "Liste"
+        },
+        "proofread": {
+          "description": "Vérifiez les erreurs de grammaire, d'orthographe et de ponctuation",
+          "title": "Relire"
+        },
+        "rewrite": {
+          "description": "Améliorer la clarté et la fluidité du texte",
+          "title": "Réécrire"
+        },
+        "sparkle": {
+          "description": "Ajouter des emojis et des éléments visuels",
+          "title": "Embellir"
+        },
+        "title": "Configuration d'outil"
+      }
+    },
+    "chat": {
+      "title": "Chat",
+      "description": "Configurer la fonctionnalité de chat et les actions rapides",
+      "basic_config": {
+        "title": "Configuration de base",
+        "chat_model": "Modèle de chat",
+        "chat_model_description": "Sélectionnez le modèle d'IA pour les conversations de chat",
+        "chat_system_prompt": "Invite du système de chat",
+        "chat_system_prompt_description": "Définir le comportement et le rôle de l'IA pendant les conversations de chat"
+      },
+      "quick_actions": {
+        "title": "Actions rapides",
+        "reset_to_default": "Rétablir par défaut",
+        "reset_to_default_confirm": "Êtes-vous sûr de vouloir réinitialiser les Actions rapides aux valeurs par défaut ?"
+      }
+    },
+    "common": {
+      "saved": "Sauvegardé"
+    },
+    "interface": {
+      "title": "Interface",
+      "interface_language": "Langue d'interface",
+      "interface_language_desc": "Choisissez la langue d'affichage pour l'interface NativeMind"
+    },
+    "header": {
+      "starts_on_github": "Étoiles sur GitHub",
+      "goto_website": "Aller sur le site Web"
     }
   },
   "context_menu": {
@@ -181,7 +263,16 @@
     "webllm_not_supported": "WebLLM n'est pas pris en charge sur votre appareil."
   },
   "common": {
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "duration": {
+      "days": "{day} jour | {day} jours",
+      "seconds": "{second} seconde | {second} secondes",
+      "minutes": "{minute} minute | {minute} minutes",
+      "hours": "{hour} heure | {hour} heures",
+      "years": "{year} an | {year} ans",
+      "months": "{month} mois | {month} mois"
+    },
+    "confirm": "Confirmer"
   },
   "ollama": {
     "sites": {

@@ -48,6 +48,12 @@ export type LoadingAttachment = {
 }
 
 export type ContextAttachment = ImageAttachment | PDFAttachment | TabAttachment | LoadingAttachment
+export type ContextAttachmentStorage = {
+  id: string
+  lastInteractedAt?: number // last time user interacted with this context(attach/detach)
+  attachments: ContextAttachment[]
+  currentTab?: ContextAttachment
+}
 
 export type AttachmentItem = {
   selectorMimeTypes: (`${string}/${string}` | '*')[]

@@ -13,6 +13,7 @@
           <EditableEntry
             v-for="(el, idx) in elements"
             :key="idx"
+            :tools="tools"
             :editableElement="el"
           />
         </div>
@@ -22,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, shallowRef, watch, watchEffect } from 'vue'
+import { computed, onMounted, ref, shallowRef, watch, watchEffect } from 'vue'
 import { ShadowRoot as ShadowRootComponent } from 'vue-shadow-dom'
 
 import { useLogger } from '@/composables/useLogger'
@@ -33,13 +34,33 @@ import { getUserConfig } from '@/utils/user-config'
 
 import { useRootElement } from '../../composables/useRootElement'
 import EditableEntry from './EditableEntry.vue'
+import { WritingToolType } from './types'
 
 const logger = useLogger()
 const rootElement = useRootElement()
 const styleSheet = shallowRef<CSSStyleSheet | null>(null)
 const shadowRootRef = ref<InstanceType<typeof ShadowRoot>>()
 const userConfig = await getUserConfig()
-const enableWritingTools = userConfig.writingTools.enable.toRef()
+const enabled = userConfig.writingTools.enable.toRef()
+const enableRewrite = userConfig.writingTools.rewrite.enable.toRef()
+const enableProofread = userConfig.writingTools.proofread.enable.toRef()
+const enableList = userConfig.writingTools.list.enable.toRef()
+const enableSparkle = userConfig.writingTools.sparkle.enable.toRef()
+
+const tools = computed(() => {
+  const tools: WritingToolType[] = []
+  if (enableRewrite.value) tools.push('rewrite')
+  if (enableProofread.value) tools.push('proofread')
+  if (enableList.value) tools.push('list')
+  if (enableSparkle.value) tools.push('sparkle')
+  return tools
+})
+
+const enableWritingTools = computed(() => {
+  const enableToolsCount = [enableProofread, enableRewrite, enableList, enableSparkle].filter((v) => v.value).length
+  return enabled.value && enableToolsCount > 0
+})
+
 const { elements, start, stop } = useFocusedElements((el) => {
   if (shouldExcludeEditableElement(el)) return false
   if (el.tagName === 'TEXTAREA') return true

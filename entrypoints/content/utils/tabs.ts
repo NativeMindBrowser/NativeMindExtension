@@ -1,9 +1,7 @@
-import { TabContent, TabInfo } from '@/types/tab'
+import { TabInfo } from '@/types/tab'
 import { INVALID_URLS } from '@/utils/constants'
-import { parseDocument } from '@/utils/document-parser'
 import logger from '@/utils/logger'
 import { c2bRpc } from '@/utils/rpc'
-import { getTabStore } from '@/utils/tab-store'
 import { timeout } from '@/utils/timeout'
 
 const log = logger.child('tabs')
@@ -17,7 +15,7 @@ export async function getValidTabs(): Promise<TabInfo[]> {
 }
 
 export async function getTabInfo(tabId: number) {
-  const tabInfo = await c2bRpc.getTabInfo({ tabId })
+  const tabInfo = await c2bRpc.getTabInfoByTabId(tabId)
   return tabInfo
 }
 
@@ -30,19 +28,5 @@ export async function getDocumentContentOfTabs(tabIds: number[]) {
 }
 
 export async function getCurrentTabInfo(): Promise<TabInfo> {
-  const tabStore = await getTabStore()
-  const currentTabId = tabStore.currentTabId.value
-  return getTabInfo(currentTabId)
-}
-
-export async function getCurrentDocumentContent(): Promise<TabContent> {
-  const tabStore = await getTabStore()
-  const currentTabId = tabStore.currentTabId.value
-  return {
-    tabId: currentTabId,
-    title: document.title,
-    url: window.location.href,
-    faviconUrl: await getTabInfo(currentTabId).then((tab) => tab.faviconUrl),
-    textContent: (await parseDocument(document))?.textContent || '',
-  }
+  return c2bRpc.getTabInfo()
 }

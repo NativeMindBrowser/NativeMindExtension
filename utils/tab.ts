@@ -1,5 +1,6 @@
 import { Browser, browser } from 'wxt/browser'
 
+import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
 export function waitForTabLoaded(tabId: number, options: { timeout?: number, matchUrl?: (url: string) => boolean, errorIfTimeout?: boolean } = {}) {
@@ -140,5 +141,15 @@ export async function isTabValid(tabId: number) {
   catch (error) {
     logger.warn('Tab is not valid:', error)
     return false
+  }
+}
+
+export function tabToTabInfo(tab: Browser.tabs.Tab): TabInfo {
+  return {
+    tabId: tab.id ?? -1,
+    title: tab.title ?? '',
+    url: tab.url ?? '',
+    faviconUrl: tab.favIconUrl,
+    windowId: tab.windowId,
   }
 }

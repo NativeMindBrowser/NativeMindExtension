@@ -16,6 +16,7 @@
       >
         <Text size="small">
           <button
+            v-if="props.tools.includes('rewrite')"
             class="bg-white border-0 cursor-pointer hover:bg-[#E4E4E7] h-7 flex items-center px-2 gap-[6px]"
             :class="{'opacity-50': !writingToolSelectedText}"
             @click.stop="onAction('rewrite')"
@@ -24,6 +25,7 @@
             {{ t('writing_tools.rewrite') }}
           </button>
           <button
+            v-if="props.tools.includes('proofread')"
             class="bg-white border-0 cursor-pointer hover:bg-[#E4E4E7] h-7 flex items-center px-2 gap-[6px]"
             :class="{'opacity-50': !writingToolSelectedText}"
             @click.stop="onAction('proofread')"
@@ -32,6 +34,7 @@
             {{ t('writing_tools.proofread') }}
           </button>
           <button
+            v-if="props.tools.includes('list')"
             class="bg-white border-0 cursor-pointer hover:bg-[#E4E4E7] h-7 flex items-center px-2 gap-[6px]"
             :class="{'opacity-50': !writingToolSelectedText}"
             @click.stop="onAction('list')"
@@ -40,6 +43,7 @@
             {{ t('writing_tools.list') }}
           </button>
           <button
+            v-if="props.tools.includes('sparkle')"
             class="bg-white border-0 cursor-pointer hover:bg-[#E4E4E7] h-7 flex items-center px-2 gap-[6px]"
             :class="{'opacity-50': !writingToolSelectedText}"
             @click.stop="onAction('sparkle')"
@@ -97,6 +101,7 @@ import { WritingToolType } from './types'
 
 const props = defineProps<{
   editableElement: HTMLElement
+  tools: WritingToolType[]
 }>()
 
 const { t } = useI18n()

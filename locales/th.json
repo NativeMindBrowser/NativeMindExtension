@@ -104,12 +104,20 @@
       "re_scan": "สแกนอีกครั้ง",
       "server_address": "ที่อยู่เซิร์ฟเวอร์",
       "setup": "ตั้งค่า",
-      "unconnected": "ยังไม่ได้เชื่อมต่อ"
+      "unconnected": "ยังไม่ได้เชื่อมต่อ",
+      "context_window_size": "ขนาดหน้าต่างบริบทแบบกำหนดเอง",
+      "context_window_size_desc": "ป้อนขนาดหน้าต่างบริบทแบบกำหนดเองเป็นโทเค็น (ขั้นต่ำ: 512)",
+      "server_address_desc": "จุดปลายทาง API ของเซิร์ฟเวอร์ Ollama",
+      "context_window_size_error": "ขนาดหน้าต่างบริบทต้องมีอย่างน้อย {min} โทเค็น",
+      "unload": "ขนถ่าย",
+      "expires_in": "หมดอายุใน {duration}",
+      "running": "กำลังทำงาน",
+      "running_models": "การรันโมเดล"
     },
     "prompts": {
       "chat_system_prompt": "ระบบแชท",
       "title": "แจ้ง",
-      "translation_system_prompt": "พรอมต์ระบบแปล"
+      "translation_system_prompt": "พรอมต์ระบบการแปล"
     },
     "provider": {
       "title": "การเชื่อมต่อ"
@@ -131,12 +139,32 @@
     },
     "test": "ทดสอบ",
     "translation": {
-      "title": "ภาษาแปล"
+      "title": "ภาษาแปล",
+      "description": "กำหนดค่าฟังก์ชันการแปลและภาษาเป้าหมาย",
+      "basic_config": {
+        "target_language": "ภาษาเป้าหมาย",
+        "target_language_desc": "เลือกภาษาเป้าหมายสำหรับการแปล",
+        "title": "การกำหนดค่าพื้นฐาน",
+        "translation_model": "โมเดลการแปล",
+        "translation_model_desc": "เลือกโมเดล AI สำหรับงานแปลภาษา",
+        "translation_system_prompt": "พรอมต์ระบบการแปล",
+        "translation_system_prompt_desc": "กำหนดพฤติกรรมของ AI และรูปแบบผลลัพธ์ระหว่างการแปล",
+        "translation_system_prompt_error": "ข้อความแจ้งระบบต้องมี {'{{LANGUAGE}}'}"
+      }
     },
     "webllm-desc": "คุณกำลังใช้ WebLLM: qwen3:0.6b สำหรับการทดลองใช้งานอย่างรวดเร็ว สำหรับการรองรับโมเดลแบบเต็มและประสิทธิภาพที่ดีกว่า กรุณาติดตั้ง Ollama",
     "general": {
       "system_language": "ภาษาระบบ",
-      "title": "ทั่วไป"
+      "title": "ทั่วไป",
+      "description": "กำหนดค่าการตั้งค่าพื้นฐานและการเชื่อมต่อเซิร์ฟเวอร์",
+      "discover_more_models": "ค้นพบโมเดลเพิ่มเติม",
+      "refresh_status": "รีเฟรชสถานะ",
+      "unload_model_confirm": "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการโหลดโมเดล \"{model}\"?",
+      "running_models": {
+        "vram": "{size} VRAM",
+        "params": "{size} พารามิเตอร์",
+        "quant": "{level} ควอนต์"
+      }
     },
     "title": "การตั้งค่า",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "หากต้องการใช้โหมดท้องถิ่น คุณจำเป็นต้องดาวน์โหลดโมเดล {model} ({size}) คุณต้องการดาวน์โหลดตอนนี้หรือไม่?"
     },
     "writing_tools": {
-      "title": "เครื่องมือการเขียน"
+      "title": "เครื่องมือการเขียน",
+      "basic_config": {
+        "enable": "เปิดใช้งานเครื่องมือการเขียน",
+        "enable_desc": "แสดงตัวเลือกความช่วยเหลือในการเขียนเมื่อเลือกข้อความ",
+        "title": "การตั้งค่าพื้นฐาน"
+      },
+      "description": "กำหนดค่าคุณสมบัติช่วยเหลือการเขียนต่างๆ",
+      "tool_config": {
+        "at_least_one_tool_error": "ต้องเลือกเครื่องมือเขียนอย่างน้อยหนึ่งรายการ",
+        "list": {
+          "description": "แปลงเนื้อหาให้เป็นรายการที่ชัดเจนและเป็นระเบียบ",
+          "title": "รายการ"
+        },
+        "proofread": {
+          "description": "ตรวจสอบข้อผิดพลาดด้านไวยากรณ์ การสะกดคำ และเครื่องหมายวรรคตอน",
+          "title": "พิสูจน์อักษร"
+        },
+        "rewrite": {
+          "description": "ปรับปรุงความชัดเจนและการไหลเวียนของข้อความ",
+          "title": "เขียนใหม่"
+        },
+        "sparkle": {
+          "description": "เพิ่มอีโมจิและองค์ประกอบทางภาพ",
+          "title": "ตกแต่ง"
+        },
+        "title": "การกำหนดค่าเครื่องมือ"
+      }
+    },
+    "chat": {
+      "title": "แชท",
+      "description": "กำหนดค่าฟังก์ชันการแชทและการดำเนินการด่วน",
+      "basic_config": {
+        "title": "การกำหนดค่าพื้นฐาน",
+        "chat_model": "โมเดลแชท",
+        "chat_model_description": "เลือกโมเดล AI สำหรับการสนทนาแชท",
+        "chat_system_prompt": "ระบบแชทพร้อมท์",
+        "chat_system_prompt_description": "กำหนดพฤติกรรมและบทบาทของ AI ในระหว่างการสนทนาแชท"
+      },
+      "quick_actions": {
+        "title": "การดำเนินการด่วน",
+        "reset_to_default": "รีเซ็ตเป็นค่าเริ่มต้น",
+        "reset_to_default_confirm": "คุณแน่ใจหรือไม่ว่าต้องการรีเซ็ต Quick Actions กลับเป็นค่าเริ่มต้น?"
+      }
+    },
+    "common": {
+      "saved": "บันทึกแล้ว"
+    },
+    "interface": {
+      "title": "อินเทอร์เฟซ",
+      "interface_language": "ภาษาของอินเทอร์เฟซ",
+      "interface_language_desc": "เลือกภาษาที่แสดงสำหรับส่วนติดต่อผู้ใช้ NativeMind"
+    },
+    "header": {
+      "starts_on_github": "Stars on GitHub",
+      "goto_website": "ไปที่เว็บไซต์"
     }
   },
   "context_menu": {
@@ -181,7 +263,16 @@
     "webllm_not_supported": "WebLLM ไม่รองรับบนอุปกรณ์ของคุณ"
   },
   "common": {
-    "cancel": "ยกเลิก"
+    "cancel": "ยกเลิก",
+    "duration": {
+      "days": "{day} วัน | {day} วัน",
+      "seconds": "{second} วินาที | {second} วินาที",
+      "minutes": "{minute} นาที | {minute} นาที",
+      "hours": "{hour} ชั่วโมง | {hour} ชั่วโมง",
+      "years": "{year} ปี | {year} ปี",
+      "months": "{month} เดือน | {month} เดือน"
+    },
+    "confirm": "ยืนยัน"
   },
   "ollama": {
     "sites": {

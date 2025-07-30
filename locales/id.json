@@ -104,12 +104,20 @@
       "re_scan": "Pindai ulang",
       "server_address": "Alamat server",
       "setup": "Pengaturan",
-      "unconnected": "Tidak terhubung"
+      "unconnected": "Tidak terhubung",
+      "context_window_size": "Ukuran jendela konteks kustom",
+      "context_window_size_desc": "Masukkan ukuran jendela konteks kustom dalam token (minimum: 512)",
+      "server_address_desc": "Endpoint API server Ollama",
+      "context_window_size_error": "Ukuran jendela konteks harus minimal {min} token",
+      "unload": "Bongkar",
+      "expires_in": "Berakhir dalam {duration}",
+      "running": "Berjalan",
+      "running_models": "Menjalankan Model"
     },
     "prompts": {
       "chat_system_prompt": "Prompt sistem obrolan",
       "title": "Prompt",
-      "translation_system_prompt": "Prompt sistem penerjemah"
+      "translation_system_prompt": "Prompt sistem terjemahan"
     },
     "provider": {
       "title": "Koneksi"
@@ -131,12 +139,32 @@
     },
     "test": "Tes",
     "translation": {
-      "title": "Bahasa terjemahan"
+      "title": "Bahasa terjemahan",
+      "description": "Konfigurasi fungsionalitas terjemahan dan bahasa target",
+      "basic_config": {
+        "target_language": "Bahasa target",
+        "target_language_desc": "Pilih bahasa target untuk terjemahan",
+        "title": "Konfigurasi Dasar",
+        "translation_model": "Model terjemahan",
+        "translation_model_desc": "Pilih model AI untuk tugas terjemahan",
+        "translation_system_prompt": "Prompt sistem terjemahan",
+        "translation_system_prompt_desc": "Tentukan perilaku AI dan format output selama penerjemahan",
+        "translation_system_prompt_error": "Perintah sistem harus mengandung {'{{LANGUAGE}}'}"
+      }
     },
     "webllm-desc": "Anda sekarang menggunakan WebLLM: qwen3:0.6b untuk percobaan cepat. Untuk dukungan model lengkap dan performa yang lebih baik, silakan instal Ollama.",
     "general": {
       "system_language": "Bahasa sistem",
-      "title": "Umum"
+      "title": "Umum",
+      "description": "Konfigurasi pengaturan dasar dan koneksi server",
+      "discover_more_models": "Temukan Lebih Banyak Model",
+      "refresh_status": "Segarkan Status",
+      "unload_model_confirm": "Apakah Anda yakin ingin membongkar model \"{model}\"?",
+      "running_models": {
+        "vram": "{size} VRAM",
+        "params": "{size} parameter",
+        "quant": "{level} kuant"
+      }
     },
     "title": "Pengaturan",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "Untuk menggunakan mode Lokal, Anda perlu mengunduh model {model} ({size}). Apakah Anda ingin mengunduhnya sekarang?"
     },
     "writing_tools": {
-      "title": "Alat Tulis"
+      "title": "Alat Tulis",
+      "basic_config": {
+        "enable": "Aktifkan Alat Tulis",
+        "enable_desc": "Tampilkan opsi bantuan penulisan saat teks dipilih",
+        "title": "Pengaturan Dasar"
+      },
+      "description": "Konfigurasikan berbagai fitur bantuan penulisan",
+      "tool_config": {
+        "at_least_one_tool_error": "Setidaknya satu alat tulis harus dipilih.",
+        "list": {
+          "description": "Ubah konten menjadi daftar yang jelas dan terorganisir",
+          "title": "Daftar"
+        },
+        "proofread": {
+          "description": "Periksa kesalahan tata bahasa, ejaan dan tanda baca",
+          "title": "Koreksi"
+        },
+        "rewrite": {
+          "description": "Tingkatkan kejelasan dan alur teks",
+          "title": "Tulis ulang"
+        },
+        "sparkle": {
+          "description": "Tambahkan emoji dan elemen visual",
+          "title": "Percantik"
+        },
+        "title": "Konfigurasi Alat"
+      }
+    },
+    "chat": {
+      "title": "Obrolan",
+      "description": "Konfigurasi fungsionalitas chat dan tindakan cepat",
+      "basic_config": {
+        "title": "Konfigurasi Dasar",
+        "chat_model": "Model chat",
+        "chat_model_description": "Pilih model AI untuk percakapan chat",
+        "chat_system_prompt": "Sistem Prompt Obrolan",
+        "chat_system_prompt_description": "Tentukan perilaku dan peran AI selama percakapan chat"
+      },
+      "quick_actions": {
+        "title": "Tindakan Cepat",
+        "reset_to_default": "Atur Ulang ke Default",
+        "reset_to_default_confirm": "Apakah Anda yakin ingin mengatur ulang Tindakan Cepat ke nilai default?"
+      }
+    },
+    "common": {
+      "saved": "Tersimpan"
+    },
+    "interface": {
+      "title": "Antarmuka",
+      "interface_language": "Bahasa Antarmuka",
+      "interface_language_desc": "Pilih bahasa tampilan untuk antarmuka NativeMind"
+    },
+    "header": {
+      "starts_on_github": "Stars on GitHub",
+      "goto_website": "Kunjungi Situs Web"
     }
   },
   "context_menu": {
@@ -181,7 +263,16 @@
     "webllm_not_supported": "WebLLM tidak didukung pada perangkat Anda."
   },
   "common": {
-    "cancel": "Batal"
+    "cancel": "Batal",
+    "duration": {
+      "days": "{day} hari | {day} hari",
+      "seconds": "{second} detik | {second} detik",
+      "minutes": "{minute} menit | {minute} menit",
+      "hours": "{hour} jam | {hour} jam",
+      "years": "{year} tahun | {year} tahun",
+      "months": "{month} bulan | {month} bulan"
+    },
+    "confirm": "Konfirmasi"
   },
   "ollama": {
     "sites": {

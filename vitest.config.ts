@@ -19,4 +19,9 @@ export default defineConfig({
       '**/tests/playwright/**',
     ],
   },
+  define: {
+    APP_METADATA: {
+      entrypoint: 'background',
+    },
+  },
 })

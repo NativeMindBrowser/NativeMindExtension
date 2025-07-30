@@ -26,7 +26,7 @@ export function uint8ArrayToDataURL(uint8: Uint8Array, mimeType: string) {
   return `data:${mimeType};base64,${base64}`
 }
 
-export function fileToDataURL(file: File): Promise<string> {
+export function fileToDataURL(file: File | Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = () => {

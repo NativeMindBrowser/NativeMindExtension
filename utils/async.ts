@@ -12,7 +12,7 @@ export async function waitForIdle() {
 }
 
 export function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+  return new Promise<void>((resolve) => setTimeout(resolve, ms))
 }
 
 type IterValue<T> = { value: T, done: false, error?: unknown } | { value: undefined, done: true, error?: unknown }

@@ -1,7 +1,10 @@
 <template>
   <div
-    class="relative focus-within:shadow-[0px_0px_0px_1px_#24B960] rounded-[6px] shadow-[0px_0px_0px_1px_rgba(0,0,0,0.08),0px_1px_2px_0px_rgba(0,0,0,0.12)]"
-    :class="classNames('overflow-hidden', props.outerClass)"
+    :class="classNames(
+      'overflow-hidden relative focus-within:shadow-[0px_0px_0px_1px_#24B960] rounded-[6px] shadow-[0px_0px_0px_1px_rgba(0,0,0,0.08),0px_1px_2px_0px_rgba(0,0,0,0.12)]',
+      props.error ? 'shadow-[0px_0px_0px_3px_#E11D4826,0px_0px_0px_1px_#E11D48] focus-within:shadow-[0px_0px_0px_3px_#E11D4826,0px_0px_0px_1px_#E11D48]' : '',
+      props.outerClass,
+    )"
   >
     <textarea
       ref="textareaRef"
@@ -51,6 +54,7 @@ const props = withDefaults(defineProps<{
   minHeight?: number
   maxHeight?: number
   maxLength?: number
+  error?: boolean
 }>(), {
   minHeight: 80,
   maxHeight: 300,

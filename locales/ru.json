@@ -104,12 +104,20 @@
       "re_scan": "Повторное сканирование",
       "server_address": "Адрес сервера",
       "setup": "Настройка",
-      "unconnected": "Не подключено"
+      "unconnected": "Не подключено",
+      "context_window_size": "Пользовательский размер окна контекста",
+      "context_window_size_desc": "Введите пользовательский размер окна контекста в токенах (минимум: 512)",
+      "server_address_desc": "Конечная точка API сервера Ollama",
+      "context_window_size_error": "Размер окна контекста должен быть не менее {min} токенов",
+      "unload": "Выгрузить",
+      "expires_in": "Истекает через {duration}",
+      "running": "Выполняется",
+      "running_models": "Запуск моделей"
     },
     "prompts": {
       "chat_system_prompt": "Системная подсказка для чата",
       "title": "Подсказки",
-      "translation_system_prompt": "Системная подсказка для перевода"
+      "translation_system_prompt": "Системный промпт для перевода"
     },
     "provider": {
       "title": "Соединение"
@@ -131,12 +139,32 @@
     },
     "test": "Тест",
     "translation": {
-      "title": "Язык перевода"
+      "title": "Язык перевода",
+      "description": "Настройте функциональность перевода и целевые языки",
+      "basic_config": {
+        "target_language": "Целевой язык",
+        "target_language_desc": "Выберите целевой язык для перевода",
+        "title": "Базовая конфигурация",
+        "translation_model": "Модель перевода",
+        "translation_model_desc": "Выберите модель ИИ для задач перевода",
+        "translation_system_prompt": "Системный промпт для перевода",
+        "translation_system_prompt_desc": "Определите поведение ИИ и формат вывода во время перевода",
+        "translation_system_prompt_error": "системная подсказка должна содержать {'{{LANGUAGE}}'}"
+      }
     },
     "webllm-desc": "Вы сейчас используете WebLLM: qwen3:0.6b для быстрого ознакомления. Для полной поддержки модели и лучшей производительности, пожалуйста, установите Ollama.",
     "general": {
       "system_language": "Язык системы",
-      "title": "Общие"
+      "title": "Общие",
+      "description": "Настройте основные параметры и подключение к серверу",
+      "discover_more_models": "Откройте для себя больше моделей",
+      "refresh_status": "Обновить статус",
+      "unload_model_confirm": "Вы уверены, что хотите выгрузить модель \"{model}\"?",
+      "running_models": {
+        "vram": "{size} видеопамяти",
+        "params": "{size} параметров",
+        "quant": "{level} квант"
+      }
     },
     "title": "Настройки",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "Для использования локального режима необходимо загрузить модель {model} ({size}). Хотите загрузить её сейчас?"
     },
     "writing_tools": {
-      "title": "Инструменты для письма"
+      "title": "Инструменты для письма",
+      "basic_config": {
+        "enable": "Включить инструменты письма",
+        "enable_desc": "Показывать параметры помощи в написании при выделении текста",
+        "title": "Основные настройки"
+      },
+      "description": "Настройте различные функции помощи в написании",
+      "tool_config": {
+        "at_least_one_tool_error": "Должен быть выбран хотя бы один инструмент для письма.",
+        "list": {
+          "description": "Преобразуйте контент в четкие, организованные списки",
+          "title": "Список"
+        },
+        "proofread": {
+          "description": "Проверить грамматические, орфографические и пунктуационные ошибки",
+          "title": "Корректировать"
+        },
+        "rewrite": {
+          "description": "Улучшить ясность и плавность текста",
+          "title": "Переписать"
+        },
+        "sparkle": {
+          "description": "Добавьте эмодзи и визуальные элементы",
+          "title": "Украшение"
+        },
+        "title": "Конфигурация инструмента"
+      }
+    },
+    "chat": {
+      "title": "Чат",
+      "description": "Настройте функциональность чата и быстрые действия",
+      "basic_config": {
+        "title": "Базовая конфигурация",
+        "chat_model": "Модель чата",
+        "chat_model_description": "Выберите модель ИИ для чат-разговоров",
+        "chat_system_prompt": "Системная подсказка чата",
+        "chat_system_prompt_description": "Определите поведение и роль ИИ во время чат-разговоров"
+      },
+      "quick_actions": {
+        "title": "Быстрые действия",
+        "reset_to_default": "Сбросить к настройкам по умолчанию",
+        "reset_to_default_confirm": "Вы уверены, что хотите сбросить быстрые действия к значениям по умолчанию?"
+      }
+    },
+    "common": {
+      "saved": "Сохранено"
+    },
+    "interface": {
+      "title": "Интерфейс",
+      "interface_language": "Язык интерфейса",
+      "interface_language_desc": "Выберите язык отображения для интерфейса NativeMind"
+    },
+    "header": {
+      "starts_on_github": "Stars on GitHub",
+      "goto_website": "Перейти на сайт"
     }
   },
   "context_menu": {
@@ -181,7 +263,16 @@
     "webllm_not_supported": "WebLLM не поддерживается на вашем устройстве."
   },
   "common": {
-    "cancel": "Отменить"
+    "cancel": "Отменить",
+    "duration": {
+      "days": "{day} день | {day} дня | {day} дней",
+      "seconds": "{second} секунда | {second} секунды | {second} секунд",
+      "minutes": "{minute} минута | {minute} минуты",
+      "hours": "{hour} час | {hour} часа | {hour} часов",
+      "years": "{year} год | {year} лет",
+      "months": "{month} месяц | {month} месяца | {month} месяцев"
+    },
+    "confirm": "Подтвердить"
   },
   "ollama": {
     "sites": {
@@ -196,10 +287,10 @@
   "writing_tools": {
     "processing": "Обработка...",
     "rewrite_suggestion": "Предложение по переписыванию",
-    "sparkle_text": "Улучшение текста",
+    "sparkle_text": "Украшение текста",
     "key_points": "Ключевые моменты",
     "grammar_and_style": "Грамматика и стиль",
-    "proofread": "Вычитать",
+    "proofread": "Корректировать",
     "list": "Список",
     "sparkle": "Украшение",
     "rewrite": "Переписать",

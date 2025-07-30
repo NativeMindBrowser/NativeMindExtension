@@ -9,6 +9,7 @@ interface FakeBrowserOptions {
     availableCapacity: number
     usage: number
   }
+  fakeAcceptedLanguages?: string[]
 }
 
 export function resetFakeBrowser(options: FakeBrowserOptions = {}) {
@@ -24,13 +25,14 @@ export function resetFakeBrowser(options: FakeBrowserOptions = {}) {
       getInfo: () => fakeSystemMemory,
     },
   }
+  // @ts-expect-error - for test env
+  browser.i18n = {
+    getAcceptLanguages: () => options.fakeAcceptedLanguages ?? ['en'],
+  }
 }
 
-export function resetFakeEntrypoint(entrypoint?: string) {
-  if (entrypoint === undefined) {
-    vi.stubEnv('ENTRYPOINT', undefined)
-  }
-  else {
-    vi.stubEnv('ENTRYPOINT', entrypoint)
-  }
+export function resetFakeEntrypoint(entrypoint?: AppMetadata['entrypoint']) {
+  vi.stubGlobal('APP_METADATA', {
+    entrypoint: entrypoint ?? 'background',
+  })
 }

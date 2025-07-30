@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center">
-    <div class="bg-[#FAFAFA] flex gap-2 border border-[#E4E4E7] h-5 items-center px-2 rounded-md">
+    <div class="bg-[#FAFAFA] flex gap-[5px] border border-[#E4E4E7] h-5 items-center px-[6px] rounded-md">
       <div
         class="w-2 h-2 rounded-xs border"
         :class="{

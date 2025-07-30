@@ -1,4 +1,4 @@
-import { AutoTokenizer, PreTrainedTokenizer, ProgressInfo } from '@huggingface/transformers'
+import type { PreTrainedTokenizer, ProgressInfo } from '@huggingface/transformers'
 import type { InitProgressReport, MLCEngineInterface, ModelRecord } from '@mlc-ai/web-llm'
 
 import logger from '@/utils/logger'
@@ -80,6 +80,7 @@ export async function createTokenizer(model: WebLLMSupportedModel, onProgress?: 
     throw new UnknownError(`Model ${model} not found in supported models.`)
   }
   const modelId = new URL(modelInfo.model).pathname.slice(1)
+  const { AutoTokenizer } = await import('@huggingface/transformers')
   const tokenizer = await AutoTokenizer.from_pretrained(modelId, {
     progress_callback: (progress) => {
       onProgress?.(progress)

@@ -102,20 +102,20 @@ import IconRewrite from '@/assets/icons/writing-tools-rewrite.svg?component'
 import IconSparkle from '@/assets/icons/writing-tools-sparkle.svg?component'
 import ExhaustiveError from '@/components/ExhaustiveError.vue'
 import Loading from '@/components/Loading.vue'
+import MarkdownViewer from '@/components/MarkdownViewer.vue'
 import Button from '@/components/ui/Button.vue'
 import Divider from '@/components/ui/Divider.vue'
 import Text from '@/components/ui/Text.vue'
 import { useToast } from '@/composables/useToast'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
+import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { writingToolList, writingToolProofread, writingToolRewrite, writingToolSparkle } from '@/utils/prompts'
 import { Prompt } from '@/utils/prompts/helpers'
+import { showSettings } from '@/utils/settings'
 import { getUserConfig } from '@/utils/user-config'
 
-import { useOllamaStatusStore } from '../../store'
 import { streamTextInBackground } from '../../utils/llm'
-import { showSettings } from '../../utils/settings'
-import MarkdownViewer from '../MarkdownViewer.vue'
 import { WritingToolType } from './types'
 
 const log = logger.child('WritingTools/SuggestionCard')
@@ -155,13 +155,13 @@ async function checkOllamaStatus() {
   if (userConfig.llm.endpointType.get() !== 'ollama') return true
   if (!(await ollamaStatusStore.updateConnectionStatus())) {
     toast(t('errors.model_request_error'), { duration: 2000 })
-    showSettings(true, { scrollTarget: 'server-address-section' })
+    showSettings({ scrollTarget: 'server-address-section' })
     emit('close')
     return false
   }
   else if ((await ollamaStatusStore.updateModelList()).length === 0) {
     toast(t('errors.model_not_found'), { duration: 2000 })
-    showSettings(true, { scrollTarget: 'model-download-section' })
+    showSettings({ scrollTarget: 'model-download-section' })
     emit('close')
     return false
   }

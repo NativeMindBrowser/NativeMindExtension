@@ -24,9 +24,6 @@ jobs:
       contents: write
       pull-requests: write
 
-    outputs:
-      new_version: ${{ steps.get-version.outputs.version }}
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,6 +58,4 @@ jobs:
         id: get-version
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Released version: $VERSION" >> $GITHUB_STEP_SUMMARY
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV

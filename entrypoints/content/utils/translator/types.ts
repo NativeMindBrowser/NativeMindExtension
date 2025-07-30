@@ -42,6 +42,7 @@ export type TranslatorStyleConfig = {
 }
 
 export type TranslatorEnv = {
+  translationModel?: string
   translationEnable?: boolean
   targetLocale: LanguageCode
 } & TranslatorStyleConfig

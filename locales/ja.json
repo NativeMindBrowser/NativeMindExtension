@@ -104,7 +104,15 @@
       "re_scan": "再スキャン",
       "server_address": "サーバーアドレス",
       "setup": "セットアップ",
-      "unconnected": "未接続"
+      "unconnected": "未接続",
+      "context_window_size": "カスタムコンテキストウィンドウサイズ",
+      "context_window_size_desc": "カスタムコンテキストウィンドウサイズをトークン数で入力してください（最小値：512）",
+      "server_address_desc": "Ollama サーバー API エンドポイント",
+      "context_window_size_error": "コンテキストウィンドウサイズは最低{min}トークンである必要があります",
+      "unload": "アンロード",
+      "expires_in": "{duration}で期限切れ",
+      "running": "実行中",
+      "running_models": "モデルの実行"
     },
     "prompts": {
       "chat_system_prompt": "チャットシステムプロンプト",
@@ -131,12 +139,32 @@
     },
     "test": "テスト",
     "translation": {
-      "title": "翻訳言語"
+      "title": "翻訳言語",
+      "description": "翻訳機能と対象言語を設定する",
+      "basic_config": {
+        "target_language": "ターゲット言語",
+        "target_language_desc": "翻訳対象言語を選択してください",
+        "title": "基本設定",
+        "translation_model": "翻訳モデル",
+        "translation_model_desc": "翻訳タスク用のAIモデルを選択してください",
+        "translation_system_prompt": "翻訳システムプロンプト",
+        "translation_system_prompt_desc": "AIの動作と翻訳時の出力形式を定義する",
+        "translation_system_prompt_error": "システムプロンプトには「{{LANGUAGE}}」が含まれている必要があります"
+      }
     },
     "webllm-desc": "WebLLMを使用中：クイック試用のためqwen3:0.6bを使用しています。フルモデルサポートとより良いパフォーマンスのために、Ollamaをインストールしてください。",
     "general": {
       "system_language": "システム言語",
-      "title": "一般"
+      "title": "一般",
+      "description": "基本設定とサーバー接続を設定する",
+      "discover_more_models": "より多くのモデルを発見する",
+      "refresh_status": "ステータスを更新",
+      "unload_model_confirm": "モデル「{model}」をアンロードしてもよろしいですか？",
+      "running_models": {
+        "vram": "{size} VRAM",
+        "params": "{size}パラメータ",
+        "quant": "{level}クオント"
+      }
     },
     "title": "設定",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "ローカルモードを使用するには、{model}モデル（{size}）をダウンロードする必要があります。今すぐダウンロードしますか？"
     },
     "writing_tools": {
-      "title": "ライティングツール"
+      "title": "ライティングツール",
+      "basic_config": {
+        "enable": "ライティングツールを有効にする",
+        "enable_desc": "テキストが選択されたときに文章作成支援オプションを表示する",
+        "title": "基本設定"
+      },
+      "description": "様々な文章作成支援機能を設定する",
+      "tool_config": {
+        "at_least_one_tool_error": "少なくとも1つの筆記用具を選択する必要があります。",
+        "list": {
+          "description": "コンテンツを明確で整理されたリストに変換する",
+          "title": "リスト"
+        },
+        "proofread": {
+          "description": "文法、スペル、句読点の誤りをチェックする",
+          "title": "校正"
+        },
+        "rewrite": {
+          "description": "テキストの明瞭性と流れを改善する",
+          "title": "書き直す"
+        },
+        "sparkle": {
+          "description": "絵文字と視覚的要素を追加する",
+          "title": "美化"
+        },
+        "title": "ツール設定"
+      }
+    },
+    "chat": {
+      "title": "チャット",
+      "description": "チャット機能とクイックアクションを設定する",
+      "basic_config": {
+        "title": "基本設定",
+        "chat_model": "チャットモデル",
+        "chat_model_description": "チャット会話用のAIモデルを選択してください",
+        "chat_system_prompt": "チャットシステムプロンプト",
+        "chat_system_prompt_description": "チャット会話中のAIの行動と役割を定義する"
+      },
+      "quick_actions": {
+        "title": "クイックアクション",
+        "reset_to_default": "デフォルトにリセット",
+        "reset_to_default_confirm": "クイックアクションをデフォルト値にリセットしてもよろしいですか？"
+      }
+    },
+    "common": {
+      "saved": "保存されました"
+    },
+    "interface": {
+      "title": "インターフェース",
+      "interface_language": "インターフェース言語",
+      "interface_language_desc": "NativeMindインターフェースの表示言語を選択してください"
+    },
+    "header": {
+      "starts_on_github": "Stars on GitHub",
+      "goto_website": "ウェブサイトに移動"
     }
   },
   "context_menu": {
@@ -181,7 +263,16 @@
     "webllm_not_supported": "WebLLMはお使いのデバイスではサポートされていません。"
   },
   "common": {
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "duration": {
+      "days": "{day}日 | {day}日",
+      "seconds": "{second}秒",
+      "minutes": "{minute}分 | {minute}分",
+      "hours": "{hour}時間",
+      "years": "{year}年 | {year}年",
+      "months": "{month}ヶ月 | {month}ヶ月"
+    },
+    "confirm": "確認"
   },
   "ollama": {
     "sites": {

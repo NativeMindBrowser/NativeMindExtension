@@ -7,14 +7,14 @@
       v-if="keepAlive || modelValue"
       v-show="modelValue"
       data-nativemind-modal
-      :class="classNames('absolute inset-0', props.class)"
+      :class="classNames('absolute inset-0 overflow-hidden', props.class)"
       :style="{ zIndex, pointerEvents: passThroughMask ? 'none' : 'auto' }"
     >
       <slot name="mask">
         <div
           v-if="!noMask"
-          class="mask absolute inset-0 bg-[#0000008b]"
-          :class="[maskClass, fadeInOpacityAnimation]"
+          class="mask absolute inset-0"
+          :class="classNames('bg-[#0000008b]', maskClass, fadeInOpacityAnimation)"
         />
       </slot>
       <div
@@ -23,7 +23,6 @@
       >
         <div
           class="w-full h-full absolute top-0 left-0 right-0"
-          :style="{height: containerBounding.height.value + 'px'}"
           @click="closeByMask && onClose()"
         />
         <div class="inline-block h-full w-0 align-middle" />
@@ -59,10 +58,8 @@
 </template>
 
 <script lang="ts">
-import { useElementBounding } from '@vueuse/core'
 import { computed, reactive, ref, watch } from 'vue'
 
-import { useInjectContext } from '@/composables/useInjectContext'
 import { classNames, ComponentClassAttr } from '@/utils/vue/utils'
 
 const modalStack: { close(): void, canCloseByEsc(): boolean }[] = reactive([])
@@ -125,11 +122,8 @@ const props = withDefaults(
   },
 )
 
-const injectedMountPoint = useInjectContext('sideContainerEl').inject()
-
-const mountPoint = computed(() => props.mountPoint ?? injectedMountPoint?.value)
+const mountPoint = computed(() => props.mountPoint ?? document.body)
 const containerRef = ref<HTMLElement | null>(null)
-const containerBounding = useElementBounding(containerRef)
 const { index: zIndex, floatTop } = useZIndex('common')
 
 const fadeInTransformAnimation = computed(() => {

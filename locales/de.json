@@ -104,12 +104,20 @@
       "re_scan": "Neu scan",
       "server_address": "Serveradresse",
       "setup": "Aufstellen",
-      "unconnected": "Nicht miteinander verbunden"
+      "unconnected": "Nicht miteinander verbunden",
+      "context_window_size": "Benutzerdefinierte Kontextfenstergröße",
+      "context_window_size_desc": "Geben Sie die benutzerdefinierte Kontextfenstergröße in Token ein (Minimum: 512)",
+      "server_address_desc": "Ollama-Server-API-Endpunkt",
+      "context_window_size_error": "Die Kontextfenstergröße muss mindestens {min} Token betragen",
+      "unload": "Entladen",
+      "running": "Läuft",
+      "expires_in": "Läuft ab in {duration}",
+      "running_models": "Modelle ausführen"
     },
     "prompts": {
       "chat_system_prompt": "Chat -System Eingabeaufforderung",
       "title": "Prompt",
-      "translation_system_prompt": "Übersetzungssystem Eingabeaufforderung"
+      "translation_system_prompt": "Übersetzungs-System-Prompt"
     },
     "provider": {
       "title": "Modellanbieter"
@@ -131,12 +139,32 @@
     },
     "test": "Prüfen",
     "translation": {
-      "title": "Übersetzungssprache auswählen"
+      "title": "Übersetzungssprache auswählen",
+      "description": "Übersetzungsfunktionalität und Zielsprachen konfigurieren",
+      "basic_config": {
+        "target_language": "Zielsprache",
+        "target_language_desc": "Wählen Sie die Zielsprache für die Übersetzung",
+        "title": "Grundkonfiguration",
+        "translation_model": "Übersetzungsmodell",
+        "translation_model_desc": "Wählen Sie das KI-Modell für Übersetzungsaufgaben aus",
+        "translation_system_prompt": "Übersetzungs-System-Prompt",
+        "translation_system_prompt_desc": "Definiere KI-Verhalten und Ausgabeformat während der Übersetzung",
+        "translation_system_prompt_error": "Systemaufforderung muss {'{{LANGUAGE}}'} enthalten"
+      }
     },
     "webllm-desc": "Verwenden Sie WebLLM für einen schnellen Test. \nFür volle Modellunterstützung und bessere Leistung installieren Sie bitte Ollama.",
     "general": {
       "system_language": "Systemsprache",
-      "title": "Allgemeine Einstellungen"
+      "title": "Allgemeine Einstellungen",
+      "description": "Grundeinstellungen und Serververbindung konfigurieren",
+      "discover_more_models": "Entdecken Sie weitere Modelle",
+      "refresh_status": "Status aktualisieren",
+      "unload_model_confirm": "Sind Sie sicher, dass Sie das Modell \"{model}\" entladen möchten?",
+      "running_models": {
+        "vram": "{size} VRAM",
+        "params": "{size} Parameter",
+        "quant": "{level} Quant"
+      }
     },
     "title": "Einstellungen",
     "model_downloader": {
@@ -153,7 +181,61 @@
       "description": "Um den lokalen Modus zu verwenden, müssen Sie das {model}-Modell ({size}) herunterladen. Möchten Sie es jetzt herunterladen?"
     },
     "writing_tools": {
-      "title": "Schreibwerkzeuge"
+      "title": "Schreibwerkzeuge",
+      "basic_config": {
+        "enable": "Schreibwerkzeuge aktivieren",
+        "enable_desc": "Schreibhilfe-Optionen anzeigen, wenn Text ausgewählt ist",
+        "title": "Grundeinstellungen"
+      },
+      "description": "Verschiedene Schreibhilfefunktionen konfigurieren",
+      "tool_config": {
+        "at_least_one_tool_error": "Mindestens ein Schreibwerkzeug muss ausgewählt werden.",
+        "list": {
+          "description": "Inhalte in klare, organisierte Listen umwandeln",
+          "title": "Liste"
+        },
+        "proofread": {
+          "description": "Überprüfe Grammatik-, Rechtschreib- und Zeichensetzungsfehler",
+          "title": "Korrekturlesen"
+        },
+        "rewrite": {
+          "description": "Textklarheit und Fluss verbessern",
+          "title": "Umschreiben"
+        },
+        "sparkle": {
+          "description": "Emojis und visuelle Elemente hinzufügen",
+          "title": "Verschönern"
+        },
+        "title": "Werkzeugkonfiguration"
+      }
+    },
+    "chat": {
+      "title": "Chat",
+      "description": "Chat-Funktionalität und Schnellaktionen konfigurieren",
+      "basic_config": {
+        "title": "Grundkonfiguration",
+        "chat_model": "Chat-Modell",
+        "chat_model_description": "Wählen Sie das KI-Modell für Chat-Unterhaltungen",
+        "chat_system_prompt": "Chat-System-Eingabeaufforderung",
+        "chat_system_prompt_description": "Definiere KI-Verhalten und -Rolle während Chat-Gesprächen"
+      },
+      "quick_actions": {
+        "title": "Schnellaktionen",
+        "reset_to_default": "Auf Standard zurücksetzen",
+        "reset_to_default_confirm": "Sind Sie sicher, dass Sie die Schnellaktionen auf die Standardwerte zurücksetzen möchten?"
+      }
+    },
+    "common": {
+      "saved": "Gespeichert"
+    },
+    "interface": {
+      "title": "Schnittstelle",
+      "interface_language": "Schnittstellensprache",
+      "interface_language_desc": "Wählen Sie die Anzeigesprache für die NativeMind-Benutzeroberfläche"
+    },
+    "header": {
+      "starts_on_github": "Sterne auf GitHub",
+      "goto_website": "Gehen Sie zur Website"
     }
   },
   "context_menu": {
@@ -202,7 +284,16 @@
     "reset_to_default": "Auf Standard zurücksetzen"
   },
   "common": {
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "duration": {
+      "days": "{day} Tag | {day} Tage",
+      "seconds": "{second} Sekunde | {second} Sekunden",
+      "minutes": "{minute} Minute | {minute} Minuten",
+      "hours": "{hour} Stunde | {hour} Stunden",
+      "years": "{year} Jahr | {year} Jahre",
+      "months": "{month} Monat | {month} Monate"
+    },
+    "confirm": "Bestätigen"
   },
   "ollama": {
     "sites": {

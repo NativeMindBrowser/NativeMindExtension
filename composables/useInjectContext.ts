@@ -1,7 +1,6 @@
-import { inject, provide, type Ref } from 'vue'
+import { inject, provide } from 'vue'
 
 type InjectContext = {
-  sideContainerEl: Ref<HTMLDivElement | null>
   rootElement: HTMLElement
   selectorScrollListenElement: HTMLElement[]
 }

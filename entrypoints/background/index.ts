@@ -3,90 +3,40 @@ import '@/utils/rpc'
 
 import { browser } from 'wxt/browser'
 import { defineBackground } from 'wxt/utils/define-background'
-import { storage } from 'wxt/utils/storage'
 
 import { INVALID_URLS } from '@/utils/constants'
-import { CONTEXT_MENU, CONTEXT_MENU_ITEM_TRANSLATE_PAGE, ContextMenuManager } from '@/utils/context-menu'
+import { CONTEXT_MENU, CONTEXT_MENU_ITEM_TRANSLATE_PAGE, ContextMenuId, ContextMenuManager } from '@/utils/context-menu'
 import { useGlobalI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
-import { bgBroadcastRpc } from '@/utils/rpc'
-import { isTabValid } from '@/utils/tab'
-import { getTabKeys } from '@/utils/tab-store'
+import { b2sRpc, bgBroadcastRpc } from '@/utils/rpc'
+import { registerTabStoreCleanupListener } from '@/utils/tab-store'
 import { translationCache } from '@/utils/translation-cache'
 import { registerDeclarativeNetRequestRule } from '@/utils/web-request'
 
 import { backgroundCacheService } from './cache-service'
+import { waitForSidepanelLoaded } from './utils'
 
 export default defineBackground(() => {
   if (import.meta.env.CHROME) {
     browser.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' })
   }
   registerDeclarativeNetRequestRule()
-
-  const tabsWaitingForOpen = new Set<number>()
+  registerTabStoreCleanupListener()
 
   browser.action.setTitle({ title: 'NativeMind' })
 
-  browser.action.onClicked.addListener(async (tab) => {
-    logger.info('onClicked', tab)
-    if (tab.id) {
-      const validTab = await isTabValid(tab.id)
-      if (validTab) {
-        tabsWaitingForOpen.delete(tab.id)
-        await bgBroadcastRpc.emit('toggleContainer', { _toTab: tab.id })
-      }
-      else {
-        tabsWaitingForOpen.add(tab.id)
-      }
-    }
-  })
-
-  const setPopupStatusBasedOnUrl = async (tabId: number, url: string) => {
-    if (INVALID_URLS.some((regex) => regex.test(url))) {
-      await browser.action.setPopup({ popup: 'popup.html' })
-    }
-    else {
-      if (tabsWaitingForOpen.has(tabId)) {
-        tabsWaitingForOpen.delete(tabId)
-        await bgBroadcastRpc.emit('toggleContainer', { _toTab: tabId, open: true })
-      }
-      await browser.action.setPopup({ popup: '' })
-    }
-  }
-
-  browser.tabs.onActivated.addListener(async ({ tabId }) => {
-    const { t } = await useGlobalI18n()
-    // reset the translate context menu to default
-    const contextMenuManager = await ContextMenuManager.getInstance()
-    contextMenuManager.updateContextMenu(CONTEXT_MENU_ITEM_TRANSLATE_PAGE.id, {
-      title: t(CONTEXT_MENU_ITEM_TRANSLATE_PAGE.titleKey),
-      contexts: CONTEXT_MENU_ITEM_TRANSLATE_PAGE.contexts,
-    })
-    const tab = await browser.tabs.get(tabId)
-    const url = tab.url
-    url && (await setPopupStatusBasedOnUrl(tabId, url))
-  })
+  browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
 
   browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
     logger.info('tab removed', { tabId, removeInfo, isFirefox: import.meta.env.FIREFOX })
-    tabsWaitingForOpen.delete(tabId)
     bgBroadcastRpc.emit('tabRemoved', {
       tabId,
       ...removeInfo,
     })
-    if (import.meta.env.FIREFOX) {
-      // Firefox does not support session storage in content scripts, so we need to clean up the tab store
-      const keys = getTabKeys(tabId)
-      logger.info('Cleaning up tab store for removed tab', { tabId, keys })
-      await storage.removeItems(keys)
-    }
   })
 
   browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     logger.info('tab updated', { tabId, changeInfo, tab })
-    if (tab.url) {
-      await setPopupStatusBasedOnUrl(tabId, tab.url)
-    }
 
     bgBroadcastRpc.emit('tabUpdated', {
       tabId,
@@ -148,10 +98,17 @@ export default defineBackground(() => {
   browser.contextMenus.onClicked.addListener(async (info, tab) => {
     logger.debug('context menu clicked', info, tab)
     if (tab?.id) {
-      bgBroadcastRpc.emit('contextMenuClicked', {
-        _toTab: tab?.id,
-        ...info,
-      })
+      if (typeof info.menuItemId === 'string' && (info.menuItemId as ContextMenuId).includes('quick-actions')) {
+        await browser.sidePanel.open({ windowId: tab.windowId })
+        await waitForSidepanelLoaded()
+        await b2sRpc.emit('contextMenuClicked', { ...info, menuItemId: info.menuItemId as ContextMenuId })
+      }
+      else {
+        bgBroadcastRpc.emit('contextMenuClicked', {
+          _toTab: tab?.id,
+          ...info,
+        })
+      }
     }
   })
 

@@ -6,8 +6,7 @@ import { OLLAMA_SITE_DOWNLOAD_BUTTON_CLASS } from '@/utils/constants'
 import { debounce } from '@/utils/debounce'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
-
-import { showSettings } from '../settings'
+import { showSettings } from '@/utils/settings'
 
 function shouldExcludeModel(modelName: string) {
   return modelName.toLowerCase().includes('embed')
@@ -56,7 +55,7 @@ function makeDownloadButton(modelName: string, text: string, additionalCss?: str
   downloadButton.addEventListener('click', async (ev) => {
     ev.stopImmediatePropagation()
     ev.preventDefault()
-    showSettings(true, {
+    showSettings({
       scrollTarget: 'model-download-section',
       downloadModel: modelName,
     })

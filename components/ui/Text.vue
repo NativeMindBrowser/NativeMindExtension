@@ -38,7 +38,7 @@ const colorClass = computed(() => {
 })
 
 const sizeMapping: Record<Size, string> = {
-  xs: 'text-xs',
+  xs: 'text-xs', // 12px
   small: 'text-[13px]',
   medium: 'text-[15px]',
   large: 'text-[17px]',
