@@ -74,6 +74,7 @@
     "events": "^3.3.0",
     "guesslanguage": "^0.2.0",
     "highlight.js": "^11.11.1",
+    "idb": "^8.0.3",
     "jimp": "^1.6.0",
     "katex": "^0.16.22",
     "lru-cache": "^11.1.0",

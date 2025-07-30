@@ -1,8 +1,7 @@
-import { LRUCache } from 'lru-cache'
-
 import { getLanguageName } from '@/utils/language/detect'
 import logger from '@/utils/logger'
 import { translateTextList } from '@/utils/prompts'
+import { translationCache } from '@/utils/translation-cache'
 import { getUserConfig } from '@/utils/user-config'
 
 import { streamObjectInBackground, streamTextInBackground } from '../llm'
@@ -86,8 +85,23 @@ export async function* translateParagraphs(
 
 export async function* translateOneParagraph(paragraph: string, targetLanguage: string, abortSignal: AbortSignal) {
   const userConfig = await getUserConfig()
+  const modelId = userConfig.llm.model.get() || 'unknown'
   const rawSystem = userConfig.translation.systemPrompt.get()
   const system = rawSystem.replace(/\{\{LANGUAGE\}\}/g, targetLanguage)
+
+  // Check cache first
+  const cachedTranslation = await translationCache.get({
+    sourceText: paragraph,
+    targetLanguage,
+    modelId,
+  })
+
+  if (cachedTranslation) {
+    logger.debug('[translateOneParagraph] Cache hit for single paragraph')
+    yield cachedTranslation
+    return
+  }
+
   const resp = streamTextInBackground({
     prompt: paragraph,
     system,
@@ -101,6 +115,17 @@ export async function* translateOneParagraph(paragraph: string, targetLanguage: 
       yield translated
     }
   }
+
+  // Store final translation in cache
+  if (translated && !abortSignal.aborted) {
+    translationCache.set({
+      sourceText: paragraph,
+      targetLanguage,
+      modelId,
+    }, translated).catch((error) => {
+      logger.error('Failed to store single paragraph translation in cache:', error)
+    })
+  }
 }
 
 interface TranslatorOptions {
@@ -109,16 +134,40 @@ interface TranslatorOptions {
 }
 
 export class Translator {
-  private cache = new LRUCache<string, string>({
-    max: 500,
-  })
-
   async* translate(options: TranslatorOptions) {
     const { textList, abortSignal } = options
     let translation: string[] = []
-    if (textList.every((text) => this.cache.has(text))) {
+
+    // Get current environment and user config for cache key generation
+    const env = await getTranslatorEnv()
+    const userConfig = await getUserConfig()
+    const targetLanguage = getLanguageName(env.targetLocale)
+    const modelId = userConfig.llm.model.get() || 'unknown'
+
+    // Check cache for all texts
+    const cacheResults = await Promise.all(
+      textList.map(async (text, idx) => {
+        // Check persistent cache (which includes internal memory layer)
+        const cachedResult = await translationCache.get({
+          sourceText: text,
+          targetLanguage: env.targetLocale,
+          modelId,
+        })
+
+        if (cachedResult) {
+          return { idx, text, translated: cachedResult, cached: true }
+        }
+
+        return { idx, text, translated: '', cached: false }
+      }),
+    )
+
+    // Check if all texts are cached
+    const allCached = cacheResults.every((result) => result.cached)
+
+    if (allCached) {
       logger.debug('[Translator] All texts cache matched')
-      translation = textList.map((text) => this.cache.get(text)!)
+      translation = cacheResults.map((result) => result.translated)
       for (let i = 0; i < textList.length; i++) {
         const translated = translation[i]
         yield {
@@ -130,17 +179,62 @@ export class Translator {
       }
     }
     else {
-      const env = await getTranslatorEnv()
-      const languageName = getLanguageName(env.targetLocale)
-      const iter = translateParagraphs(textList, languageName, abortSignal)
-      for await (const translatedPart of iter) {
-        if (translatedPart.done) {
-          this.cache.set(translatedPart.text, translatedPart.translated)
-          translation[translatedPart.idx] = translatedPart.translated
+      // Some texts need translation
+      const uncachedTexts = cacheResults
+        .filter((result) => !result.cached)
+        .map((result) => result.text)
+
+      if (uncachedTexts.length > 0) {
+        const iter = translateParagraphs(uncachedTexts, targetLanguage, abortSignal)
+
+        for await (const translatedPart of iter) {
+          if (translatedPart.done) {
+            const originalText = uncachedTexts[translatedPart.idx]
+            const translatedText = translatedPart.translated
+
+            // Store in persistent cache (which includes internal memory layer)
+            translationCache.set({
+              sourceText: originalText,
+              targetLanguage: env.targetLocale,
+              modelId,
+            }, translatedText).catch((error) => {
+              logger.error('Failed to store translation in persistent cache:', error)
+            })
+
+            // Find the original index in the full text list
+            const originalIdx = textList.findIndex((text) => text === originalText)
+            if (originalIdx !== -1) {
+              translation[originalIdx] = translatedText
+            }
+          }
+
+          // Yield the translated part with correct index mapping
+          const originalText = uncachedTexts[translatedPart.idx]
+          const originalIdx = textList.findIndex((text) => text === originalText)
+          if (originalIdx !== -1) {
+            yield {
+              idx: originalIdx,
+              text: originalText,
+              translated: translatedPart.translated,
+              done: translatedPart.done,
+            }
+          }
         }
-        yield translatedPart
+      }
+
+      // Yield cached results for texts that were already translated
+      for (const result of cacheResults) {
+        if (result.cached) {
+          yield {
+            idx: result.idx,
+            text: result.text,
+            translated: result.translated,
+            done: true,
+          }
+        }
       }
     }
+
     logger.table(
       textList.map((p, i) => {
         return {

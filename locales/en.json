@@ -56,6 +56,15 @@
     "provider_model": {
       "title": "Configure Ollama"
     },
+    "cache": {
+      "title": "Translation Cache",
+      "enable": "Enable Cache",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "max_size": "Max Size",
+      "retention_days": "Retention Period",
+      "days": "days"
+    },
     "advanced": {
       "title": "Advanced"
     },

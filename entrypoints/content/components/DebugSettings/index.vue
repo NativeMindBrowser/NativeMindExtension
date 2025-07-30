@@ -374,13 +374,108 @@
             </div>
           </div>
         </Block>
+        <Block
+          title="Cache"
+          class="gap-4"
+        >
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div>
+              <div class="flex gap-3 justify-start items-center">
+                Translation Cache
+              </div>
+            </div>
+            <div class="flex flex-col gap-3 justify-start items-start">
+              Enable
+              <Switch
+                v-model="enableTranslationCache"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-6 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[
+                  {
+                    label: 'Enable',
+                    key: true,
+                  },
+                  {
+                    label: 'Disable',
+                    key: false,
+                    activeThumbClass: 'bg-gray-200',
+                  }
+                ]"
+              />
+            </div>
+            <div class="flex flex-col gap-3 justify-start items-start">
+              <div class="flex gap-3 items-center">
+                <span class="text-xs">Retention Days</span>
+                <Input
+                  v-model.number="cacheRetentionDays"
+                  type="number"
+                  min="1"
+                  class="border-b border-gray-200 py-1 disabled:opacity-50 w-20"
+                />
+              </div>
+              <div class="flex gap-3 items-center">
+                <span class="text-xs">Enable Analytics</span>
+                <Switch
+                  v-model="cacheEnableAnalytics"
+                  slotClass="rounded-lg border-gray-200 border bg-white"
+                  itemClass="h-6 flex items-center justify-center text-xs px-2"
+                  thumbClass="bg-blue-500 rounded-md"
+                  activeItemClass="text-white"
+                  :items="[
+                    { label: 'Enable', key: true },
+                    { label: 'Disable', key: false, activeThumbClass: 'bg-gray-200' }
+                  ]"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div class="flex gap-3 justify-start items-center">
+              Cache Stats
+            </div>
+            <div class="flex flex-col gap-3 justify-start items-stretch">
+              <div class="flex flex-col gap-2">
+                <div>
+                  Total Entries
+                </div>
+                <div>
+                  {{ cacheStats?.totalEntries ?? 'N/A' }}
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <div>
+                  Total Size (MB)
+                </div>
+                <div>{{ cacheStats?.totalSizeMB.toFixed(2) ?? 'N/A' }}</div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <div>
+                  Model Namespaces
+                </div>
+                <div>{{ cacheStats?.modelNamespaces.join(', ') ?? 'N/A' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-3 items-center">
+            <span class="text-xs">Clear Cache</span>
+            <Button
+              variant="primary"
+              class="p-1 font-normal"
+              @click="handleClearCache"
+            >
+              Clear
+            </Button>
+          </div>
+        </Block>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="tsx">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import IconDelete from '@/assets/icons/delete.svg?component'
 import Input from '@/components/Input.vue'
@@ -395,6 +490,7 @@ import { SUPPORTED_MODELS, WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
 import { c2bRpc } from '@/utils/rpc'
 import { SettingsScrollTarget } from '@/utils/scroll-targets'
+import { CacheStats, translationCache } from '@/utils/translation-cache'
 import { getUserConfig } from '@/utils/user-config'
 
 import { pullOllamaModel } from '../../utils/llm'
@@ -422,6 +518,11 @@ const writingToolsListPrompt = userConfig.writingTools.list.systemPrompt.toRef()
 const writingToolsSparklePrompt = userConfig.writingTools.sparkle.systemPrompt.toRef()
 const endpointType = userConfig.llm.endpointType.toRef()
 const localeInConfig = userConfig.locale.current.toRef()
+// Translation Cache Part
+const enableTranslationCache = userConfig.translation.cache.enabled.toRef()
+const cacheRetentionDays = userConfig.translation.cache.retentionDays.toRef()
+const cacheEnableAnalytics = userConfig.translation.cache.enableAnalytics.toRef()
+
 const translationSystemPromptError = ref('')
 const newModelId = ref('')
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }[]>([])
@@ -432,6 +533,8 @@ const modelProviderOptions = [
   { id: 'ollama' as const, label: 'Ollama' },
   { id: 'web-llm' as const, label: 'Web LLM' },
 ]
+
+const cacheStats = ref<CacheStats>()
 
 const resetOnboarding = async () => {
   onboardingVersion.value = 0
@@ -497,6 +600,11 @@ const onPullModel = async () => {
   }
 }
 
+const handleClearCache = async () => {
+  await translationCache.clear()
+  cacheStats.value = await translationCache.getStats()
+}
+
 watch(translationSystemPrompt, (newValue) => {
   if (!/\{\{LANGUAGE\}\}/.test(newValue)) {
     translationSystemPromptError.value = 'system prompt must contain {{LANGUAGE}}'
@@ -505,4 +613,18 @@ watch(translationSystemPrompt, (newValue) => {
     translationSystemPromptError.value = ''
   }
 })
+
+// watch cache config changes and invoke update functions
+watch([enableTranslationCache, cacheRetentionDays, cacheEnableAnalytics], async () => {
+  await c2bRpc.cacheUpdateConfig()
+})
+
+watch(enableTranslationCache, async () => {
+  await translationCache.updateConfig()
+})
+
+onMounted(async () => {
+  cacheStats.value = await translationCache.getStats()
+})
+
 </script>

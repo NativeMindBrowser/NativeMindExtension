@@ -12,7 +12,10 @@ import logger from '@/utils/logger'
 import { bgBroadcastRpc } from '@/utils/rpc'
 import { isTabValid } from '@/utils/tab'
 import { getTabKeys } from '@/utils/tab-store'
+import { translationCache } from '@/utils/translation-cache'
 import { registerDeclarativeNetRequestRule } from '@/utils/web-request'
+
+import { backgroundCacheService } from './cache-service'
 
 export default defineBackground(() => {
   if (import.meta.env.CHROME) {
@@ -151,6 +154,47 @@ export default defineBackground(() => {
       })
     }
   })
+
+  // Initialize the background cache service
+  async function initializeCacheService() {
+    try {
+      logger.debug('Starting cache service initialization in background context')
+      logger.debug('Extension ID:', browser.runtime.id)
+      logger.debug('Context info:', {
+        location: typeof location !== 'undefined' ? location.origin : 'undefined',
+        isServiceWorker: typeof importScripts === 'function',
+        hasIndexedDB: typeof indexedDB !== 'undefined',
+      })
+
+      await backgroundCacheService.initialize()
+      await translationCache.initialize()
+      logger.debug('Background cache service initialized successfully')
+
+      // ================================
+      // Debug Code
+      // ================================
+
+      // Insert test data for development
+      // if (import.meta.env.DEV) {
+      //   logger.debug('Inserting test mock data for development')
+      //   await backgroundCacheService.insertTestMockData(10)
+      //   logger.debug('Test mock data inserted successfully')
+
+      //   // Test getting stats
+      //   const stats = await backgroundCacheService.getStats()
+      //   logger.debug('Cache stats after test data:', stats)
+      // }
+
+      // @ts-expect-error - this is a global variable
+      globalThis.backgroundCacheService = backgroundCacheService
+    }
+    catch (error) {
+      logger.error('Failed to initialize background cache service:', error)
+    }
+  }
+
+  // Initialize cache service
+  initializeCacheService()
 
   logger.info('Hello from background!', { id: browser.runtime.id })
 })

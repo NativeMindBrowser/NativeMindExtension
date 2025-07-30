@@ -1,9 +1,6 @@
-import md5 from 'md5'
-
 import { SUPPORTED_LANGUAGE_CODES } from '@/utils/language/detect'
 
 import { TranslationDisplayStyle, TranslatorEnv } from '../types'
-import { TRANSLATOR_ID } from './constant'
 import { blockOriginList, translationLoadingSkeletonAnimationName, translationTypingCaretClass, translatorStyleId } from './constant'
 import { createStylesheetTag } from './dom-utils'
 
@@ -45,10 +42,6 @@ export function shouldTranslateText(textContent: string | null) {
 
 export async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-export function getCacheKey(targetLocale: string, backend: string, richTextContent: string) {
-  return `${TRANSLATOR_ID}:${targetLocale}:${backend}:${md5(richTextContent)}`
 }
 
 export function numberToLetters(number: number) {
