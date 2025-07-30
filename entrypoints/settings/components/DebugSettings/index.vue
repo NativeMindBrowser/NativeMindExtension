@@ -536,6 +536,10 @@ const modelProviderOptions = [
 
 const cacheStats = ref<CacheStats>()
 
+onMounted(async () => {
+  cacheStats.value = await settings2bRpc.cacheGetStats()
+})
+
 const resetOnboarding = async () => {
   onboardingVersion.value = 0
 }
@@ -601,8 +605,8 @@ const onPullModel = async () => {
 }
 
 const handleClearCache = async () => {
-  await translationCache.clear()
-  cacheStats.value = await translationCache.getStats()
+  await settings2bRpc.cacheClear()
+  cacheStats.value = await settings2bRpc.cacheGetStats()
 }
 
 watch(translationSystemPrompt, (newValue) => {
@@ -616,15 +620,11 @@ watch(translationSystemPrompt, (newValue) => {
 
 // watch cache config changes and invoke update functions
 watch([enableTranslationCache, cacheRetentionDays, cacheEnableAnalytics], async () => {
-  await c2bRpc.cacheUpdateConfig()
+  await settings2bRpc.cacheUpdateConfig()
 })
 
 watch(enableTranslationCache, async () => {
   await translationCache.updateConfig()
-})
-
-onMounted(async () => {
-  cacheStats.value = await translationCache.getStats()
 })
 
 </script>

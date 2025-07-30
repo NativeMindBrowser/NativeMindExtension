@@ -285,6 +285,7 @@ export class RpcTranslationCacheManager {
    */
   async getStats(): Promise<CacheStats> {
     try {
+      log.debug('Getting cache stats', c2bRpc)
       return await c2bRpc.cacheGetStats()
     }
     catch (error) {

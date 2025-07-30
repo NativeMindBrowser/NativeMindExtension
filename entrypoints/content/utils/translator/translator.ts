@@ -92,9 +92,9 @@ export async function* translateParagraphs(options: {
   }
 }
 
-export async function* translateOneParagraph(paragraph: string, targetLanguage: string, abortSignal: AbortSignal) {
+export async function* translateOneParagraph(paragraph: string, targetLanguage: string, model?: string, abortSignal?: AbortSignal) {
   const userConfig = await getUserConfig()
-  const modelId = userConfig.llm.model.get() || 'unknown'
+  const modelId = model ?? userConfig.llm.model.get() ?? 'unknown'
   const rawSystem = userConfig.translation.systemPrompt.get()
   const system = rawSystem.replace(/\{\{LANGUAGE\}\}/g, targetLanguage)
 
@@ -126,7 +126,7 @@ export async function* translateOneParagraph(paragraph: string, targetLanguage: 
   }
 
   // Store final translation in cache
-  if (translated && !abortSignal.aborted) {
+  if (translated && !abortSignal?.aborted) {
     translationCache.set({
       sourceText: paragraph,
       targetLanguage,
@@ -150,8 +150,7 @@ export class Translator {
     // Get current environment and user config for cache key generation
     const env = await getTranslatorEnv()
     const userConfig = await getUserConfig()
-    const targetLanguage = getLanguageName(env.targetLocale)
-    const modelId = userConfig.llm.model.get() || 'unknown'
+    const modelId = env.translationModel ?? userConfig.llm.model.get() ?? 'unknown'
 
     // Check cache for all texts
     const cacheResults = await Promise.all(
@@ -188,7 +187,6 @@ export class Translator {
       }
     }
     else {
-      const env = await getTranslatorEnv()
       const languageName = getLanguageName(env.targetLocale)
       // Some texts need translation
       const uncachedTexts = cacheResults
@@ -197,7 +195,7 @@ export class Translator {
 
       if (uncachedTexts.length > 0) {
         const iter = translateParagraphs({
-          paragraphs: textList,
+          paragraphs: uncachedTexts,
           targetLanguage: languageName,
           model: env.translationModel,
           abortSignal,
