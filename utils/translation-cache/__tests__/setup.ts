@@ -157,7 +157,6 @@ export function setupBrowserMocks() {
         cache: {
           enabled: { get: () => true },
           retentionDays: { get: () => 30 },
-          enableAnalytics: { get: () => true },
         },
       },
     })),
@@ -181,7 +180,6 @@ export function setupRpcMocks() {
     cacheGetConfig: vi.fn(() => Promise.resolve({
       enabled: true,
       retentionDays: 30,
-      enableAnalytics: true,
     })),
     getSystemMemoryInfo: vi.fn(() => Promise.resolve({ capacity: 8 * 1024 * 1024 * 1024 })),
   }
@@ -219,20 +217,6 @@ export function createTestCacheMetadata(overrides: Partial<any> = {}) {
   }
 }
 
-// Create test cache analytics
-export function createTestCacheAnalytics(overrides: Partial<any> = {}) {
-  return {
-    id: '2024-01-01',
-    date: '2024-01-01',
-    hits: 50,
-    misses: 10,
-    entriesAdded: 5,
-    entriesRemoved: 2,
-    avgResponseTime: 25.5,
-    ...overrides,
-  }
-}
-
 // Create test cache configuration
 export function createTestCacheConfig(overrides: Partial<any> = {}) {
   return {
@@ -240,7 +224,6 @@ export function createTestCacheConfig(overrides: Partial<any> = {}) {
     maxSizeMB: 50,
     retentionDays: 30,
     maxEntriesPerModel: 10000,
-    enableAnalytics: true,
     ...overrides,
   }
 }

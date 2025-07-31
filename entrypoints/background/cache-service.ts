@@ -13,7 +13,6 @@ import logger from '@/utils/logger'
 import {
   CACHE_DB_NAME,
   CACHE_DB_VERSION,
-  type CacheAnalytics,
   type CacheConfig,
   type CacheMetadata,
   type CacheStats,
@@ -42,13 +41,6 @@ interface TranslationCacheDBSchema extends DBSchema {
     key: string
     value: CacheMetadata
   }
-  [OBJECT_STORES.ANALYTICS]: {
-    key: string
-    value: CacheAnalytics
-    indexes: {
-      [INDEXES.ANALYTICS.DATE]: string
-    }
-  }
 }
 
 /**
@@ -60,7 +52,6 @@ class BackgroundCacheService {
   private config: CacheConfig = {
     enabled: true,
     retentionDays: 30,
-    enableAnalytics: true,
   }
 
   private fallbackCache = new LRUCache<string, TranslationEntry>({
@@ -77,7 +68,6 @@ class BackgroundCacheService {
       const cacheConfig: CacheConfig = {
         enabled: userConfig.translation.cache.enabled.get(),
         retentionDays: userConfig.translation.cache.retentionDays.get(),
-        enableAnalytics: userConfig.translation.cache.enableAnalytics.get(),
       }
 
       this.config = { ...this.config, ...cacheConfig }
@@ -173,14 +163,6 @@ class BackgroundCacheService {
             db.createObjectStore(OBJECT_STORES.METADATA, {
               keyPath: 'id',
             })
-          }
-
-          // Create analytics store
-          if (!db.objectStoreNames.contains(OBJECT_STORES.ANALYTICS)) {
-            const analyticsStore = db.createObjectStore(OBJECT_STORES.ANALYTICS, {
-              keyPath: 'id',
-            })
-            analyticsStore.createIndex(INDEXES.ANALYTICS.DATE, 'date', { unique: false })
           }
         },
         blocked() {

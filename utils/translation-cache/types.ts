@@ -37,17 +37,6 @@ export interface CacheMetadata {
   version: string
 }
 
-export interface CacheAnalytics {
-  id: string
-  /** Date in YYYY-MM-DD format */
-  date: string
-  hits: number
-  misses: number
-  entriesAdded: number
-  entriesRemoved: number
-  avgResponseTime: number
-}
-
 export interface CacheKeyComponents {
   sourceText: string
   targetLanguage: string
@@ -61,8 +50,6 @@ export interface CacheConfig {
   // maxSizeMB: number
   /** Cache retention period in days */
   retentionDays: number
-  /** Enable analytics collection */
-  enableAnalytics: boolean
 }
 
 export interface CacheStats {

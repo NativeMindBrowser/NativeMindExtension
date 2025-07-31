@@ -31,7 +31,7 @@ A centralized RPC-based caching solution for translation functionality with cros
 │  ┌─────────────────────────────────────────────────────────┐ │
 │  │            BackgroundCacheService                       │ │
 │  │  • Single IndexedDB database (using idb package)        │ │
-│  │  • Centralized cleanup and analytics                    │ │
+│  │  • Centralized cleanup                                  │ │
 │  │  • Coordinated configuration management                 │ │
 │  └─────────────────────────────────────────────────────────┘ │
 └──────────────────────────────────────────────────────────────┘
@@ -39,9 +39,9 @@ A centralized RPC-based caching solution for translation functionality with cros
                               ▼
 ┌────────────────────────────────────────────────────────────────┐
 │            IndexedDB Storage (Service Workers)                 │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
-│  │  Translations   │  │    Metadata     │  │   Analytics     │ │
-│  │     Store       │  │     Store       │  │     Store       │ │
+│  ┌─────────────────┐  ┌─────────────────┐ │
+│  │  Translations   │  │    Metadata     │ │
+│  │     Store       │  │     Store       │ │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
 └────────────────────────────────────────────────────────────────┘
 ```
@@ -92,12 +92,10 @@ const userConfig = await getUserConfig();
 // Check current cache settings
 const isEnabled = userConfig.translation.cache.enabled.get();
 const retentionDays = userConfig.translation.cache.retentionDays.get();
-const enableAnalytics = userConfig.translation.cache.enableAnalytics.get();
 
 // Update cache configuration (triggers background service update)
 await userConfig.translation.cache.enabled.set(true);
 await userConfig.translation.cache.retentionDays.set(60);
-await userConfig.translation.cache.enableAnalytics.set(true);
 ```
 
 ### Monitoring
@@ -184,7 +182,6 @@ interface CacheConfig {
   maxSizeMB: number;
   retentionDays: number;
   maxEntriesPerModel: number;
-  enableAnalytics: boolean;
 }
 ```
 
@@ -232,7 +229,6 @@ Namespace: endpointType:modelName (e.g., "ollama:llama3", "webllm:phi3")
 - **Object Stores**:
   - `translations`: Translation entries with indexes on modelNamespace, createdAt, lastAccessedAt
   - `metadata`: Cache metadata and statistics
-  - `analytics`: Daily analytics data
 
 ### Indexes
 
@@ -274,7 +270,6 @@ translation: {
   cache: {
     enabled: boolean (default: true)
     retentionDays: number (default: 30)
-    enableAnalytics: boolean (default: true)
   }
 }
 ```
@@ -289,13 +284,12 @@ import { c2bRpc } from "@/utils/rpc";
 const userConfig = await getUserConfig();
 await userConfig.translation.cache.enabled.set(true);
 await userConfig.translation.cache.retentionDays.set(60);
-await userConfig.translation.cache.enableAnalytics.set(false);
 
 // Notify background service to reload configuration
 await c2bRpc.cacheUpdateConfig();
 ```
 
-## Monitoring and Analytics
+## Monitoring
 
 ### Health Monitoring
 
@@ -305,8 +299,6 @@ The system provides comprehensive health monitoring:
 - Entry count tracking
 - Last cleanup time
 - Performance metrics
-
-### Analytics
 
 - Hit/miss ratios
 - Response times
@@ -345,7 +337,7 @@ The system supports schema migrations:
 1. **Always check cache first** before making translation requests
 2. **Use appropriate cache keys** including model and prompt information
 3. **Handle cache failures gracefully** with fallback to direct translation
-4. **Monitor cache performance** using provided analytics
+4. **Monitor cache performance** using provided monitoring tools
 5. **Configure appropriate limits** based on user device capabilities
 
 ### For Users
@@ -353,7 +345,6 @@ The system supports schema migrations:
 1. **Regular cleanup** helps maintain performance
 2. **Adjust retention period** based on usage patterns
 3. **Monitor storage usage** to prevent quota issues
-4. **Enable analytics** for better cache optimization
 
 ## Troubleshooting
 

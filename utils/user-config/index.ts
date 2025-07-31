@@ -275,7 +275,6 @@ export async function _getUserConfig() {
         enabled: await new Config('translation.cache.enabled').default(true).build(),
         // maxSizeMB: await new Config('translation.cache.maxSizeMB').default(1024).build(),
         retentionDays: await new Config('translation.cache.retentionDays').default(30).build(),
-        enableAnalytics: await new Config('translation.cache.enableAnalytics').default(true).build(),
       },
     },
     ui: {

@@ -8,7 +8,7 @@ The previous implementation created separate database instances for each browser
 
 - **Data Isolation**: Each tab maintained its own cache, missing reuse opportunities
 - **Storage Fragmentation**: Quota was split across multiple database instances
-- **Uncoordinated Management**: Cleanup and analytics weren't synchronized across tabs
+- **Uncoordinated Management**: Cleanup wasn't synchronized across tabs
 
 ## 🏗️ **New Architecture**
 
@@ -20,7 +20,7 @@ The previous implementation created separate database instances for each browser
 │  ┌─────────────────────────────────────────────────────────┐ │
 │  │            BackgroundCacheService                       │ │
 │  │  • Single IndexedDB database (using idb package)       │ │
-│  │  • Centralized cleanup and analytics                   │ │
+│  │  • Centralized cleanup                                 │ │
 │  │  • Coordinated configuration management                │ │
 │  └─────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────┘
@@ -77,7 +77,6 @@ The previous implementation created separate database instances for each browser
 
 - Single storage quota for all tabs
 - Coordinated cleanup prevents storage bloat
-- Centralized analytics provide complete usage picture
 
 ### **Better Performance**
 
@@ -112,7 +111,7 @@ The previous implementation created separate database instances for each browser
 2. Store immediately in local memory cache
 3. Queue for batch write to background service
 4. Background service stores in IndexedDB
-5. Update metadata and analytics
+5. Update metadata
 ```
 
 ### **Cross-Tab Sharing**
@@ -218,7 +217,6 @@ const debugInfo = await c2bRpc.cacheGetDebugInfo();
 const config: CacheConfig = {
   enabled: true,
   retentionDays: 30,
-  enableAnalytics: true,
 };
 ```
 
@@ -289,7 +287,7 @@ await translationCache.set(components, translation);
 ### **Developer Experience**
 
 - **Same API**: No code changes required for existing translation code
-- **Better Debugging**: Centralized analytics and monitoring
+- **Better Debugging**: Centralized monitoring
 - **Easier Testing**: Comprehensive test coverage with RPC mocking
 
 This centralized architecture transforms the translation cache from a per-tab limitation into a powerful cross-tab acceleration system! 🚀

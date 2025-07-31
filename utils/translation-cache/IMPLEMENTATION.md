@@ -8,7 +8,7 @@ The translation cache system has been designed as a drop-in replacement for the 
 
 - **Persistent Storage**: Uses IndexedDB for data that survives browser restarts
 - **Model Isolation**: Separate cache namespaces prevent cross-contamination
-- **Automatic Management**: Built-in cleanup, expiration, and analytics
+- **Automatic Management**: Built-in cleanup and expiration
 - **Configuration**: User-configurable settings integrated with existing config system
 - **Performance**: Two-tier caching (memory + persistent) for optimal performance
 
@@ -16,26 +16,28 @@ The translation cache system has been designed as a drop-in replacement for the 
 
 ```
 utils/translation-cache/
-├── index.ts                    # Main exports and convenience functions
-├── types.ts                    # TypeScript interfaces and constants
-├── cache-manager.ts            # Core cache management class
-├── key-strategy.ts             # Cache key generation and model isolation
-├── config.ts                   # Configuration management
-├── cleanup.ts                  # Automatic cleanup and maintenance
-├── analytics.ts                # Performance analytics and monitoring
-├── monitoring.ts               # Health monitoring and diagnostics
-├── indexeddb/
-│   ├── connection.ts           # Database connection management
-│   ├── schema.ts               # Database schema and initialization
-│   └── operations.ts           # CRUD operations
-├── __tests__/                  # Comprehensive test suite
-│   ├── setup.ts                # Test utilities and mocks
-│   ├── cache-manager.test.ts   # Core functionality tests
-│   ├── key-strategy.test.ts    # Key generation tests
-│   ├── cleanup.test.ts         # Cleanup functionality tests
-│   └── integration.test.ts     # End-to-end integration tests
-├── README.md                   # User documentation
-└── IMPLEMENTATION.md           # This implementation guide
+├── index.ts                           # Main exports and singleton cache instance
+├── types.ts                           # TypeScript interfaces and constants
+├── key-strategy.ts                    # Cache key generation and model isolation
+├── rpc-cache-manager.ts               # RPC-based cache manager for cross-tab communication
+├── __tests__/                         # Comprehensive test suite
+│   ├── setup.ts                       # Test utilities and mocks
+│   ├── background-cache-service.test.ts # Background service tests
+│   ├── cache-key-generation.test.ts   # Key generation tests
+│   ├── key-strategy.test.ts           # Key strategy tests
+│   ├── rpc-cache-manager.test.ts      # RPC cache manager tests
+│   └── integration.test.ts            # End-to-end integration tests
+├── README.md                          # User documentation
+├── IMPLEMENTATION.md                  # This implementation guide
+└── CENTRALIZED_ARCHITECTURE.md       # Architecture documentation
+
+entrypoints/background/
+├── cache-service.ts                   # Centralized background cache service
+├── index.ts                           # Background script entry point
+└── utils.ts                           # Background utilities
+
+utils/rpc/
+└── background-fns.ts                  # RPC functions including cache operations
 ```
 
 ## Integration Steps
@@ -50,7 +52,6 @@ translation: {
   cache: {
     enabled: boolean (default: true)
     retentionDays: number (default: 30)
-    enableAnalytics: boolean (default: true)
   }
 }
 ```
@@ -138,13 +139,12 @@ const retentionDays = userConfig.translation.cache.retentionDays.get();
 // Update settings
 await userConfig.translation.cache.enabled.set(true);
 await userConfig.translation.cache.retentionDays.set(60);
-await userConfig.translation.cache.enableAnalytics.set(true);
 
 // Notify background service to reload configuration
 await c2bRpc.cacheUpdateConfig();
 ```
 
-### Monitoring and Analytics
+### Monitoring
 
 ```typescript
 import { translationCache } from "@/utils/translation-cache";
@@ -315,16 +315,6 @@ if (!debugInfo.isInitialized) {
 }
 ```
 
-### Analytics Dashboard
-
-The cache system provides detailed analytics:
-
-- Hit/miss ratios
-- Response times
-- Storage usage
-- Model-specific statistics
-- Daily/weekly trends
-
 ## Migration Strategy
 
 ### From Existing LRU Cache
@@ -357,7 +347,7 @@ if (oldVersion < 2) {
 1. **Always Check Cache First**: Before making translation requests
 2. **Handle Failures Gracefully**: Cache operations can fail
 3. **Use Appropriate Keys**: Include all relevant context (model, prompt)
-4. **Monitor Performance**: Use provided analytics tools
+4. **Monitor Performance**: Use provided monitoring tools
 5. **Configure Appropriately**: Set limits based on user device
 
 ### For Users
@@ -408,7 +398,6 @@ await translationCache.clear();
 const userConfig = await getUserConfig();
 await userConfig.translation.cache.enabled.set(true);
 await userConfig.translation.cache.retentionDays.set(30);
-await userConfig.translation.cache.enableAnalytics.set(true);
 await c2bRpc.cacheUpdateConfig();
 
 // Get cache data for analysis
@@ -425,7 +414,7 @@ console.log("Cache analysis:", { stats, debugInfo });
 2. **Compression**: Reduce storage usage for large translations
 3. **Fuzzy Matching**: Find similar translations for related text
 4. **ML Optimization**: Use machine learning for cache optimization
-5. **Advanced Analytics**: More detailed performance insights
+5. **Advanced Monitoring**: More detailed performance insights
 
 ### Extension Points
 
@@ -440,11 +429,6 @@ export function customKeyGenerator(components: CacheKeyComponents): string {
 // Custom cleanup policies
 export class CustomCleanupManager extends CacheCleanupManager {
   // Custom cleanup logic
-}
-
-// Custom analytics
-export class CustomAnalyticsManager extends CacheAnalyticsManager {
-  // Custom analytics logic
 }
 ```
 

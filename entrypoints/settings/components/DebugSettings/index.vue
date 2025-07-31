@@ -410,20 +410,6 @@
                   class="border-b border-gray-200 py-1 disabled:opacity-50 w-20"
                 />
               </div>
-              <div class="flex gap-3 items-center">
-                <span class="text-xs">Enable Analytics</span>
-                <Switch
-                  v-model="cacheEnableAnalytics"
-                  slotClass="rounded-lg border-gray-200 border bg-white"
-                  itemClass="h-6 flex items-center justify-center text-xs px-2"
-                  thumbClass="bg-blue-500 rounded-md"
-                  activeItemClass="text-white"
-                  :items="[
-                    { label: 'Enable', key: true },
-                    { label: 'Disable', key: false, activeThumbClass: 'bg-gray-200' }
-                  ]"
-                />
-              </div>
             </div>
           </div>
         </Block>
@@ -519,7 +505,6 @@ const localeInConfig = userConfig.locale.current.toRef()
 // Translation Cache Part
 const enableTranslationCache = userConfig.translation.cache.enabled.toRef()
 const cacheRetentionDays = userConfig.translation.cache.retentionDays.toRef()
-const cacheEnableAnalytics = userConfig.translation.cache.enableAnalytics.toRef()
 
 const translationSystemPromptError = ref('')
 const newModelId = ref('')
@@ -617,7 +602,7 @@ watch(translationSystemPrompt, (newValue) => {
 })
 
 // watch cache config changes and invoke update functions
-watch([enableTranslationCache, cacheRetentionDays, cacheEnableAnalytics], async () => {
+watch([enableTranslationCache, cacheRetentionDays], async () => {
   await settings2bRpc.cacheUpdateConfig()
 })
 

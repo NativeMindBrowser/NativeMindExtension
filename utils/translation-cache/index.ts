@@ -10,7 +10,7 @@
  * - Persistence across page refreshes and browser restarts
  * - Model isolation to prevent cross-contamination
  * - Automatic cleanup and expiration
- * - Performance analytics and monitoring
+ * - Performance monitoring
  */
 
 // ============================================================================
@@ -57,7 +57,6 @@ export {
 
 export type {
   BatchCacheOperation,
-  CacheAnalytics,
   CacheConfig,
   CacheKeyComponents,
   CacheMetadata,
@@ -78,7 +77,6 @@ export const CACHE_DB_VERSION = 1
 export const OBJECT_STORES = {
   TRANSLATIONS: 'translations',
   METADATA: 'metadata',
-  ANALYTICS: 'analytics',
 } as const
 
 export const INDEXES = {
@@ -88,8 +86,5 @@ export const INDEXES = {
     LAST_ACCESSED: 'lastAccessedAt',
     TEXT_HASH: 'textHash',
     MODEL_LANG: 'modelNamespace_targetLanguage',
-  },
-  ANALYTICS: {
-    DATE: 'date',
   },
 } as const

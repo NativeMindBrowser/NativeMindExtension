@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock IndexedDB
 const mockIndexedDB = {
@@ -15,7 +15,6 @@ const mockUserConfig = {
     cache: {
       enabled: { get: () => true },
       retentionDays: { get: () => 30 },
-      enableAnalytics: { get: () => true },
     },
   },
 }
@@ -86,7 +85,6 @@ describe('BackgroundCacheService', () => {
       expect(service.getConfig()).toEqual({
         enabled: true,
         retentionDays: 30,
-        enableAnalytics: true,
       })
     })
 
@@ -99,7 +97,6 @@ describe('BackgroundCacheService', () => {
 
       expect(config.enabled).toBe(true)
       expect(config.retentionDays).toBe(30)
-      expect(config.enableAnalytics).toBe(true)
     })
   })
 
@@ -163,17 +160,18 @@ describe('BackgroundCacheService', () => {
                   if (request.onsuccess) {
                     request.onsuccess({
                       target: {
-                        result: entryIndex < mockEntries.length ? cursor : null
-                      }
+                        result: entryIndex < mockEntries.length ? cursor : null,
+                      },
                     })
                   }
                 }, 0)
-              }
+              },
             }
             if (request.onsuccess) {
               request.onsuccess({ target: { result: cursor } })
             }
-          } else {
+          }
+          else {
             if (request.onsuccess) {
               request.onsuccess({ target: { result: null } })
             }
@@ -231,17 +229,18 @@ describe('BackgroundCacheService', () => {
                   if (request.onsuccess) {
                     request.onsuccess({
                       target: {
-                        result: entryIndex < mockOldEntries.length ? cursor : null
-                      }
+                        result: entryIndex < mockOldEntries.length ? cursor : null,
+                      },
                     })
                   }
                 }, 0)
-              }
+              },
             }
             if (request.onsuccess) {
               request.onsuccess({ target: { result: cursor } })
             }
-          } else {
+          }
+          else {
             if (request.onsuccess) {
               request.onsuccess({ target: { result: null } })
             }
