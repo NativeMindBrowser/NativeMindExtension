@@ -375,15 +375,10 @@
           </div>
         </Block>
         <Block
-          title="Cache"
+          title="Translation Cache"
           class="gap-4"
         >
           <div class="flex flex-col gap-3 justify-start items-stretch">
-            <div>
-              <div class="flex gap-3 justify-start items-center">
-                Translation Cache
-              </div>
-            </div>
             <div class="flex flex-col gap-3 justify-start items-start">
               Enable
               <Switch
@@ -431,42 +426,45 @@
               </div>
             </div>
           </div>
+        </Block>
+        <Block
+          title="Cache Stats"
+          class="gap-4"
+        >
           <div class="flex flex-col gap-3 justify-start items-stretch">
-            <div class="flex gap-3 justify-start items-center">
-              Cache Stats
-            </div>
-            <div class="flex flex-col gap-3 justify-start items-stretch">
-              <div class="flex flex-col gap-2">
-                <div>
-                  Total Entries
-                </div>
-                <div>
-                  {{ cacheStats?.totalEntries ?? 'N/A' }}
-                </div>
+            <div class="flex flex-col gap-2">
+              <div>
+                Total Entries
               </div>
-              <div class="flex flex-col gap-2">
-                <div>
-                  Total Size (MB)
-                </div>
-                <div>{{ cacheStats?.totalSizeMB.toFixed(2) ?? 'N/A' }}</div>
-              </div>
-              <div class="flex flex-col gap-2">
-                <div>
-                  Model Namespaces
-                </div>
-                <div>{{ cacheStats?.modelNamespaces.join(', ') ?? 'N/A' }}</div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.totalEntries ?? 'N/A' }}
               </div>
             </div>
-          </div>
-          <div class="flex gap-3 items-center">
-            <span class="text-xs">Clear Cache</span>
-            <Button
-              variant="primary"
-              class="p-1 font-normal"
-              @click="handleClearCache"
-            >
-              Clear
-            </Button>
+            <div class="flex flex-col gap-2">
+              <div>
+                Total Size (MB)
+              </div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.totalSizeMB.toFixed(2) ?? 'N/A' }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <div>
+                Model Namespaces
+              </div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.modelNamespaces.join(', ') ?? 'N/A' }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 justify-start items-start">
+              <span class="text-xs">Clear Cache</span>
+              <button
+                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+                @click="handleClearCache"
+              >
+                Clear
+              </button>
+            </div>
           </div>
         </Block>
       </div>
