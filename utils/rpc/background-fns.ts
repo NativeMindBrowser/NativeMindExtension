@@ -7,6 +7,8 @@ import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
+// Import singleton managers for type-safe service access
+import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
 import { sleep } from '../async'
 import { ContextMenuManager } from '../context-menu'
 import { AppError, CreateTabStreamCaptureError, FetchError, ModelRequestError, UnknownError } from '../error'
@@ -18,6 +20,7 @@ import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
 import { parsePdfFileOfUrl } from '../pdf'
 import { searchOnline } from '../search'
 import { showSettingsForBackground } from '../settings'
+import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
 import { bgBroadcastRpc } from '.'
 import { preparePortConnection } from './utils'
@@ -558,6 +561,118 @@ function ping() {
   return 'pong'
 }
 
+// Translation cache functions
+async function cacheGetEntry(id: string) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getEntry(id) || null
+  }
+  catch (error) {
+    logger.error('Cache RPC getEntry failed:', error)
+    return null
+  }
+}
+
+async function cacheSetEntry(entry: TranslationEntry) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.setEntry(entry) || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC setEntry failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheDeleteEntry(id: string) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.deleteEntry(id) || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC deleteEntry failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheGetStats() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getStats() || {
+      totalEntries: 0,
+      totalSizeMB: 0,
+      modelNamespaces: [],
+    }
+  }
+  catch (error) {
+    logger.error('Cache RPC getStats failed:', error)
+    return {
+      totalEntries: 0,
+      totalSizeMB: 0,
+      modelNamespaces: [],
+    }
+  }
+}
+
+async function cacheClear() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.clear() || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC clear failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheUpdateConfig() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    await service?.loadUserConfig()
+    return { success: true }
+  }
+  catch (error) {
+    logger.error('Cache RPC updateConfig failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheGetConfig() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return service?.getConfig() || null
+  }
+  catch (error) {
+    logger.error('Cache RPC getConfig failed:', error)
+    return null
+  }
+}
+
+async function cacheGetDebugInfo() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getDebugInfo() || {
+      isInitialized: false,
+      contextInfo: {
+        location: 'unknown',
+        isServiceWorker: false,
+        isExtensionContext: false,
+      },
+    }
+  }
+  catch (error) {
+    logger.error('Cache RPC getDebugInfo failed:', error)
+    return {
+      isInitialized: false,
+      contextInfo: {
+        location: 'unknown',
+        isServiceWorker: false,
+        isExtensionContext: false,
+      },
+    }
+  }
+}
+
 export const backgroundFunctions = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)
@@ -596,6 +711,15 @@ export const backgroundFunctions = {
   getSystemMemoryInfo,
   testOllamaConnection,
   captureVisibleTab,
+  // Translation cache functions
+  cacheGetEntry,
+  cacheSetEntry,
+  cacheDeleteEntry,
+  cacheGetStats,
+  cacheClear,
+  cacheUpdateConfig,
+  cacheGetConfig,
+  cacheGetDebugInfo,
   showSidepanel,
   showSettings: showSettingsForBackground,
 }

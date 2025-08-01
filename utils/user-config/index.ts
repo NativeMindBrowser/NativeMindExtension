@@ -270,6 +270,11 @@ export async function _getUserConfig() {
       model: await new Config<string, undefined>('translation.model').build(),
       targetLocale: await new Config('translation.targetLocale').default('zh' as LanguageCode).build(),
       systemPrompt: await new Config('translation.systemPrompt').default(DEFAULT_TRANSLATOR_SYSTEM_PROMPT).build(),
+      cache: {
+        enabled: await new Config('translation.cache.enabled').default(true).build(),
+        // maxSizeMB: await new Config('translation.cache.maxSizeMB').default(1024).build(),
+        retentionDays: await new Config('translation.cache.retentionDays').default(30).build(),
+      },
     },
     ui: {
       pinSidebar: await new Config('ui.pinSidebar').default(false).build(),
