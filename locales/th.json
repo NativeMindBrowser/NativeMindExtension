@@ -112,7 +112,7 @@
       "unload": "ขนถ่าย",
       "expires_in": "หมดอายุใน {duration}",
       "running": "กำลังทำงาน",
-      "running_models": "การรันโมเดล"
+      "running_models": "โมเดลที่กำลังทำงาน"
     },
     "prompts": {
       "chat_system_prompt": "ระบบแชท",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size} พารามิเตอร์",
-        "quant": "{level} ควอนต์"
+        "quant": "{level} ควอนต์",
+        "no_active_models": "Ollama เชื่อมต่อแล้ว แต่ไม่มีโมเดลที่ใช้งานอยู่",
+        "not_connected_to_ollama": "ไม่ได้เชื่อมต่อกับ Ollama"
       }
     },
     "title": "การตั้งค่า",

@@ -112,7 +112,7 @@
       "unload": "내리다",
       "expires_in": "{duration} 후 만료",
       "running": "실행 중",
-      "running_models": "모델 실행"
+      "running_models": "실행 중인 모델"
     },
     "prompts": {
       "chat_system_prompt": "채팅 시스템 프롬프트",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size} 매개변수",
-        "quant": "{level} 퀀트"
+        "quant": "{level} 퀀트",
+        "no_active_models": "Ollama가 연결되었지만 활성화된 모델이 없습니다",
+        "not_connected_to_ollama": "Ollama에 연결되지 않음"
       }
     },
     "title": "설정",

@@ -112,7 +112,7 @@
       "unload": "Décharger",
       "expires_in": "Expire dans {duration}",
       "running": "En cours d'exécution",
-      "running_models": "Exécution de modèles"
+      "running_models": "Modèles en cours d'exécution"
     },
     "prompts": {
       "chat_system_prompt": "Instruction système de chat",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size} paramètres",
-        "quant": "{level} quant"
+        "quant": "{level} quant",
+        "no_active_models": "Ollama connecté, mais aucun modèle actif",
+        "not_connected_to_ollama": "Pas connecté à Ollama"
       }
     },
     "title": "Paramètres",

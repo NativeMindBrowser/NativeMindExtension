@@ -23,7 +23,7 @@
             v-if="item.role === 'user'"
             class="flex flex-col items-end"
           >
-            <div class="text-sm inline-block bg-[#24B960] rounded-md p-3">
+            <div class="text-sm inline-block bg-[#24B960] rounded-md p-3 max-w-full">
               <div class="wrap-anywhere text-white">
                 <MarkdownViewer :text="item.content" />
               </div>

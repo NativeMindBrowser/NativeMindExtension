@@ -112,7 +112,7 @@
       "unload": "アンロード",
       "expires_in": "{duration}で期限切れ",
       "running": "実行中",
-      "running_models": "モデルの実行"
+      "running_models": "実行中のモデル"
     },
     "prompts": {
       "chat_system_prompt": "チャットシステムプロンプト",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size}パラメータ",
-        "quant": "{level}クオント"
+        "quant": "{level}クオント",
+        "no_active_models": "Ollamaに接続されていますが、アクティブなモデルがありません",
+        "not_connected_to_ollama": "Ollamaに接続されていません"
       }
     },
     "title": "設定",

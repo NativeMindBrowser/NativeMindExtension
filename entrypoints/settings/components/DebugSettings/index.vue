@@ -344,34 +344,52 @@
                 document parser
                 <button
                   class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-1 px-3"
-                  @click="parseCurrentDocument"
+                  @click="parseAllDocuments"
                 >
                   parse
                 </button>
               </div>
             </div>
-            <div class="flex flex-col gap-3 justify-start items-stretch">
-              <div class="text-[10px]">
-                Title
+            <details
+              v-for="(article, idx) of articles"
+              :key="idx"
+              class="border border-gray-200 rounded-md p-2 &[open]:bg-gray-50 hover:bg-gray-100 open:hover:bg-transparent transition-all"
+            >
+              <summary
+                class="flex justify-start items-stretch text-xs cursor-pointer wrap-anywhere"
+                :title="`${article.type} - ${article.title} - ${article.url}`"
+              >
+                <span class="whitespace-nowrap">[{{ article.type }}]</span> <span class="font-light">{{ article.title }}</span>
+              </summary>
+              <div class="flex flex-col gap-3 mt-2">
+                <div class="flex flex-col gap-3 justify-start items-stretch">
+                  <pre class="text-[8px] font-light border border-gray-200 min-h-4 p-2 whitespace-pre-wrap">{{ article?.title ?? 'N/A' }}</pre>
+                  <div class="text-[10px]">
+                    URL
+                  </div>
+                  <pre class="text-[8px] font-light border border-gray-200 min-h-4 p-2 whitespace-pre-wrap">{{ article?.url ?? 'N/A' }}</pre>
+                </div>
+                <div class="flex flex-col gap-3 justify-start items-stretch">
+                  <div class="text-[10px]">
+                    Text
+                  </div>
+                  <pre class="text-[8px] font-light border border-gray-200 min-h-4 p-2 whitespace-pre-wrap max-h-72 overflow-auto">{{
+                    article?.content ?? 'N/A'
+                  }}</pre>
+                </div>
+                <div
+                  v-if="article.html"
+                  class="flex flex-col gap-3 justify-start items-stretch"
+                >
+                  <div class="text-[10px]">
+                    HTML
+                  </div>
+                  <div class="text-[8px] font-light border border-gray-200 min-h-4 p-2 max-h-72 overflow-auto [&_img]:max-w-14! [&_svg]:max-w-14!">
+                    <div v-html="article?.html ?? 'N/A'" />
+                  </div>
+                </div>
               </div>
-              <pre class="text-[8px] font-light border border-gray-200 min-h-4 p-2 whitespace-pre-wrap">{{ article?.title ?? 'N/A' }}</pre>
-            </div>
-            <div class="flex flex-col gap-3 justify-start items-stretch">
-              <div class="text-[10px]">
-                Text
-              </div>
-              <pre class="text-[8px] font-light border border-gray-200 min-h-4 p-2 whitespace-pre-wrap max-h-72 overflow-auto">{{
-                article?.textContent ?? 'N/A'
-              }}</pre>
-            </div>
-            <div class="flex flex-col gap-3 justify-start items-stretch">
-              <div class="text-[10px]">
-                HTML
-              </div>
-              <div class="text-[8px] font-light border border-gray-200 min-h-4 p-2 max-h-72 overflow-auto [&_img]:max-w-14! [&_svg]:max-w-14!">
-                <div v-html="article?.content ?? 'N/A'" />
-              </div>
-            </div>
+            </details>
           </div>
         </Block>
         <Block
@@ -468,7 +486,7 @@ import Selector from '@/components/Selector.vue'
 import Switch from '@/components/Switch.vue'
 import Button from '@/components/ui/Button.vue'
 import UILanguageSelector from '@/components/UILanguageSelector.vue'
-import { parseDocument } from '@/utils/document-parser'
+import { INVALID_URLS } from '@/utils/constants'
 import { formatSize } from '@/utils/formatter'
 import { SUPPORTED_MODELS, WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
@@ -511,7 +529,7 @@ const newModelId = ref('')
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }[]>([])
 const webllmCacheStatus = ref<{ modelId: WebLLMSupportedModel, hasCache: boolean }[]>([])
 
-const article = ref<Awaited<ReturnType<typeof parseDocument>>>()
+const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string }[]>()
 const modelProviderOptions = [
   { id: 'ollama' as const, label: 'Ollama' },
   { id: 'web-llm' as const, label: 'Web LLM' },
@@ -547,8 +565,35 @@ const deleteWebLLMModelCache = async (model: WebLLMSupportedModel) => {
   await checkWebLLMCacheStatus()
 }
 
-const parseCurrentDocument = async () => {
-  article.value = await settings2bRpc.getDocumentContentOfTab()
+const parseAllDocuments = async () => {
+  const allTabs = await settings2bRpc.getAllTabs()
+  articles.value = []
+  for (const tab of allTabs) {
+    const { url, tabId } = tab
+    if (tabId && url && !INVALID_URLS.some((schema) => schema.test(url))) {
+      const pdfContent = await settings2bRpc.getPagePDFContent(tabId)
+      if (pdfContent) {
+        articles.value.push({
+          type: 'pdf',
+          title: pdfContent.fileName,
+          url,
+          content: pdfContent.texts.join('\n'),
+        })
+      }
+      else {
+        const article = await settings2bRpc.getDocumentContentOfTab(tabId)
+        if (article) {
+          articles.value.push({
+            type: 'html',
+            title: article.title,
+            content: article.textContent,
+            html: article.content ?? undefined,
+            url,
+          })
+        }
+      }
+    }
+  }
 }
 
 const onPullModel = async () => {

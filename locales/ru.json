@@ -112,7 +112,7 @@
       "unload": "Выгрузить",
       "expires_in": "Истекает через {duration}",
       "running": "Выполняется",
-      "running_models": "Запуск моделей"
+      "running_models": "Работающие модели"
     },
     "prompts": {
       "chat_system_prompt": "Системная подсказка для чата",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} видеопамяти",
         "params": "{size} параметров",
-        "quant": "{level} квант"
+        "quant": "{level} квант",
+        "no_active_models": "Ollama подключен, но нет активных моделей",
+        "not_connected_to_ollama": "Не подключено к Ollama"
       }
     },
     "title": "Настройки",

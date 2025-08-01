@@ -120,7 +120,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size} parámetros",
-        "quant": "{level} cuantitativo"
+        "quant": "{level} cuantitativo",
+        "no_active_models": "Ollama conectado, pero no hay modelos activos",
+        "not_connected_to_ollama": "No conectado a Ollama"
       }
     },
     "get_ollama": "Obtener Ollama",
@@ -149,7 +151,7 @@
       "unload": "Descargar",
       "expires_in": "Expira en {duration}",
       "running": "Ejecutándose",
-      "running_models": "Ejecutando Modelos"
+      "running_models": "Modelos en Ejecución"
     },
     "prompts": {
       "chat_system_prompt": "Sistema de Indicaciones de Chat",

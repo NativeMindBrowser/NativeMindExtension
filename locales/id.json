@@ -112,7 +112,7 @@
       "unload": "Bongkar",
       "expires_in": "Berakhir dalam {duration}",
       "running": "Berjalan",
-      "running_models": "Menjalankan Model"
+      "running_models": "Model yang Berjalan"
     },
     "prompts": {
       "chat_system_prompt": "Prompt sistem obrolan",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size} parameter",
-        "quant": "{level} kuant"
+        "quant": "{level} kuant",
+        "no_active_models": "Ollama terhubung, tetapi tidak ada model yang aktif",
+        "not_connected_to_ollama": "Tidak terhubung ke Ollama"
       }
     },
     "title": "Pengaturan",

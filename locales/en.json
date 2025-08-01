@@ -97,7 +97,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size} params",
-        "quant": "{level} quant"
+        "quant": "{level} quant",
+        "not_connected_to_ollama": "Not connected to Ollama",
+        "no_active_models": "Ollama connected, but no active models"
       }
     },
     "title": "Settings",

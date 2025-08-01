@@ -36,7 +36,7 @@
       "unload": "卸载",
       "expires_in": "在 {duration} 后过期",
       "running": "运行中",
-      "running_models": "运行模型"
+      "running_models": "运行中的模型"
     },
     "choose_model": "选择模型",
     "download": "下载",
@@ -88,7 +88,9 @@
       "running_models": {
         "vram": "{size} 显存",
         "params": "{size} 参数",
-        "quant": "{level} 量化"
+        "quant": "{level} 量化",
+        "no_active_models": "Ollama 已连接，但没有活跃的模型",
+        "not_connected_to_ollama": "未连接到 Ollama"
       }
     },
     "title": "设置",

@@ -1,6 +1,7 @@
 import { Ref, ref } from 'vue'
 import { LocationQuery, useRoute, useRouter } from 'vue-router'
 
+import { sleep } from '@/utils/async'
 import { lazyInitialize } from '@/utils/memo'
 import { SettingsScrollTarget } from '@/utils/scroll-targets'
 
@@ -10,9 +11,11 @@ function getFirst<T>(value: T | T[]) {
 
 class QueryItem<T> {
   constructor(private refValue: Ref<T>) {}
-  matchAndRemove(testValue: T) {
+  matchAndRemove(testValue: T, removeDelay = 500) {
     if (this.refValue.value === testValue) {
-      this.refValue.value = undefined as unknown as T
+      sleep(removeDelay).then(() => {
+        this.refValue.value = undefined as unknown as T
+      })
       return true
     }
     return false
@@ -44,12 +47,8 @@ export const useSettingsInitialQuery = lazyInitialize(() => {
   const update = (query: LocationQuery): LocationQuery | undefined => {
     const scrollTargetValue = getFirst(query['scrollTarget']) as SettingsScrollTarget
     const downloadModelValue = getFirst(query['downloadModel']) as string
-    if (scrollTargetValue) {
-      scrollTarget.value = scrollTargetValue
-    }
-    if (downloadModelValue) {
-      downloadModel.value = downloadModelValue
-    }
+    if (scrollTargetValue) scrollTarget.value = scrollTargetValue
+    if (downloadModelValue) downloadModel.value = downloadModelValue
     if (query['scrollTarget'] || query['downloadModel']) {
       delete query['scrollTarget']
       delete query['downloadModel']

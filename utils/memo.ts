@@ -1,8 +1,10 @@
 export function lazyInitialize<T>(initializer: () => T): () => T {
-  let value: T | undefined
+  let value: T
+  let isInitialized = false
   return () => {
-    if (value === undefined) {
+    if (!isInitialized) {
       value = initializer()
+      isInitialized = true
       return value
     }
     return value

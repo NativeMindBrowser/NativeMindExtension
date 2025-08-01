@@ -112,7 +112,7 @@
       "unload": "Entladen",
       "running": "Läuft",
       "expires_in": "Läuft ab in {duration}",
-      "running_models": "Modelle ausführen"
+      "running_models": "Laufende Modelle"
     },
     "prompts": {
       "chat_system_prompt": "Chat -System Eingabeaufforderung",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size} Parameter",
-        "quant": "{level} Quant"
+        "quant": "{level} Quant",
+        "no_active_models": "Ollama verbunden, aber keine aktiven Modelle",
+        "not_connected_to_ollama": "Nicht mit Ollama verbunden"
       }
     },
     "title": "Einstellungen",

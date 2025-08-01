@@ -20,10 +20,18 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
   const modelList = ref<OllamaModelInfo[]>([])
   const connectionStatus = ref<'connected' | 'error' | 'unconnected'>('unconnected')
   const updateModelList = async () => {
-    const response = await rpc.getLocalModelList()
-    log.debug('Model list fetched:', response)
-    modelList.value = response.models
-    return modelList.value
+    try {
+      const response = await rpc.getLocalModelList()
+      connectionStatus.value = 'connected'
+      log.debug('Model list fetched:', response)
+      modelList.value = response.models
+      return modelList.value
+    }
+    catch (error) {
+      log.error('Failed to fetch model list:', error)
+      connectionStatus.value = 'error'
+      return []
+    }
   }
 
   const connectionStatusLoading = ref(false)

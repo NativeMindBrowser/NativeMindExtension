@@ -112,7 +112,7 @@
       "unload": "Dỡ tải",
       "expires_in": "Hết hạn trong {duration}",
       "running": "Chạy",
-      "running_models": "Chạy Mô hình"
+      "running_models": "Mô hình đang chạy"
     },
     "prompts": {
       "chat_system_prompt": "Nhắc hệ thống trò chuyện",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} VRAM",
         "params": "{size} tham số",
-        "quant": "{level} định lượng"
+        "quant": "{level} định lượng",
+        "no_active_models": "Ollama đã kết nối, nhưng không có mô hình nào đang hoạt động",
+        "not_connected_to_ollama": "Không kết nối với Ollama"
       }
     },
     "title": "Cài đặt",

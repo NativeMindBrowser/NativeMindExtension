@@ -1,6 +1,36 @@
 # Changelog
 
 
+## v1.6.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.5...v1.6.0-beta.6)
+
+### 🩹 Fixes
+
+- **chat:** Limit message bubble width ([2fcc34b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2fcc34b))
+- **settings:** Conditionally render SavedMessage ([637ece1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/637ece1))
+- **chat:** Set default chat ID to a static value ([0f8ae86](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f8ae86))
+
+### 💅 Refactors
+
+- **onboarding:** Remove pin sidebar functionality and related icons ([5b8b5b3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5b8b5b3))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.4...v1.6.0-beta.5)
+
+### 🚀 Enhancements
+
+- **settings:** Connection status in running models section ([71ba272](https://github.com/NativeMindBrowser/NativeMindExtension/commit/71ba272))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.6.0-beta.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.3...v1.6.0-beta.4)

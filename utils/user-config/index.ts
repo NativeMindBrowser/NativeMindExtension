@@ -3,7 +3,6 @@ import { browser } from 'wxt/browser'
 import { c2bRpc } from '@/utils/rpc'
 
 import { SupportedLocaleCode } from '../i18n/constants'
-import { generateRandomId } from '../id'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
 import logger from '../logger'
@@ -257,7 +256,7 @@ export async function _getUserConfig() {
     },
     chat: {
       history: {
-        currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
+        currentChatId: await new Config('chat.history.currentChatId').default('default-chat-id').build(),
       },
       onlineSearch: {
         enable: await new Config('chat.onlineSearch.enable').default('auto' as OnlineSearchStatus).build(),

@@ -7,16 +7,6 @@
       <div class="h-12 px-3 flex items-center justify-start border-b border-gray-200">
         <div class="text-center" />
         <div class="absolute right-4 h-full flex items-center gap-4">
-          <IconPin
-            v-if="!pinSidebar"
-            class="w-4 cursor-pointer hover:text-gray-500"
-            @click="pinSidebar = true"
-          />
-          <IconUnPin
-            v-else
-            class="w-4 cursor-pointer hover:text-gray-500"
-            @click="pinSidebar = false"
-          />
           <IconClose
             class="w-4 h-4 cursor-pointer hover:text-gray-500"
             @click="onModelDownloaderFinished"
@@ -68,8 +58,6 @@
 import { computed, onMounted, ref } from 'vue'
 
 import IconClose from '@/assets/icons/close.svg?component'
-import IconPin from '@/assets/icons/pin.svg?component'
-import IconUnPin from '@/assets/icons/unpin.svg?component'
 import ExhaustiveError from '@/components/ExhaustiveError.vue'
 import Logo from '@/components/Logo.vue'
 import ScrollContainer from '@/components/ScrollContainer.vue'
@@ -96,7 +84,6 @@ const panel = ref<'tutorial' | 'model-downloader'>('tutorial')
 const isShow = computed(() => {
   return onboardingVersion.value !== TARGET_ONBOARDING_VERSION
 })
-const pinSidebar = userConfig.ui.pinSidebar.toRef()
 
 const onOllamaInstalled = async () => {
   endpointType.value = 'ollama'

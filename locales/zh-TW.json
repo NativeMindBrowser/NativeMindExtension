@@ -112,7 +112,7 @@
       "unload": "卸載",
       "expires_in": "於 {duration} 後到期",
       "running": "運行中",
-      "running_models": "執行模型"
+      "running_models": "運行中的模型"
     },
     "prompts": {
       "chat_system_prompt": "聊天系統提示詞",
@@ -163,7 +163,9 @@
       "running_models": {
         "vram": "{size} 顯示記憶體",
         "params": "{size} 個參數",
-        "quant": "{level} 量化"
+        "quant": "{level} 量化",
+        "no_active_models": "Ollama 已連接，但沒有啟用的模型",
+        "not_connected_to_ollama": "未連接到 Ollama"
       }
     },
     "title": "設定",

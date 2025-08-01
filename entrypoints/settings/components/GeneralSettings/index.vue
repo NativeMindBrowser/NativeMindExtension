@@ -126,7 +126,10 @@
                     >
                       {{ t('settings.ollama.context_window_size_desc') }}
                     </Text>
-                    <SavedMessage :watch="[guardedNumCtx, enableNumCtx]" />
+                    <SavedMessage
+                      v-if="!numCtxError"
+                      :watch="[guardedNumCtx, enableNumCtx]"
+                    />
                   </div>
                   <WarningMessage
                     v-if="numCtxError"
@@ -167,7 +170,7 @@
                 </Text>
               </div>
               <div class="-mt-2">
-                <div class="flex items-center justify-center gap-2 w-full font-medium">
+                <div class="flex items-center justify-center flex-wrap gap-2 w-full font-medium">
                   <Button
                     variant="secondary"
                     class="flex items-center justify-center min-h-8 min-w-40 py-1"
@@ -277,7 +280,7 @@ const { value: numCtx, guardedValue: guardedNumCtx, errorMessage: numCtxError } 
 })
 const enableNumCtx = userConfig.llm.enableNumCtx.toRef()
 
-watch(settingsQuery.downloadModel, (v) => {
+watch(() => settingsQuery.downloadModel.value, (v) => {
   if (v) isShowDownloadOllamaModal.value = true
 })
 const onDownloadOllamaModelFinished = async () => {
