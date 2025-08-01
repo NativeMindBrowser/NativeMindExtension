@@ -1,18 +1,13 @@
-import { extractReasoningMiddleware, LanguageModelV1, wrapLanguageModel } from 'ai'
+import { LanguageModelV1, wrapLanguageModel } from 'ai'
 
 import { getUserConfig } from '@/utils/user-config'
 
 import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
+import { middlewares } from './middlewares'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
 import { getWebLLMEngine, WebLLMSupportedModel } from './web-llm'
-
-const reasoningMiddleware = extractReasoningMiddleware({
-  tagName: 'think',
-  separator: '\n\n',
-  startWithReasoning: false,
-})
 
 export async function getModelUserConfig() {
   const userConfig = await getUserConfig()
@@ -91,7 +86,7 @@ export async function getModel(options: {
   }
   return wrapLanguageModel({
     model,
-    middleware: [reasoningMiddleware],
+    middleware: middlewares,
   })
 }
 

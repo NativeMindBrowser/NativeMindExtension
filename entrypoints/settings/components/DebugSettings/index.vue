@@ -265,36 +265,20 @@
             </div>
           </div>
         </Block>
-        <Block title="Online Search">
-          <div class="flex gap-3 justify-start items-stretch">
-            <Switch
-              v-model="enableOnlineSearch"
-              slotClass="rounded-lg border-gray-200 border bg-white"
-              thumbClass="bg-blue-500 w-4 h-4 rounded-md"
-              activeItemClass="text-white"
-              :items="[
-                {
-                  label: 'Force',
-                  key: 'force',
-                },
-                {
-                  label: 'Auto',
-                  key: 'auto',
-                },
-                {
-                  label: 'Disable',
-                  key: 'disable',
-                  activeThumbClass: 'bg-gray-200',
-                },
-              ]"
-            >
-              <template #label="{ item }">
-                <div class="flex p-2 items-center justify-center text-xs">
-                  {{ item.label }}
-                </div>
-              </template>
-            </Switch>
+        <Block title="Agent">
+          <div class="mt-1">
+            <div class="flex gap-3 justify-start items-center">
+              <div>Max iterations</div>
+              <Input
+                v-model.number="maxAgentIterations"
+                type="number"
+                min="0"
+                class="border-b border-gray-200"
+              />
+            </div>
           </div>
+        </Block>
+        <Block title="Online Search">
           <div class="mt-1">
             <div class="flex gap-3 justify-start items-center">
               <div>Max pages to read</div>
@@ -427,9 +411,8 @@ const userConfig = await getUserConfig()
 const numCtx = userConfig.llm.numCtx.toRef()
 const enableNumCtx = userConfig.llm.enableNumCtx.toRef()
 const translationSystemPrompt = userConfig.translation.systemPrompt.toRef()
-const chatSystemPrompt = userConfig.llm.chatSystemPrompt.toRef()
+const chatSystemPrompt = userConfig.chat.systemPrompt.toRef()
 const summarizeSystemPrompt = userConfig.llm.summarizeSystemPrompt.toRef()
-const enableOnlineSearch = userConfig.chat.onlineSearch.enable.toRef()
 const enableReasoning = userConfig.llm.reasoning.toRef()
 const onlineSearchPageReadCount = userConfig.chat.onlineSearch.pageReadCount.toRef()
 const onboardingVersion = userConfig.ui.onboarding.version.toRef()
@@ -440,6 +423,7 @@ const writingToolsListPrompt = userConfig.writingTools.list.systemPrompt.toRef()
 const writingToolsSparklePrompt = userConfig.writingTools.sparkle.systemPrompt.toRef()
 const endpointType = userConfig.llm.endpointType.toRef()
 const localeInConfig = userConfig.locale.current.toRef()
+const maxAgentIterations = userConfig.chat.agent.maxIterations.toRef()
 const translationSystemPromptError = ref('')
 const newModelId = ref('')
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }[]>([])

@@ -2,7 +2,8 @@ import { beforeAll, describe, expect, it } from 'vitest'
 
 import { resetFakeEntrypoint } from '@/tests/utils/fake-browser'
 
-import { ConditionBuilder, renderPrompt, TagBuilder, TextBuilder } from './helpers'
+import { searchOnlineTool, viewImageTool } from '../llm/tools/prompt-based/tools'
+import { ConditionBuilder, PromptBasedToolBuilder, renderPrompt, TagBuilder, TextBuilder } from './helpers'
 
 describe('prompt builder', () => {
   beforeAll(() => {
@@ -61,6 +62,85 @@ this is a test content
 The following 3 image(s) have been uploaded by the user.
 
 Question: What is the weather today?`)
+  })
+
+  it('tag builder from structured data', async () => {
+    const builder = TagBuilder.fromStructured('root', {
+      results: {
+        result1: 'This is result 1',
+        result2: 'This is result 2',
+      },
+    })
+    const prompt = renderPrompt`${builder}`
+    expect(prompt).toBe(`<root>
+<results>
+<result1>
+This is result 1
+</result1>
+<result2>
+This is result 2
+</result2>
+</results>
+</root>`)
+
+    const builder2 = TagBuilder.fromStructured('results', [
+      { result: 'This is result 1' },
+      { result: 'This is result 2' },
+    ])
+
+    const prompt2 = renderPrompt`${builder2}`
+    expect(prompt2).toBe(`<results>
+<result>
+This is result 1
+</result>
+<result>
+This is result 2
+</result>
+</results>`)
+
+    const builder3 = TagBuilder.fromStructured('tool_results', {
+      tool_type: 'search_online',
+      query: 'weather today',
+      results_count: 5,
+      status: 'completed',
+      search_results: [
+        'WARNING: These are INCOMPLETE search snippets only! You can use fetch_page to get complete content before answering!',
+        {
+          result: 'URL: https://example.com/weather-today \nTitle: Weather Today\nSnippet: The weather today is sunny with a high of 25°C.',
+        },
+        {
+          result: 'URL: https://example.com/weather-today \nTitle: Weather Today\nSnippet: The weather today is sunny with a high of 25°C.',
+        },
+      ],
+    })
+
+    expect(renderPrompt`${builder3}`).toBe(`<tool_results>
+<tool_type>
+search_online
+</tool_type>
+<query>
+weather today
+</query>
+<results_count>
+5
+</results_count>
+<status>
+completed
+</status>
+<search_results>
+WARNING: These are INCOMPLETE search snippets only! You can use fetch_page to get complete content before answering!
+<result>
+URL: https://example.com/weather-today 
+Title: Weather Today
+Snippet: The weather today is sunny with a high of 25°C.
+</result>
+<result>
+URL: https://example.com/weather-today 
+Title: Weather Today
+Snippet: The weather today is sunny with a high of 25°C.
+</result>
+</search_results>
+</tool_results>`)
   })
 
   it('test condition builder', async () => {
@@ -205,5 +285,26 @@ This is page 2 content.
 user: What is the weather today?
 assistant: The weather is sunny.
 </conversation>`)
+  })
+
+  it('should generate correct prompt based tools', async () => {
+    expect(renderPrompt`${new PromptBasedToolBuilder(searchOnlineTool)}`).toBe(`## search_online
+Purpose: Search for current and latest information
+Format:
+<tool_calls>
+<search_online>
+<query>2-6 specific keywords</query>
+<max_results>5</max_results>
+</search_online>
+</tool_calls>`)
+
+    expect(renderPrompt`${new PromptBasedToolBuilder(viewImageTool)}`).toBe(`## view_image
+Purpose: Analyze a specific image
+Format:
+<tool_calls>
+<view_image>
+<image_id>1</image_id>
+</view_image>
+</tool_calls>`)
   })
 })

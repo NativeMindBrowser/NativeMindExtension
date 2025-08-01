@@ -1,71 +1,11 @@
-import { Base64ImageData } from '@/types/image'
 import { PDFContentForModel } from '@/types/pdf'
+import { Page } from '@/types/prompt'
 
+import { PROMPT_MAX_PAGE_CONTENT_LENGTH } from '../constants'
 import { getUserConfig } from '../user-config'
-import { ConditionBuilder, definePrompt, JSONBuilder, renderPrompt, TagBuilder, TextBuilder, UserPrompt } from './helpers'
+import { definePrompt, JSONBuilder, renderPrompt, TagBuilder, trimText, truncateText, UserPrompt } from './helpers'
 
-export interface Page {
-  title: string
-  url: string
-  textContent?: string | null
-}
-
-const trimText = (text: string | null | undefined) => text?.replace(/(\s|\t)+/g, ' ').replace(/\n+/g, '\n').trim() ?? ''
-const truncateText = (text: string | null | undefined, maxLength: number) => {
-  if (!text) return ''
-  const trimmed = trimText(text)
-  return trimmed.length > maxLength ? trimmed.slice(0, maxLength) + '...[content truncated]' : trimmed
-}
-
-const MAX_PAGE_CONTENT_LENGTH = 1000
-
-export const chatWithPageContent = definePrompt(async (question: string, pages: Page[], onlineInfo: Page[] = [], images: Base64ImageData[], pdfInfo?: PDFContentForModel) => {
-  const userConfig = await getUserConfig()
-  const system = userConfig.llm.chatSystemPrompt.get()
-
-  const searchResultsBuilder = new TagBuilder('search_results')
-  for (let i = 0; i < onlineInfo.length; i++) {
-    const { title = '', url = '', textContent } = onlineInfo[i]
-    const head = `Title: ${title} | URL: ${url}`
-    const body = truncateText(textContent, MAX_PAGE_CONTENT_LENGTH)
-    searchResultsBuilder.insert(new TagBuilder('search_result', { id: i + 1 }).insertContent(head, body))
-  }
-
-  const tabContextBuilder = new TagBuilder('tabs_context')
-  for (let i = 0; i < pages.length; i++) {
-    const { title = '', url = '', textContent } = pages[i]
-    const head = `Title: ${title} | URL: ${url}`
-    const body = truncateText(textContent, MAX_PAGE_CONTENT_LENGTH)
-    tabContextBuilder.insert(new TagBuilder('tab', { id: i + 1 }).insertContent(head, body))
-  }
-
-  let pdfContextBuilder: TagBuilder | TextBuilder = new TagBuilder('pdf_document')
-  if (pdfInfo?.type === 'text') {
-    const { fileName = '', pageCount, textContent } = pdfInfo
-    pdfContextBuilder.insert(new TagBuilder('title').insertContent(fileName))
-    pdfContextBuilder.insert(new TagBuilder('pages').insertContent(pageCount.toString()))
-    pdfContextBuilder.insert(new TagBuilder('content').insertContent(textContent))
-  }
-  else if (pdfInfo?.type === 'images') {
-    pdfContextBuilder = new TextBuilder('The images provided are pages from a user-uploaded PDF document. ')
-    if (images.length > 0) {
-      pdfContextBuilder.insertContent(` And the following ${images.length} image(s) have been uploaded by the user.`)
-    }
-  }
-
-  const imageContextBuilder = new ConditionBuilder([new TextBuilder(`The following ${images.length} image(s) have been uploaded by the user.`)], images.length > 0 && pdfInfo?.type !== 'images')
-
-  const user = renderPrompt`
-${tabContextBuilder}
-${searchResultsBuilder}
-${pdfContextBuilder}
-${imageContextBuilder}
-
-Question: ${question}`.trim()
-
-  const pdfImages = pdfInfo?.type === 'images' ? pdfInfo.images : []
-  return { user: UserPrompt.fromTextAndImages(user, [...pdfImages, ...images]), system }
-})
+export * from './chat'
 
 export const summarizeWithPageContent = definePrompt(async (page: Page, question: string) => {
   const userConfig = await getUserConfig()
@@ -113,7 +53,7 @@ ${new JSONBuilder({ action: 'chat' })}
   for (let i = 0; i < pages.length; i++) {
     const { title = '', url = '', textContent } = pages[i]
     const head = `Title: ${title} | URL: ${url}`
-    const body = truncateText(textContent, MAX_PAGE_CONTENT_LENGTH)
+    const body = truncateText(textContent, PROMPT_MAX_PAGE_CONTENT_LENGTH)
     tabContextBuilder.insert(new TagBuilder('tab', { id: i + 1 }).insertContent(head, body))
   }
 
@@ -148,7 +88,7 @@ Return only the keywords in a JSON array without any explanations.`
   for (let i = 0; i < pages.length; i++) {
     const { title = '', url = '', textContent } = pages[i]
     const head = `Title: ${title} | URL: ${url}`
-    const body = truncateText(textContent, MAX_PAGE_CONTENT_LENGTH)
+    const body = truncateText(textContent, PROMPT_MAX_PAGE_CONTENT_LENGTH)
     tabContextBuilder.insert(new TagBuilder('tab', { id: i + 1 }).insertContent(head, body))
   }
 
