@@ -1,9 +1,10 @@
-import { backgroundCacheService } from '@/entrypoints/background/cache-service'
 import logger from '@/utils/logger'
+
+import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
 
 async function cacheGetStats() {
   try {
-    return await backgroundCacheService.getStats()
+    return await BackgroundCacheServiceManager.getInstance()?.getStats()
   }
   catch (error) {
     logger.error('Cache RPC getStats failed:', error)
@@ -20,7 +21,7 @@ async function cacheGetStats() {
 
 async function cacheClear() {
   try {
-    return await backgroundCacheService.clear()
+    return await BackgroundCacheServiceManager.getInstance()?.clear()
   }
   catch (error) {
     logger.error('Cache RPC clear failed:', error)
@@ -30,7 +31,7 @@ async function cacheClear() {
 
 async function cacheUpdateConfig() {
   try {
-    await backgroundCacheService.loadUserConfig()
+    await BackgroundCacheServiceManager.getInstance()?.loadUserConfig()
     return { success: true }
   }
   catch (error) {
@@ -41,7 +42,7 @@ async function cacheUpdateConfig() {
 
 async function cacheGetConfig() {
   try {
-    return backgroundCacheService.getConfig()
+    return BackgroundCacheServiceManager.getInstance()?.getConfig()
   }
   catch (error) {
     logger.error('Cache RPC getConfig failed:', error)
@@ -51,7 +52,7 @@ async function cacheGetConfig() {
 
 async function cacheGetDebugInfo() {
   try {
-    return backgroundCacheService.getDebugInfo()
+    return BackgroundCacheServiceManager.getInstance()?.getDebugInfo()
   }
   catch (error) {
     logger.error('Cache RPC getDebugInfo failed:', error)

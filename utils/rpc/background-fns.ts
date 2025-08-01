@@ -7,7 +7,8 @@ import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
-import { backgroundCacheService } from '../../entrypoints/background/cache-service'
+// Import singleton managers for type-safe service access
+import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
 import { sleep } from '../async'
 import { ContextMenuManager } from '../context-menu'
 import { AppError, CreateTabStreamCaptureError, FetchError, ModelRequestError, UnknownError } from '../error'
@@ -563,7 +564,8 @@ function ping() {
 // Translation cache functions
 async function cacheGetEntry(id: string) {
   try {
-    return await backgroundCacheService.getEntry(id)
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getEntry(id) || null
   }
   catch (error) {
     logger.error('Cache RPC getEntry failed:', error)
@@ -573,7 +575,8 @@ async function cacheGetEntry(id: string) {
 
 async function cacheSetEntry(entry: TranslationEntry) {
   try {
-    return await backgroundCacheService.setEntry(entry)
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.setEntry(entry) || { success: false, error: 'Cache service not available' }
   }
   catch (error) {
     logger.error('Cache RPC setEntry failed:', error)
@@ -583,7 +586,8 @@ async function cacheSetEntry(entry: TranslationEntry) {
 
 async function cacheDeleteEntry(id: string) {
   try {
-    return await backgroundCacheService.deleteEntry(id)
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.deleteEntry(id) || { success: false, error: 'Cache service not available' }
   }
   catch (error) {
     logger.error('Cache RPC deleteEntry failed:', error)
@@ -593,24 +597,27 @@ async function cacheDeleteEntry(id: string) {
 
 async function cacheGetStats() {
   try {
-    return await backgroundCacheService.getStats()
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getStats() || {
+      totalEntries: 0,
+      totalSizeMB: 0,
+      modelNamespaces: [],
+    }
   }
   catch (error) {
     logger.error('Cache RPC getStats failed:', error)
     return {
       totalEntries: 0,
       totalSizeMB: 0,
-      hitRate: 0,
       modelNamespaces: [],
-      oldestEntry: 0,
-      newestEntry: 0,
     }
   }
 }
 
 async function cacheClear() {
   try {
-    return await backgroundCacheService.clear()
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.clear() || { success: false, error: 'Cache service not available' }
   }
   catch (error) {
     logger.error('Cache RPC clear failed:', error)
@@ -620,7 +627,8 @@ async function cacheClear() {
 
 async function cacheUpdateConfig() {
   try {
-    await backgroundCacheService.loadUserConfig()
+    const service = BackgroundCacheServiceManager.getInstance()
+    await service?.loadUserConfig()
     return { success: true }
   }
   catch (error) {
@@ -631,7 +639,8 @@ async function cacheUpdateConfig() {
 
 async function cacheGetConfig() {
   try {
-    return backgroundCacheService.getConfig()
+    const service = BackgroundCacheServiceManager.getInstance()
+    return service?.getConfig() || null
   }
   catch (error) {
     logger.error('Cache RPC getConfig failed:', error)
@@ -641,13 +650,20 @@ async function cacheGetConfig() {
 
 async function cacheGetDebugInfo() {
   try {
-    return backgroundCacheService.getDebugInfo()
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getDebugInfo() || {
+      isInitialized: false,
+      contextInfo: {
+        location: 'unknown',
+        isServiceWorker: false,
+        isExtensionContext: false,
+      },
+    }
   }
   catch (error) {
     logger.error('Cache RPC getDebugInfo failed:', error)
     return {
       isInitialized: false,
-      extensionId: 'unknown',
       contextInfo: {
         location: 'unknown',
         isServiceWorker: false,

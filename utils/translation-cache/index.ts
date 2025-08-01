@@ -64,27 +64,3 @@ export type {
   CacheStats,
   TranslationEntry,
 } from './types'
-
-export type ObjectStoreName = typeof OBJECT_STORES[keyof typeof OBJECT_STORES]
-
-// ============================================================================
-// DATABASE CONSTANTS
-// ============================================================================
-
-export const CACHE_DB_NAME = 'NativeMindExtension_TranslationCache'
-export const CACHE_DB_VERSION = 1
-
-export const OBJECT_STORES = {
-  TRANSLATIONS: 'translations',
-  METADATA: 'metadata',
-} as const
-
-export const INDEXES = {
-  TRANSLATIONS: {
-    MODEL_NAMESPACE: 'modelNamespace',
-    CREATED_AT: 'createdAt',
-    LAST_ACCESSED: 'lastAccessedAt',
-    TEXT_HASH: 'textHash',
-    MODEL_LANG: 'modelNamespace_targetLanguage',
-  },
-} as const

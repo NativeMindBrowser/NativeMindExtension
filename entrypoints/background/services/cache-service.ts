@@ -1,54 +1,31 @@
 /**
  * Centralized translation cache service running in background script
  *
- * This service manages a single IndexedDB database that is shared across all tabs,
+ * This service manages translation cache operations using a shared database instance,
  * providing better cache hit rates and coordinated cleanup/analytics.
  */
 
-import { type DBSchema, deleteDB, type IDBPDatabase, openDB } from 'idb'
 import { LRUCache } from 'lru-cache'
-import { browser } from 'wxt/browser'
 
 import logger from '@/utils/logger'
 import {
-  CACHE_DB_NAME,
-  CACHE_DB_VERSION,
   type CacheConfig,
   type CacheMetadata,
   type CacheStats,
-  INDEXES,
-  OBJECT_STORES,
   type TranslationEntry,
 } from '@/utils/translation-cache'
 import { getUserConfig } from '@/utils/user-config'
 
-const log = logger.child('background-cache-service')
+import { type BackgroundDatabaseManager } from '../database'
+import { TRANSLATION_INDEXES, TRANSLATION_OBJECT_STORES } from '../database/schemas'
 
-// IndexedDB schema for idb package
-interface TranslationCacheDBSchema extends DBSchema {
-  [OBJECT_STORES.TRANSLATIONS]: {
-    key: string
-    value: TranslationEntry
-    indexes: {
-      [INDEXES.TRANSLATIONS.MODEL_NAMESPACE]: string
-      [INDEXES.TRANSLATIONS.CREATED_AT]: number
-      [INDEXES.TRANSLATIONS.LAST_ACCESSED]: number
-      [INDEXES.TRANSLATIONS.TEXT_HASH]: string
-      [INDEXES.TRANSLATIONS.MODEL_LANG]: [string, string]
-    }
-  }
-  [OBJECT_STORES.METADATA]: {
-    key: string
-    value: CacheMetadata
-  }
-}
+const log = logger.child('background-cache-service')
 
 /**
  * Background cache service class
  */
 class BackgroundCacheService {
-  private db: IDBPDatabase<TranslationCacheDBSchema> | null = null
-  private initPromise: Promise<void> | null = null
+  private databaseManager: BackgroundDatabaseManager
   private config: CacheConfig = {
     enabled: true,
     retentionDays: 30,
@@ -58,6 +35,10 @@ class BackgroundCacheService {
     max: 500,
     ttl: 1000 * 60 * 60 * 24 * 30, // 30 days
   })
+
+  constructor(databaseManager: BackgroundDatabaseManager) {
+    this.databaseManager = databaseManager
+  }
 
   /**
    * Load configuration from user-config
@@ -79,112 +60,25 @@ class BackgroundCacheService {
   }
 
   /**
-   * Initialize the cache database
+   * Initialize the cache service
    */
   async initialize(): Promise<void> {
     log.debug('Initializing background cache service')
-    if (this.initPromise) {
-      return this.initPromise
-    }
 
-    this.initPromise = this._initialize()
-    return this.initPromise
-  }
-
-  private async _initialize(): Promise<void> {
     try {
-      log.debug('Initializing background cache service', browser)
+      // Ensure database manager is initialized
+      await this.databaseManager.initialize()
 
-      // Load configuration from user-config first
+      // Load configuration from user-config
       await this.loadUserConfig()
-
-      // Debug: Check the current context
-      // const contextInfo = {
-      //   location: typeof location !== 'undefined' ? location.origin : 'undefined',
-      //   extensionId: browser.runtime?.id || 'unknown',
-      //   isServiceWorker: typeof importScripts === 'function',
-      //   isExtensionContext: typeof browser !== 'undefined' && typeof browser.runtime !== 'undefined',
-      //   databaseName: CACHE_DB_NAME,
-      //   databaseVersion: CACHE_DB_VERSION,
-      //   hasIndexedDB: typeof indexedDB !== 'undefined',
-      // }
-
-      // log.debug('Background service context:', contextInfo)
-
-      // Additional check: Verify IndexedDB is available
-      // if not, using fallback LRU cache
-      if (typeof indexedDB === 'undefined') {
-        throw new Error('IndexedDB is not available in this context, fallback to LRU cache')
-      }
-
-      // Use a unique database name for the extension context
-      const dbName = `${CACHE_DB_NAME}-extension`
-
-      this.db = await openDB<TranslationCacheDBSchema>(dbName, CACHE_DB_VERSION, {
-        upgrade(db, oldVersion, newVersion, _transaction) {
-          log.debug(`Upgrading database from version ${oldVersion} to ${newVersion}`)
-
-          // Create translations store
-          if (!db.objectStoreNames.contains(OBJECT_STORES.TRANSLATIONS)) {
-            const translationsStore = db.createObjectStore(OBJECT_STORES.TRANSLATIONS, {
-              keyPath: 'id',
-            })
-
-            // Create indexes
-            translationsStore.createIndex(
-              INDEXES.TRANSLATIONS.MODEL_NAMESPACE,
-              'modelNamespace',
-              { unique: false },
-            )
-            translationsStore.createIndex(
-              INDEXES.TRANSLATIONS.CREATED_AT,
-              'createdAt',
-              { unique: false },
-            )
-            translationsStore.createIndex(
-              INDEXES.TRANSLATIONS.LAST_ACCESSED,
-              'lastAccessedAt',
-              { unique: false },
-            )
-            translationsStore.createIndex(
-              INDEXES.TRANSLATIONS.TEXT_HASH,
-              'textHash',
-              { unique: false },
-            )
-            translationsStore.createIndex(
-              INDEXES.TRANSLATIONS.MODEL_LANG,
-              ['modelNamespace', 'targetLanguage'],
-              { unique: false },
-            )
-          }
-
-          // Create metadata store
-          if (!db.objectStoreNames.contains(OBJECT_STORES.METADATA)) {
-            db.createObjectStore(OBJECT_STORES.METADATA, {
-              keyPath: 'id',
-            })
-          }
-        },
-        blocked() {
-          log.warn('Database upgrade blocked by another connection')
-        },
-        blocking() {
-          log.warn('Database upgrade blocking another connection')
-        },
-      })
 
       // Initialize metadata if needed
       await this.initializeMetadata()
 
-      // expire old entries by retention days and last accessed time
+      // Expire old entries by retention days and last accessed time
       await this.expireOldEntries()
 
-      // Debug: Confirm database was created successfully
-      log.debug('Background cache service initialized successfully', {
-        databaseName: this.db.name,
-        databaseVersion: this.db.version,
-        objectStoreNames: Array.from(this.db.objectStoreNames),
-      })
+      log.debug('Background cache service initialized successfully')
     }
     catch (error) {
       log.error('Failed to initialize background cache service:', error)
@@ -196,19 +90,20 @@ class BackgroundCacheService {
    * Initialize default metadata
    */
   private async initializeMetadata(): Promise<void> {
-    if (!this.db) return
+    const db = this.databaseManager.getDatabase()
+    if (!db) return
 
     try {
-      const existing = await this.db.get(OBJECT_STORES.METADATA, 'global')
+      const existing = await db.get(TRANSLATION_OBJECT_STORES.METADATA, 'global')
       if (!existing) {
         const defaultMetadata: CacheMetadata = {
           id: 'global',
           totalEntries: 0,
           totalSize: 0,
           lastCleanup: Date.now(),
-          version: CACHE_DB_VERSION.toString(),
+          version: '1',
         }
-        await this.db.put(OBJECT_STORES.METADATA, defaultMetadata)
+        await db.put(TRANSLATION_OBJECT_STORES.METADATA, defaultMetadata)
         log.debug('Initialized default metadata')
       }
     }
@@ -221,10 +116,11 @@ class BackgroundCacheService {
    * Get a translation entry by ID
    */
   async getEntry(id: string): Promise<TranslationEntry | null> {
-    if (!this.db || !this.config.enabled) return null
+    const db = this.databaseManager.getDatabase()
+    if (!db || !this.config.enabled) return null
 
     try {
-      const entry = await this.db.get(OBJECT_STORES.TRANSLATIONS, id)
+      const entry = await db.get(TRANSLATION_OBJECT_STORES.TRANSLATIONS, id)
       if (entry) {
         // Update access statistics
         await this.updateLastAccessed(id, entry.accessCount + 1)
@@ -242,7 +138,8 @@ class BackgroundCacheService {
    * Set a translation entry
    */
   async setEntry(entry: TranslationEntry): Promise<{ success: boolean, error?: string }> {
-    if (!this.db || !this.config.enabled) {
+    const db = this.databaseManager.getDatabase()
+    if (!db || !this.config.enabled) {
       return { success: false, error: 'Cache disabled or not initialized' }
     }
 
@@ -250,17 +147,17 @@ class BackgroundCacheService {
       // Calculate entry size
       entry.size = this.calculateEntrySize(entry)
 
-      const tx = this.db.transaction([OBJECT_STORES.TRANSLATIONS, OBJECT_STORES.METADATA], 'readwrite')
+      const tx = db.transaction([TRANSLATION_OBJECT_STORES.TRANSLATIONS, TRANSLATION_OBJECT_STORES.METADATA], 'readwrite')
 
       // Check if entry exists
-      const existing = await tx.objectStore(OBJECT_STORES.TRANSLATIONS).get(entry.id)
+      const existing = await tx.objectStore(TRANSLATION_OBJECT_STORES.TRANSLATIONS).get(entry.id)
       const isUpdate = !!existing
 
       // Store the entry
-      await tx.objectStore(OBJECT_STORES.TRANSLATIONS).put(entry)
+      await tx.objectStore(TRANSLATION_OBJECT_STORES.TRANSLATIONS).put(entry)
 
       // Update metadata
-      const metadata = await tx.objectStore(OBJECT_STORES.METADATA).get('global')
+      const metadata = await tx.objectStore(TRANSLATION_OBJECT_STORES.METADATA).get('global')
       if (metadata) {
         if (!isUpdate) {
           metadata.totalEntries += 1
@@ -269,7 +166,7 @@ class BackgroundCacheService {
         else {
           metadata.totalSize = metadata.totalSize - (existing.size || 0) + entry.size
         }
-        await tx.objectStore(OBJECT_STORES.METADATA).put(metadata)
+        await tx.objectStore(TRANSLATION_OBJECT_STORES.METADATA).put(metadata)
       }
 
       await tx.done
@@ -285,28 +182,29 @@ class BackgroundCacheService {
    * Delete a translation entry
    */
   async deleteEntry(id: string): Promise<{ success: boolean, error?: string }> {
-    if (!this.db || !this.config.enabled) {
+    const db = this.databaseManager.getDatabase()
+    if (!db || !this.config.enabled) {
       return { success: false, error: 'Cache disabled or not initialized' }
     }
 
     try {
-      const tx = this.db.transaction([OBJECT_STORES.TRANSLATIONS, OBJECT_STORES.METADATA], 'readwrite')
+      const tx = db.transaction([TRANSLATION_OBJECT_STORES.TRANSLATIONS, TRANSLATION_OBJECT_STORES.METADATA], 'readwrite')
 
       // Get entry to update metadata
-      const entry = await tx.objectStore(OBJECT_STORES.TRANSLATIONS).get(id)
+      const entry = await tx.objectStore(TRANSLATION_OBJECT_STORES.TRANSLATIONS).get(id)
       if (!entry) {
         return { success: true } // Entry doesn't exist
       }
 
       // Delete the entry
-      await tx.objectStore(OBJECT_STORES.TRANSLATIONS).delete(id)
+      await tx.objectStore(TRANSLATION_OBJECT_STORES.TRANSLATIONS).delete(id)
 
       // Update metadata
-      const metadata = await tx.objectStore(OBJECT_STORES.METADATA).get('global')
+      const metadata = await tx.objectStore(TRANSLATION_OBJECT_STORES.METADATA).get('global')
       if (metadata) {
         metadata.totalEntries = Math.max(0, metadata.totalEntries - 1)
         metadata.totalSize = Math.max(0, metadata.totalSize - entry.size)
-        await tx.objectStore(OBJECT_STORES.METADATA).put(metadata)
+        await tx.objectStore(TRANSLATION_OBJECT_STORES.METADATA).put(metadata)
       }
 
       await tx.done
@@ -322,17 +220,18 @@ class BackgroundCacheService {
    * Get cache statistics
    */
   async getStats(): Promise<CacheStats> {
-    if (!this.db) {
+    const db = this.databaseManager.getDatabase()
+    if (!db) {
       return this.getEmptyStats()
     }
 
     try {
-      const metadata = await this.db.get(OBJECT_STORES.METADATA, 'global')
+      const metadata = await db.get(TRANSLATION_OBJECT_STORES.METADATA, 'global')
 
       // Get unique model namespaces
       const namespaces = new Set<string>()
-      const tx = this.db.transaction(OBJECT_STORES.TRANSLATIONS, 'readonly')
-      const index = tx.store.index(INDEXES.TRANSLATIONS.MODEL_NAMESPACE)
+      const tx = db.transaction(TRANSLATION_OBJECT_STORES.TRANSLATIONS, 'readonly')
+      const index = tx.store.index(TRANSLATION_INDEXES.TRANSLATIONS.MODEL_NAMESPACE)
 
       for await (const cursor of index.iterate()) {
         namespaces.add(cursor.key as string)
@@ -354,21 +253,22 @@ class BackgroundCacheService {
    * Clear all cache entries
    */
   async clear(): Promise<{ success: boolean, error?: string }> {
-    if (!this.db) {
+    const db = this.databaseManager.getDatabase()
+    if (!db) {
       return { success: false, error: 'Database not initialized' }
     }
 
     try {
-      const tx = this.db.transaction([OBJECT_STORES.TRANSLATIONS, OBJECT_STORES.METADATA], 'readwrite')
+      const tx = db.transaction([TRANSLATION_OBJECT_STORES.TRANSLATIONS, TRANSLATION_OBJECT_STORES.METADATA], 'readwrite')
 
-      await tx.objectStore(OBJECT_STORES.TRANSLATIONS).clear()
+      await tx.objectStore(TRANSLATION_OBJECT_STORES.TRANSLATIONS).clear()
 
       // Reset metadata
-      const metadata = await tx.objectStore(OBJECT_STORES.METADATA).get('global')
+      const metadata = await tx.objectStore(TRANSLATION_OBJECT_STORES.METADATA).get('global')
       if (metadata) {
         metadata.totalEntries = 0
         metadata.totalSize = 0
-        await tx.objectStore(OBJECT_STORES.METADATA).put(metadata)
+        await tx.objectStore(TRANSLATION_OBJECT_STORES.METADATA).put(metadata)
       }
 
       await tx.done
@@ -399,10 +299,11 @@ class BackgroundCacheService {
    * Update last accessed time and count
    */
   private async updateLastAccessed(id: string, accessCount: number): Promise<void> {
-    if (!this.db) return
+    const db = this.databaseManager.getDatabase()
+    if (!db) return
 
     try {
-      const tx = this.db.transaction(OBJECT_STORES.TRANSLATIONS, 'readwrite')
+      const tx = db.transaction(TRANSLATION_OBJECT_STORES.TRANSLATIONS, 'readwrite')
       const entry = await tx.store.get(id)
 
       if (entry) {
@@ -440,12 +341,9 @@ class BackgroundCacheService {
    * Close the database connection
    */
   async close(): Promise<void> {
-    if (this.db) {
-      this.db.close()
-      this.db = null
-      this.initPromise = null
-      log.debug('Background cache service closed')
-    }
+    // Database connection is managed by the database manager
+    // Individual services don't need to close the connection
+    log.debug('Background cache service closed')
   }
 
   /**
@@ -457,11 +355,12 @@ class BackgroundCacheService {
     count: number = 10,
     options?: Partial<TranslationEntry>,
   ): Promise<void> {
-    if (!this.db) {
+    const db = this.databaseManager.getDatabase()
+    if (!db) {
       throw new Error('Database not initialized')
     }
     const now = Date.now()
-    const tx = this.db.transaction(OBJECT_STORES.TRANSLATIONS, 'readwrite')
+    const tx = db.transaction(TRANSLATION_OBJECT_STORES.TRANSLATIONS, 'readwrite')
     for (let i = 0; i < count; i++) {
       const id = `mock-${now}-${i}`
       const entry: TranslationEntry = {
@@ -489,13 +388,9 @@ class BackgroundCacheService {
   async getDebugInfo(): Promise<unknown> {
     const contextInfo = {
       location: typeof location !== 'undefined' ? location.origin : 'undefined',
-      extensionId: browser.runtime?.id || 'unknown',
       isServiceWorker: typeof importScripts === 'function',
-      isExtensionContext: typeof browser !== 'undefined' && typeof browser.runtime !== 'undefined',
-      databaseName: CACHE_DB_NAME,
-      databaseVersion: CACHE_DB_VERSION,
       hasIndexedDB: typeof indexedDB !== 'undefined',
-      isInitialized: !!this.db,
+      isInitialized: this.databaseManager.isInitialized(),
     }
 
     const cachedEntries = await this.getCachedEntries()
@@ -509,11 +404,12 @@ class BackgroundCacheService {
   }
 
   async getCachedEntries(): Promise<TranslationEntry[]> {
-    if (!this.db) {
+    const db = this.databaseManager.getDatabase()
+    if (!db) {
       return []
     }
-    const tx = this.db.transaction(OBJECT_STORES.TRANSLATIONS, 'readonly')
-    const index = tx.store.index(INDEXES.TRANSLATIONS.MODEL_NAMESPACE)
+    const tx = db.transaction(TRANSLATION_OBJECT_STORES.TRANSLATIONS, 'readonly')
+    const index = tx.store.index(TRANSLATION_INDEXES.TRANSLATIONS.MODEL_NAMESPACE)
     const entries: TranslationEntry[] = []
     for await (const cursor of index.iterate()) {
       entries.push(cursor.value as TranslationEntry)
@@ -526,7 +422,8 @@ class BackgroundCacheService {
    * Expire old entries based on retention days and last accessed time
    */
   async expireOldEntries(): Promise<{ success: boolean, removedCount: number, error?: string }> {
-    if (!this.db || !this.config.enabled) {
+    const db = this.databaseManager.getDatabase()
+    if (!db || !this.config.enabled) {
       return { success: false, removedCount: 0, error: 'Cache disabled or not initialized' }
     }
 
@@ -536,9 +433,9 @@ class BackgroundCacheService {
 
       log.debug(`Expiring entries older than ${this.config.retentionDays} days (cutoff: ${new Date(cutoffTime).toISOString()})`)
 
-      const tx = this.db.transaction([OBJECT_STORES.TRANSLATIONS, OBJECT_STORES.METADATA], 'readwrite')
-      const translationsStore = tx.objectStore(OBJECT_STORES.TRANSLATIONS)
-      const lastAccessedIndex = translationsStore.index(INDEXES.TRANSLATIONS.LAST_ACCESSED)
+      const tx = db.transaction([TRANSLATION_OBJECT_STORES.TRANSLATIONS, TRANSLATION_OBJECT_STORES.METADATA], 'readwrite')
+      const translationsStore = tx.objectStore(TRANSLATION_OBJECT_STORES.TRANSLATIONS)
+      const lastAccessedIndex = translationsStore.index(TRANSLATION_INDEXES.TRANSLATIONS.LAST_ACCESSED)
 
       // Find entries that haven't been accessed within the retention period
       const expiredEntries: TranslationEntry[] = []
@@ -560,12 +457,12 @@ class BackgroundCacheService {
 
       // Update metadata
       if (expiredEntries.length > 0) {
-        const metadata = await tx.objectStore(OBJECT_STORES.METADATA).get('global')
+        const metadata = await tx.objectStore(TRANSLATION_OBJECT_STORES.METADATA).get('global')
         if (metadata) {
           metadata.totalEntries = Math.max(0, metadata.totalEntries - expiredEntries.length)
           metadata.totalSize = Math.max(0, metadata.totalSize - totalSizeRemoved)
           metadata.lastCleanup = Date.now()
-          await tx.objectStore(OBJECT_STORES.METADATA).put(metadata)
+          await tx.objectStore(TRANSLATION_OBJECT_STORES.METADATA).put(metadata)
         }
       }
 
@@ -594,37 +491,69 @@ class BackgroundCacheService {
    */
   async destroyDatabase(): Promise<{ success: boolean, error?: string }> {
     try {
-      // Close the current database connection if it exists
-      if (this.db) {
-        this.db.close()
-        this.db = null
-        this.initPromise = null
-      }
-
-      // Get the database name (same as used in initialization)
-      const dbName = `${CACHE_DB_NAME}-extension`
-
-      // Delete the database using idb's deleteDB function
-      await deleteDB(dbName, {
-        blocked() {
-          log.warn(`Database deletion blocked - there may be open connections to '${dbName}'`)
-        },
-      })
+      // Delegate to database manager
+      const result = await this.databaseManager.destroyDatabase()
 
       // Clear the fallback cache as well
       this.fallbackCache.clear()
 
-      log.debug(`Database '${dbName}' destroyed successfully and fallback cache cleared`)
+      if (result.success) {
+        log.debug('Database destroyed successfully and fallback cache cleared')
+      }
 
-      return { success: true }
+      return result
     }
     catch (error) {
       log.error('Failed to destroy database:', error)
       return { success: false, error: String(error) }
     }
   }
+
+  /**
+   * Clear all object stores
+   */
+  async clearObjectStore(): Promise<void> {
+    await this.databaseManager.clearObjectStore(TRANSLATION_OBJECT_STORES.TRANSLATIONS)
+    await this.databaseManager.clearObjectStore(TRANSLATION_OBJECT_STORES.METADATA)
+  }
 }
 
-// Singleton instance - DO NOT auto-initialize here
-// Initialization should only happen in the background script context
-export const backgroundCacheService = new BackgroundCacheService()
+/**
+ * Singleton instance manager for BackgroundCacheService
+ */
+class BackgroundCacheServiceManager {
+  private static instance: BackgroundCacheService | null = null
+
+  static async initialize(databaseManager: BackgroundDatabaseManager): Promise<BackgroundCacheService> {
+    if (!this.instance) {
+      const service = new BackgroundCacheService(databaseManager)
+      log.debug('[BackgroundCacheServiceManager] Initializing cache service', service)
+      try {
+        await service.initialize()
+        this.instance = service
+      }
+      catch (error) {
+        // If initialization fails, don't set the instance
+        log.error('[BackgroundCacheServiceManager] Failed to initialize cache service:', error)
+        throw error
+      }
+    }
+    return this.instance
+  }
+
+  static getInstance(): BackgroundCacheService | null {
+    return this.instance
+  }
+
+  static reset(): void {
+    this.instance = null
+  }
+}
+
+// Factory function to create cache service with database manager (deprecated, use singleton)
+export function createBackgroundCacheService(databaseManager: BackgroundDatabaseManager): BackgroundCacheService {
+  return new BackgroundCacheService(databaseManager)
+}
+
+// Singleton access
+export { BackgroundCacheServiceManager }
