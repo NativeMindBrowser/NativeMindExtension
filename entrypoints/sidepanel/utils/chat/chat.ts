@@ -6,21 +6,20 @@ import { ContextAttachmentStorage, PDFAttachment } from '@/types/chat'
 import { PDFContentForModel } from '@/types/pdf'
 import { nonNullable } from '@/utils/array'
 import { debounce } from '@/utils/debounce'
-import { parseDocument } from '@/utils/document-parser'
 import { AbortError, AppError } from '@/utils/error'
-import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
+import { PromptBasedToolName } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
-import { chatWithPageContent, generateSearchKeywords, nextStep, Page, summarizeWithPageContent } from '@/utils/prompts'
-import { UserPrompt } from '@/utils/prompts/helpers'
-import { SearchingMessage } from '@/utils/search'
+import { generateSearchKeywords, nextStep } from '@/utils/prompts'
+import { renderPrompt, TagBuilder, UserPrompt } from '@/utils/prompts/helpers'
 import { ScopeStorage } from '@/utils/storage'
 import { type HistoryItemV1 } from '@/utils/tab-store'
 import { ActionMessageV1, ActionTypeV1, ActionV1, AssistantMessageV1, ChatHistoryV1, ChatList, pickByRoles, TaskMessageV1, UserMessageV1 } from '@/utils/tab-store/history'
 import { getUserConfig } from '@/utils/user-config'
 
+import { Agent } from '../agent'
 import { generateObjectInBackground, initCurrentModel, isCurrentModelReady, streamTextInBackground } from '../llm'
-import { makeMarkdownIcon, makeParagraph } from '../markdown/content'
+import { makeMarkdownIcon } from '../markdown/content'
 import { SearchScraper } from '../search'
 import { getCurrentTabInfo, getDocumentContentOfTabs } from '../tabs'
 
@@ -245,6 +244,7 @@ export class Chat {
   private abortControllers: AbortController[] = []
   private searchScraper = new SearchScraper()
   private static chatStorage = new ScopeStorage<{ timestamp: number, title: string }>('chat')
+  private currentAgent: Agent<PromptBasedToolName> | null = null
 
   static getInstance() {
     if (!this.instance) {
@@ -317,7 +317,7 @@ export class Chat {
     const contextTabs = this.contextAttachments.value.filter((attachment) => attachment.type === 'tab').map((attachment) => attachment.value)
     const currentTab = this.contextAttachmentStorage.value.currentTab?.type === 'tab' ? this.contextAttachmentStorage.value.currentTab.value : undefined
     const filteredContextTabs = contextTabs.filter((tab) => tab.id !== currentTab?.id)
-    return [currentTab, ...filteredContextTabs].filter(nonNullable)
+    return [currentTab ? { ...currentTab, isCurrent: true } : undefined, ...filteredContextTabs.map((tab) => ({ ...tab, isCurrent: false }))].filter(nonNullable)
   }
 
   get contextImages() {
@@ -363,12 +363,23 @@ export class Chat {
     this.contextAttachments.value.unshift({ type: 'tab', value: { ...currentTabInfo, id: generateRandomId() } })
   }
 
+  async getContentOfTabs() {
+    const relevantTabIds = this.contextTabs.map((tab) => tab.tabId)
+    const currentTab = this.contextTabs.find((tab) => tab.isCurrent)
+    const pages = (await getDocumentContentOfTabs(relevantTabIds)).filter(nonNullable).map((tabContent) => {
+      return {
+        ...tabContent,
+        isActive: currentTab?.tabId === tabContent.tabId,
+      }
+    })
+    return pages
+  }
+
   async checkNextStep(contextMsgs: { role: 'user' | 'assistant', content: string }[]) {
     log.debug('checkNextStep', contextMsgs)
-    const relevantTabIds = this.contextTabs.map((tab) => tab.tabId)
     const relevantPDF = this.contextPDFs?.[0] ? await this.extractPDFContent(this.contextPDFs[0]) : undefined
     if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
-    const pages = await getDocumentContentOfTabs(relevantTabIds)
+    const pages = await this.getContentOfTabs()
     const abortController = this.createAbortController()
     const prompt = await nextStep(contextMsgs, pages.filter(nonNullable), relevantPDF)
     const next = await generateObjectInBackground({
@@ -415,71 +426,10 @@ export class Chat {
     }
   }
 
-  private async searchOnline(queryList: string[], { onStartQuery, resultLimit }: { onStartQuery?: (query: string) => void, resultLimit?: number } = {}) {
-    const { t } = await useGlobalI18n()
-    const abortController = new AbortController()
-    this.abortControllers.push(abortController)
-    const searcher = this.searchScraper.search(queryList, { abortSignal: abortController.signal, resultLimit, engine: 'google' })
-    let linksResult: undefined | (SearchingMessage & { type: 'links' })['links'] = undefined
-    const msgs = {} as Record<string, TaskMessageV1>
-    const makeShortTitleLink = (title: string, url: string) => {
-      return `[${title}](${url})`
-    }
-    let parentTaskMsg: TaskMessageV1 | undefined
-    for await (const progress of searcher) {
-      if (progress.type === 'query-start') {
-        onStartQuery?.(progress.query)
-        parentTaskMsg = this.historyManager.appendTaskMessage(t('chat.messages.search_locally'))
-        parentTaskMsg.icon = 'searchColored'
-      }
-      else if (progress.type === 'query-finished') {
-        if (parentTaskMsg) {
-          parentTaskMsg.content = `Finished searching`
-          parentTaskMsg.done = true
-        }
-      }
-      else if (progress.type === 'page-start') {
-        const msg = this.historyManager.appendTaskMessage(makeParagraph(`${t('chat.messages.reading')}: "${makeShortTitleLink(progress.title, progress.url)}"`, { rows: 1 }), parentTaskMsg)
-        msg.icon = 'tickColored'
-        if (msgs[progress.url]) {
-          msgs[progress.url].done = true
-        }
-        msgs[progress.url] = msg
-      }
-      else if (progress.type === 'page-finished') {
-        if (msgs[progress.url]) {
-          msgs[progress.url].content = makeParagraph(`${t('chat.messages.reading')}: "${makeShortTitleLink(progress.title, progress.url)}"`, { rows: 1 })
-          msgs[progress.url].done = true
-        }
-      }
-      else if (progress.type === 'page-error') {
-        if (msgs[progress.url]) {
-          const idx = parentTaskMsg?.subTasks?.findIndex((subTask) => subTask.id === msgs[progress.url].id)
-          if (idx !== undefined && idx > -1) {
-            parentTaskMsg?.subTasks?.splice(idx, 1)
-          }
-        }
-      }
-      else if (progress.type === 'links') {
-        linksResult = progress.links
-      }
-      else if (progress.type === 'need-interaction') {
-        this.historyManager.appendAssistantMessage(`Need interaction: [${progress.currentUrl}](${progress.currentUrl})`)
-      }
-    }
-    Object.values(msgs).forEach((msg) => {
-      msg.done = true
-    })
-    parentTaskMsg && (parentTaskMsg.done = true)
-    log.debug('[Search Engine] result', linksResult)
-    return linksResult
-  }
-
   private async questionToKeywords(contextMsgs: { role: 'user' | 'assistant', content: string }[]) {
     const abortController = this.createAbortController()
-    const relevantTabIds = this.contextTabs.map((tab) => tab.tabId)
-    const pages = await getDocumentContentOfTabs(relevantTabIds)
-    const prompt = await generateSearchKeywords(contextMsgs, pages.filter(nonNullable))
+    const pages = await this.getContentOfTabs()
+    const prompt = await generateSearchKeywords(contextMsgs, pages)
     const r = await generateObjectInBackground({
       schema: 'searchKeywords',
       system: prompt.system,
@@ -487,18 +437,6 @@ export class Chat {
       abortSignal: abortController.signal,
     })
     return r.object.queryKeywords
-  }
-
-  async summarizeCurrentPage(hint: string) {
-    const userPrompt = hint
-    const display = hint
-
-    using _s = this.statusScope('pending')
-    const article = await parseDocument(document)
-    const prompt = await summarizeWithPageContent({ ...article, url: location.href }, userPrompt)
-    this.historyManager.appendUserMessage(display)
-    await this.prepareModel()
-    return await this.sendMessage(prompt.user, prompt.system, { autoDeleteEmptyResponseMsg: false })
   }
 
   private async extractPDFContent(pdfData: PDFAttachment['value']): Promise<PDFContentForModel> {
@@ -512,42 +450,74 @@ export class Chat {
 
   async ask(question: string) {
     using _s = this.statusScope('pending')
-    const userConfig = await getUserConfig()
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
 
     question && this.historyManager.appendUserMessage(question)
     await this.prepareModel()
-    const nextStepContext = pickByRoles(this.historyManager.history.value, ['user', 'assistant']).slice(-4)
-    let loading: AssistantMessageV1 | undefined = this.historyManager.appendAssistantMessage()
-    const enableOnlineSearch = userConfig.chat.onlineSearch.enable.get()
-    let onlineResults: undefined | Page[]
-    let next: Awaited<ReturnType<typeof this.checkNextStep>> = { action: 'chat' }
-    let searchKeywords: string[] = []
-    if (enableOnlineSearch === 'force') {
-      searchKeywords = await this.questionToKeywords(nextStepContext)
-    }
-    else if (enableOnlineSearch === 'auto') {
-      next = await this.checkNextStep(nextStepContext).catch(async (e) => {
-        await this.errorHandler(e, loading)
-        throw e
-      })
-      if (next.action === 'search_online') {
-        searchKeywords = next.queryKeywords
-      }
-    }
-    if (searchKeywords?.length) {
-      log.debug('[Search Engine] keywords', searchKeywords)
-      onlineResults = await this.searchOnline(searchKeywords, { onStartQuery: () => loading && this.historyManager.deleteMessage(loading), resultLimit: userConfig.chat.onlineSearch.pageReadCount.get() })
-      loading = undefined
-    }
-    const relevantTabIds = this.contextTabs.map((tab) => tab.tabId)
-    const relevantImages = this.contextImages
-    const relevantPDF = this.contextPDFs?.[0] ? await this.extractPDFContent(this.contextPDFs[0]) : undefined
     if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
-    const pages = await getDocumentContentOfTabs(relevantTabIds)
-    const prompt = await chatWithPageContent(question, pages.filter(nonNullable), onlineResults, relevantImages, relevantPDF)
-    await this.sendMessage(prompt.user, prompt.system, { assistantMsg: loading })
+    await this.runWithAgent(question)
+  }
+
+  private async runWithAgent(question: string) {
+    const agent = new Agent({
+      historyManager: this.historyManager,
+      attachmentStorage: this.contextAttachmentStorage.value,
+      tools: {
+        search_online: {
+          execute: async ({ params, historyManager }) => {
+            const { query, max_results } = params
+            const taskMsg = historyManager.appendTaskMessage(`Searching results for "${query}"`)
+            const links = await this.searchScraper.searchWebsites(query)
+            const filteredLinks = links.slice(0, max_results)
+            taskMsg.done = true
+            taskMsg.content = `Found ${filteredLinks.length} results for "${query}"`
+            const resultBuilder = new TagBuilder('tool_results')
+            resultBuilder.insert(new TagBuilder('tool_type').insertContent('search_online'))
+            resultBuilder.insert(new TagBuilder('query').insertContent(query))
+            resultBuilder.insert(new TagBuilder('results_count').insertContent(filteredLinks.length.toString()))
+            resultBuilder.insert(new TagBuilder('status').insertContent('completed'))
+            const searchResultsBuilder = new TagBuilder('search_results')
+            resultBuilder.insert(searchResultsBuilder)
+            searchResultsBuilder.insertContent('WARNING: These are INCOMPLETE search snippets only! You can use fetch_page to get complete content before answering!')
+            for (const link of filteredLinks) {
+              searchResultsBuilder.insert(new TagBuilder('result').insertContent(`Title: ${link.title}\nURL: ${link.url}\nSnippet: ${link.description}`))
+            }
+            return [{
+              type: 'agent-assistant-text',
+              content: renderPrompt`${resultBuilder}`,
+            }]
+          },
+        },
+        fetch_page: {
+          execute: async ({ params, historyManager }) => {
+            const { url } = params
+            const taskMsg = historyManager.appendTaskMessage(`Fetching page content from "${url}"`)
+            const [content] = await this.searchScraper.fetchUrlsContent([url])
+            if (!content) {
+              taskMsg.content = `Failed to fetch content from "${url}"`
+              taskMsg.done = true
+              return []
+            }
+            else {
+              taskMsg.content = `Fetched content from "${url}"`
+              taskMsg.done = true
+              const resultBuilder = new TagBuilder('tool_results')
+              resultBuilder.insert(new TagBuilder('tool_type').insertContent('fetch_page'))
+              resultBuilder.insert(new TagBuilder('url').insertContent(url))
+              resultBuilder.insert(new TagBuilder('status').insertContent('completed'))
+              const pageContentTag = new TagBuilder('page_content').insertContent(`URL: ${content.url}\n\n ${content.textContent}`)
+              resultBuilder.insert(pageContentTag)
+              return [{
+                type: 'agent-assistant-text',
+                content: renderPrompt`${resultBuilder}`,
+              }]
+            }
+          },
+        },
+      },
+    })
+    await agent.runWithPrompt(question)
   }
 
   private async sendMessage(user: UserPrompt, system?: string, options: { autoDeleteEmptyResponseMsg?: boolean, assistantMsg?: AssistantMessageV1 } = {}) {
@@ -605,6 +575,7 @@ export class Chat {
   }
 
   stop() {
+    this.currentAgent?.stop()
     this.abortControllers.forEach((abortController) => {
       abortController.abort()
     })

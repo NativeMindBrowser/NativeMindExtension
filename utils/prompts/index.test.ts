@@ -2,7 +2,8 @@ import { beforeAll, describe, expect, it } from 'vitest'
 
 import { resetFakeEntrypoint } from '@/tests/utils/fake-browser'
 
-import { ConditionBuilder, renderPrompt, TagBuilder, TextBuilder } from './helpers'
+import { searchOnlineTool, viewImageTool } from '../llm/tools/prompt-based/tools'
+import { ConditionBuilder, PromptBasedToolBuilder, renderPrompt, TagBuilder, TextBuilder } from './helpers'
 
 describe('prompt builder', () => {
   beforeAll(() => {
@@ -205,5 +206,26 @@ This is page 2 content.
 user: What is the weather today?
 assistant: The weather is sunny.
 </conversation>`)
+  })
+
+  it('should generate correct prompt based tools', async () => {
+    expect(renderPrompt`${new PromptBasedToolBuilder(searchOnlineTool)}`).toBe(`## search_online
+Purpose: Search for current and latest information
+Format:
+<tool_calls>
+<search_online>
+<query>2-6 specific keywords</query>
+<max_results>5</max_results>
+</search_online>
+</tool_calls>`)
+
+    expect(renderPrompt`${new PromptBasedToolBuilder(viewImageTool)}`).toBe(`## view_image
+Purpose: Analyze a specific image
+Format:
+<tool_calls>
+<view_image>
+<image_id>1</image_id>
+</view_image>
+</tool_calls>`)
   })
 })

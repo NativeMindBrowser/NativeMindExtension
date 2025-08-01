@@ -3,6 +3,7 @@ import { UserContent } from 'ai'
 import { Base64ImageData } from '@/types/image'
 
 import { nonNullable } from '../array'
+import { PromptBasedTool, PromptBasedToolParams } from '../llm/tools/prompt-based/helpers'
 
 export class UserPrompt {
   constructor(private _content: UserContent) { }
@@ -150,6 +151,23 @@ export class JSONBuilder extends Builder {
   }
 }
 
+export class PromptBasedToolBuilder<Name extends string, T extends PromptBasedToolParams> extends Builder {
+  constructor(public tool: PromptBasedTool<Name, T>) {
+    super()
+  }
+
+  build(): string {
+    return `## ${this.tool.toolName}
+Purpose: ${this.tool.instruction}
+Format:
+<tool_calls>
+<${this.tool.toolName}>
+${this.tool.xmlParams}
+</${this.tool.toolName}>
+</tool_calls>`
+  }
+}
+
 export function renderPrompt(arr: TemplateStringsArray, ...values: unknown[]) {
   return arr.reduce((result, str, i) => {
     const value = values[i]
@@ -166,4 +184,11 @@ export function renderPrompt(arr: TemplateStringsArray, ...values: unknown[]) {
     }
     return result + str
   }, '')
+}
+
+export const trimText = (text: string | null | undefined) => text?.replace(/(\s|\t)+/g, ' ').replace(/\n+/g, '\n').trim() ?? ''
+export const truncateText = (text: string | null | undefined, maxLength: number) => {
+  if (!text) return ''
+  const trimmed = trimText(text)
+  return trimmed.length > maxLength ? trimmed.slice(0, maxLength) + '...[content truncated]' : trimmed
 }

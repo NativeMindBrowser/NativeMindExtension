@@ -24,10 +24,12 @@ export async function getTabInfo(tabId: number) {
 }
 
 export async function getDocumentContentOfTabs(tabIds: number[]) {
-  const contents = await Promise.all(tabIds.map((tabId) => timeout(s2bRpc.getDocumentContentOfTab(tabId), 5000).catch(() => {
-    log.error(`Failed to get content for tab ${tabId}, it might not be a valid HTML page or the tab is closed.`)
-    return undefined
-  })))
+  const contents = await Promise.all(tabIds
+    .map((tabId) => timeout(s2bRpc.getDocumentContentOfTab(tabId), 5000)
+      .catch(() => {
+        log.error(`Failed to get content for tab ${tabId}, it might not be a valid HTML page or the tab is closed.`)
+        return undefined
+      })))
   return contents.filter((tabContent) => tabContent?.type === 'html')
 }
 
