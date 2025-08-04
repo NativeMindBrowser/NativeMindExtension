@@ -1,6 +1,26 @@
 # Changelog
 
 
+## v1.7.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.9...v1.7.0-beta.1)
+
+### 🚀 Enhancements
+
+- **agent:** Add support for agent in beta ([ae46e66](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ae46e66))
+
+### 🩹 Fixes
+
+- **translator:** Update context menu after page navigation ([ef2d683](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ef2d683))
+
+### 🏡 Chore
+
+- **package:** Update version to 1.7.0-beta.0 ([1947b6b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1947b6b))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.6.0-beta.9
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.8...v1.6.0-beta.9)
