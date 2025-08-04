@@ -69,11 +69,11 @@ function normalizeText(text: string): string {
     .replace(/\n{3,}/g, '\n\n') // Limit consecutive newlines
     .replace(/[ \t]{2,}/g, ' ') // Normalize multiple spaces/tabs
     .replace(/&nbsp;/g, ' ') // Normalize non-breaking spaces
-    .replace(/&amp;/g, '&') // Normalize HTML entities
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, '\'')
+    .replace(/&amp;/g, '&') // Normalize HTML entities (moved to end)
 }
 
 /**
