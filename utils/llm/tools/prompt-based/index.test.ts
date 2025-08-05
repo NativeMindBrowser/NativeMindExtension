@@ -283,19 +283,9 @@ I will fetch the weather data for the next week using the available tools.
 
   it('should handle weird response', async () => {
     const response = `>
-
-
 <assistant>
 <thought>
-Okay, the user is asking about the weather in Shenzhen for the next week. Let me check the available tools. There are no open tabs, PDFs, or images, so I need to use the search_online tool to find the latest information.
-
-The search results provided include several websites like the Shenzhen Meteorological Bureau, Weather.com.cn, China Meteorological Administration, and AccuWeather. These seem to be reliable sources for weather forecasts.
-
-Since the user wants the weather for the next week, I should check each of these links to see if they provide a 7-day forecast. However, the snippets in the results are incomplete. For example, the first result from the Shenzhen Meteorological Bureau might have the forecast, but the snippet doesn't show the details. Similarly, the AccuWeather link is for a 3-day forecast, but it's in Chinese. 
-
-I need to use the fetch_page tool to get the complete content from these URLs. Let me start with the Shenzhen Meteorological Bureau's page. If that doesn't have the 7-day forecast, I can check the other links. Alternatively, maybe the Weather.com.cn or China Meteorological Administration pages have the necessary information. 
-
-Wait, the user's question is in Chinese, so the answer should be in Chinese. The tools are set up to handle that. I should make sure to fetch the correct pages and extract the 7-day forecast details. Let me proceed step by step, first checking the Shenzhen Meteorological Bureau's site, then the others if needed.
+test block response
 </thought>
 
 <tool_calls>
@@ -316,10 +306,11 @@ Wait, the user's question is in Chinese, so the answer should be in Chinese. The
 
     expect(calls).toEqual([
       {
-        tagText: `ls>
+        tagText: `<tool_calls>
 <fetch_page>
 <url>https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html</url>
-</fetch_page>`,
+</fetch_page>
+</tool_calls>`,
         tool: promptBasedTools[4],
         params: {
           url: 'https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html',

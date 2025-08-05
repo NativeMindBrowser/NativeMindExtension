@@ -4,33 +4,47 @@ import { Ref, ref } from 'vue'
 import { ContextAttachment, ContextAttachmentStorage, TabAttachment } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData } from '@/types/image'
-import { fromError, ParseFunctionCallError } from '@/utils/error'
+import { AbortError, fromError, ParseFunctionCallError } from '@/utils/error'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
 import { GetPromptBasedTool, PromptBasedToolName } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
 import { chatWithEnvironment } from '@/utils/prompts'
 import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
-import { AssistantMessageV1 } from '@/utils/tab-store/history'
+import { AssistantMessageV1, TaskMessageV1 } from '@/utils/tab-store/history'
 
 import { ReactiveHistoryManager } from '../chat'
 import { streamTextInBackground } from '../llm'
 
 // Tool results for next agent loop
-type ToolExecuteResult = {
+export type AgentToolExecuteResult = {
   type: 'user-message'
   content: string
 }
 
-type ToolCall<T extends PromptBasedToolName> = {
+export type AgentToolCallExecute<T extends PromptBasedToolName> = {
+  (options: {
+    params: InferredParams<GetPromptBasedTool<T>['parameters']>
+    agentStorage: AgentStorage
+    historyManager: ReactiveHistoryManager
+    loopImages: (Base64ImageData & { id: string })[]
+    statusMessageModifier: StatusMessageModifier
+    abortSignal: AbortSignal
+  }): PromiseOr<AgentToolExecuteResult[]>
+}
+
+export type AgentToolCall<T extends PromptBasedToolName> = {
   [toolName in T]: {
-    execute(options: {
-      params: InferredParams<GetPromptBasedTool<toolName>['parameters']>
-      agentStorage: AgentStorage
-      historyManager: ReactiveHistoryManager
-      loopImages: (Base64ImageData & { id: string })[]
-    }): PromiseOr<ToolExecuteResult[]>
+    execute: AgentToolCallExecute<toolName>
   }
+}
+
+// status message is what tools use to show their progress in the UI
+export type StatusMessageModifier = {
+  setContent: (content: string) => void
+  getContent: () => string
+  done(): void
+  content: string
 }
 
 export class AgentStorage {
@@ -61,7 +75,7 @@ export class AgentStorage {
 interface AgentOptions<T extends PromptBasedToolName> {
   historyManager: ReactiveHistoryManager
   attachmentStorage: ContextAttachmentStorage
-  tools: ToolCall<T>
+  tools: AgentToolCall<T>
   maxIterations?: number
 }
 
@@ -115,6 +129,59 @@ export class Agent<T extends PromptBasedToolName> {
     return messages
   }
 
+  // tool use message proxy to modify the assistant message content
+  makeTaskMessageProxy(): StatusMessageModifier {
+    let msg: TaskMessageV1 | undefined
+    const ensureMessage = () => {
+      if (!msg) {
+        msg = this.historyManager.appendTaskMessage()
+      }
+      return msg
+    }
+    return {
+      done() {
+        ensureMessage().done = true
+      },
+      setContent(content: string) {
+        ensureMessage().content = content
+      },
+      getContent() {
+        if (msg === undefined) return ''
+        return msg.content
+      },
+      get content() {
+        return this.getContent()
+      },
+      set content(content: string) {
+        this.setContent(content)
+      },
+    }
+  }
+
+  makeTempAssistantMessageManager() {
+    let assistantMessage: AssistantMessageV1 | undefined
+    const getAssistantMessage = () => {
+      return assistantMessage
+    }
+    const getOrAddAssistantMessage = () => {
+      if (!assistantMessage) assistantMessage = this.historyManager.appendAssistantMessage()
+      return assistantMessage
+    }
+    const deleteAssistantMessageIfEmpty = () => {
+      if (assistantMessage) {
+        const normalizedText = this.normalizeText(assistantMessage.content)
+        if (!normalizedText) {
+          this.historyManager.deleteMessage(assistantMessage)
+        }
+      }
+    }
+    return {
+      getAssistantMessage,
+      getOrAddAssistantMessage,
+      deleteAssistantMessageIfEmpty,
+    }
+  }
+
   async runWithPrompt(input: string) {
     this.stop()
     const abortController = new AbortController()
@@ -123,22 +190,6 @@ export class Agent<T extends PromptBasedToolName> {
     // clone the message to avoid ui changes in agent's running process
     const prompt = await chatWithEnvironment(input, this.agentStorage.attachmentStorage, [])
     const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
-    let assistantMessage: AssistantMessageV1 | undefined
-    const getAssistantMessage = () => {
-      if (!assistantMessage) assistantMessage = this.historyManager.appendAssistantMessage()
-      return assistantMessage
-    }
-    const deleteAssistantMessage = () => {
-      this.historyManager.deleteMessage(getAssistantMessage())
-      assistantMessage = undefined
-    }
-    const clearAssistantMessage = () => {
-      const msg = getAssistantMessage()
-      msg.content = ''
-      msg.reasoning = ''
-      msg.reasoningTime = undefined
-      msg.done = false
-    }
 
     // this messages only used for the agent iteration but not user-facing
     const loopMessages: (CoreAssistantMessage | CoreUserMessage)[] = []
@@ -149,19 +200,19 @@ export class Agent<T extends PromptBasedToolName> {
     while (iteration < this.maxIterations) {
       if (abortController.signal.aborted) {
         this.log.debug('Agent aborted')
-        if (assistantMessage) assistantMessage.done = true
         return
       }
       iteration++
       const shouldForceAnswer = iteration === this.maxIterations
       const currentLoopToolCalls = []
       this.log.debug('Agent iteration', iteration)
-      clearAssistantMessage()
 
       const thisLoopMessages: CoreMessage[] = [...baseMessages, ...loopMessages]
       if (shouldForceAnswer) {
         thisLoopMessages.push({ role: 'user', content: `Answer Language: Strictly follow the LANGUAGE POLICY above.\nBased on all the information collected above, please provide a comprehensive final answer.\nDo not use any tools.` })
       }
+      const assistantMessageManager = this.makeTempAssistantMessageManager()
+      const assistantMessage = assistantMessageManager.getOrAddAssistantMessage()
       const response = streamTextInBackground({
         abortSignal: abortController.signal,
         messages: this.injectImagesToLastMessage(thisLoopMessages, loopImages),
@@ -173,19 +224,19 @@ export class Agent<T extends PromptBasedToolName> {
       try {
         for await (const chunk of response) {
           if (abortController.signal.aborted) {
-            if (assistantMessage) assistantMessage.done = true
+            assistantMessage.done = true
             this.status.value = 'idle'
             return
           }
           if (chunk.type === 'text-delta') {
             text += chunk.textDelta
             currentLoopAssistantRawMessage.content += chunk.textDelta
-            getAssistantMessage().content += chunk.textDelta
+            assistantMessage.content += chunk.textDelta
           }
           else if (chunk.type === 'reasoning') {
             reasoningStart = reasoningStart || Date.now()
-            getAssistantMessage().reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
-            getAssistantMessage().reasoning = (getAssistantMessage().reasoning || '') + chunk.textDelta
+            assistantMessage.reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
+            assistantMessage.reasoning = (assistantMessage.reasoning || '') + chunk.textDelta
           }
           else if (chunk.type === 'tool-call') {
             currentLoopToolCalls.push(chunk.toolName as T)
@@ -197,20 +248,40 @@ export class Agent<T extends PromptBasedToolName> {
             if (tool) {
               const params = chunk.args
               this.log.debug('Tool call start', chunk)
-              const executedResults = await tool.execute({ params, agentStorage: this.agentStorage, historyManager: this.historyManager, loopImages })
-              for (const result of executedResults) {
-                if (result.type === 'user-message') {
-                  loopMessages.push({ role: 'user', content: result.content })
+              const abortController = new AbortController()
+              this.abortControllers.push(abortController)
+              try {
+                const statusMessageModifier = this.makeTaskMessageProxy()
+                const executedResults = await tool.execute({
+                  params,
+                  agentStorage: this.agentStorage,
+                  historyManager: this.historyManager,
+                  loopImages,
+                  abortSignal: abortController.signal,
+                  statusMessageModifier,
+                })
+                statusMessageModifier.done()
+                for (const result of executedResults) {
+                  if (result.type === 'user-message') {
+                    loopMessages.push({ role: 'user', content: result.content })
+                  }
                 }
+                this.log.debug('Tool call executed', toolName, executedResults)
               }
-              this.log.debug('Tool call executed', toolName, executedResults)
+              catch (e) {
+                if (e instanceof AbortError) {
+                  this.log.debug('Tool call aborted', toolName)
+                  break
+                }
+                this.log.error('Tool call error', toolName, e)
+              }
             }
             else {
               this.log.warn('Tool not found', toolName)
             }
           }
         }
-        getAssistantMessage().done = true
+        assistantMessage.done = true
       }
       catch (e) {
         const error = fromError(e)
@@ -229,7 +300,7 @@ export class Agent<T extends PromptBasedToolName> {
         this.log.debug('No tool call, ending iteration')
         break
       }
-      deleteAssistantMessage()
+      assistantMessageManager.deleteAssistantMessageIfEmpty()
     }
   }
 

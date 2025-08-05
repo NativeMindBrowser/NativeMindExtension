@@ -92,7 +92,7 @@ export class TagWalker {
         this.addedSafeText += this.text.slice(this.curIndex - this.tagIndex, this.curIndex + 1)
         this.maybeTag = false
         this.tagIndex = 0
-        this.startIndex += 1
+        this.startIndex = this.curIndex + 1
       }
       else if (this.started) {
         const matchedEndTag = this.started.end
@@ -213,7 +213,11 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
   static createToolCallsStreamParser<Tools extends PromptBasedToolType[]>(tools: Tools) {
     type ToolWithParams = ExtractToolWithParams<Tools[number]> & { tagText: string }
     let accText = ''
-    const pairs = tools.map((tool) => ([{ start: `<${tool.toolName}>`, end: `</${tool.toolName}>` }, { start: `\`\`\`${tool.toolName}`, end: '```' }])).flat()
+    const pairs = tools.map((tool) => ([
+      { start: `<${tool.toolName}>`, end: `</${tool.toolName}>` },
+      { start: `\`\`\`${tool.toolName}`, end: '```' },
+      { start: `<tool_calls>\n<${tool.toolName}>`, end: `</tool_calls>` },
+    ])).flat()
     const toolCallsWalkParser = new TagWalker(pairs)
     return (text: string) => {
       const errors: string[] = []
