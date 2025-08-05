@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.7.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.1...v1.7.0-beta.2)
+
+### 🚀 Enhancements
+
+- **agent:** Refactor agent tool execution and add abortable promise handling ([ff345ab](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ff345ab))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.9...v1.7.0-beta.1)
