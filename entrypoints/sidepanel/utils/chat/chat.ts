@@ -535,9 +535,9 @@ export class Chat {
   }
 
   /**
-   * Toggle starred status of a chat
+   * Toggle pinned status of a chat
    */
-  async toggleChatStar(chatId: string): Promise<{ success: boolean, isStarred?: boolean }> {
+  async toggleChatStar(chatId: string): Promise<{ success: boolean, isPinned?: boolean }> {
     try {
       const result = await s2bRpc.toggleChatStar(chatId)
 
@@ -583,14 +583,14 @@ export class Chat {
   }
 
   /**
-   * Get starred chats
+   * Get pinned chats
    */
-  async getStarredChats(): Promise<ChatList> {
+  async getPinnedChats(): Promise<ChatList> {
     try {
-      return await s2bRpc.getStarredChats()
+      return await s2bRpc.getPinnedChats()
     }
     catch (error) {
-      log.error('Failed to get starred chats:', error)
+      log.error('Failed to get pinned chats:', error)
       return []
     }
   }

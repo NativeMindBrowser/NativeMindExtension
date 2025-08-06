@@ -27,7 +27,6 @@ import { showSettingsForBackground } from '../settings'
 import { ChatHistoryV1 } from '../tab-store/history'
 import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
-// Import singleton managers for type-safe service access
 import { b2sRpc, bgBroadcastRpc } from '.'
 import { preparePortConnection } from './utils'
 
@@ -827,13 +826,13 @@ async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
   }
 }
 
-async function getStarredChats() {
+async function getPinnedChats() {
   try {
     const service = BackgroundChatHistoryServiceManager.getInstance()
-    return await service?.getStarredChats() || []
+    return await service?.getPinnedChats() || []
   }
   catch (error) {
-    logger.error('Chat history RPC getStarredChats failed:', error)
+    logger.error('Chat history RPC getPinnedChats failed:', error)
     return []
   }
 }
@@ -896,7 +895,7 @@ export const backgroundFunctions = {
   toggleChatStar,
   updateChatTitle,
   autoGenerateChatTitle: autoGenerateChatTitleIfNeeded,
-  getStarredChats,
+  getPinnedChats,
   showSidepanel,
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,

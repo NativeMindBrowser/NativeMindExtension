@@ -11,7 +11,7 @@
     <div class="flex items-center flex-1 min-w-0 gap-2">
       <!-- Star Icon -->
       <div
-        v-if="isStarred && !isEditing"
+        v-if="isPinned && !isEditing"
         class="flex-shrink-0"
       >
         <IconStarFilled class="w-4 h-4 text-[#F7C103] fill-current" />
@@ -91,14 +91,14 @@
             @click.stop="handleToggleStar"
           >
             <IconStarFilled
-              v-if="!isStarred"
+              v-if="!isPinned"
               class="w-4 h-4 text-[#F7C103] fill-current"
             />
             <IconStarOutline
               v-else
               class="w-4 h-4 text-[#F7C103]"
             />
-            {{ isStarred ? 'Unstar' : 'Star' }}
+            {{ isPinned ? 'Unstar' : 'Star' }}
           </button>
           <button
             class="w-full px-2 py-1.5 text-left text-[13px] text-[#992121] hover:bg-red-50 flex items-center gap-2 rounded cursor-pointer"
@@ -128,7 +128,7 @@ import type { ChatListItem } from '@/utils/tab-store/history'
 interface Props {
   chat: ChatListItem
   isCurrent: boolean
-  isStarred: boolean
+  isPinned: boolean
   isEditing: boolean
   isMenuOpen: boolean
 }

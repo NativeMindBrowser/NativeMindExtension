@@ -78,7 +78,8 @@ export type ChatListItem = {
   timestamp: number
   id: string
   title: string
-  isStarred?: boolean
+  isPinned?: boolean
+  pinnedAt?: number
 }
 
 export type ChatList = ChatListItem[]

@@ -121,7 +121,7 @@ export class BackgroundChatHistoryService {
       // Save chat history
       await tx.objectStore(CHAT_OBJECT_STORES.CHAT_HISTORY).put(record)
 
-      // Update metadata - preserve existing isStarred value
+      // Update metadata - preserve existing isPinned and pinnedAt values
       const existingMetadata = await tx.objectStore(CHAT_OBJECT_STORES.CHAT_METADATA).get(chatHistory.id)
       const metadata: ChatMetadata = {
         id: chatHistory.id,
@@ -129,7 +129,8 @@ export class BackgroundChatHistoryService {
         lastInteractedAt: chatHistory.lastInteractedAt,
         createdAt: record.createdAt,
         updatedAt: now,
-        isStarred: existingMetadata?.isStarred,
+        isPinned: existingMetadata?.isPinned,
+        pinnedAt: existingMetadata?.pinnedAt,
       }
       await tx.objectStore(CHAT_OBJECT_STORES.CHAT_METADATA).put(metadata)
 
@@ -198,27 +199,48 @@ export class BackgroundChatHistoryService {
 
   /**
    * Get chat list (metadata for all chats)
+   * Sorting: pinned chats first (by pinnedAt desc), then unpinned chats by lastInteractedAt desc
    */
   async getChatList(): Promise<ChatList> {
     const db = this.databaseManager.getDatabase()
     if (!db || !this.config.enabled) return []
 
     try {
-      const chatList: ChatList = []
+      const allChats: ChatList = []
       const tx = db.transaction(CHAT_OBJECT_STORES.CHAT_METADATA, 'readonly')
-      const lastInteractedIndex = tx.store.index(CHAT_INDEXES.CHAT_METADATA.LAST_INTERACTED_AT)
 
-      // Get chats ordered by last interaction (newest first)
-      for await (const cursor of lastInteractedIndex.iterate(null, 'prev')) {
-        chatList.push({
+      // Get all chats without specific ordering from the index
+      for await (const cursor of tx.store) {
+        allChats.push({
           id: cursor.value.id,
           title: cursor.value.title,
           timestamp: cursor.value.lastInteractedAt || cursor.value.createdAt,
-          isStarred: cursor.value.isStarred,
+          isPinned: cursor.value.isPinned,
+          pinnedAt: cursor.value.pinnedAt,
         })
       }
 
-      return chatList
+      // Sort according to requirements:
+      // 1. Pinned chats first, sorted by pinnedAt (newest first)
+      // 2. Unpinned chats sorted by lastInteractedAt (newest first)
+      return allChats.sort((a, b) => {
+        // If both are pinned or both are unpinned
+        if (!!a.isPinned === !!b.isPinned) {
+          if (a.isPinned) {
+            // Both pinned: sort by pinnedAt (newest first)
+            const aPinnedAt = a.pinnedAt || 0
+            const bPinnedAt = b.pinnedAt || 0
+            return bPinnedAt - aPinnedAt
+          }
+          else {
+            // Both unpinned: sort by timestamp (newest first)
+            return b.timestamp - a.timestamp
+          }
+        }
+
+        // One is pinned, one is not: pinned comes first
+        return a.isPinned ? -1 : 1
+      })
     }
     catch (error) {
       log.error('Failed to get chat list:', error)
@@ -302,9 +324,9 @@ export class BackgroundChatHistoryService {
   }
 
   /**
-   * Toggle starred status of a chat
+   * Toggle pinned status of a chat
    */
-  async toggleChatStar(chatId: string): Promise<{ success: boolean, isStarred?: boolean, error?: string }> {
+  async toggleChatStar(chatId: string): Promise<{ success: boolean, isPinned?: boolean, error?: string }> {
     const db = this.databaseManager.getDatabase()
     if (!db || !this.config.enabled) {
       return { success: false, error: 'Chat history disabled or not initialized' }
@@ -319,18 +341,20 @@ export class BackgroundChatHistoryService {
         return { success: false, error: 'Chat not found' }
       }
 
-      const newIsStarred = !existing.isStarred
+      const newisPinned = !existing.isPinned
+      const now = Date.now()
       const updatedMetadata: ChatMetadata = {
         ...existing,
-        isStarred: newIsStarred,
-        updatedAt: Date.now(),
+        isPinned: newisPinned,
+        pinnedAt: newisPinned ? now : undefined,
+        updatedAt: now,
       }
 
       await store.put(updatedMetadata)
       await tx.done
 
-      log.debug('Toggled chat star:', chatId, 'isStarred:', newIsStarred)
-      return { success: true, isStarred: newIsStarred }
+      log.debug('Toggled chat star:', chatId, 'isPinned:', newisPinned)
+      return { success: true, isPinned: newisPinned }
     }
     catch (error) {
       log.error('Failed to toggle chat star:', error)
@@ -379,33 +403,33 @@ export class BackgroundChatHistoryService {
   }
 
   /**
-   * Get starred chats
+   * Get pinned chats
    */
-  async getStarredChats(): Promise<ChatList> {
+  async getPinnedChats(): Promise<ChatList> {
     const db = this.databaseManager.getDatabase()
     if (!db || !this.config.enabled) return []
 
     try {
-      const starredChats: ChatList = []
+      const pinnedChats: ChatList = []
       const tx = db.transaction(CHAT_OBJECT_STORES.CHAT_METADATA, 'readonly')
       const lastInteractedIndex = tx.store.index(CHAT_INDEXES.CHAT_METADATA.LAST_INTERACTED_AT)
 
-      // Get starred chats ordered by last interaction (newest first)
+      // Get pinned chats ordered by last interaction (newest first)
       for await (const cursor of lastInteractedIndex.iterate(null, 'prev')) {
-        if (cursor.value.isStarred) {
-          starredChats.push({
+        if (cursor.value.isPinned) {
+          pinnedChats.push({
             id: cursor.value.id,
             title: cursor.value.title,
             timestamp: cursor.value.lastInteractedAt || cursor.value.createdAt,
-            isStarred: true,
+            isPinned: true,
           })
         }
       }
 
-      return starredChats
+      return pinnedChats
     }
     catch (error) {
-      log.error('Failed to get starred chats:', error)
+      log.error('Failed to get pinned chats:', error)
       return []
     }
   }

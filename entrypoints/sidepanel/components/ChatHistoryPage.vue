@@ -10,18 +10,18 @@
     <!-- Content -->
     <div class="flex-1 overflow-hidden">
       <div class="px-4 py-2 space-y-2">
-        <!-- Starred Section -->
-        <div v-if="starredChats.length > 0">
+        <!-- Pinned Section -->
+        <div v-if="pinnedChats.length > 0">
           <h3 class="text-xs font-medium text-text-secondary mb-2 leading-[16px]">
-            Starred
+            Pinned
           </h3>
           <div class="space-y-2">
             <ChatItem
-              v-for="chatItem in starredChats"
+              v-for="chatItem in pinnedChats"
               :key="chatItem.id"
               :chat="chatItem"
               :isCurrent="currentChatId === chatItem.id"
-              :isStarred="true"
+              :isPinned="true"
               :isEditing="editingChatId === chatItem.id"
               :isMenuOpen="openMenuChatId === chatItem.id"
               @click="onSwitchChatAndGoBack(chatItem.id)"
@@ -46,7 +46,7 @@
               :key="chatItem.id"
               :chat="chatItem"
               :isCurrent="currentChatId === chatItem.id"
-              :isStarred="!!chatItem.isStarred"
+              :isPinned="!!chatItem.isPinned"
               :isEditing="editingChatId === chatItem.id"
               :isMenuOpen="openMenuChatId === chatItem.id"
               @click="onSwitchChatAndGoBack(chatItem.id)"
@@ -60,7 +60,7 @@
 
             <!-- Empty State -->
             <div
-              v-if="recentChats.length === 0 && starredChats.length === 0"
+              v-if="recentChats.length === 0 && pinnedChats.length === 0"
               class="text-center py-8 text-gray-500"
             >
               <div class="text-lg mb-2">
@@ -100,12 +100,12 @@ const editingChatId = ref<string | null>(null)
 const editingTitle = ref('')
 const openMenuChatId = ref<string | null>(null)
 
-const starredChats = computed(() =>
-  chatList.value.filter((chat) => chat.isStarred),
+const pinnedChats = computed(() =>
+  chatList.value.filter((chat) => chat.isPinned),
 )
 
 const recentChats = computed(() =>
-  chatList.value.filter((chat) => !chat.isStarred),
+  chatList.value.filter((chat) => !chat.isPinned),
 )
 
 const onSwitchChatAndGoBack = async (chatId: string) => {

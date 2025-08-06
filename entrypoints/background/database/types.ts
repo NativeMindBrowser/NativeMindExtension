@@ -26,5 +26,6 @@ export interface ChatMetadata {
   lastInteractedAt?: number
   createdAt: number
   updatedAt: number
-  isStarred?: boolean
+  isPinned?: boolean
+  pinnedAt?: number
 }
