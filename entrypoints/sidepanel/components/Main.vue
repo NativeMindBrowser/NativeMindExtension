@@ -4,31 +4,54 @@
       ref="topRef"
       class="bg-[#E9E9EC]"
     >
-      <div class="h-15 px-4 flex items-center justify-between border-b border-gray-200 ">
+      <div class="h-12 px-4 flex items-center justify-between border-b border-gray-200 ">
         <div class="left flex items-center gap-2">
-          <Logo
-            class="font-bold text-base"
-          />
-          <ModelSelector
-            containerClass="h-7"
-            class="max-w-44"
-            dropdownAlign="left"
-          />
-        </div>
-        <div class="right flex items-center gap-2">
+          <!-- Back button for chat history page -->
+          <div
+            v-if="currentPage === 'chat-history'"
+            class="p-1 cursor-pointer hover:text-gray-500"
+            @click="onBackToChat"
+          >
+            <IconBack class="size-4" />
+          </div>
+
+          <div class="size-6 flex items-center justify-center">
+            <Logo
+              class="font-bold text-base"
+            />
+          </div>
+
+          <!-- Show chat history button only on main chat page -->
           <Tooltip
-            v-if="!chat.historyManager.onlyHasDefaultMessages()"
-            :content="t('tooltips.clear_chat')"
+            v-if="currentPage === 'chat'"
+            :content="t('tooltips.settings')"
+          >
+            <div
+              class="p-1 cursor-pointer hover:text-gray-500"
+              @click="onOpenChatHistory"
+            >
+              <IconChatHistory
+                class="size-4"
+              />
+            </div>
+          </Tooltip>
+
+          <!-- Show new chat button only on main chat page -->
+          <Tooltip
+            v-if="currentPage === 'chat'"
+            :content="t('tooltips.settings')"
           >
             <div
               class="p-1 cursor-pointer hover:text-gray-500"
               @click="onNewChat"
             >
-              <IconClearChat
+              <IconNewChat
                 class="size-4"
               />
             </div>
           </Tooltip>
+        </div>
+        <div class="right flex items-center gap-2">
           <Tooltip :content="t('tooltips.settings')">
             <div
               class="p-1 cursor-pointer hover:text-gray-500"
@@ -42,16 +65,35 @@
         </div>
       </div>
     </div>
-    <div class="px-5 py-2">
-      <div
-        class="absolute bottom-0 left-0 right-0"
-        :style="{ top: `${topBounding.height.value}px` }"
-      >
-        <Chat
-          ref="chatRef"
-          class="h-full"
-        />
+
+    <!-- Main Chat View -->
+    <div v-if="currentPage === 'chat'">
+      <!-- Chat History Component (inline) -->
+      <ChatHistory />
+
+      <div class="px-5 py-2">
+        <div
+          class="absolute bottom-0 left-0 right-0"
+          :style="{ top: `${topBounding.height.value}px` }"
+        >
+          <ChatComponent
+            ref="chatRef"
+            class="h-full"
+          />
+        </div>
       </div>
+    </div>
+
+    <!-- Chat History Full Page View -->
+    <div
+      v-else-if="currentPage === 'chat-history'"
+      class="absolute bottom-0 left-0 right-0"
+      :style="{ top: `${topBounding.height.value}px` }"
+    >
+      <ChatHistoryPage
+        @backToChat="onBackToChat"
+        @switchChat="onSwitchChat"
+      />
     </div>
   </div>
 </template>
@@ -60,35 +102,81 @@
 import { useElementBounding } from '@vueuse/core'
 import { ref } from 'vue'
 
-import IconClearChat from '@/assets/icons/clear-chat.svg?component'
+import IconChatHistory from '@/assets/icons/chat-history.svg?component'
+import IconNewChat from '@/assets/icons/new-chat-add.svg?component'
 import IconSetting from '@/assets/icons/setting.svg?component'
 import Logo from '@/components/Logo.vue'
-import ModelSelector from '@/components/ModelSelector.vue'
 import Tooltip from '@/components/ui/Tooltip.vue'
 import { useI18n } from '@/utils/i18n'
+import logger from '@/utils/logger'
 
 import { showSettings } from '../../../utils/settings'
-import { Chat as ChatManager } from '../utils/chat/index'
-import Chat from './Chat/index.vue'
+import { Chat } from '../utils/chat'
+import ChatComponent from './Chat/index.vue'
+import ChatHistory from './ChatHistory/index.vue'
+import ChatHistoryPage from './ChatHistoryPage.vue'
 
-const chatRef = ref<InstanceType<typeof Chat>>()
+// Define a simple back arrow component inline
+const IconBack = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M10 12L6 8L10 4"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+)
+
+type PageType = 'chat' | 'chat-history'
+
+const chatRef = ref<InstanceType<typeof ChatComponent>>()
 const topRef = ref<HTMLDivElement>()
 const topBounding = useElementBounding(topRef)
+const currentPage = ref<PageType>('chat')
 const { t } = useI18n()
 
 defineExpose({
   chatRef: chatRef,
 })
 
-const chat = await ChatManager.getInstance()
-
-const onNewChat = async () => {
-  chat.stop()
-  chat.historyManager.clear()
-}
+const chat = await Chat.getInstance()
 
 const onClickSetting = () => {
   showSettings()
+}
+
+const onOpenChatHistory = () => {
+  currentPage.value = 'chat-history'
+}
+
+const onBackToChat = () => {
+  currentPage.value = 'chat'
+}
+
+const onNewChat = async () => {
+  try {
+    await chat.createNewChat()
+  }
+  catch (error) {
+    logger.error('Failed to create new chat:', error)
+  }
+}
+
+const onSwitchChat = async (chatId: string) => {
+  try {
+    await chat.switchToChat(chatId)
+  }
+  catch (error) {
+    logger.error('Failed to switch chat:', error)
+  }
 }
 </script>
 

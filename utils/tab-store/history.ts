@@ -78,6 +78,7 @@ export type ChatListItem = {
   timestamp: number
   id: string
   title: string
+  isStarred?: boolean
 }
 
 export type ChatList = ChatListItem[]

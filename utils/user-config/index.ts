@@ -3,6 +3,7 @@ import { browser } from 'wxt/browser'
 import { c2bRpc } from '@/utils/rpc'
 
 import { SupportedLocaleCode } from '../i18n/constants'
+import { generateRandomId } from '../id'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
 import { promptBasedTools } from '../llm/tools/prompt-based/tools'
@@ -279,9 +280,30 @@ export const TARGET_ONBOARDING_VERSION = 1
 const MIN_SYSTEM_MEMORY = 8 // GB
 
 export const DEFAULT_QUICK_ACTIONS = [
-  { editedTitle: '', defaultTitleKey: 'chat.prompt.summarize_page_content.title' as const, prompt: 'Please summarize the main content of this page in a clear and concise manner.', showInContextMenu: false, edited: false },
-  { editedTitle: '', defaultTitleKey: 'chat.prompt.highlight_key_insights.title' as const, prompt: 'Identify and highlight the key insights, important points, and takeaways from this content.', showInContextMenu: false, edited: false },
-  { editedTitle: '', defaultTitleKey: 'chat.prompt.search_more.title' as const, prompt: 'Help me find more content similar to this topic and provide relevant search suggestions.', showInContextMenu: false, edited: false },
+  {
+    editedTitle: '',
+    defaultTitleKey: 'chat.prompt.summarize_page_content.title' as const,
+    prompt:
+      'Please summarize the main content of this page in a clear and concise manner.',
+    showInContextMenu: false,
+    edited: false,
+  },
+  {
+    editedTitle: '',
+    defaultTitleKey: 'chat.prompt.highlight_key_insights.title' as const,
+    prompt:
+      'Identify and highlight the key insights, important points, and takeaways from this content.',
+    showInContextMenu: false,
+    edited: false,
+  },
+  {
+    editedTitle: '',
+    defaultTitleKey: 'chat.prompt.search_more.title' as const,
+    prompt:
+      'Help me find more content similar to this topic and provide relevant search suggestions.',
+    showInContextMenu: false,
+    edited: false,
+  },
 ]
 
 export async function _getUserConfig() {
@@ -295,7 +317,8 @@ export async function _getUserConfig() {
       content: () => c2bRpc.getSystemMemoryInfo(),
       default: () => browser.system.memory.getInfo(),
     })
-    if (!systemMemoryInfo) log.error('getUserConfig is used in an unknown runtime')
+    if (!systemMemoryInfo)
+      log.error('getUserConfig is used in an unknown runtime')
     else {
       const systemMemory = ByteSize.fromBytes(systemMemoryInfo.capacity).toGB()
       enableNumCtx = systemMemory > MIN_SYSTEM_MEMORY ? true : false
@@ -304,7 +327,9 @@ export async function _getUserConfig() {
 
   return {
     locale: {
-      current: await new Config<SupportedLocaleCode, undefined>('locale.current').build(),
+      current: await new Config<SupportedLocaleCode, undefined>(
+        'locale.current',
+      ).build(),
     },
     llm: {
       defaultFirstTokenTimeout: await new Config('llm.firstTokenTimeout').default(60 * 1000).build(), // 60 seconds
@@ -331,7 +356,7 @@ export async function _getUserConfig() {
       },
       systemPrompt: await new Config('chat.systemPrompt').default(DEFAULT_CHAT_SYSTEM_PROMPT).build(),
       history: {
-        currentChatId: await new Config('chat.history.currentChatId').default('default-chat-id').build(),
+        currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
       },
       onlineSearch: {
         pageReadCount: await new Config('chat.onlineSearch.pageReadCount').default(5).build(), // how many pages to read when online search is enabled
