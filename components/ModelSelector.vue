@@ -116,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, toRefs, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue'
 
 import IconDelete from '@/assets/icons/delete.svg?component'
 import IconOllamaRedirect from '@/assets/icons/ollama-redirect.svg?component'
@@ -156,9 +156,8 @@ const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
 const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
 
 only(['sidepanel'], () => {
-  registerSidepanelRpcEvent('updateModelList', async () => {
-    await updateOllamaModelList()
-  })
+  const removeListener = registerSidepanelRpcEvent('updateModelList', async () => await updateOllamaModelList())
+  onBeforeUnmount(() => removeListener())
 })
 
 const modelList = computed(() => {

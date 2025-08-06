@@ -220,6 +220,7 @@ export class OllamaChatLanguageModel implements LanguageModelV1 {
       rawResponse: { headers: responseHeaders },
       request: { body: JSON.stringify(body) },
       text: response.message.content ?? undefined,
+      reasoning: response.message.thinking ?? undefined,
       toolCalls,
       usage: {
         completionTokens: response.eval_count || 0,
@@ -367,6 +368,13 @@ export class OllamaChatLanguageModel implements LanguageModelV1 {
                 type: 'text-delta',
               })
             }
+
+            if (value.message.thinking !== undefined) {
+              controller.enqueue({
+                textDelta: value.message.thinking,
+                type: 'reasoning',
+              })
+            }
           },
         }),
       ),
@@ -385,6 +393,7 @@ const ollamaChatResponseSchema = z.object({
   message: z.object({
     content: z.string(),
     role: z.string(),
+    thinking: z.string().optional(),
     tool_calls: z
       .array(
         z.object({
@@ -412,6 +421,7 @@ const ollamaChatStreamChunkSchema = z.discriminatedUnion('done', [
     done: z.literal(false),
     message: z.object({
       content: z.string(),
+      thinking: z.string().optional(),
       role: z.string(),
       tool_calls: z
         .array(

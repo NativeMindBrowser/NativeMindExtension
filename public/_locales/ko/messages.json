@@ -1,9 +1,9 @@
 {
   "extName": {
-    "message": "NativeMind: Your fully private, open-source, on-device AI assistant"
+    "message": "NativeMind: 완전한 개인 정보 보호를 위한 오픈소스 온디바이스 AI 어시스턴트"
   },
   "extDesc": {
-    "message": "NativeMind connects to local LLMs via Ollama to bring powerful AI into your browser — with zero data sent to the cloud."
+    "message": "NativeMind는 Ollama의 로컬 LLM과 연결하여 최신 AI 기능을 가장 즐겨 사용하는 브라우저 안에서 바로 제공합니다 — 클라우드 서버로 단 한 바이트의 데이터도 전송되지 않습니다."
   },
   "extNameFirefox": {
     "message": "NativeMind"

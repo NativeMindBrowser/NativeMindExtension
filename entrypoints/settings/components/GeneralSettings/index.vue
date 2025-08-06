@@ -100,7 +100,7 @@
                             class="font-medium text-xs"
                             display="block"
                           >
-                            {{ t('settings.ollama.context_window_size') }}
+                            {{ t('settings.ollama.custom_context_window_size') }}
                           </Text>
                         </template>
                       </Checkbox>

@@ -1,4 +1,5 @@
 import { generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
+import { parse as safeParseJSON } from 'best-effort-json-parser'
 import { EventEmitter } from 'events'
 import { Browser, browser } from 'wxt/browser'
 import { z } from 'zod'
@@ -8,6 +9,7 @@ import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
 import { sleep } from '../async'
+import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
 import { AppError, CreateTabStreamCaptureError, FetchError, ModelRequestError, UnknownError } from '../error'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
@@ -191,10 +193,32 @@ const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<Gene
   const s = parseSchema(options)
   const isEnum = s instanceof z.ZodEnum
   let ret
+  const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
   try {
+    if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(modelInfo.model))) {
+      const response = await originalGenerateText({
+        model: await getModel(modelInfo),
+        prompt: options.prompt,
+        system: options.system,
+        messages: options.messages,
+      })
+      const parsed = s.safeParse(safeParseJSON(response.text))
+      if (!parsed.success) {
+        logger.error('Failed to parse response with schema', s, 'response:', response)
+        throw new Error(`Response does not match schema: ${parsed.error.message}`)
+      }
+      const result: GenerateObjectResult<z.infer<Schemas[S]>> = {
+        ...response,
+        object: parsed.data,
+        toJsonResponse: () => new Response(JSON.stringify(response.text), {
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      }
+      return result
+    }
     if (isEnum) {
       ret = await originalGenerateObject({
-        model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+        model: await getModel(modelInfo),
         output: 'enum',
         enum: (s as z.ZodEnum<[string, ...string[]]>)._def.values,
         prompt: options.prompt,
@@ -204,7 +228,7 @@ const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<Gene
     }
     else {
       ret = await originalGenerateObject({
-        model: await getModel({ ...(await getModelUserConfig()) }),
+        model: await getModel(modelInfo),
         output: 'object',
         schema: s as z.ZodSchema,
         prompt: options.prompt,
@@ -562,8 +586,9 @@ function ping() {
   return 'pong'
 }
 
-function updateSidepanelModelList() {
+async function updateSidepanelModelList() {
   b2sRpc.emit('updateModelList')
+  return true
 }
 
 export const backgroundFunctions = {

@@ -15,6 +15,7 @@ export const SCOPE_STORAGE_ROOT_SCOPE = 'root'
 export const MIN_CONTEXT_WINDOW_SIZE = 512
 export const FEEDBACK_EMAIL = 'hi@nativemind.app'
 export const PROMPT_MAX_PAGE_CONTENT_LENGTH = 1000
+export const MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT = [/gpt-oss/]
 
 export const INVALID_URLS = [
   /^https:\/\/chromewebstore\.google\.com/,
