@@ -276,6 +276,18 @@ Examples of good emoji usage:
 
 Return ONLY the enhanced text with emojis. No explanations.`
 
+export const DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT = `You are a conversation title generator. Your task is to create concise, descriptive titles for chat conversations based on their content. The title should be in {{LANGUAGE}} and capture the main topic or purpose of the conversation.
+
+Guidelines:
+- Generate titles in {{LANGUAGE}} language
+- Keep titles between 3-8 words
+- Focus on the main topic, not specific details
+- Use clear, descriptive language
+- Avoid generic phrases like "Chat about" or "Discussion on"
+- For technical topics, include key terms
+- For questions, focus on the subject matter rather than the question format
+- If the conversation covers multiple topics, choose the most prominent one`
+
 export const TARGET_ONBOARDING_VERSION = 1
 const MIN_SYSTEM_MEMORY = 8 // GB
 
@@ -341,6 +353,7 @@ export async function _getUserConfig() {
       enableNumCtx: await new Config('llm.enableNumCtx').default(enableNumCtx).build(),
       reasoning: await new Config('llm.reasoning').default(true).build(),
       summarizeSystemPrompt: await new Config('llm.summarizeSystemPrompt').default(DEFAULT_CHAT_SYSTEM_PROMPT).build(),
+      titleGenerationSystemPrompt: await new Config('llm.titleGenerationSystemPrompt').default(DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT).build(),
     },
     browserAI: {
       polyfill: {

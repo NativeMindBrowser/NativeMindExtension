@@ -798,6 +798,35 @@ async function updateChatTitle(chatId: string, newTitle: string) {
   }
 }
 
+async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
+  try {
+    logger.debug('autoGenerateChatTitleIfNeeded called for chat', chatHistory.id)
+
+    // Skip title generation for existing chats with a title other than 'New Chat'
+    if (chatHistory.title !== 'New Chat') {
+      return { success: true, updatedTitle: chatHistory.title }
+    }
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      return { success: false, error: 'Chat history service not available' }
+    }
+
+    const originalTitle = chatHistory.title
+    await service.autoGenerateTitleIfNeeded(chatHistory)
+
+    // Get the updated chat history to see the new title
+    const updatedChatHistory = await service.getChatHistory(chatHistory.id)
+    const newTitle = updatedChatHistory?.title || originalTitle
+
+    logger.debug('Title generation result:', { originalTitle, newTitle, titleChanged: newTitle !== originalTitle })
+    return { success: true, updatedTitle: newTitle, titleChanged: newTitle !== originalTitle }
+  }
+  catch (error) {
+    logger.error('Chat history RPC autoGenerateChatTitle failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
 async function getStarredChats() {
   try {
     const service = BackgroundChatHistoryServiceManager.getInstance()
@@ -866,6 +895,7 @@ export const backgroundFunctions = {
   deleteChat,
   toggleChatStar,
   updateChatTitle,
+  autoGenerateChatTitle: autoGenerateChatTitleIfNeeded,
   getStarredChats,
   showSidepanel,
   showSettings: showSettingsForBackground,

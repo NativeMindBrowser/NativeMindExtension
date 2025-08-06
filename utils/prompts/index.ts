@@ -145,6 +145,23 @@ export const writingToolSparkle = definePrompt(async (text: string) => {
   return { system, user: new UserPrompt(user) }
 })
 
+export const generateChatTitle = definePrompt(async (userMessage: string, assistantMessage: string, language: string) => {
+  const userConfig = await getUserConfig()
+  const rawSystem = userConfig.llm.titleGenerationSystemPrompt.get()
+  const system = rawSystem.replace(/\{\{LANGUAGE\}\}/g, language)
+
+  const user = `Based on the following conversation, generate a concise title in ${language}:
+
+Conversation:
+User: ${userMessage}
+
+AI: ${assistantMessage}
+
+Generate only the title, no additional text or explanation. The title should be ${language} and capture the main topic discussed.`
+
+  return { system, user: new UserPrompt(user) }
+})
+
 // TODO: This is a placeholder for the Chrome AI summarizer prompt.
 export const chromeAISummarizer = definePrompt(async (input: string) => {
   const system = `You are an AI assistant for the browser extension, helping users understand and interact with web content across multiple tabs and search results.

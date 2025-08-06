@@ -5,9 +5,16 @@
  * providing persistent storage for chat conversations and context attachments.
  */
 
+import { generateObject as originalGenerateObject } from 'ai'
+
 import { ContextAttachmentStorage } from '@/types/chat'
+import { getLocaleName } from '@/utils/i18n/constants'
+import { getModel, getModelUserConfig } from '@/utils/llm/models'
+import { selectSchema } from '@/utils/llm/output-schema'
 import logger from '@/utils/logger'
+import { generateChatTitle } from '@/utils/prompts'
 import { ChatHistoryV1, ChatList, HistoryItemV1 } from '@/utils/tab-store/history'
+import { getUserConfig } from '@/utils/user-config'
 
 import {
   type BackgroundDatabaseManager,
@@ -408,6 +415,84 @@ export class BackgroundChatHistoryService {
    */
   getConfig(): ChatHistoryConfig {
     return { ...this.config }
+  }
+
+  /**
+   * Generate chat title based on first user and assistant messages using LLM
+   */
+  private async generateChatTitle(userMessage: string, assistantMessage: string): Promise<string> {
+    try {
+      const userConfig = await getUserConfig()
+      const localeInConfig = userConfig.locale.current.toRef()
+
+      // Map locale to supported language name
+      const language = getLocaleName(localeInConfig.value || 'en')
+
+      // Use the centralized prompt function
+      const prompt = await generateChatTitle(userMessage, assistantMessage, language)
+
+      const result = await originalGenerateObject({
+        model: await getModel(await getModelUserConfig()),
+        schema: selectSchema('chatTitle'),
+        system: prompt.system,
+        prompt: prompt.user.extractText(),
+      })
+
+      const generatedTitle = result.object.title?.trim()
+
+      if (!generatedTitle || generatedTitle.length === 0) {
+        log.warn('Generated title is empty, using fallback')
+        return 'New Chat'
+      }
+
+      // TODO: Simple validation for inappropriate titles
+
+      log.debug('Generated title:', generatedTitle)
+      return generatedTitle
+    }
+    catch (error) {
+      log.error('Failed to generate title:', error)
+      return 'New Chat'
+    }
+  }
+
+  /**
+   * Auto-generate title if conditions are met
+   */
+  async autoGenerateTitleIfNeeded(chatHistory: ChatHistoryV1): Promise<void> {
+    // Only generate if title is still "New Chat"
+    if (chatHistory.title !== 'New Chat') {
+      return
+    }
+
+    // Check if we have exactly one user message and one assistant message
+    const completedMessages = chatHistory.history.filter((item) => item.done)
+    const userMessages = completedMessages.filter((item) => item.role === 'user')
+    const assistantMessages = completedMessages.filter((item) => item.role === 'assistant')
+
+    if (userMessages.length >= 1 && assistantMessages.length >= 1) {
+      const firstUser = userMessages[0]
+      const firstAssistant = assistantMessages[0]
+
+      if (firstUser.content && firstAssistant.content) {
+        try {
+          log.debug('Auto-generating chat title for chat:', chatHistory.id)
+          const newTitle = await this.generateChatTitle(firstUser.content, firstAssistant.content)
+          if (newTitle !== 'New Chat') {
+            // Update the title in the chat history
+            chatHistory.title = newTitle
+
+            log.debug('Setting new chat history:', chatHistory)
+            // Save the updated chat history
+            await this.saveChatHistory(chatHistory)
+            log.info('Auto-generated chat title:', newTitle)
+          }
+        }
+        catch (error) {
+          log.error('Failed to auto-generate title:', error)
+        }
+      }
+    }
   }
 }
 

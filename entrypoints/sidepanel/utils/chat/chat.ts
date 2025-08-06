@@ -261,8 +261,13 @@ export class Chat {
         const debounceSaveHistory = debounce(async () => {
           if (!chatHistory.value.lastInteractedAt) return
 
-          // Update title if needed (when first message is added)
-          instance.updateChatTitleIfNeeded(chatHistory.value)
+          // Auto-generate title if needed (when first message is added)
+          const titleResult = await s2bRpc.autoGenerateChatTitle(toRaw(chatHistory.value)) as { success: boolean, updatedTitle?: string, titleChanged?: boolean, error?: string }
+
+          // Update the local chat history title if it was changed
+          if (titleResult.success && titleResult.updatedTitle && titleResult.updatedTitle !== chatHistory.value.title) {
+            chatHistory.value.title = titleResult.updatedTitle
+          }
 
           await s2bRpc.saveChatHistory(toRaw(chatHistory.value))
 
@@ -488,28 +493,6 @@ export class Chat {
     catch (error) {
       log.error('Failed to delete chat:', error)
       return { success: false, error: String(error) }
-    }
-  }
-
-  /**
-   * Generate a title for the chat based on the first user message
-   */
-  private generateChatTitle(history: HistoryItemV1[]): string {
-    const firstUserMessage = history.find((item) => item.role === 'user')
-    if (firstUserMessage && firstUserMessage.content) {
-      // Take the first 50 characters and add ellipsis if longer
-      const content = firstUserMessage.content.trim()
-      return content.length > 50 ? content.substring(0, 50) + '...' : content
-    }
-    return 'New Chat'
-  }
-
-  /**
-   * Update chat title when the first message is added
-   */
-  private updateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
-    if (chatHistory.title === 'New Chat' && chatHistory.history.length > 0) {
-      chatHistory.title = this.generateChatTitle(chatHistory.history)
     }
   }
 
