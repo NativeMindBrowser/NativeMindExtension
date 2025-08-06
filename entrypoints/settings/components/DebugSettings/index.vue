@@ -108,6 +108,15 @@
               />
             </div>
             <div class="flex gap-3 justify-start items-center">
+              <div>Default first token timeout (ms)</div>
+              <Input
+                v-model.number="defaultFirstTokenTimeout"
+                type="number"
+                min="0"
+                class="border-b border-gray-200 py-1 disabled:opacity-50"
+              />
+            </div>
+            <div class="flex gap-3 justify-start items-center">
               Reasoning
               <Switch
                 v-model="enableReasoning"
@@ -424,6 +433,7 @@ const writingToolsSparklePrompt = userConfig.writingTools.sparkle.systemPrompt.t
 const endpointType = userConfig.llm.endpointType.toRef()
 const localeInConfig = userConfig.locale.current.toRef()
 const maxAgentIterations = userConfig.chat.agent.maxIterations.toRef()
+const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.toRef()
 const translationSystemPromptError = ref('')
 const newModelId = ref('')
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }[]>([])

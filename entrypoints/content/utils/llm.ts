@@ -10,10 +10,9 @@ import { SchemaName } from '@/utils/llm/output-schema'
 import { WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
 import { c2bRpc } from '@/utils/rpc'
+import { getUserConfig } from '@/utils/user-config'
 
 const log = logger.child('llm')
-
-const DEFAULT_PENDING_TIMEOUT = 60_000 // 60 seconds
 
 interface ExtraOptions {
   abortSignal?: AbortSignal
@@ -21,7 +20,8 @@ interface ExtraOptions {
 }
 
 export async function* streamTextInBackground(options: Parameters<typeof c2bRpc.streamText>[0] & ExtraOptions) {
-  const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, ...restOptions } = options
+  const defaultFirstTokenTimeout = (await getUserConfig()).llm.defaultFirstTokenTimeout.get()
+  const { abortSignal, timeout = defaultFirstTokenTimeout, ...restOptions } = options
   const { portName } = await c2bRpc.streamText(restOptions)
   const aliveKeeper = new BackgroundAliveKeeper()
   const port = browser.runtime.connect({ name: portName })
@@ -34,7 +34,8 @@ export async function* streamTextInBackground(options: Parameters<typeof c2bRpc.
 }
 
 export async function* streamObjectInBackground(options: Parameters<typeof c2bRpc.streamObjectFromSchema>[0] & ExtraOptions) {
-  const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, ...restOptions } = options
+  const defaultFirstTokenTimeout = (await getUserConfig()).llm.defaultFirstTokenTimeout.get()
+  const { abortSignal, timeout = defaultFirstTokenTimeout, ...restOptions } = options
   const { portName } = await c2bRpc.streamObjectFromSchema(restOptions)
   const aliveKeeper = new BackgroundAliveKeeper()
   const port = browser.runtime.connect({ name: portName })
@@ -48,8 +49,9 @@ export async function* streamObjectInBackground(options: Parameters<typeof c2bRp
 }
 
 export async function generateObjectInBackground<S extends SchemaName>(options: Parameters<typeof c2bRpc.generateObjectFromSchema<S>>[0] & ExtraOptions) {
+  const defaultFirstTokenTimeout = (await getUserConfig()).llm.defaultFirstTokenTimeout.get()
   const { promise: abortPromise, resolve, reject } = Promise.withResolvers<Awaited<ReturnType<typeof c2bRpc.generateObjectFromSchema<S>>>>()
-  const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, ...restOptions } = options
+  const { abortSignal, timeout = defaultFirstTokenTimeout, ...restOptions } = options
   const aliveKeeper = new BackgroundAliveKeeper()
   abortSignal?.addEventListener('abort', () => {
     log.debug('generate object request aborted')
