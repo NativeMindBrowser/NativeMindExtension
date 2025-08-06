@@ -1,6 +1,30 @@
 # Changelog
 
 
+## v1.7.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.1...v1.7.0-beta.3)
+
+### 🚀 Enhancements
+
+- **agent:** Add support for agent in beta ([ae46e66](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ae46e66))
+- **agent:** Refactor agent tool execution and add abortable promise handling ([ff345ab](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ff345ab))
+- **agent:** Add support for gpt-oss tool call format ([3e6528d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e6528d))
+
+### 🩹 Fixes
+
+- **chat:** Correct variable name for tab ID in chat prompt environment section ([e7f35c6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e7f35c6))
+
+### 🏡 Chore
+
+- **package:** Update version to 1.7.0-beta.0 ([1947b6b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1947b6b))
+- **release:** V1.7.0-beta.1 ([be9b8ba](https://github.com/NativeMindBrowser/NativeMindExtension/commit/be9b8ba))
+- **debug:** Add default first token timeout configuration ([1efcdbf](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1efcdbf))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.9...v1.7.0-beta.1)
