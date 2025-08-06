@@ -20,8 +20,8 @@ export const chatWithEnvironment = definePrompt(async (question: string, context
     tabContextBuilder.insertContent(`- Tab ID ${id} (SELECTED): "${title}"`)
   }
   for (const tab of tabs) {
-    const { value: { tabId, title = '' } } = tab
-    tabContextBuilder.insertContent(`- Tab ID ${tabId} (NOT SELECTED): "${title}"`)
+    const { value: { title = '', id } } = tab
+    tabContextBuilder.insertContent(`- Tab ID ${id} (NOT SELECTED): "${title}"`)
   }
 
   const pdfContextBuilder = new TextBuilder('# Available PDFs')
