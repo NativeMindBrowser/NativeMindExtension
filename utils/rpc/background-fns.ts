@@ -1,5 +1,5 @@
+import { safeParseJSON } from '@ai-sdk/provider-utils'
 import { generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
-import { parse as safeParseJSON } from 'best-effort-json-parser'
 import { EventEmitter } from 'events'
 import { Browser, browser } from 'wxt/browser'
 import { z } from 'zod'
@@ -202,14 +202,14 @@ const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<Gene
         system: options.system,
         messages: options.messages,
       })
-      const parsed = s.safeParse(safeParseJSON(response.text))
+      const parsed = safeParseJSON<z.infer<Schemas[S]>>({ text: response.text, schema: s })
       if (!parsed.success) {
         logger.error('Failed to parse response with schema', s, 'response:', response)
         throw new Error(`Response does not match schema: ${parsed.error.message}`)
       }
       const result: GenerateObjectResult<z.infer<Schemas[S]>> = {
         ...response,
-        object: parsed.data,
+        object: parsed.value,
         toJsonResponse: () => new Response(JSON.stringify(response.text), {
           headers: { 'Content-Type': 'application/json' },
         }),

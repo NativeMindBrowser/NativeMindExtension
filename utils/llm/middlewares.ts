@@ -1,6 +1,8 @@
 import { LanguageModelV1FunctionToolCall } from '@ai-sdk/provider'
+import { safeParseJSON } from '@ai-sdk/provider-utils'
 import type { LanguageModelV1Middleware, LanguageModelV1StreamPart } from 'ai'
 import { extractReasoningMiddleware } from 'ai'
+import { z } from 'zod'
 
 import { debounce } from '../debounce'
 import { ParseFunctionCallError } from '../error'
@@ -85,6 +87,52 @@ export const extractPromptBasedToolCallsMiddleware: LanguageModelV1Middleware = 
   },
 }
 
+export const normalizeToolCallsMiddleware: LanguageModelV1Middleware = {
+  wrapGenerate: async ({ doGenerate }) => {
+    const result = await doGenerate()
+
+    if (result.toolCalls?.length) {
+      result.toolCalls = result.toolCalls?.map((toolCall) => {
+        if (toolCall.toolName === 'tool_calls' && toolCall.args) {
+          const newToolCall = safeParseJSON({ text: toolCall.args, schema: z.object({ name: z.string(), arguments: z.any() }) })
+          if (newToolCall.success) {
+            toolCall.toolName = newToolCall.value.name
+            toolCall.args = JSON.stringify(newToolCall.value.arguments)
+          }
+        }
+        return toolCall
+      })
+    }
+
+    return result
+  },
+
+  wrapStream: async ({ doStream }) => {
+    const { stream, ...rest } = await doStream()
+
+    const transformStream = new TransformStream<
+      LanguageModelV1StreamPart,
+      LanguageModelV1StreamPart
+    >({
+      transform(chunk, controller) {
+        if (chunk.type === 'tool-call' && chunk.toolName === 'tool_calls' && chunk.args) {
+          const newToolCall = safeParseJSON({ text: chunk.args, schema: z.object({ name: z.string(), arguments: z.any() }) })
+          if (newToolCall.success) {
+            chunk.toolName = newToolCall.value.name
+            chunk.args = JSON.stringify(newToolCall.value.arguments)
+          }
+        }
+        controller.enqueue(chunk)
+      },
+    })
+
+    return {
+      stream: stream.pipeThrough(transformStream),
+      ...rest,
+    }
+  },
+}
+
 export const rawLoggingMiddleware: LanguageModelV1Middleware = {
   wrapStream: async ({ doStream, params }) => {
     const log = logger.child('rawLoggingMiddleware')
@@ -119,6 +167,7 @@ export const rawLoggingMiddleware: LanguageModelV1Middleware = {
 
 export const middlewares = [
   reasoningMiddleware,
+  normalizeToolCallsMiddleware,
   extractPromptBasedToolCallsMiddleware,
   // rawLoggingMiddleware,
 ]

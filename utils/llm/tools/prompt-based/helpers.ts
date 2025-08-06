@@ -251,7 +251,13 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
   }
 
   static toAiSDKTools<Tools extends PromptBasedToolType[]>(tools: Tools): ToolSet {
-    const toolSet: ToolSet = {}
+    const toolSet: ToolSet = {
+      tool_calls: tool({
+        type: 'function',
+        description: 'Placeholder for tool call which is named `tool_calls` by mistake',
+        parameters: z.any(),
+      }),
+    }
     tools.forEach((tool) => {
       toolSet[tool.toolName] = tool.toAiSDKTool()
     })

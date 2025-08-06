@@ -241,7 +241,9 @@ export class Agent<T extends PromptBasedToolName> {
           else if (chunk.type === 'tool-call') {
             currentLoopToolCalls.push(chunk.toolName as T)
             this.log.debug('Tool call received', chunk)
-            const tagText = chunk.args?.__tagText
+            const tagText = chunk.args?.__tagText ?? TagBuilder.fromStructured('tool_calls', {
+              [chunk.toolName]: chunk.args,
+            }).build()
             currentLoopAssistantRawMessage.content += tagText ?? ''
             const toolName = chunk.toolName as T
             const tool = this.tools[toolName]
@@ -291,7 +293,7 @@ export class Agent<T extends PromptBasedToolName> {
           })
           loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
         }
-        logger.error('Error in chat stream', e)
+        this.log.error('Error in chat stream', e)
         hasError = true
       }
       const normalizedText = this.normalizeText(text)
