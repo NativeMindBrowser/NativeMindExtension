@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.7.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.3...v1.7.0-beta.4)
+
+### 🚀 Enhancements
+
+- **agent:** Enhance agent tool execution and environment details handling ([9ec4df0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9ec4df0))
+
+### 🩹 Fixes
+
+- **test:** Fix chat prompt unit test ([532870a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/532870a))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.3
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.1...v1.7.0-beta.3)
