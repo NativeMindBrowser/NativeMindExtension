@@ -27,22 +27,35 @@
       :dropdownClass="classNames('text-xs text-black w-52', dropdownClass)"
       :containerClass="classNames('max-w-full', containerClass)"
       :dropdownAlign="dropdownAlign"
+      :triggerStyle="props.triggerStyle"
     >
       <template #button="{ option }">
-        <div
-          v-if="option"
-          class="flex items-center gap-[6px] min-w-0"
-        >
-          <ModelLogo
-            :modelId="option.model.model"
-            class="shrink-0 grow-0"
-          />
-          <span class="text-ellipsis overflow-hidden whitespace-nowrap">
-            {{ option.label }}
-          </span>
+        <div v-if="!isGhostBtn">
+          <div
+            v-if="option"
+            class="flex items-center gap-[6px] min-w-0"
+          >
+            <ModelLogo
+              :modelId="option.model.model"
+              class="shrink-0 grow-0"
+            />
+            <span class="text-ellipsis overflow-hidden whitespace-nowrap">
+              {{ option.label }}
+            </span>
+          </div>
+          <div v-else>
+            ⚠️ No model
+          </div>
         </div>
         <div v-else>
-          ⚠️ No model
+          <div
+            class="cursor-pointer text-[13px] text-[#5B5B5B] font-medium px-1 leading-5 flex flex-row gap-1 items-center justify-center"
+          >
+            <span class="text-ellipsis overflow-hidden whitespace-nowrap">
+              {{ option?.label || t('settings.models.no_model') }}
+            </span>
+            <IconExpand class="shrink-0" />
+          </div>
         </div>
       </template>
       <template #option="{ option }">
@@ -119,6 +132,7 @@
 import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue'
 
 import IconDelete from '@/assets/icons/delete.svg?component'
+import IconExpand from '@/assets/icons/model-expand.svg?component'
 import IconOllamaRedirect from '@/assets/icons/ollama-redirect.svg?component'
 import IconRedirect from '@/assets/icons/redirect.svg?component'
 import ModelLogo from '@/components/ModelLogo.vue'
@@ -147,8 +161,10 @@ const props = withDefaults(defineProps<{
   containerClass?: string
   dropdownClass?: string
   onDeleteModel?: (model: string) => Promise<void>
+  triggerStyle?: 'normal' | 'ghost'
 }>(), {
   modelType: 'chat',
+  triggerStyle: 'normal',
 })
 
 const { t } = useI18n()
@@ -159,6 +175,8 @@ only(['sidepanel'], () => {
   const removeListener = registerSidepanelRpcEvent('updateModelList', async () => await updateOllamaModelList())
   onBeforeUnmount(() => removeListener())
 })
+
+const isGhostBtn = computed(() => props.triggerStyle === 'ghost')
 
 const modelList = computed(() => {
   if (endpointType.value === 'ollama') {

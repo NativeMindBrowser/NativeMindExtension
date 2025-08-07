@@ -10,7 +10,7 @@ import { browser } from 'wxt/browser'
 
 import logger from '@/utils/logger'
 
-import { BackgroundDBSchema, ObjectStoreName, TRANSLATION_INDEXES, TRANSLATION_OBJECT_STORES } from './schemas'
+import { BackgroundDBSchema, CHAT_INDEXES, CHAT_OBJECT_STORES, ObjectStoreName, TRANSLATION_INDEXES, TRANSLATION_OBJECT_STORES } from './schemas'
 import { DB_NAME, DB_VERSION } from './types'
 
 const log = logger.child('background-database-manager')
@@ -104,6 +104,71 @@ export class BackgroundDatabaseManager {
             db.createObjectStore(TRANSLATION_OBJECT_STORES.METADATA, {
               keyPath: 'id',
             })
+          }
+
+          // Create chat history stores
+          if (!db.objectStoreNames.contains(CHAT_OBJECT_STORES.CHAT_HISTORY)) {
+            const chatHistoryStore = db.createObjectStore(CHAT_OBJECT_STORES.CHAT_HISTORY, {
+              keyPath: 'id',
+            })
+
+            // Create indexes for chat history
+            chatHistoryStore.createIndex(
+              CHAT_INDEXES.CHAT_HISTORY.LAST_INTERACTED_AT,
+              'lastInteractedAt',
+              { unique: false },
+            )
+            chatHistoryStore.createIndex(
+              CHAT_INDEXES.CHAT_HISTORY.CREATED_AT,
+              'createdAt',
+              { unique: false },
+            )
+            chatHistoryStore.createIndex(
+              CHAT_INDEXES.CHAT_HISTORY.UPDATED_AT,
+              'updatedAt',
+              { unique: false },
+            )
+          }
+
+          if (!db.objectStoreNames.contains(CHAT_OBJECT_STORES.CONTEXT_ATTACHMENTS)) {
+            const contextAttachmentsStore = db.createObjectStore(CHAT_OBJECT_STORES.CONTEXT_ATTACHMENTS, {
+              keyPath: 'id',
+            })
+
+            // Create indexes for context attachments
+            contextAttachmentsStore.createIndex(
+              CHAT_INDEXES.CONTEXT_ATTACHMENTS.LAST_INTERACTED_AT,
+              'lastInteractedAt',
+              { unique: false },
+            )
+            contextAttachmentsStore.createIndex(
+              CHAT_INDEXES.CONTEXT_ATTACHMENTS.UPDATED_AT,
+              'updatedAt',
+              { unique: false },
+            )
+          }
+
+          if (!db.objectStoreNames.contains(CHAT_OBJECT_STORES.CHAT_METADATA)) {
+            const chatMetadataStore = db.createObjectStore(CHAT_OBJECT_STORES.CHAT_METADATA, {
+              keyPath: 'id',
+            })
+
+            // Create indexes for chat metadata
+            chatMetadataStore.createIndex(
+              CHAT_INDEXES.CHAT_METADATA.LAST_INTERACTED_AT,
+              'lastInteractedAt',
+              { unique: false },
+            )
+            chatMetadataStore.createIndex(
+              CHAT_INDEXES.CHAT_METADATA.CREATED_AT,
+              'createdAt',
+              { unique: false },
+            )
+            chatMetadataStore.createIndex(
+              CHAT_INDEXES.CHAT_METADATA.UPDATED_AT,
+              'updatedAt',
+              { unique: false },
+            )
           }
         },
         blocked() {
