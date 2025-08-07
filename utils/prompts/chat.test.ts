@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { resetFakeEntrypoint } from '@/tests/utils/fake-browser'
 import { ContextAttachmentStorage } from '@/types/chat'
 
+import dayjs from '../time'
 import { EnvironmentDetailsBuilder } from './chat'
 
 describe('prompt builder', () => {
@@ -23,7 +24,7 @@ describe('prompt builder', () => {
     const envDetails = environmentDetailsBuilder.generate()
     expect(envDetails).toBe(`<environment_details>
 # Current Time
-2025-08-07 16:20:31 +08:00Z
+${dayjs().format('YYYY-MM-DD HH:mm:ss Z[Z]')}
 # Available Tabs
 (No open tabs)
 # Available PDFs
