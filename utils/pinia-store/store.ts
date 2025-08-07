@@ -6,6 +6,7 @@ import { logger } from '@/utils/logger'
 import { c2bRpc, s2bRpc, settings2bRpc } from '@/utils/rpc'
 
 import { forRuntimes } from '../runtime'
+import { getUserConfig } from '../user-config'
 
 const log = logger.child('store')
 
@@ -19,7 +20,7 @@ const rpc = forRuntimes({
 export const useOllamaStatusStore = defineStore('ollama-status', () => {
   const modelList = ref<OllamaModelInfo[]>([])
   const connectionStatus = ref<'connected' | 'error' | 'unconnected'>('unconnected')
-  const updateModelList = async () => {
+  const updateModelList = async (): Promise<OllamaModelInfo[]> => {
     try {
       const response = await rpc.getLocalModelList()
       connectionStatus.value = 'connected'
@@ -48,6 +49,17 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
     await updateModelList()
   }
 
+  const checkCurrentModelSupportVision = async () => {
+    const userConfig = await getUserConfig()
+    const endpointType = userConfig.llm.endpointType.get()
+    const currentModel = userConfig.llm.model.get()
+    if (endpointType !== 'ollama') return false
+    if (!currentModel) return false
+    const modelDetails = await rpc.showOllamaModelDetails(currentModel)
+    const supported = !!modelDetails.capabilities?.includes('vision')
+    return supported
+  }
+
   return {
     connectionStatusLoading,
     connectionStatus,
@@ -55,5 +67,6 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
     unloadModel,
     updateModelList,
     updateConnectionStatus,
+    checkCurrentModelSupportVision,
   }
 })

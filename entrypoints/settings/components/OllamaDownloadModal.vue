@@ -76,6 +76,9 @@ import { useI18n } from '@/utils/i18n'
 import { PREDEFINED_OLLAMA_MODELS } from '@/utils/llm/predefined-models'
 import logger from '@/utils/logger'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { settings2bRpc } from '@/utils/rpc'
+import dayjs from '@/utils/time'
+import { getUserConfig } from '@/utils/user-config'
 
 import { pullOllamaModel } from '../utils/llm'
 
@@ -94,6 +97,8 @@ const modelInfo = PREDEFINED_OLLAMA_MODELS.find((model) => model.id === props.mo
   size: 0,
 }
 const ollamaStatusStore = useOllamaStatusStore()
+const userConfig = await getUserConfig()
+const currentModel = userConfig.llm.model.toRef()
 
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }>()
 
@@ -128,6 +133,7 @@ const installModel = async () => {
         pulling.value.status = progress.status
       }
     }
+    await updateCurrentModel()
     emit('finished')
   }
   catch (error: unknown) {
@@ -135,6 +141,20 @@ const installModel = async () => {
     if (pulling.value) {
       pulling.value.error = String(error)
     }
+  }
+}
+
+const updateCurrentModel = async () => {
+  await settings2bRpc.updateSidepanelModelList().catch((error) => {
+    log.error('Failed to update model list:', error)
+  })
+  const modelList = await ollamaStatusStore.updateModelList()
+  const latestUpdatedModel = modelList.filter((model) => model.modifiedAt).sort((a, b) =>
+    dayjs(b.modifiedAt).diff(dayjs(a.modifiedAt)),
+  )[0]
+  if (latestUpdatedModel?.model.startsWith(props.model)) {
+    log.debug('Updating current model to:', latestUpdatedModel.model)
+    currentModel.value = latestUpdatedModel.model
   }
 }
 

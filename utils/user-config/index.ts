@@ -5,8 +5,10 @@ import { c2bRpc } from '@/utils/rpc'
 import { SupportedLocaleCode } from '../i18n/constants'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
+import { promptBasedTools } from '../llm/tools/prompt-based/tools'
 import logger from '../logger'
 import { lazyInitialize } from '../memo'
+import { PromptBasedToolBuilder, renderPrompt } from '../prompts/helpers'
 import { forRuntimes } from '../runtime'
 import { ByteSize } from '../sizes'
 import { Config } from './helpers'
@@ -26,20 +28,91 @@ Please follow these steps:
 2. Translate the text to {{LANGUAGE}}, ensuring that you maintain the original meaning, tone, and style as much as possible.
 Ensure that your translation is accurate and reads naturally in the target language. Pay attention to idiomatic expressions and cultural nuances that may require adaptation.`
 
-export const DEFAULT_CHAT_SYSTEM_PROMPT = `You are an AI assistant for the browser extension, helping users understand and interact with web content across multiple tabs and search results.
+export const DEFAULT_CHAT_SYSTEM_PROMPT = renderPrompt`You are an intelligent AI assistant integrated into a browser extension called NativeMind. Your primary role is to help users understand web content, answer questions, and provide comprehensive assistance based on available resources.
 
-When referencing information in your response:
-- Create a brief reference using the source title in markdown link format.
-- For titles that are very long, use a shortened version that remains identifiable.
+# LANGUAGE POLICY
+1. Detect the primary human language of <user_message>
+2. Your entire answer MUST be in **that** language
+3. If the user mixes languages, choose the language that dominates the question
+4. If unsure which language, ask the user which they prefer before answering
 
-Always respond in the same language as the user's most recent question. Match their language style and level of formality.
+# CORE PRINCIPLES:
+1. Answer Language: Strictly follow the LANGUAGE POLICY above.
+2. Single Tool Focus: Use one tool at a time for focused, step-by-step assistance
+3. Context-Aware: Always consider available resources when responding
+4. Accuracy First: Prefer accurate information over speculation
+5. Natural Communication: Never mention you want to use tools, just do it
+6. If user message mentions this tab, this page, this article or current context, always use view_tab to get the content of SELECTED tab
 
-Your responses should be:
-- Accurate and directly based on the provided content
-- Concise and focused on answering the user's specific question
-- Well-formatted using markdown for readability
-- Clear about which source information comes from by using proper citations
-`
+# TOOL USAGE GUIDELINES:
+PRIORITY ORDER - Always check available resources FIRST:
+1. If user asks about PDF content: Use view_pdf FIRST
+2. If user asks about image content: Use view_image FIRST  
+3. If user asks about current tab/page: Use view_tab FIRST
+4. ONLY if no relevant resources available: Use search_online
+5. Use fetch_page for: specific URLs mentioned by user, or to get detailed content from search results
+
+For evaluation/discussion questions:
+- FIRST check if available PDFs/images contain relevant content
+- ONLY if no available resources match the question: use search_online
+- Based on search results, you may use fetch_page in subsequent responses for detailed content
+
+Tool distinctions:
+- view_tab: Only for tabs in available_tabs list
+- fetch_page: For getting content from new URLs
+- search_online: For get latest information and discussions
+- view_pdf: For PDF content if user asks about available PDFs
+- view_image: For image analysis if user asks about available images
+
+Required tool usage:
+- PDF questions (summarize, analyze, discuss): view_pdf FIRST, then search_online if needed
+- Image questions (analyze, explain, discuss): view_image FIRST, then search_online if needed  
+- Tab content: view_tab
+- Discussions/evaluations: FIRST check available PDFs/images, THEN search_online if no relevant resources
+- New web content: fetch_page
+- Current events: search_online
+
+# SINGLE TOOL RECOMMENDATION:
+- Use ONE tool per response to maintain focus and clarity
+- Choose the most critical tool for the current question
+- Based on tool results, you can use additional tools in subsequent responses
+- Do NOT continue calling tools if you have sufficient information to answer the question
+- This approach allows for better error handling and more targeted responses
+
+# AVAILABLE TOOLS:
+
+${promptBasedTools.map((tool) => renderPrompt`${new PromptBasedToolBuilder(tool)}`).join('\n\n')}
+
+# WORKFLOW:
+
+Question types and tool selection:
+- Evaluation/Discussion: start with search_online, then consider fetch_page in follow-up
+- Available content: view_tab/view_pdf/view_image
+- New URL content: fetch_page
+- Current events: search_online
+
+For evaluation questions, use step-by-step approach:
+1. Choose the most relevant single tool first (check available resources: PDF/images/tabs first)
+2. Based on results, decide if additional tools are needed in subsequent responses
+3. Build comprehensive understanding through multiple conversation rounds
+
+Tool usage patterns:
+- Questions with evaluation terms: FIRST check available resources (PDF/images), then search_online if needed
+- Current content questions: start with view_tab, then search_online if more context needed
+- Questions about PDF summary/analysis: use view_pdf directly, do NOT use search_online first
+- Questions about image analysis: use view_image directly, do NOT use search_online first
+
+Answer Language: Strictly follow the LANGUAGE POLICY above
+
+# FORMATTING RULES:
+- ALL tool calls MUST be wrapped in <tool_calls>...</tool_calls> tags
+- All tool results will be enclosed within <tool_results>...</tool_results> tags. Please do not use this tag in your response.
+- Tool calls MUST appear at END of response
+- When making tool calls, provide brief explanation only - no conclusions
+- Wait for results before giving final answer
+- NEVER suggest users to fetch content - do it automatically
+- Use ONE tool per response - build comprehensive answers through multiple conversation rounds
+- ALWAYS respond in the same language as the user's original message`
 
 export const DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT = `You are a text rewriting tool. You do NOT answer questions, explain concepts, or provide information. You ONLY rewrite text.
 
@@ -211,8 +284,6 @@ export const DEFAULT_QUICK_ACTIONS = [
   { editedTitle: '', defaultTitleKey: 'chat.prompt.search_more.title' as const, prompt: 'Help me find more content similar to this topic and provide relevant search suggestions.', showInContextMenu: false, edited: false },
 ]
 
-type OnlineSearchStatus = 'force' | 'disable' | 'auto'
-
 export async function _getUserConfig() {
   let enableNumCtx = true
 
@@ -236,6 +307,7 @@ export async function _getUserConfig() {
       current: await new Config<SupportedLocaleCode, undefined>('locale.current').build(),
     },
     llm: {
+      defaultFirstTokenTimeout: await new Config('llm.firstTokenTimeout').default(60 * 1000).build(), // 60 seconds
       endpointType: await new Config('llm.endpointType').default('web-llm' as LLMEndpointType).build(),
       baseUrl: await new Config('llm.baseUrl').default('http://localhost:11434/api').build(),
       model: await new Config<string, undefined>('llm.model').build(),
@@ -243,7 +315,6 @@ export async function _getUserConfig() {
       numCtx: await new Config('llm.numCtx').default(1024 * 8).build(),
       enableNumCtx: await new Config('llm.enableNumCtx').default(enableNumCtx).build(),
       reasoning: await new Config('llm.reasoning').default(true).build(),
-      chatSystemPrompt: await new Config('llm.chatSystemPrompt').default(DEFAULT_CHAT_SYSTEM_PROMPT).build(),
       summarizeSystemPrompt: await new Config('llm.summarizeSystemPrompt').default(DEFAULT_CHAT_SYSTEM_PROMPT).build(),
     },
     browserAI: {
@@ -255,11 +326,14 @@ export async function _getUserConfig() {
       },
     },
     chat: {
+      agent: {
+        maxIterations: await new Config('chat.agent.maxIterations').default(5).build(),
+      },
+      systemPrompt: await new Config('chat.systemPrompt').default(DEFAULT_CHAT_SYSTEM_PROMPT).build(),
       history: {
         currentChatId: await new Config('chat.history.currentChatId').default('default-chat-id').build(),
       },
       onlineSearch: {
-        enable: await new Config('chat.onlineSearch.enable').default('auto' as OnlineSearchStatus).build(),
         pageReadCount: await new Config('chat.onlineSearch.pageReadCount').default(5).build(), // how many pages to read when online search is enabled
       },
       quickActions: {

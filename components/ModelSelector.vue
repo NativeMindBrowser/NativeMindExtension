@@ -116,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, toRefs, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue'
 
 import IconDelete from '@/assets/icons/delete.svg?component'
 import IconOllamaRedirect from '@/assets/icons/ollama-redirect.svg?component'
@@ -127,6 +127,8 @@ import { formatSize } from '@/utils/formatter'
 import { useI18n } from '@/utils/i18n'
 import { SUPPORTED_MODELS } from '@/utils/llm/web-llm'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
+import { only } from '@/utils/runtime'
 import { showSettings } from '@/utils/settings'
 import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
@@ -152,6 +154,11 @@ const props = withDefaults(defineProps<{
 const { t } = useI18n()
 const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
 const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
+
+only(['sidepanel'], () => {
+  const removeListener = registerSidepanelRpcEvent('updateModelList', async () => await updateOllamaModelList())
+  onBeforeUnmount(() => removeListener())
+})
 
 const modelList = computed(() => {
   if (endpointType.value === 'ollama') {
@@ -223,7 +230,7 @@ watch(modelList, (modelList) => {
   commonModel.value = newCommonModel.model
 })
 
-watch([baseUrl, endpointType], async () => {
+watch([baseUrl, endpointType, selectedModel], async () => {
   updateModelList()
 })
 

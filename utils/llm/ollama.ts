@@ -14,13 +14,14 @@ async function getOllamaClient() {
 }
 
 function formatModelInfo(modelResponse: ModelResponse, psModelResponse?: ModelResponse) {
+  const modifiedAt = psModelResponse?.modified_at ?? modelResponse.modified_at
   return {
     name: modelResponse.name,
     model: modelResponse.model,
     size: modelResponse.size,
     digest: modelResponse.digest,
     expiresAt: psModelResponse?.expires_at ? new Date(psModelResponse.expires_at).getTime() : undefined,
-    modifiedAt: psModelResponse?.modified_at ? new Date(psModelResponse.modified_at).getTime() : undefined,
+    modifiedAt: modifiedAt ? new Date(modifiedAt).getTime() : undefined,
     sizeVRam: psModelResponse?.size_vram,
     parameterSize: psModelResponse?.details?.parameter_size,
     quantizationLevel: psModelResponse?.details?.quantization_level,

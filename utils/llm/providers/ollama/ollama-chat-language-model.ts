@@ -220,6 +220,7 @@ export class OllamaChatLanguageModel implements LanguageModelV1 {
       rawResponse: { headers: responseHeaders },
       request: { body: JSON.stringify(body) },
       text: response.message.content ?? undefined,
+      reasoning: response.message.thinking ?? undefined,
       toolCalls,
       usage: {
         completionTokens: response.eval_count || 0,
@@ -327,18 +328,8 @@ export class OllamaChatLanguageModel implements LanguageModelV1 {
 
             const value = chunk.value
 
-            if (value.done) {
-              finishReason = toolCalls.length ? 'tool-calls' : 'stop'
-              usage = {
-                completionTokens: value.eval_count,
-                promptTokens: value.prompt_eval_count || 0,
-              }
-
-              return
-            }
-
             if (experimentalStreamTools) {
-              if (value.message.tool_calls) {
+              if (value.message?.tool_calls) {
                 for (const toolCall of value.message.tool_calls) {
                   const curToolCall: LanguageModelV1StreamPart = {
                     type: 'tool-call',
@@ -361,10 +352,27 @@ export class OllamaChatLanguageModel implements LanguageModelV1 {
               }
             }
 
+            if (value.done) {
+              finishReason = toolCalls.length ? 'tool-calls' : 'stop'
+              usage = {
+                completionTokens: value.eval_count,
+                promptTokens: value.prompt_eval_count || 0,
+              }
+
+              return
+            }
+
             if (value.message.content !== null) {
               controller.enqueue({
                 textDelta: value.message.content,
                 type: 'text-delta',
+              })
+            }
+
+            if (value.message.thinking !== undefined) {
+              controller.enqueue({
+                textDelta: value.message.thinking,
+                type: 'reasoning',
               })
             }
           },
@@ -385,6 +393,7 @@ const ollamaChatResponseSchema = z.object({
   message: z.object({
     content: z.string(),
     role: z.string(),
+    thinking: z.string().optional(),
     tool_calls: z
       .array(
         z.object({
@@ -406,24 +415,27 @@ const ollamaChatResponseSchema = z.object({
 
 export type OllamaChatResponseSchema = z.infer<typeof ollamaChatResponseSchema>
 
+const toolCallsSchema = z
+  .array(
+    z.object({
+      function: z.object({
+        arguments: z.record(z.any()),
+        name: z.string(),
+      }),
+    }),
+  )
+  .optional()
+  .nullable()
+
 const ollamaChatStreamChunkSchema = z.discriminatedUnion('done', [
   z.object({
     created_at: z.string(),
     done: z.literal(false),
     message: z.object({
       content: z.string(),
+      thinking: z.string().optional(),
       role: z.string(),
-      tool_calls: z
-        .array(
-          z.object({
-            function: z.object({
-              arguments: z.record(z.any()),
-              name: z.string(),
-            }),
-          }),
-        )
-        .optional()
-        .nullable(),
+      tool_calls: toolCallsSchema,
     }),
     model: z.string(),
   }),
@@ -434,6 +446,12 @@ const ollamaChatStreamChunkSchema = z.discriminatedUnion('done', [
     eval_duration: z.number(),
     load_duration: z.number().optional(),
     model: z.string(),
+    message: z.object({
+      content: z.string(),
+      thinking: z.string().optional(),
+      role: z.string(),
+      tool_calls: toolCallsSchema,
+    }).optional().nullable(),
     prompt_eval_count: z.number().optional(),
     prompt_eval_duration: z.number().optional(),
     total_duration: z.number(),

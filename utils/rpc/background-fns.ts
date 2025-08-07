@@ -1,3 +1,4 @@
+import { safeParseJSON } from '@ai-sdk/provider-utils'
 import { generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
 import { EventEmitter } from 'events'
 import { Browser, browser } from 'wxt/browser'
@@ -7,29 +8,31 @@ import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
-// Import singleton managers for type-safe service access
 import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
 import { sleep } from '../async'
+import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
 import { AppError, CreateTabStreamCaptureError, FetchError, ModelRequestError, UnknownError } from '../error'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
 import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
-import { selectTools, ToolName, ToolWithName } from '../llm/tools'
+import { PromptBasedTool } from '../llm/tools/prompt-based/helpers'
+import { promptBasedTools } from '../llm/tools/prompt-based/tools'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
 import { parsePdfFileOfUrl } from '../pdf'
-import { searchOnline } from '../search'
+import { openAndFetchUrlsContent, searchWebsites } from '../search'
 import { showSettingsForBackground } from '../settings'
 import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
-import { bgBroadcastRpc } from '.'
+// Import singleton managers for type-safe service access
+import { b2sRpc, bgBroadcastRpc } from '.'
 import { preparePortConnection } from './utils'
 
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
 type GenerateObjectOptions = Omit<Parameters<typeof originalGenerateObject>[0], 'tools'>
 type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean }
-type ExtraGenerateOptionsWithTools = ExtraGenerateOptions & { tools?: (ToolName | ToolWithName)[] }
+type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
 
 const parseSchema = <S extends SchemaName>(options: SchemaOptions<S>) => {
@@ -70,7 +73,7 @@ const normalizeError = (_error: unknown) => {
   return error
 }
 
-const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt' | 'system' | 'toolChoice' | 'maxTokens' | 'topK' | 'topP'> & ExtraGenerateOptionsWithTools) => {
+const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens' | 'topK' | 'topP'> & ExtraGenerateOptionsWithTools) => {
   const abortController = new AbortController()
   const portName = `streamText-${Date.now().toString(32)}`
   const onStart = async (port: Browser.runtime.Port) => {
@@ -82,13 +85,15 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
       logger.debug('port disconnected from client')
       abortController.abort()
     })
+
     const response = originalStreamText({
       model: await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) }),
       messages: options.messages,
       prompt: options.prompt,
       system: options.system,
-      tools: options.tools?.length ? selectTools(...options.tools) : undefined,
-      toolChoice: options.toolChoice,
+      // this is a trick workaround to use prompt based tools in the vercel ai sdk
+      tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
+      experimental_activeTools: [],
       maxTokens: options.maxTokens,
       abortSignal: abortController.signal,
     })
@@ -107,15 +112,15 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
   return { portName }
 }
 
-const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'toolChoice' | 'maxTokens'> & ExtraGenerateOptionsWithTools) => {
+const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens'> & ExtraGenerateOptionsWithTools) => {
   const response = originalGenerateText({
     model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
     messages: options.messages,
     prompt: options.prompt,
     system: options.system,
-    tools: options.tools?.length ? selectTools(...options.tools) : undefined,
-    toolChoice: options.toolChoice,
+    tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
     maxTokens: options.maxTokens,
+    experimental_activeTools: [],
   })
   return response
 }
@@ -137,12 +142,13 @@ const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'pro
       messages: options.messages,
       prompt: options.prompt,
       system: options.system,
-      tools: options.tools?.length ? selectTools(...options.tools) : undefined,
+      tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
       temperature: options.temperature,
       topK: options.topK,
       topP: options.topP,
       toolChoice: options.toolChoice,
       maxTokens: options.maxTokens,
+      experimental_activeTools: [],
       abortSignal: abortController.signal,
     })
     logger.debug('generateText response', response)
@@ -190,10 +196,32 @@ const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<Gene
   const s = parseSchema(options)
   const isEnum = s instanceof z.ZodEnum
   let ret
+  const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
   try {
+    if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(modelInfo.model))) {
+      const response = await originalGenerateText({
+        model: await getModel(modelInfo),
+        prompt: options.prompt,
+        system: options.system,
+        messages: options.messages,
+      })
+      const parsed = safeParseJSON<z.infer<Schemas[S]>>({ text: response.text, schema: s })
+      if (!parsed.success) {
+        logger.error('Failed to parse response with schema', s, 'response:', response)
+        throw new Error(`Response does not match schema: ${parsed.error.message}`)
+      }
+      const result: GenerateObjectResult<z.infer<Schemas[S]>> = {
+        ...response,
+        object: parsed.value,
+        toJsonResponse: () => new Response(JSON.stringify(response.text), {
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      }
+      return result
+    }
     if (isEnum) {
       ret = await originalGenerateObject({
-        model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+        model: await getModel(modelInfo),
         output: 'enum',
         enum: (s as z.ZodEnum<[string, ...string[]]>)._def.values,
         prompt: options.prompt,
@@ -203,7 +231,7 @@ const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<Gene
     }
     else {
       ret = await originalGenerateObject({
-        model: await getModel({ ...(await getModelUserConfig()) }),
+        model: await getModel(modelInfo),
         output: 'object',
         schema: s as z.ZodSchema,
         prompt: options.prompt,
@@ -236,7 +264,7 @@ const getDocumentContentOfTab = async (tabId?: number) => {
   }
   if (!tabId) throw new Error('No tab id provided')
   const article = await bgBroadcastRpc.getDocumentContent({ _toTab: tabId })
-  return article
+  return { ...article, tabId } as const
 }
 
 const getPagePDFContent = async (tabId: number) => {
@@ -673,6 +701,11 @@ async function cacheGetDebugInfo() {
   }
 }
 
+async function updateSidepanelModelList() {
+  b2sRpc.emit('updateModelList')
+  return true
+}
+
 export const backgroundFunctions = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)
@@ -690,7 +723,8 @@ export const backgroundFunctions = {
   pullOllamaModel,
   showOllamaModelDetails,
   unloadOllamaModel,
-  searchOnline,
+  openAndFetchUrlsContent,
+  searchWebsites,
   generateObjectFromSchema,
   getDocumentContentOfTab,
   getPageContentType,
@@ -722,5 +756,6 @@ export const backgroundFunctions = {
   cacheGetDebugInfo,
   showSidepanel,
   showSettings: showSettingsForBackground,
+  updateSidepanelModelList,
 }
 ;(self as unknown as { backgroundFunctions: unknown }).backgroundFunctions = backgroundFunctions

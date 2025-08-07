@@ -99,7 +99,7 @@ export default defineBackground(() => {
   browser.contextMenus.onClicked.addListener(async (info, tab) => {
     logger.debug('context menu clicked', info, tab)
     if (tab?.id) {
-      if (typeof info.menuItemId === 'string' && (info.menuItemId as ContextMenuId).includes('quick-actions')) {
+      if (typeof info.menuItemId === 'string' && ['quick-actions', 'add-image-to-chat'].some((id) => info.menuItemId.toString().includes(id))) {
         await browser.sidePanel.open({ windowId: tab.windowId })
         await waitForSidepanelLoaded()
         await b2sRpc.emit('contextMenuClicked', { ...info, menuItemId: info.menuItemId as ContextMenuId })

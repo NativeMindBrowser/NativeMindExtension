@@ -1,6 +1,6 @@
 import { onScopeDispose } from 'vue'
 
-import IconLogo from '@/assets/icons/logo.svg?url'
+import IconLogo from '@/assets/icons/logo-custom-color.svg?raw'
 import { useDocumentLoaded } from '@/composables/useDocumentLoaded'
 import { OLLAMA_SITE_DOWNLOAD_BUTTON_CLASS } from '@/utils/constants'
 import { debounce } from '@/utils/debounce'
@@ -12,18 +12,21 @@ function shouldExcludeModel(modelName: string) {
   return modelName.toLowerCase().includes('embed')
 }
 
-function makeLogoElement(_modelName: string) {
+function makeLogoElement() {
   const logo = document.createElement('div')
-  const img = document.createElement('img')
-  img.src = IconLogo
-  img.style.cssText = `width: 16px; height: 16px; object-fit: contain;`
-  logo.appendChild(img)
+  logo.innerHTML = IconLogo
+  const svgEl = logo.querySelector('svg')
+  if (svgEl) {
+    svgEl.style.width = '14px'
+    svgEl.style.height = '14px'
+    svgEl.style.color = '#24B960'
+  }
   return logo
 }
 
 function makeDownloadButton(modelName: string, text: string, additionalCss?: string) {
   const downloadButton = document.createElement('button')
-  const logo = makeLogoElement(modelName)
+  const logo = makeLogoElement()
   downloadButton.appendChild(logo)
   downloadButton.appendChild(document.createTextNode(text))
   downloadButton.style.cssText = `
@@ -34,23 +37,13 @@ function makeDownloadButton(modelName: string, text: string, additionalCss?: str
     cursor: pointer;
     font-size: 12px;
     font-weight: 500;
-    padding: 0px 10px;
     color: #24B960;
-    border: 1px;
-    height: 32px;
-    border-radius: 6px;
+    height: 16px;
     text-decoration: none;
-    background-color: white;
-    box-shadow: 0px 0px 0px 1px #24B960, 0px 0.75px 0px 0px #FFFFFF33 inset;
+    white-space: nowrap;
+    vertical-align: middle;
     ${additionalCss || ''}
 `
-  downloadButton.addEventListener('mouseenter', () => {
-    downloadButton.style.backgroundColor = '#F0FFF4' // Change background color on hover
-  })
-
-  downloadButton.addEventListener('mouseleave', () => {
-    downloadButton.style.backgroundColor = '' // Reset to default background color
-  })
   downloadButton.className = OLLAMA_SITE_DOWNLOAD_BUTTON_CLASS
   downloadButton.addEventListener('click', async (ev) => {
     ev.stopImmediatePropagation()

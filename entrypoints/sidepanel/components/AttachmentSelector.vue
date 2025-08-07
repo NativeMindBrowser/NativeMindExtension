@@ -216,10 +216,10 @@ import { useI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { convertImageFileToJpegBase64 } from '@/utils/image'
 import { extractPdfText, getPdfPageCount } from '@/utils/pdf'
+import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { s2bRpc } from '@/utils/rpc'
 import { ByteSize } from '@/utils/sizes'
 import { tabToTabInfo } from '@/utils/tab'
-import { getUserConfig } from '@/utils/user-config'
 
 import ExternalImage from '../../../components/ExternalImage.vue'
 import { getValidTabs } from '../utils/tabs'
@@ -250,6 +250,7 @@ const emit = defineEmits<{
   (e: 'update:attachments', images: ContextAttachment[]): void
 }>()
 
+const ollamaStatusStore = useOllamaStatusStore()
 const attachmentStorage = useVModel(props, 'attachmentStorage', emit)
 const attachments = toRef(attachmentStorage.value, 'attachments')
 const attachmentsWithCurrentTab = computed(() => {
@@ -309,7 +310,7 @@ const SUPPORTED_ATTACHMENT_TYPES: AttachmentItem[] = [
     type: 'image',
     matchMimeType: (mimeType) => /image\/*/.test(mimeType),
     validateFile: async ({ attachments }, file: File) => {
-      if (!await checkCurrentModelSupportVision()) {
+      if (!await ollamaStatusStore.checkCurrentModelSupportVision()) {
         showErrorMessage(t('chat.input.attachment_selector.unsupported_model'))
         return false
       }
@@ -462,10 +463,6 @@ defineExpose({
   },
 })
 
-const userConfig = await getUserConfig()
-const currentModel = userConfig.llm.model.toRef()
-const endpointType = userConfig.llm.endpointType.toRef()
-
 onChange(async (files) => {
   if (files && files.length) {
     attachmentStorage.value.lastInteractedAt = Date.now()
@@ -474,19 +471,6 @@ onChange(async (files) => {
   }
   reset()
 })
-
-const modelsSupportVision = new Map()
-const checkCurrentModelSupportVision = async () => {
-  if (endpointType.value !== 'ollama') return false
-  if (!currentModel.value) return false
-  if (modelsSupportVision.has(currentModel.value)) {
-    return modelsSupportVision.get(currentModel.value)
-  }
-  const modelDetails = await s2bRpc.showOllamaModelDetails(currentModel.value)
-  const supported = !!modelDetails.capabilities?.includes('vision')
-  modelsSupportVision.set(currentModel.value, supported)
-  return supported
-}
 
 const unselectedTabs = computed(() => {
   return allTabs.value.filter((tab) => !selectedTabs.value.some((selectedTab) => selectedTab === tab.tabId))

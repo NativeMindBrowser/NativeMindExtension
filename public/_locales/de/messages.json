@@ -1,9 +1,9 @@
 {
   "extName": {
-    "message": "NativeMind: Your fully private, open-source, on-device AI assistant"
+    "message": "NativeMind: Open-Source KI-Assistent im Browser"
   },
   "extDesc": {
-    "message": "NativeMind connects to local LLMs via Ollama to bring powerful AI into your browser — with zero data sent to the cloud."
+    "message": "NativeMind verbindet sich über Ollama mit lokalen Sprachmodellen (LLMs) und bringt die neuesten KI-Funktionen direkt in deinen Browser – ohne Daten in Cloud-Server zu senden."
   },
   "extNameFirefox": {
     "message": "NativeMind"

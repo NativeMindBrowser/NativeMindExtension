@@ -1,6 +1,133 @@
 # Changelog
 
 
+## v1.7.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.1...v1.7.0-beta.3)
+
+### 🚀 Enhancements
+
+- **agent:** Add support for agent in beta ([ae46e66](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ae46e66))
+- **agent:** Refactor agent tool execution and add abortable promise handling ([ff345ab](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ff345ab))
+- **agent:** Add support for gpt-oss tool call format ([3e6528d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e6528d))
+
+### 🩹 Fixes
+
+- **chat:** Correct variable name for tab ID in chat prompt environment section ([e7f35c6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e7f35c6))
+
+### 🏡 Chore
+
+- **package:** Update version to 1.7.0-beta.0 ([1947b6b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1947b6b))
+- **release:** V1.7.0-beta.1 ([be9b8ba](https://github.com/NativeMindBrowser/NativeMindExtension/commit/be9b8ba))
+- **debug:** Add default first token timeout configuration ([1efcdbf](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1efcdbf))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.7.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.9...v1.7.0-beta.1)
+
+### 🚀 Enhancements
+
+- **agent:** Add support for agent in beta ([ae46e66](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ae46e66))
+
+### 🩹 Fixes
+
+- **translator:** Update context menu after page navigation ([ef2d683](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ef2d683))
+
+### 🏡 Chore
+
+- **package:** Update version to 1.7.0-beta.0 ([1947b6b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1947b6b))
+## v1.6.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0...v1.6.1)
+
+### 🚀 Enhancements
+
+- **models:** Add support for gpt-oss model ([9708639](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9708639))
+
+### 🩹 Fixes
+
+- **i18n:** Update localized messages for consistency across multiple languages ([803b408](https://github.com/NativeMindBrowser/NativeMindExtension/commit/803b408))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.12...v1.6.0)
+
+## v1.6.0-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.11...v1.6.0-beta.12)
+
+### 🏡 Chore
+
+- **i18n:** Update settings translations for consistency across languages ([6ecea37](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6ecea37))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.0-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.10...v1.6.0-beta.11)
+
+## v1.6.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.9...v1.6.0-beta.10)
+
+### 🩹 Fixes
+
+- **translator:** Update context menu after page navigation ([ef2d683](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ef2d683))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.8...v1.6.0-beta.9)
+
+### 🩹 Fixes
+
+- **ModelSelector:** Register sidepanel RPC event to update model list ([a4d0b01](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a4d0b01))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.0-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.7...v1.6.0-beta.8)
+
+### 🩹 Fixes
+
+- **ModelSelector:** Update model list after selectedModel changed ([33cd582](https://github.com/NativeMindBrowser/NativeMindExtension/commit/33cd582))
+
+### 💅 Refactors
+
+- **logger:** Update logging level management ([b3b97f1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b3b97f1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.6...v1.6.0-beta.7)
+
+### 🚀 Enhancements
+
+- **ollama-download-button:** Update "use in nativemind" button style ([e9daedd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e9daedd))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.6.0-beta.6
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.5...v1.6.0-beta.6)

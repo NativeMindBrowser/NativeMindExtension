@@ -2,15 +2,13 @@ const LEVELS = ['debug', 'info', 'warn', 'error'] as const
 type Level = (typeof LEVELS)[number]
 
 class Logger {
-  private static level = 'info' as Level
-  static setLevel(level: Level): void {
-    Logger.level = level
+  private static levels: Level[] = LEVELS.slice()
+  static setLevels(levels: Level[]): void {
+    Logger.levels = levels
   }
 
   private shouldLog(level: Level) {
-    const currentLevelIndex = LEVELS.indexOf(Logger.level)
-    const targetLevelIndex = LEVELS.indexOf(level)
-    return targetLevelIndex >= currentLevelIndex
+    return Logger.levels.includes(level)
   }
 
   moduleList: string[] = []
@@ -69,7 +67,7 @@ class Logger {
   }
 }
 
-Logger.setLevel('debug')
+Logger.setLevels(import.meta.env.PROD ? [] : LEVELS.slice())
 
 export const logger = new Logger()
 export default logger

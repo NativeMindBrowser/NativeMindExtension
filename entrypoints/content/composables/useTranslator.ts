@@ -1,5 +1,5 @@
 import { createSharedComposable, useEventListener } from '@vueuse/core'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 import { useToast } from '@/composables/useToast'
 import { getTranslatorEnv, handleTranslatorEnvUpdated, init, setTranslatorEnv, toggleTranslation, translation } from '@/entrypoints/content/utils/translator'
@@ -23,9 +23,7 @@ async function _useTranslator() {
   const userConfig = await getUserConfig()
   const targetLocale = userConfig.translation.targetLocale.toRef()
   const ollamaStatusStore = useOllamaStatusStore()
-  onMounted(() => {
-    setTranslationMenuTargetLanguage(enabled.value, targetLocale.value)
-  })
+  setTranslationMenuTargetLanguage(enabled.value, targetLocale.value)
   watch(targetLocale, async (targetLocale) => {
     logger.debug('targetLocale changed', targetLocale)
     const curEnv = await getTranslatorEnv()
