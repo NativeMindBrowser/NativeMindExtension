@@ -166,8 +166,8 @@ export const rawLoggingMiddleware: LanguageModelV1Middleware = {
 }
 
 export const middlewares = [
-  reasoningMiddleware,
   normalizeToolCallsMiddleware,
   extractPromptBasedToolCallsMiddleware,
+  reasoningMiddleware,
   // rawLoggingMiddleware,
 ]

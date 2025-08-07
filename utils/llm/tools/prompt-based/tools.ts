@@ -37,4 +37,5 @@ export type ExtractToolWithParams<T extends PromptBasedToolType> = {
   params: InferredParams<T['parameters']>
 }
 export type PromptBasedToolName = PromptBasedToolType['toolName']
+export type PromptBasedToolNameAndParams<Name extends PromptBasedToolName = PromptBasedToolName> = { toolName: Name, params: InferredParams<GetPromptBasedTool<Name>['parameters']> }
 export type GetPromptBasedTool<Name extends PromptBasedToolName> = PromptBasedToolType & { toolName: Name }

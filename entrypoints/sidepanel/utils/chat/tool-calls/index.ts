@@ -3,7 +3,6 @@ import { browser } from 'wxt/browser'
 import { makeAbortable } from '@/utils/abort-controller'
 import logger from '@/utils/logger'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
-import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
 import { s2bRpc } from '@/utils/rpc'
 
 import { AgentToolCallExecute } from '../../agent'
@@ -19,21 +18,19 @@ export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async 
 Found ${filteredLinks.length} results for "${query}":
 ${filteredLinks.map((link) => `\n- ${link.title} [${link.url.substring(0, 35)}...](${link.url})`).join('\n\n')}`.trim()
 
-  const resultBuilder = TagBuilder.fromStructured('tool_results', {
-    tool_type: 'search_online',
-    query,
-    results_count: filteredLinks.length.toString(),
-    status: 'completed',
-    search_results: [
-      'WARNING: These are INCOMPLETE search snippets only! You can use fetch_page to get complete content before answering!',
-      ...filteredLinks.map((link) => ({
-        result: `Title: ${link.title}\nURL: ${link.url}\nSnippet: ${link.description}`,
-      })),
-    ],
-  })
   return [{
-    type: 'user-message',
-    content: renderPrompt`${resultBuilder}`,
+    type: 'tool-result',
+    results: {
+      query,
+      results_count: filteredLinks.length.toString(),
+      status: 'completed',
+      search_results: [
+        'WARNING: These are INCOMPLETE search snippets only! You can use fetch_page to get complete content before answering!',
+        ...filteredLinks.map((link) => ({
+          result: `Title: ${link.title}\nURL: ${link.url}\nSnippet: ${link.description}`,
+        })),
+      ],
+    },
   }]
 }
 
@@ -44,28 +41,24 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
   const [content] = await makeAbortable(searchScraper.fetchUrlsContent([url]), abortSignal)
   if (!content) {
     statusMessageModifier.content = `Failed to fetch content from "${url}"`
-    const errorResult = TagBuilder.fromStructured('tool_results', {
-      tool_type: 'fetch_page',
-      url,
-      status: 'failed',
-      error_message: `Failed to fetch content from "${url}"`,
-    })
     return [{
-      type: 'user-message',
-      content: renderPrompt`${errorResult}`,
+      type: 'tool-result',
+      results: {
+        url,
+        status: 'failed',
+        error_message: `Failed to fetch content from "${url}"`,
+      },
     }]
   }
   else {
     statusMessageModifier.content = `Fetched content from "${url}"`
-    const resultBuilder = TagBuilder.fromStructured('tool_results', {
-      tool_type: 'fetch_page',
-      url,
-      status: 'completed',
-      page_content: `URL: ${content.url}\n\n ${content.textContent}`,
-    })
     return [{
-      type: 'user-message',
-      content: renderPrompt`${resultBuilder}`,
+      type: 'tool-result',
+      results: {
+        url,
+        status: 'completed',
+        page_content: `URL: ${content.url}\n\n ${content.textContent}`,
+      },
     }]
   }
 }
@@ -83,31 +76,27 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   if (!hasTab) {
     const allTabAttachmentIds = [...new Set(agentStorage.getAllTabs().map((tab) => tab.value.id))]
     statusMessageModifier.content = `Tab "${tabId}" not found`
-    const errorResult = TagBuilder.fromStructured('tool_results', {
-      tool_type: 'view_tab',
-      tab_id: tabId,
-      error_message: `Tab with id "${tabId}" not found`,
-      available_tab_ids: allTabAttachmentIds.join(', '),
-      status: 'failed',
-    })
     return [{
-      type: 'user-message',
-      content: renderPrompt`${errorResult}`,
+      type: 'tool-result',
+      results: {
+        tab_id: tabId,
+        error_message: `Tab with id "${tabId}" not found`,
+        available_tab_ids: allTabAttachmentIds.join(', '),
+        status: 'failed',
+      },
     }]
   }
   else {
     statusMessageModifier.content = `Reading tab "${tab.value.title}"`
   }
   const content = await makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal)
-  const resultBuilder = TagBuilder.fromStructured('tool_results', {
-    tool_type: 'view_tab',
-    tab_id: tabId,
-    status: 'completed',
-    tab_content: `Title: ${content.title}\nURL: ${content.url}\n\n${content.textContent}`,
-  })
   return [{
-    type: 'user-message',
-    content: renderPrompt`${resultBuilder}`,
+    type: 'tool-result',
+    results: {
+      tab_id: tabId,
+      status: 'completed',
+      tab_content: `Title: ${content.title}\nURL: ${content.url}\n\n${content.textContent}`,
+    },
   }]
 }
 
@@ -117,29 +106,25 @@ export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params,
   const pdf = agentStorage.getById('pdf', pdfId)
   if (!pdf) {
     statusMessageModifier.content = `PDF with ID "${pdfId}" not found`
-    const errorResult = TagBuilder.fromStructured('tool_results', {
-      tool_type: 'view_pdf',
-      pdf_id: pdfId,
-      error_message: `PDF with ID "${pdfId}" not found`,
-      available_pdf_ids: agentStorage.getAllPDFs().map((pdf) => pdf.value.id).join(', '),
-      status: 'failed',
-    })
     return [{
-      type: 'user-message',
-      content: renderPrompt`${errorResult}`,
+      type: 'tool-result',
+      results: {
+        pdf_id: pdfId,
+        error_message: `PDF with ID "${pdfId}" not found`,
+        available_pdf_ids: agentStorage.getAllPDFs().map((pdf) => pdf.value.id).join(', '),
+        status: 'failed',
+      },
     }]
   }
   statusMessageModifier.content = `Viewing PDF "${pdf.value.name}"`
-  const resultBuilder = TagBuilder.fromStructured('tool_results', {
-    tool_type: 'view_pdf',
-    pdf_id: pdfId,
-    status: 'completed',
-    pdf_content: `File: ${pdf.value.name}\nPage Count: ${pdf.value.pageCount}\n\n${pdf.value.textContent}`,
-  })
 
   return [{
-    type: 'user-message',
-    content: renderPrompt`${resultBuilder}`,
+    type: 'tool-result',
+    results: {
+      pdf_id: pdfId,
+      status: 'completed',
+      pdf_content: `File: ${pdf.value.name}\nPage Count: ${pdf.value.pageCount}\n\n${pdf.value.textContent}`,
+    },
   }]
 }
 
@@ -150,28 +135,25 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
   if (!image) {
     const availableImageIds = agentStorage.getAllImages().map((img) => img.value.id)
     statusMessageModifier.content = `Image with ID "${imageId}" not found`
-    const errorResult = TagBuilder.fromStructured('tool_results', {
-      tool_type: 'view_image',
-      image_id: imageId,
-      error_message: `Image with ID "${imageId}" not found`,
-      available_image_ids: availableImageIds.join(', '),
-      status: 'failed',
-    })
     return [{
-      type: 'user-message',
-      content: renderPrompt`${errorResult}`,
+      type: 'tool-result',
+      results: {
+        image_id: imageId,
+        error_message: `Image with ID "${imageId}" not found`,
+        available_image_ids: availableImageIds.join(', '),
+        status: 'failed',
+      },
     }]
   }
   const supportVision = await useOllamaStatusStore().checkCurrentModelSupportVision()
   if (!supportVision) {
     statusMessageModifier.content = `Current model does not support image processing`
-    const errorResult = TagBuilder.fromStructured('error', {
-      message: 'Current model does not support image viewing. Please use vision-capable models like: gemma3, qwen2.5vl, etc.',
-      status: 'failed',
-    })
     return [{
-      type: 'user-message',
-      content: renderPrompt`${errorResult}`,
+      type: 'tool-result',
+      results: {
+        message: 'Current model does not support image viewing. Please use vision-capable models like: gemma3, qwen2.5vl, etc.',
+        status: 'failed',
+      },
     }]
   }
   statusMessageModifier.content = `Viewing image "${image.value.name}"`
@@ -180,16 +162,14 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
   if (existImageIdxInLoop === -1) {
     loopImages.push({ ...image.value, id: imageId })
   }
-  const resultBuilder = TagBuilder.fromStructured('tool_results', {
-    tool_type: 'view_image',
-    image_id: imageId,
-    image_position: imageIdx + 1,
-    status: 'completed',
-    message: `Image ${imageId} loaded as image #${imageIdx}`,
-  })
 
   return [{
-    type: 'user-message',
-    content: renderPrompt`${resultBuilder}`,
+    type: 'tool-result',
+    results: {
+      image_id: imageId,
+      image_position: imageIdx + 1,
+      status: 'completed',
+      message: `Image ${imageId} loaded as image #${imageIdx}`,
+    },
   }]
 }

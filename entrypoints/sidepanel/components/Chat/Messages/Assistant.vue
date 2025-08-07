@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import IconReasoningFinished from '@/assets/icons/reasoning-finished.svg?component'
@@ -94,10 +94,17 @@ import Text from '@/components/ui/Text.vue'
 import { AssistantMessageV1 } from '@/utils/tab-store/history'
 
 import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'
-defineProps<{
+const props = defineProps<{
   message: AssistantMessageV1
 }>()
 
+const message = computed(() => {
+  return {
+    ...props.message,
+    content: props.message.content.trim(),
+    reasoning: props.message.reasoning?.trim(),
+  }
+})
 const { t } = useI18n()
 const expanded = ref(false)
 </script>

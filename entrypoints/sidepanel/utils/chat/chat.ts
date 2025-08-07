@@ -27,7 +27,7 @@ const log = logger.child('chat')
 export type MessageIdScope = 'quickActions' | 'welcomeMessage'
 
 export class ReactiveHistoryManager extends EventEmitter {
-  constructor(public chatHistory: Ref<ChatHistoryV1>, public systemMessage?: string) {
+  constructor(public chatHistory: Ref<ChatHistoryV1>) {
     super()
     this.cleanUp()
   }
@@ -64,13 +64,9 @@ export class ReactiveHistoryManager extends EventEmitter {
     return this.history.value.every((item) => item.isDefault)
   }
 
-  setSystemMessage(message: string) {
-    this.systemMessage = message
-  }
-
   // this method will not change the underlying history, it will just return a new array of messages
   getLLMMessages(extra: { system?: string, user?: UserPrompt, lastUser?: UserPrompt } = {}) {
-    const systemMessage = extra.system || this.systemMessage
+    const systemMessage = extra.system
     const userMessage = extra.user
     const lastUserMessage = extra.lastUser
     const fullHistory = pickByRoles(this.history.value.filter((m) => m.done), ['assistant', 'user', 'system']).map((item) => ({
