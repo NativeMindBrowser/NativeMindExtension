@@ -56,10 +56,34 @@
         />
       </div>
       <div class="flex gap-1 relative">
+        <div
+          v-if="isThinkingModel(commonModel??'')"
+          ref="thinkingButtonContainerRef"
+          class="absolute left-0 top-0 bottom-0 p-2 pr-0 z-10"
+        >
+          <Button
+            v-if="enableThinking"
+            variant="primary"
+            class="px-[6px] grow-0 shrink-0 h-7"
+            :disabled="chat.isAnswering()"
+            @click="handleToggleThinking"
+          >
+            {{ "Thinking" }}
+          </Button>
+          <Button
+            v-else
+            variant="secondary"
+            class="px-[6px] grow-0 shrink-0 h-7"
+            :disabled="chat.isAnswering()"
+            @click="handleToggleThinking"
+          >
+            {{ "No Thinking..." }}
+          </Button>
+        </div>
         <ScrollContainer
           class="max-h-72 grow shadow-02 bg-white rounded-md overflow-hidden"
           itemContainerClass="px-2 py-[7px]"
-          :style="{ paddingRight: `${sendButtonContainerWidth}px` }"
+          :style="{ paddingRight: `${sendButtonContainerWidth}px`, paddingLeft: `${thinkingButtonContainerWidth}px` }"
         >
           <div class="h-max min-h-[30px] grid place-items-center">
             <AutoExpandTextArea
@@ -118,7 +142,9 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
+import { isThinkingModel } from '@/utils/llm/thinking-models'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
+import { getUserConfig } from '@/utils/user-config'
 
 import MarkdownViewer from '../../../../components/MarkdownViewer.vue'
 import { showSettings } from '../../../../utils/settings'
@@ -134,8 +160,10 @@ import MessageTask from './Messages/Task.vue'
 
 const inputContainerRef = ref<HTMLDivElement>()
 const sendButtonContainerRef = ref<HTMLDivElement>()
+const thinkingButtonContainerRef = ref<HTMLDivElement>()
 const { height: inputContainerHeight } = useElementBounding(inputContainerRef)
 const { width: sendButtonContainerWidth } = useElementBounding(sendButtonContainerRef)
+const { width: thinkingButtonContainerWidth } = useElementBounding(thinkingButtonContainerRef)
 
 const { t } = useI18n()
 const userInput = ref('')
@@ -149,6 +177,10 @@ defineExpose({
 
 const chat = await Chat.getInstance()
 const contextAttachmentStorage = chat.contextAttachmentStorage
+
+const userConfig = await getUserConfig()
+const commonModel = userConfig.llm.model.toRef()
+const enableThinking = userConfig.llm.reasoning.toRef()
 
 initChatSideEffects()
 
@@ -201,6 +233,10 @@ const ask = async () => {
   if (!allowAsk.value) return
   chat.ask(userInput.value)
   userInput.value = ''
+}
+
+const handleToggleThinking = () => {
+  enableThinking.value = !enableThinking.value
 }
 
 onMounted(() => {

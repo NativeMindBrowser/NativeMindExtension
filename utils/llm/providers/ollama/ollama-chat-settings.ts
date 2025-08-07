@@ -318,4 +318,10 @@ export interface OllamaChatSettings {
    * If true, the model will only load the vocabulary without performing further computation. (Default: false)
    */
   vocabOnly?: boolean
+
+  /**
+   * If true, the model will use thinking. (Default: true)
+   * @link https://ollama.com/blog/thinking
+   */
+  think?: boolean
 }
