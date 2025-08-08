@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.7.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.4...v1.7.0-beta.5)
+
+### 🚀 Enhancements
+
+- **agent:** Improve environment info handling ([314fd98](https://github.com/NativeMindBrowser/NativeMindExtension/commit/314fd98))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.3...v1.7.0-beta.4)
