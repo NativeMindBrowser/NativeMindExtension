@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.7.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.5...v1.7.0-beta.6)
+
+### 🚀 Enhancements
+
+- **agent:** Add methods to persist and check current tab in AgentStorage ([510c90a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/510c90a))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.4...v1.7.0-beta.5)
