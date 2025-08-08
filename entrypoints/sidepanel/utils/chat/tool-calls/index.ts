@@ -86,8 +86,9 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
       },
     }]
   }
-  else {
-    statusMessageModifier.content = `Reading tab "${tab.value.title}"`
+  statusMessageModifier.content = `Reading tab "${tab.value.title}"`
+  if (agentStorage.isCurrentTab(tab.value.tabId)) {
+    agentStorage.persistCurrentTab()
   }
   const content = await makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal)
   return [{

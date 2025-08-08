@@ -74,6 +74,19 @@ export class AgentStorage {
   getAllPDFs() {
     return this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'pdf')
   }
+
+  persistCurrentTab() {
+    const currentTab = this.attachmentStorage.currentTab
+    if (currentTab?.type !== 'tab') return
+    const currentTabId = currentTab.value.tabId
+    if (this.attachmentStorage.attachments.some((attachment) => attachment.type === 'tab' && attachment.value.tabId === currentTabId)) return
+    this.attachmentStorage.attachments.push(currentTab)
+  }
+
+  isCurrentTab(tabId: number) {
+    const currentTab = this.attachmentStorage.currentTab
+    return currentTab?.type === 'tab' && currentTab.value.tabId === tabId
+  }
 }
 
 interface AgentOptions<T extends PromptBasedToolName> {
