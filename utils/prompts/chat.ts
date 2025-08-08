@@ -8,28 +8,31 @@ import { definePrompt, renderPrompt, TagBuilder, TextBuilder, UserPrompt } from 
 
 export class EnvironmentDetailsBuilder {
   private log = logger.child('EnvironmentDetailsBuilder')
-  private usedIds = new Set<string>()
 
   constructor(public contextAttachmentStorage: ContextAttachmentStorage) {}
 
-  addCurrentAttachmentIds() {
-    const currentTab = this.contextAttachmentStorage.currentTab
-    if (currentTab) {
-      this.usedIds.add(currentTab.value.id)
-    }
+  getAllAttachmentIds() {
+    const ids = new Set<string>()
     for (const attachment of this.contextAttachmentStorage.attachments) {
-      this.usedIds.add(attachment.value.id)
+      ids.add(attachment.value.id)
     }
+    if (this.contextAttachmentStorage.currentTab) {
+      ids.add(this.contextAttachmentStorage.currentTab.value.id)
+    }
+    return [...ids]
   }
 
-  ensureUnused<C extends ContextAttachment>(attachment?: C): C | undefined {
-    return attachment && !this.usedIds.has(attachment.value.id) ? attachment : undefined
+  private ensureUnused<C extends ContextAttachment>(usedIds: string[], attachment?: C): C | undefined {
+    const usedIdSet = new Set(usedIds)
+    return attachment && !usedIdSet.has(attachment.value.id) ? attachment : undefined
   }
 
-  generateUpdates() {
+  generateUpdates(usedIds: string[] = []) {
+    const ensureUnused = <T extends ContextAttachment>(attachment?: T) => this.ensureUnused(usedIds, attachment)
+
     const envBuilder = new TagBuilder('environment_updates')
-    const currentTab = this.ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'tab' ? this.contextAttachmentStorage.currentTab : undefined)
-    const attachments = this.contextAttachmentStorage.attachments.filter((a) => !!this.ensureUnused(a))
+    const currentTab = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'tab' ? this.contextAttachmentStorage.currentTab : undefined)
+    const attachments = this.contextAttachmentStorage.attachments.filter((a) => !!ensureUnused(a))
     const tabs = attachments.filter((a): a is TabAttachment => a.type === 'tab' && a.value.tabId !== currentTab?.value.tabId)
     if (tabs.length || currentTab) {
       envBuilder.insertContent('# Updated Tabs')
@@ -59,11 +62,10 @@ export class EnvironmentDetailsBuilder {
       }
     }
 
-    this.addCurrentAttachmentIds()
     return envBuilder.hasContent() ? envBuilder.build() : undefined
   }
 
-  generate() {
+  generateFull() {
     const tabContextBuilder = new TextBuilder('# Available Tabs')
     const currentTab = this.contextAttachmentStorage.currentTab?.type === 'tab' ? this.contextAttachmentStorage.currentTab : undefined
     const tabs = this.contextAttachmentStorage.attachments.filter((a): a is TabAttachment => a.type === 'tab' && a.value.tabId !== currentTab?.value.tabId)
@@ -101,20 +103,17 @@ ${pdfContextBuilder}
 ${imageContextBuilder}
 `.trim())
 
-    this.addCurrentAttachmentIds()
     return environmentTagBuilder.build()
   }
 }
 
-export const chatWithEnvironment = definePrompt(async (question: string, environmentDetails: string, images: Base64ImageData[]) => {
+export const chatWithEnvironment = definePrompt(async (question: string, environmentDetails?: string | undefined, images?: Base64ImageData[] | undefined) => {
   const userConfig = await getUserConfig()
   const system = userConfig.chat.systemPrompt.get()
   const userMessageTagBuilder = new TagBuilder('user_message').insertContent(question)
 
   const user = renderPrompt`
-${userMessageTagBuilder}
+${userMessageTagBuilder}${environmentDetails ? `\n\n${environmentDetails}` : ''}`.trim()
 
-${environmentDetails}`.trim()
-
-  return { user: UserPrompt.fromTextAndImages(user, images), system }
+  return { user: UserPrompt.fromTextAndImages(user, images ?? []), system }
 })

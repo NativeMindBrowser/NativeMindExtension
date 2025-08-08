@@ -21,7 +21,7 @@ describe('prompt builder', () => {
       currentTab: undefined,
     }
     const environmentDetailsBuilder = new EnvironmentDetailsBuilder(contextAttachmentStorage)
-    const envDetails = environmentDetailsBuilder.generate()
+    const envDetails = environmentDetailsBuilder.generateFull()
     expect(envDetails).toBe(`<environment_details>
 # Current Time
 ${dayjs().format('YYYY-MM-DD HH:mm:ss Z[Z]')}
@@ -44,7 +44,7 @@ ${dayjs().format('YYYY-MM-DD HH:mm:ss Z[Z]')}
       },
     }
 
-    let updateInfo = environmentDetailsBuilder.generateUpdates()
+    let updateInfo = environmentDetailsBuilder.generateUpdates([])
     expect(updateInfo).toBe(`<environment_updates>
 # Updated Tabs
 - Tab ID test-tab (SELECTED): "Test Tab"
@@ -61,7 +61,7 @@ ${dayjs().format('YYYY-MM-DD HH:mm:ss Z[Z]')}
       },
     })
 
-    updateInfo = environmentDetailsBuilder.generateUpdates()
+    updateInfo = environmentDetailsBuilder.generateUpdates(['test-tab'])
     expect(updateInfo).toBe(`<environment_updates>
 # Updated Images
 - Image ID image-1: Image 1
@@ -73,7 +73,7 @@ ${dayjs().format('YYYY-MM-DD HH:mm:ss Z[Z]')}
       id: 'updated-image-1',
     }
 
-    updateInfo = environmentDetailsBuilder.generateUpdates()
+    updateInfo = environmentDetailsBuilder.generateUpdates(['test-tab', 'image-1'])
     expect(updateInfo).toBe(`<environment_updates>
 # Updated Images
 - Image ID updated-image-1: Updated Image 1
@@ -81,7 +81,7 @@ ${dayjs().format('YYYY-MM-DD HH:mm:ss Z[Z]')}
 
     // do nothing if something is deleted
     contextAttachmentStorage.attachments.length = 0
-    updateInfo = environmentDetailsBuilder.generateUpdates()
+    updateInfo = environmentDetailsBuilder.generateUpdates(['test-tab', 'image-1', 'updated-image-1'])
     expect(updateInfo).toBe(undefined)
   })
 })

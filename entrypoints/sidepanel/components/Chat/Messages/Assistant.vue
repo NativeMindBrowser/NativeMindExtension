@@ -91,11 +91,11 @@ import IconReasoningFinished from '@/assets/icons/reasoning-finished.svg?compone
 import IconWarning from '@/assets/icons/warning-circle.svg?component'
 import Loading from '@/components/Loading.vue'
 import Text from '@/components/ui/Text.vue'
-import { AssistantMessageV1 } from '@/utils/tab-store/history'
+import { AgentMessageV1, AssistantMessageV1 } from '@/types/chat'
 
 import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'
 const props = defineProps<{
-  message: AssistantMessageV1
+  message: AssistantMessageV1 | AgentMessageV1
 }>()
 
 const message = computed(() => {

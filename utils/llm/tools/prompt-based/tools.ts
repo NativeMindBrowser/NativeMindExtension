@@ -3,15 +3,15 @@ import { z } from 'zod'
 import { InferredParams, PromptBasedTool } from './helpers'
 
 export const viewTabTool = new PromptBasedTool('view_tab', 'View complete content of a specific tab', {
-  tab_id: z.string().min(1).describe('1'),
+  tab_id: z.string().min(1).describe('{{TAB_ID}}'),
 })
 
 export const viewPdfTool = new PromptBasedTool('view_pdf', 'View content of a specific PDF', {
-  pdf_id: z.string().min(1).describe('1'),
+  pdf_id: z.string().min(1).describe('{{PDF_ID}}'),
 })
 
 export const viewImageTool = new PromptBasedTool('view_image', 'Analyze a specific image', {
-  image_id: z.string().min(1).describe('1'),
+  image_id: z.string().min(1).describe('{{IMAGE_ID}}'),
 })
 
 export const searchOnlineTool = new PromptBasedTool('search_online', 'Search for current and latest information', {
@@ -20,7 +20,7 @@ export const searchOnlineTool = new PromptBasedTool('search_online', 'Search for
 })
 
 export const fetchPageTool = new PromptBasedTool('fetch_page', 'Get detailed content from specific web pages', {
-  url: z.string().url().describe('https://example.com'),
+  url: z.string().url().describe('{{URL}}'),
 })
 
 export const promptBasedTools = [

@@ -260,7 +260,7 @@
   "errors": {
     "model_not_found": "Hoppla! \nEtwas ist schiefgelaufen. \nBitte überprüfen Sie Ihre Ollama-Verbindung in den Einstellungen und versuchen Sie es erneut.",
     "model_request_error": "Hoppla! \nEtwas ist schiefgelaufen. \nBitte überprüfen Sie Ihre Ollama-Verbindung in den Einstellungen und versuchen Sie es erneut.",
-    "model_request_timeout": "\"Anfordern Sie eine Zeitüberschreitung, überprüfen Sie bitte Ihre Ollama -Verbindung oder in Betracht, eine neue Sitzung zu starten, da lange Kontexte die Antwortzeiten beeinflussen können.\"",
+    "model_request_timeout": "Anfordern Sie eine Zeitüberschreitung, überprüfen Sie bitte Ihre Ollama -Verbindung oder in Betracht, eine neue Sitzung zu starten, da lange Kontexte die Antwortzeiten beeinflussen können.",
     "timeout_error": "Operation zeitlich ausgegeben: {message}",
     "unknown_error": "Es ist ein unerwarteter Fehler aufgetreten: {message}",
     "webllm_not_supported": "WebLLM wird auf Ihrem Gerät nicht unterstützt."

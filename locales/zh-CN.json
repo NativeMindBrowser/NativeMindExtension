@@ -260,9 +260,9 @@
   "errors": {
     "model_not_found": "哎呀！\n出了点问题。\n请在设置中检查您的Ollama连接，然后重试。",
     "model_request_error": "哎呀！\n出了点问题。\n请在设置中检查您的Ollama连接，然后重试。",
-    "timeout_error": "操作计时：{message}",
+    "timeout_error": "操作超时：{message}",
     "unknown_error": "发生意外错误：{message}",
-    "model_request_timeout": "“请求超时，请检查您的Ollama连接或考虑启动新会话，因为长上下文可能会影响响应时间。”",
+    "model_request_timeout": "请求超时，请检查您的Ollama连接或考虑启动新会话，因为长上下文可能会影响响应时间。",
     "webllm_not_supported": "WebLLM 在您的设备上不受支持。"
   },
   "common": {

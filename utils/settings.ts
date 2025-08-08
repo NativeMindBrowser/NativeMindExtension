@@ -1,6 +1,6 @@
 import { browser } from 'wxt/browser'
 
-import { SettingsScrollTarget } from '@/utils/scroll-targets'
+import { SettingsScrollTarget } from '@/types/scroll-targets'
 
 import { SETTINGS_PAGE_WINDOW_HEIGHT, SETTINGS_PAGE_WINDOW_WIDTH } from './constants'
 import { getCurrentDisplayInfo } from './display'

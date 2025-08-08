@@ -2,6 +2,7 @@ import { CoreMessage } from 'ai'
 import EventEmitter from 'events'
 import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 
+import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
 import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
 import { debounce } from '@/utils/debounce'
@@ -9,16 +10,15 @@ import { AbortError, AppError } from '@/utils/error'
 import { generateRandomId } from '@/utils/id'
 import { PromptBasedToolName } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
+import { chatWithEnvironment, EnvironmentDetailsBuilder } from '@/utils/prompts'
 import { UserPrompt } from '@/utils/prompts/helpers'
 import { ScopeStorage } from '@/utils/storage'
-import { type HistoryItemV1 } from '@/utils/tab-store'
-import { ActionMessageV1, ActionTypeV1, ActionV1, AssistantMessageV1, ChatHistoryV1, ChatList, pickByRoles, TaskMessageV1, UserMessageV1 } from '@/utils/tab-store/history'
+import { pickByRoles } from '@/utils/tab-store/history'
 import { getUserConfig } from '@/utils/user-config'
 
 import { Agent } from '../agent'
 import { initCurrentModel, isCurrentModelReady } from '../llm'
 import { makeMarkdownIcon } from '../markdown/content'
-import { SearchScraper } from '../search'
 import { getCurrentTabInfo, getDocumentContentOfTabs } from '../tabs'
 import { executeFetchPage, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
 
@@ -120,6 +120,22 @@ export class ReactiveHistoryManager extends EventEmitter {
     return msg
   }
 
+  countMessagesRight(options: {
+    untilId: string
+    includesMessageTypes?: HistoryItemV1['role'][]
+  }) {
+    const { untilId, includesMessageTypes = ['user', 'assistant'] } = options
+    let count = 0
+    for (let i = this.history.value.length - 1; i >= 0; i--) {
+      const item = this.history.value[i]
+      if (includesMessageTypes.includes(item.role)) {
+        count++
+      }
+      if (item.id === untilId) break
+    }
+    return count
+  }
+
   appendUserMessage(content: string = '') {
     this.history.value.push({
       id: this.generateId(),
@@ -144,6 +160,19 @@ export class ReactiveHistoryManager extends EventEmitter {
     const newMsg = this.history.value[this.history.value.length - 1]
     this.emit('messageAdded', newMsg)
     return newMsg as AssistantMessageV1
+  }
+
+  appendAgentMessage(content: string = '') {
+    this.history.value.push({
+      id: this.generateId(),
+      role: 'agent',
+      content,
+      done: false,
+      timestamp: Date.now(),
+    })
+    const newMsg = this.history.value[this.history.value.length - 1]
+    this.emit('messageAdded', newMsg)
+    return newMsg as AgentMessageV1
   }
 
   appendTaskMessage(content: string = '', parentMessage?: TaskMessageV1) {
@@ -214,6 +243,7 @@ export class ReactiveHistoryManager extends EventEmitter {
   clear() {
     const oldHistoryLength = this.history.value.length
     this.history.value.length = 0
+    this.chatHistory.value.contextUpdateInfo = undefined
     if (oldHistoryLength > 0) {
       this.emit('messageCleared')
     }
@@ -237,7 +267,6 @@ export class Chat {
   private static instance: Promise<Chat> | null = null
   private readonly status = ref<ChatStatus>('idle')
   private abortControllers: AbortController[] = []
-  private searchScraper = new SearchScraper()
   private static chatStorage = new ScopeStorage<{ timestamp: number, title: string }>('chat')
   private currentAgent: Agent<PromptBasedToolName> | null = null
 
@@ -409,13 +438,20 @@ export class Chat {
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
 
-    question && this.historyManager.appendUserMessage(question)
+    this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
+    const userMsg = this.historyManager.appendUserMessage()
+    const environmentDetails = await this.generateEnvironmentDetails(userMsg.id)
+    const prompt = await chatWithEnvironment(question, environmentDetails)
+    // the display content on UI and the content that should be sent to the LLM are different
+    userMsg.displayContent = question
+    userMsg.content = prompt.user.extractText()
+    const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
     await this.prepareModel()
     if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
-    await this.runWithAgent(question)
+    await this.runWithAgent(baseMessages)
   }
 
-  private async runWithAgent(question: string) {
+  private async runWithAgent(baseMessages: CoreMessage[]) {
     const userConfig = await getUserConfig()
     const maxIterations = userConfig.chat.agent.maxIterations.get()
 
@@ -432,7 +468,35 @@ export class Chat {
       },
     })
     this.currentAgent = agent
-    await agent.runWithPrompt(question)
+    await agent.runWithPrompt(baseMessages)
+  }
+
+  private async generateEnvironmentDetails(currentUserMessageId: string) {
+    const fullEnvironmentDetailsFrequency = (await getUserConfig()).chat.environmentDetails.fullUpdateFrequency.get()
+    const environmentDetailsBuilder = new EnvironmentDetailsBuilder(this.contextAttachmentStorage.value)
+    const contextUpdateInfo = this.historyManager.chatHistory.value.contextUpdateInfo
+    if (contextUpdateInfo) {
+      const lastFullUpdateMessageId = contextUpdateInfo.lastFullUpdateMessageId
+      if (lastFullUpdateMessageId) {
+        const count = this.historyManager.countMessagesRight({ untilId: lastFullUpdateMessageId, includesMessageTypes: ['user', 'assistant'] })
+        if (count <= fullEnvironmentDetailsFrequency) {
+          const envDefaults = environmentDetailsBuilder.generateUpdates(contextUpdateInfo.lastAttachmentIds)
+          contextUpdateInfo.lastAttachmentIds = [...new Set([...contextUpdateInfo.lastAttachmentIds, ...environmentDetailsBuilder.getAllAttachmentIds()])]
+          return envDefaults
+        }
+      }
+      contextUpdateInfo.lastFullUpdateMessageId = currentUserMessageId
+      contextUpdateInfo.lastAttachmentIds = environmentDetailsBuilder.getAllAttachmentIds()
+      return environmentDetailsBuilder.generateFull()
+    }
+    else {
+      // generate full environment details if no context update info is available
+      this.historyManager.chatHistory.value.contextUpdateInfo = {
+        lastFullUpdateMessageId: currentUserMessageId,
+        lastAttachmentIds: environmentDetailsBuilder.getAllAttachmentIds(),
+      }
+      return environmentDetailsBuilder.generateFull()
+    }
   }
 
   stop() {

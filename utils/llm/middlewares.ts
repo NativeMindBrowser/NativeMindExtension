@@ -70,7 +70,7 @@ export const extractPromptBasedToolCallsMiddleware: LanguageModelV1Middleware = 
               type: 'tool-call',
               toolCallType: 'function',
               toolName: toolCall.tool.toolName,
-              args: JSON.stringify({ ...toolCall.params, __tagText: toolCall.tagText }),
+              args: JSON.stringify(toolCall.params),
               toolCallId: generateRandomId(),
             } as LanguageModelV1StreamPart)
           }
