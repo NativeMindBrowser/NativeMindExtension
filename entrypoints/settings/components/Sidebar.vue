@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="h-full flex flex-col">
     <div
       class="font-bold text-[21px] cursor-default px-6 py-5 leading-[26px]"
     >
       {{ t('settings.title') }}
     </div>
     <Divider />
-    <div class="px-6 py-5 flex flex-col gap-[10px]">
+    <div class="px-6 py-5 flex flex-col gap-[10px] grow">
       <RouterLink
         v-for="menuItem of menu"
         :key="menuItem.to"
@@ -23,12 +23,16 @@
         {{ menuItem.title }}
       </RouterLink>
     </div>
+    <div class="px-6 py-3 text-xs self-center opacity-30">
+      Version {{ version }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { browser } from 'wxt/browser'
 
 import IconChat from '@/assets/icons/settings-chat.svg?component'
 import IconGeneral from '@/assets/icons/settings-general.svg?component'
@@ -43,6 +47,9 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
+
+const manifest = browser.runtime.getManifest()
+const version = manifest.version || 'Null'
 
 const menu = computed(() => (
   [
