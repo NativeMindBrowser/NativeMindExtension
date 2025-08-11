@@ -82,6 +82,10 @@
   --color-danger: #bf2a2a;
   --color-success: #60c959;
 
+  --color-bg-hover: #eaecef;
+
+  --color-foreground-base: #18181b;
+
   --shadow-01: 0px 8px 16px 0px #00000014, 0px 4px 8px 0px #00000014,
     0px 0px 0px 1px #00000014;
   --shadow-02: 0px 0px 0px 1px #00000014, 0px 1px 2px 0px #0000001f;

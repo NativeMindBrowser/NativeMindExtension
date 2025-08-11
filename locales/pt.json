@@ -40,6 +40,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "Tem certeza de que deseja excluir esta conversa? Esta ação não pode ser desfeita.",
+    "delete": "Excluir",
+    "rename": "Renomear",
+    "unpin": "Desafixar",
+    "pin": "Fixar",
+    "title": "Histórico de Conversa",
+    "pinned_section": "Fixadas",
+    "recent_section": "Recentes",
+    "empty_state": "Ainda não há conversas",
+    "untitled_chat": "Conversa Sem Título",
+    "new_chat": "Nova Conversa",
+    "save": "Salvar",
+    "cancel": "Cancelar"
+  },
   "onboarding": {
     "banner": {
       "description": "Privado e seguro, com recursos poderosos que executam inteiramente em seu dispositivo.",
@@ -308,6 +323,8 @@
     "settings": "Configurações",
     "pin_sidebar": "Fixar",
     "unpin_sidebar": "Desafixar",
-    "close": "Fechar"
+    "close": "Fechar",
+    "chat_history": "História",
+    "new_chat": "Novo bate -papo"
   }
 }

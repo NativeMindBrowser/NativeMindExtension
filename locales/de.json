@@ -40,6 +40,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "Sind Sie sicher, dass Sie diese Unterhaltung löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "delete": "Löschen",
+    "rename": "Umbenennen",
+    "unpin": "Lösen",
+    "pin": "Anheften",
+    "title": "Chat-Verlauf",
+    "pinned_section": "Angeheftet",
+    "recent_section": "Kürzlich",
+    "empty_state": "Noch keine Unterhaltungen",
+    "untitled_chat": "Unbenannter Chat",
+    "new_chat": "Neuer Chat",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
   "onboarding": {
     "banner": {
       "description": "Privat und sicher, mit leistungsstarken Funktionen, die vollständig in Ihrem Gerät ausgeführt werden.",
@@ -308,6 +323,8 @@
     "settings": "Einstellungen",
     "pin_sidebar": "Anheften",
     "unpin_sidebar": "Anheftung aufheben",
-    "close": "Schließen"
+    "close": "Schließen",
+    "chat_history": "Geschichte",
+    "new_chat": "Neuer Chat"
   }
 }

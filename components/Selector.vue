@@ -3,7 +3,36 @@
     class="relative"
     data-nativemind-selector
   >
+    <div
+      v-if="isGhostBtn"
+      ref="selectorRef"
+      :class="['flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 h-8', containerClass]"
+      :disabled="disabled"
+      @click="toggleDropdown"
+    >
+      <div
+        class="truncate"
+        :title="displayValue || placeholder"
+      >
+        <slot
+          name="button"
+          :option="selectedOption"
+        >
+          <Label
+            v-if="selectedOption"
+            :option="selectedOption"
+          />
+          <span
+            v-else
+            class="truncate"
+          >
+            {{ placeholder }}
+          </span>
+        </slot>
+      </div>
+    </div>
     <Button
+      v-else
       variant="secondary"
       :class="['flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 px-[10px] h-8', containerClass]"
       :disabled="disabled"
@@ -121,6 +150,7 @@ interface Props {
   disabled?: boolean
   listenScrollElements?: HTMLElement[]
   onChange?: (value: Option, oldValue?: Option) => Promise<boolean> | boolean // function to call when the value changes, return false to prevent the change
+  triggerStyle?: 'normal' | 'ghost'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -129,6 +159,7 @@ const props = withDefaults(defineProps<Props>(), {
   containerClass: '',
   dropdownClass: '',
   dropdownAlign: 'center',
+  triggerStyle: 'normal',
 })
 
 const emit = defineEmits<{
@@ -136,6 +167,8 @@ const emit = defineEmits<{
   (e: 'update:id', value?: Id): void
   (e: 'click', event: MouseEvent): void
 }>()
+
+const isGhostBtn = computed(() => props.triggerStyle === 'ghost')
 
 const options = computed(() => {
   return props.options
@@ -164,9 +197,22 @@ const dropdownPos = computed(() => {
     left: containerLeft = 0,
     top: containerTop = 0,
   } = selectorRef.value?.getBoundingClientRect() || {}
+
+  // Calculate preferred position below the button
   let y = containerTop + containerHeight + gap
+
+  // Check if dropdown would overflow bottom of window
   if (y + dropdownHeight > window.innerHeight) {
-    y = window.innerHeight - dropdownHeight
+    // Try to position above the button
+    const yAbove = containerTop - dropdownHeight - gap
+    if (yAbove >= 0) {
+      // There's enough space above, position it there
+      y = yAbove
+    }
+    else {
+      // Not enough space above either, keep it below but adjust
+      y = window.innerHeight - dropdownHeight
+    }
   }
 
   return {

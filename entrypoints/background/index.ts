@@ -15,6 +15,7 @@ import { registerDeclarativeNetRequestRule } from '@/utils/web-request'
 
 import { BackgroundDatabaseManager } from './database'
 import { BackgroundCacheServiceManager } from './services/cache-service'
+import { BackgroundChatHistoryServiceManager } from './services/chat-history-service'
 import { waitForSidepanelLoaded } from './utils'
 
 export default defineBackground(() => {
@@ -133,6 +134,9 @@ export default defineBackground(() => {
       await BackgroundCacheServiceManager.initialize(databaseManager)
       logger.debug('Background cache service initialized successfully')
 
+      await BackgroundChatHistoryServiceManager.initialize(databaseManager)
+      logger.debug('Background chat history service initialized successfully')
+
       // Initialize translation cache (RPC-based cache manager)
       await translationCache.initialize()
       logger.debug('Translation cache initialized successfully')
@@ -157,6 +161,9 @@ export default defineBackground(() => {
 
       // @ts-expect-error - this is a global variable
       globalThis.backgroundCacheService = BackgroundCacheServiceManager.getInstance()
+
+      // @ts-expect-error - this is a global variable
+      globalThis.backgroundChatHistoryService = BackgroundChatHistoryServiceManager.getInstance()
 
       // @ts-expect-error - this is a global variable
       globalThis.databaseManager = databaseManager

@@ -11,6 +11,7 @@ import { GetPromptBasedTool, PromptBasedToolName } from '@/utils/llm/tools/promp
 import logger from '@/utils/logger'
 import { chatWithEnvironment } from '@/utils/prompts'
 import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
+import { s2bRpc } from '@/utils/rpc'
 import { AssistantMessageV1, TaskMessageV1 } from '@/utils/tab-store/history'
 
 import { ReactiveHistoryManager } from '../chat'
@@ -48,9 +49,12 @@ export type StatusMessageModifier = {
 }
 
 export class AgentStorage {
-  constructor(public attachmentStorage: ContextAttachmentStorage) {}
+  constructor(private chatId: string, public attachmentStorage: ContextAttachmentStorage) {}
+
   getById<T extends ContextAttachment['type']>(type: T, id: string): ContextAttachment & { type: T } | undefined {
-    if (this.attachmentStorage.currentTab?.value.id === id && this.attachmentStorage.currentTab.type === type) return this.attachmentStorage.currentTab as ContextAttachment & { type: T } | undefined
+    if (this.attachmentStorage.currentTab?.value.id === id && this.attachmentStorage.currentTab.type === type) {
+      return this.attachmentStorage.currentTab as ContextAttachment & { type: T } | undefined
+    }
     return this.attachmentStorage.attachments.find((attachment) => attachment.value.id === id && attachment.type === type) as ContextAttachment & { type: T } | undefined
   }
 
@@ -75,6 +79,7 @@ export class AgentStorage {
 interface AgentOptions<T extends PromptBasedToolName> {
   historyManager: ReactiveHistoryManager
   attachmentStorage: ContextAttachmentStorage
+  chatId: string
   tools: AgentToolCall<T>
   maxIterations?: number
 }
@@ -92,7 +97,7 @@ export class Agent<T extends PromptBasedToolName> {
   constructor(public options: AgentOptions<T>) {
     this.historyManager = options.historyManager
     this.tools = options.tools
-    this.agentStorage = new AgentStorage(options.attachmentStorage)
+    this.agentStorage = new AgentStorage(options.chatId, options.attachmentStorage)
     this.maxIterations = options.maxIterations || 6
   }
 
@@ -187,8 +192,15 @@ export class Agent<T extends PromptBasedToolName> {
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
     let reasoningStart: number | undefined
+    // Get the latest context attachments from the database to ensure we have current state
+    const latestContextAttachments = await s2bRpc.getContextAttachments(this.options.chatId)
+    if (!latestContextAttachments) {
+      throw new Error('Failed to get context attachments for chat')
+    }
+    this.log.debug('Latest context attachments', latestContextAttachments)
+    this.log.debug('Agent started', { input })
     // clone the message to avoid ui changes in agent's running process
-    const prompt = await chatWithEnvironment(input, this.agentStorage.attachmentStorage, [])
+    const prompt = await chatWithEnvironment(input, latestContextAttachments, [])
     const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
 
     // this messages only used for the agent iteration but not user-facing

@@ -40,6 +40,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette conversation ? Cette action ne peut pas être annulée.",
+    "delete": "Supprimer",
+    "rename": "Rebaptiser",
+    "unpin": "Désépingler",
+    "pin": "Épingler",
+    "title": "Historique des Conversations",
+    "pinned_section": "Épinglées",
+    "recent_section": "Récentes",
+    "empty_state": "Aucune conversation pour le moment",
+    "untitled_chat": "Conversation Sans Titre",
+    "new_chat": "Nouvelle Conversation",
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
   "onboarding": {
     "banner": {
       "description": "Privé et sécurisé, avec des fonctionnalités puissantes qui fonctionnent entièrement sur votre appareil.",
@@ -308,6 +323,8 @@
     "settings": "Paramètres",
     "pin_sidebar": "Épingler",
     "unpin_sidebar": "Désépingler",
-    "close": "Fermer"
+    "close": "Fermer",
+    "chat_history": "Histoire",
+    "new_chat": "Nouveau chat"
   }
 }

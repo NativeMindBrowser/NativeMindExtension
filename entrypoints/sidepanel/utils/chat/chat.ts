@@ -6,11 +6,12 @@ import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
 import { debounce } from '@/utils/debounce'
 import { AbortError, AppError } from '@/utils/error'
+import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { PromptBasedToolName } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
 import { UserPrompt } from '@/utils/prompts/helpers'
-import { ScopeStorage } from '@/utils/storage'
+import { s2bRpc } from '@/utils/rpc'
 import { type HistoryItemV1 } from '@/utils/tab-store'
 import { ActionMessageV1, ActionTypeV1, ActionV1, AssistantMessageV1, ChatHistoryV1, ChatList, pickByRoles, TaskMessageV1, UserMessageV1 } from '@/utils/tab-store/history'
 import { getUserConfig } from '@/utils/user-config'
@@ -18,8 +19,7 @@ import { getUserConfig } from '@/utils/user-config'
 import { Agent } from '../agent'
 import { initCurrentModel, isCurrentModelReady } from '../llm'
 import { makeMarkdownIcon } from '../markdown/content'
-import { SearchScraper } from '../search'
-import { getCurrentTabInfo, getDocumentContentOfTabs } from '../tabs'
+import { getDocumentContentOfTabs } from '../tabs'
 import { executeFetchPage, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
 
 const log = logger.child('chat')
@@ -241,44 +241,83 @@ export class Chat {
   private static instance: Promise<Chat> | null = null
   private readonly status = ref<ChatStatus>('idle')
   private abortControllers: AbortController[] = []
-  private searchScraper = new SearchScraper()
-  private static chatStorage = new ScopeStorage<{ timestamp: number, title: string }>('chat')
   private currentAgent: Agent<PromptBasedToolName> | null = null
 
   static getInstance() {
     if (!this.instance) {
       this.instance = (async () => {
+        const i18n = await useGlobalI18n()
         const userConfig = await getUserConfig()
         const chatHistoryId = userConfig.chat.history.currentChatId.toRef()
-        const chatHistory = ref<ChatHistoryV1>(await this.chatStorage.getItem<ChatHistoryV1>(`${chatHistoryId.value}`, 'chat') ?? { history: [], id: chatHistoryId.value, title: 'New Chat' })
-        const contextAttachments = ref<ContextAttachmentStorage>(await this.chatStorage.getItem<ContextAttachmentStorage>(`${chatHistoryId.value}`, 'context-attachments') ?? { attachments: [], id: chatHistoryId.value })
+
+        // Process chat history
+        log.debug('[Chat] getInstance', chatHistoryId.value)
+        const defaultTitle = i18n.t('chat_history.new_chat')
+        const chatHistory = ref<ChatHistoryV1>(await s2bRpc.getChatHistory(chatHistoryId.value) ?? { history: [], id: chatHistoryId.value, title: defaultTitle, lastInteractedAt: Date.now() })
+        const contextAttachments = ref<ContextAttachmentStorage>(await s2bRpc.getContextAttachments(chatHistoryId.value) ?? { attachments: [], id: chatHistoryId.value, lastInteractedAt: Date.now() })
         const chatList = ref<ChatList>([])
         const updateChatList = async () => {
-          const chatMeta = await this.chatStorage.getAllMetadata()
-          chatList.value = chatMeta
-            ? Object.entries(chatMeta)
-                .map(([id, meta]) => ({ id, title: meta.metadata.title, timestamp: meta.metadata.timestamp }))
-                .toSorted((a, b) => b.timestamp - a.timestamp)
-            : []
+          chatList.value = await s2bRpc.getChatList()
         }
+        // Auto-save chat history and context attachments with debounce
         const debounceSaveHistory = debounce(async () => {
+          log.debug('Debounce save history', chatHistory.value)
           if (!chatHistory.value.lastInteractedAt) return
-          await this.chatStorage.setItem(`${chatHistory.value.id}`, { chat: toRaw(chatHistory.value) }, { timestamp: Date.now(), title: chatHistory.value.title })
+
+          // Auto-generate title if needed (when first message is added)
+          const titleResult = await s2bRpc.autoGenerateChatTitle(toRaw(chatHistory.value)) as { success: boolean, updatedTitle?: string, titleChanged?: boolean, error?: string }
+
+          // Update the local chat history title if it was changed
+          if (titleResult.success && titleResult.updatedTitle && titleResult.updatedTitle !== chatHistory.value.title) {
+            chatHistory.value.title = titleResult.updatedTitle
+          }
+
+          await s2bRpc.saveChatHistory(toRaw(chatHistory.value))
+
+          // Update chat list to reflect title changes
+          updateChatList()
         }, 1000)
         const debounceSaveContextAttachment = debounce(async () => {
+          log.debug('Debounce save context attachments', contextAttachments.value)
           if (!contextAttachments.value.lastInteractedAt) return
-          await this.chatStorage.setItem(`${contextAttachments.value.id}`, { 'context-attachments': toRaw(contextAttachments.value) }, { timestamp: Date.now(), title: '' })
+          await s2bRpc.saveContextAttachments(toRaw(contextAttachments.value))
         }, 1000)
-        watch(chatHistoryId, async (newId) => {
+
+        // Watch for changes in chat history ID to load new chat
+        watch(chatHistoryId, async (newId, oldId) => {
+          if (newId === oldId) return
+
+          log.debug('[Chat] Switching to chat:', newId)
           instance.stop()
-          Object.assign(chatHistory.value, await this.chatStorage.getItem<ChatHistoryV1>(`${newId}`, 'chat') ?? { history: [], id: newId })
-          Object.assign(contextAttachments.value, await this.chatStorage.getItem<ContextAttachmentStorage>(`${newId}`, 'context-attachments') ?? { attachments: [], id: newId })
+
+          // Load the new chat data
+          const newChatHistory = await s2bRpc.getChatHistory(newId) ?? {
+            history: [],
+            id: newId,
+            title: defaultTitle,
+            lastInteractedAt: Date.now(),
+          }
+          const newContextAttachments = await s2bRpc.getContextAttachments(newId) ?? {
+            attachments: [],
+            id: newId,
+            lastInteractedAt: Date.now(),
+          }
+
+          // Update the reactive objects
+          Object.assign(chatHistory.value, newChatHistory)
+          Object.assign(contextAttachments.value, newContextAttachments)
+
+          // Clean up any loading messages
           instance.historyManager.cleanupLoadingMessages()
+
+          // Update the chat list to reflect any changes
+          updateChatList()
         })
         watch(chatHistory, async () => debounceSaveHistory(), { deep: true })
         watch(contextAttachments, async () => debounceSaveContextAttachment(), { deep: true })
         updateChatList()
-        this.chatStorage.onMetaChange(async () => await updateChatList())
+
+        // Create the Chat instance
         const instance = new this(new ReactiveHistoryManager(chatHistory), contextAttachments, chatList)
         return instance
       })()
@@ -356,12 +395,6 @@ export class Chat {
     }
   }
 
-  async resetContextTabs() {
-    const currentTabInfo = await getCurrentTabInfo()
-    this.contextAttachments.value = this.contextAttachments.value.filter((attachment) => attachment.type !== 'tab')
-    this.contextAttachments.value.unshift({ type: 'tab', value: { ...currentTabInfo, id: generateRandomId() } })
-  }
-
   async getContentOfTabs() {
     const relevantTabIds = this.contextTabs.map((tab) => tab.tabId)
     const currentTab = this.contextTabs.find((tab) => tab.isCurrent)
@@ -413,7 +446,11 @@ export class Chat {
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
 
-    question && this.historyManager.appendUserMessage(question)
+    if (question) {
+      this.historyManager.appendUserMessage(question)
+      // Update lastInteractedAt when user sends a message
+      this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
+    }
     await this.prepareModel()
     if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
     await this.runWithAgent(question)
@@ -426,6 +463,7 @@ export class Chat {
     const agent = new Agent({
       historyManager: this.historyManager,
       attachmentStorage: this.contextAttachmentStorage.value,
+      chatId: this.contextAttachmentStorage.value.id,
       maxIterations,
       tools: {
         search_online: { execute: executeSearchOnline },
@@ -445,6 +483,123 @@ export class Chat {
       abortController.abort()
     })
     this.abortControllers.length = 0
+  }
+
+  /**
+   * Delete a chat and refresh the chat list
+   */
+  async deleteChat(chatId: string) {
+    try {
+      const result = await s2bRpc.deleteChat(chatId)
+      if (result.success) {
+        // Refresh the chat list
+        this.chatList.value = await s2bRpc.getChatList()
+      }
+      return result
+    }
+    catch (error) {
+      log.error('Failed to delete chat:', error)
+      return { success: false, error: String(error) }
+    }
+  }
+
+  /**
+   * Create a new chat and switch to it
+   */
+  async createNewChat(): Promise<string> {
+    try {
+      const newChatId = generateRandomId()
+      const userConfig = await getUserConfig()
+
+      // Update the current chat ID in user config
+      userConfig.chat.history.currentChatId.set(newChatId)
+
+      log.info('Created new chat:', newChatId)
+      return newChatId
+    }
+    catch (error) {
+      log.error('Failed to create new chat:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Switch to an existing chat
+   */
+  async switchToChat(chatId: string): Promise<void> {
+    try {
+      const userConfig = await getUserConfig()
+
+      // Update the current chat ID in user config
+      userConfig.chat.history.currentChatId.set(chatId)
+
+      log.info('Switched to chat:', chatId)
+    }
+    catch (error) {
+      log.error('Failed to switch chat:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Toggle pinned status of a chat
+   */
+  async toggleChatStar(chatId: string): Promise<{ success: boolean, isPinned?: boolean }> {
+    try {
+      const result = await s2bRpc.toggleChatStar(chatId)
+
+      if (result.success) {
+        // Refresh the chat list to reflect the change
+        this.chatList.value = await s2bRpc.getChatList()
+      }
+
+      return result
+    }
+    catch (error) {
+      log.error('Failed to toggle chat star:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Update chat title
+   */
+  async updateChatTitle(chatId: string, newTitle: string): Promise<void> {
+    try {
+      const result = await s2bRpc.updateChatTitle(chatId, newTitle)
+
+      if (result.success) {
+        // Refresh the chat list to reflect the change
+        this.chatList.value = await s2bRpc.getChatList()
+
+        // If this is the current chat, update the history manager's chat title
+        const userConfig = await getUserConfig()
+        const currentChatId = userConfig.chat.history.currentChatId.get()
+        if (currentChatId === chatId) {
+          this.historyManager.chatHistory.value.title = newTitle
+        }
+      }
+      else {
+        throw new Error(result.error || 'Failed to update chat title')
+      }
+    }
+    catch (error) {
+      log.error('Failed to update chat title:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get pinned chats
+   */
+  async getPinnedChats(): Promise<ChatList> {
+    try {
+      return await s2bRpc.getPinnedChats()
+    }
+    catch (error) {
+      log.error('Failed to get pinned chats:', error)
+      return []
+    }
   }
 }
 

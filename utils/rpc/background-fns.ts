@@ -5,10 +5,13 @@ import { Browser, browser } from 'wxt/browser'
 import { z } from 'zod'
 import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 
+import { ContextAttachmentStorage } from '@/types/chat'
 import { TabInfo } from '@/types/tab'
+import { useGlobalI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
 
 import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
+import { BackgroundChatHistoryServiceManager } from '../../entrypoints/background/services/chat-history-service'
 import { sleep } from '../async'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
@@ -22,9 +25,9 @@ import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
 import { parsePdfFileOfUrl } from '../pdf'
 import { openAndFetchUrlsContent, searchWebsites } from '../search'
 import { showSettingsForBackground } from '../settings'
+import { ChatHistoryV1 } from '../tab-store/history'
 import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
-// Import singleton managers for type-safe service access
 import { b2sRpc, bgBroadcastRpc } from '.'
 import { preparePortConnection } from './utils'
 
@@ -706,6 +709,141 @@ async function updateSidepanelModelList() {
   return true
 }
 
+// Chat history functions
+async function getChatHistory(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getChatHistory(chatId) || null
+  }
+  catch (error) {
+    logger.error('Chat history RPC getChatHistory failed:', error)
+    return null
+  }
+}
+
+async function saveChatHistory(chatHistory: ChatHistoryV1) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.saveChatHistory(chatHistory) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC saveChatHistory failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function getContextAttachments(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getContextAttachments(chatId) || null
+  }
+  catch (error) {
+    logger.error('Chat history RPC getContextAttachments failed:', error)
+    return null
+  }
+}
+
+async function saveContextAttachments(contextAttachments: ContextAttachmentStorage) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.saveContextAttachments(contextAttachments) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC saveContextAttachments failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function getChatList() {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getChatList() || []
+  }
+  catch (error) {
+    logger.error('Chat history RPC getChatList failed:', error)
+    return []
+  }
+}
+
+async function deleteChat(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.deleteChat(chatId) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC deleteChat failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function toggleChatStar(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.toggleChatStar(chatId) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC toggleChatStar failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function updateChatTitle(chatId: string, newTitle: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.updateChatTitle(chatId, newTitle) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC updateChatTitle failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
+  try {
+    logger.debug('autoGenerateChatTitleIfNeeded called for chat', chatHistory.id)
+
+    const { t } = await useGlobalI18n()
+    const newChatTitle = t('chat_history.new_chat')
+
+    // Skip when title is not "New Chat" and there are multiple user and assistant messages
+    // TODO: implement a reusable function for this
+    const userMessages = chatHistory.history.filter((msg) => msg.role === 'user')
+    const assistantMessages = chatHistory.history.filter((msg) => msg.role === 'assistant')
+    if (chatHistory.title !== newChatTitle && userMessages.length > 0 && assistantMessages.length > 0) {
+      return { success: true, updatedTitle: chatHistory.title }
+    }
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      return { success: false, error: 'Chat history service not available' }
+    }
+
+    const originalTitle = chatHistory.title
+    await service.autoGenerateTitleIfNeeded(chatHistory)
+
+    // Get the updated chat history to see the new title
+    const updatedChatHistory = await service.getChatHistory(chatHistory.id)
+    const newTitle = updatedChatHistory?.title || originalTitle
+
+    logger.debug('Title generation result:', { originalTitle, newTitle, titleChanged: newTitle !== originalTitle })
+    return { success: true, updatedTitle: newTitle, titleChanged: newTitle !== originalTitle }
+  }
+  catch (error) {
+    logger.error('Chat history RPC autoGenerateChatTitle failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function getPinnedChats() {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getPinnedChats() || []
+  }
+  catch (error) {
+    logger.error('Chat history RPC getPinnedChats failed:', error)
+    return []
+  }
+}
+
 export const backgroundFunctions = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)
@@ -754,6 +892,17 @@ export const backgroundFunctions = {
   cacheUpdateConfig,
   cacheGetConfig,
   cacheGetDebugInfo,
+  // Chat history functions
+  getChatHistory,
+  saveChatHistory,
+  getContextAttachments,
+  saveContextAttachments,
+  getChatList,
+  deleteChat,
+  toggleChatStar,
+  updateChatTitle,
+  autoGenerateChatTitle: autoGenerateChatTitleIfNeeded,
+  getPinnedChats,
   showSidepanel,
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,

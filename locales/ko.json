@@ -40,6 +40,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "이 대화를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "delete": "삭제",
+    "rename": "이름 바꾸기",
+    "unpin": "고정 해제",
+    "pin": "고정",
+    "title": "채팅 기록",
+    "pinned_section": "고정됨",
+    "recent_section": "최근",
+    "empty_state": "아직 대화가 없습니다",
+    "untitled_chat": "제목 없는 채팅",
+    "new_chat": "새 채팅",
+    "save": "저장",
+    "cancel": "취소"
+  },
   "onboarding": {
     "banner": {
       "description": "사용자의 기기에서만 실행되는 강력한 기능으로 개인 정보를 보호하고 안전합니다.",
@@ -308,6 +323,8 @@
     "settings": "설정",
     "pin_sidebar": "고정",
     "unpin_sidebar": "고정 해제",
-    "close": "닫기"
+    "close": "닫기",
+    "chat_history": "역사",
+    "new_chat": "새로운 채팅"
   }
 }
