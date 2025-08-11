@@ -3,8 +3,36 @@
     class="relative"
     data-nativemind-selector
   >
+    <div
+      v-if="isGhostBtn"
+      ref="selectorRef"
+      :class="['flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 h-8', containerClass]"
+      :disabled="disabled"
+      @click="toggleDropdown"
+    >
+      <div
+        class="truncate"
+        :title="displayValue || placeholder"
+      >
+        <slot
+          name="button"
+          :option="selectedOption"
+        >
+          <Label
+            v-if="selectedOption"
+            :option="selectedOption"
+          />
+          <span
+            v-else
+            class="truncate"
+          >
+            {{ placeholder }}
+          </span>
+        </slot>
+      </div>
+    </div>
     <Button
-      v-if="!isGhostBtn"
+      v-else
       variant="secondary"
       :class="['flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 px-[10px] h-8', containerClass]"
       :disabled="disabled"
@@ -52,34 +80,6 @@
         </svg>
       </div>
     </Button>
-    <div
-      v-if="isGhostBtn"
-      ref="selectorRef"
-      :class="['flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 h-8', containerClass]"
-      :disabled="disabled"
-      @click="toggleDropdown"
-    >
-      <div
-        class="truncate"
-        :title="displayValue || placeholder"
-      >
-        <slot
-          name="button"
-          :option="selectedOption"
-        >
-          <Label
-            v-if="selectedOption"
-            :option="selectedOption"
-          />
-          <span
-            v-else
-            class="truncate"
-          >
-            {{ placeholder }}
-          </span>
-        </slot>
-      </div>
-    </div>
 
     <Teleport :to="rootElement">
       <div
