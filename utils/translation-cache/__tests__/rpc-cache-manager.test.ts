@@ -5,7 +5,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { CacheKeyComponents } from '../types'
-import { setupRpcMocks, setupBrowserMocks, waitForNextTick } from './setup'
+import { setupBrowserMocks, setupRpcMocks, waitForNextTick } from './setup'
 
 // Setup browser mocks
 setupBrowserMocks()
@@ -114,8 +114,6 @@ describe('RpcTranslationCacheManager', () => {
       const result = await cacheManager.get(components)
       expect(result).toBe('Hola mundo')
     })
-
-
 
     it('should deduplicate concurrent requests', async () => {
       const mockEntry = {
@@ -248,7 +246,7 @@ describe('RpcTranslationCacheManager', () => {
       const testResult = await cacheManager.get({
         sourceText: 'test',
         targetLanguage: 'es',
-        modelId: 'test-model'
+        modelId: 'test-model',
       })
       expect(testResult).toBeNull() // Should work normally
     })

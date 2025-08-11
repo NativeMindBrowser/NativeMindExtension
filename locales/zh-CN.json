@@ -207,6 +207,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "您确定要删除此对话吗？此操作无法撤销。",
+    "delete": "删除",
+    "rename": "重命名",
+    "unpin": "取消固定",
+    "pin": "固定",
+    "title": "聊天记录",
+    "pinned_section": "已固定",
+    "recent_section": "最近",
+    "empty_state": "暂无对话",
+    "untitled_chat": "无标题聊天",
+    "new_chat": "新聊天",
+    "save": "保存",
+    "cancel": "取消"
+  },
   "onboarding": {
     "banner": {
       "description": "私密且安全，所有强大功能完全在本地设备上运行。",
@@ -308,6 +323,8 @@
     "settings": "设置",
     "pin_sidebar": "固定",
     "unpin_sidebar": "取消固定",
-    "close": "关闭"
+    "close": "关闭",
+    "chat_history": "历史",
+    "new_chat": "新聊天"
   }
 }

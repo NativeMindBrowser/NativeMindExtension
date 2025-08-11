@@ -7,6 +7,7 @@ import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 
 import { ContextAttachmentStorage } from '@/types/chat'
 import { TabInfo } from '@/types/tab'
+import { useGlobalI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
 
 import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
@@ -801,8 +802,14 @@ async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
   try {
     logger.debug('autoGenerateChatTitleIfNeeded called for chat', chatHistory.id)
 
-    // Skip title generation for existing chats with a title other than 'New Chat'
-    if (chatHistory.title !== 'New Chat') {
+    const { t } = await useGlobalI18n()
+    const newChatTitle = t('chat_history.new_chat')
+
+    // Skip when title is not "New Chat" and there are multiple user and assistant messages
+    // TODO: implement a reusable function for this
+    const userMessages = chatHistory.history.filter((msg) => msg.role === 'user')
+    const assistantMessages = chatHistory.history.filter((msg) => msg.role === 'assistant')
+    if (chatHistory.title !== newChatTitle && userMessages.length > 0 && assistantMessages.length > 0) {
       return { success: true, updatedTitle: chatHistory.title }
     }
     const service = BackgroundChatHistoryServiceManager.getInstance()

@@ -23,7 +23,7 @@
           v-if="!isEditing"
           class="text-[13px] font-medium text-black truncate"
         >
-          {{ chat.title || 'Untitled Chat' }}
+          {{ chat.title || t('chat_history.untitled_chat') }}
         </div>
         <div
           v-else
@@ -44,14 +44,14 @@
               class="px-2.5 py-2 text-xs min-h-8"
               @click.stop="handleCancel"
             >
-              Cancel
+              {{ t('chat_history.cancel') }}
             </Button>
             <Button
               variant="primary"
               class="px-2.5 py-2 text-xs min-h-8"
               @click.stop="handleSave"
             >
-              Save
+              {{ t('chat_history.save') }}
             </Button>
           </div>
         </div>
@@ -85,7 +85,7 @@
             @click.stop="handleRename"
           >
             <IconEditPencil class="w-4 h-4" />
-            Rename
+            {{ t('chat_history.rename') }}
           </button>
           <button
             class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer"
@@ -99,14 +99,14 @@
               v-else
               class="w-4 h-4 text-[#F7C103]"
             />
-            {{ isPinned ? 'Unstar' : 'Star' }}
+            {{ isPinned ? t('chat_history.unpin') : t('chat_history.pin') }}
           </button>
           <button
             class="w-full px-2 py-1.5 text-left text-[13px] text-[#992121] hover:bg-red-50 flex items-center gap-2 rounded cursor-pointer"
             @click.stop="handleDelete"
           >
             <IconTrash class="w-4 h-4" />
-            Delete
+            {{ t('chat_history.delete') }}
           </button>
         </div>
       </div>
@@ -124,6 +124,7 @@ import IconStarOutline from '@/assets/icons/star-outline.svg?component'
 import IconTrash from '@/assets/icons/trash.svg?component'
 import Input from '@/components/Input.vue'
 import Button from '@/components/ui/Button.vue'
+import { useI18n } from '@/utils/i18n'
 import type { ChatListItem } from '@/utils/tab-store/history'
 
 interface Props {
@@ -149,11 +150,12 @@ const emit = defineEmits<Emits>()
 
 const editInput = ref<HTMLInputElement>()
 const editTitle = ref('')
+const { t } = useI18n()
 
 // Watch for editing state changes to focus input
 watch(() => props.isEditing, async (isEditing) => {
   if (isEditing) {
-    editTitle.value = props.chat.title || 'Untitled Chat'
+    editTitle.value = props.chat.title || t('chat_history.untitled_chat')
     await nextTick()
     editInput.value?.focus()
     editInput.value?.select()
@@ -190,7 +192,7 @@ const toggleMenu = () => {
 
 const handleRename = () => {
   emit('toggleMenu', props.chat.id) // Close menu
-  emit('startEdit', props.chat.id, props.chat.title || 'Untitled Chat')
+  emit('startEdit', props.chat.id, props.chat.title || t('chat_history.untitled_chat'))
 }
 
 const handleSave = () => {

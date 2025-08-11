@@ -24,7 +24,7 @@
           <!-- Show chat history button only on main chat page -->
           <Tooltip
             v-if="currentPage === 'chat'"
-            :content="t('tooltips.settings')"
+            :content="t('tooltips.chat_history')"
           >
             <div
               class="p-1 cursor-pointer hover:text-gray-500"
@@ -39,7 +39,7 @@
           <!-- Show new chat button only on main chat page -->
           <Tooltip
             v-if="currentPage === 'chat'"
-            :content="t('tooltips.settings')"
+            :content="t('tooltips.new_chat')"
           >
             <div
               class="p-1 cursor-pointer hover:text-gray-500"
@@ -68,9 +68,6 @@
 
     <!-- Main Chat View -->
     <div v-if="currentPage === 'chat'">
-      <!-- Chat History Component (inline) -->
-      <ChatHistory />
-
       <div class="px-5 py-2">
         <div
           class="absolute bottom-0 left-0 right-0"
@@ -90,7 +87,7 @@
       class="absolute bottom-0 left-0 right-0"
       :style="{ top: `${topBounding.height.value}px` }"
     >
-      <ChatHistoryPage
+      <ChatHistory
         @backToChat="onBackToChat"
         @switchChat="onSwitchChat"
       />
@@ -98,10 +95,11 @@
   </div>
 </template>
 
-<script setup lang="tsx">
+<script setup lang="ts">
 import { useElementBounding } from '@vueuse/core'
 import { ref } from 'vue'
 
+import IconBack from '@/assets/icons/back-arrow.svg?component'
 import IconChatHistory from '@/assets/icons/chat-history.svg?component'
 import IconNewChat from '@/assets/icons/new-chat-add.svg?component'
 import IconSetting from '@/assets/icons/setting.svg?component'
@@ -114,26 +112,6 @@ import { showSettings } from '../../../utils/settings'
 import { Chat } from '../utils/chat'
 import ChatComponent from './Chat/index.vue'
 import ChatHistory from './ChatHistory/index.vue'
-import ChatHistoryPage from './ChatHistoryPage.vue'
-
-// Define a simple back arrow component inline
-const IconBack = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M10 12L6 8L10 4"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
-)
 
 type PageType = 'chat' | 'chat-history'
 
@@ -141,6 +119,7 @@ const chatRef = ref<InstanceType<typeof ChatComponent>>()
 const topRef = ref<HTMLDivElement>()
 const topBounding = useElementBounding(topRef)
 const currentPage = ref<PageType>('chat')
+
 const { t } = useI18n()
 
 defineExpose({

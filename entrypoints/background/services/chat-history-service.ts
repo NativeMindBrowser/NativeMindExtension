@@ -7,7 +7,8 @@
 
 import { generateObject as originalGenerateObject } from 'ai'
 
-import { ContextAttachmentStorage } from '@/types/chat'
+import { ContextAttachment, ContextAttachmentStorage } from '@/types/chat'
+import { useGlobalI18n } from '@/utils/i18n'
 import { getLocaleName } from '@/utils/i18n/constants'
 import { getModel, getModelUserConfig } from '@/utils/llm/models'
 import { selectSchema } from '@/utils/llm/output-schema'
@@ -169,7 +170,7 @@ export class BackgroundChatHistoryService {
   }
 
   /**
-   * Save context attachments
+   * Save context attachments, contextAttachments.id is ChatID
    */
   async saveContextAttachments(contextAttachments: ContextAttachmentStorage): Promise<{ success: boolean, error?: string }> {
     const db = this.databaseManager.getDatabase()
@@ -187,12 +188,261 @@ export class BackgroundChatHistoryService {
         updatedAt: now,
       }
 
+      log.debug('Saving context attachments record:', record)
+
       await db.put(CHAT_OBJECT_STORES.CONTEXT_ATTACHMENTS, record)
       log.debug('Saved context attachments:', contextAttachments.id)
       return { success: true }
     }
     catch (error) {
       log.error('Failed to save context attachments:', error)
+      return { success: false, error: String(error) }
+    }
+  }
+
+  /**
+   * Get a specific context attachment by type and ID
+   */
+  async getContextAttachmentById<T extends ContextAttachment['type']>(
+    chatId: string,
+    type: T,
+    id: string,
+  ): Promise<(ContextAttachment & { type: T }) | null> {
+    const contextAttachments = await this.getContextAttachments(chatId)
+    if (!contextAttachments) return null
+
+    // Check current tab first
+    if (contextAttachments.currentTab?.value.id === id && contextAttachments.currentTab.type === type) {
+      return contextAttachments.currentTab as ContextAttachment & { type: T }
+    }
+
+    // Then check attachments
+    const attachment = contextAttachments.attachments.find(
+      (attachment) => attachment.value.id === id && attachment.type === type,
+    )
+
+    return attachment as (ContextAttachment & { type: T }) | null
+  }
+
+  /**
+   * Get all context attachments of a specific type
+   */
+  async getContextAttachmentsByType<T extends ContextAttachment['type']>(
+    chatId: string,
+    type: T,
+  ): Promise<(ContextAttachment & { type: T })[]> {
+    const contextAttachments = await this.getContextAttachments(chatId)
+    if (!contextAttachments) return []
+
+    const attachments = contextAttachments.attachments.filter(
+      (attachment) => attachment.type === type,
+    ) as (ContextAttachment & { type: T })[]
+
+    // Include current tab if it matches the type and isn't already in attachments
+    if (contextAttachments.currentTab?.type === type) {
+      const currentTabAsT = contextAttachments.currentTab as ContextAttachment & { type: T }
+      const exists = attachments.some((att) => att.value.id === currentTabAsT.value.id)
+      if (!exists) {
+        attachments.unshift(currentTabAsT)
+      }
+    }
+
+    return attachments
+  }
+
+  /**
+   * Add or update a context attachment
+   */
+  async addContextAttachment(
+    chatId: string,
+    attachment: ContextAttachment,
+  ): Promise<{ success: boolean, error?: string }> {
+    try {
+      const contextAttachments = await this.getContextAttachments(chatId) || {
+        id: chatId,
+        lastInteractedAt: Date.now(),
+        attachments: [],
+      }
+
+      // Remove existing attachment with same id and type if exists
+      const existingIndex = contextAttachments.attachments.findIndex(
+        (a) => a.value.id === attachment.value.id && a.type === attachment.type,
+      )
+
+      if (existingIndex >= 0) {
+        contextAttachments.attachments[existingIndex] = attachment
+      }
+      else {
+        contextAttachments.attachments.push(attachment)
+      }
+
+      contextAttachments.lastInteractedAt = Date.now()
+      return await this.saveContextAttachments(contextAttachments)
+    }
+    catch (error) {
+      log.error('Failed to add context attachment:', error)
+      return { success: false, error: String(error) }
+    }
+  }
+
+  /**
+   * Remove a context attachment by ID
+   */
+  async removeContextAttachment(
+    chatId: string,
+    attachmentId: string,
+  ): Promise<{ success: boolean, error?: string }> {
+    try {
+      const contextAttachments = await this.getContextAttachments(chatId)
+      if (!contextAttachments) {
+        return { success: true } // Nothing to remove
+      }
+
+      const initialLength = contextAttachments.attachments.length
+      contextAttachments.attachments = contextAttachments.attachments.filter(
+        (attachment) => attachment.value.id !== attachmentId,
+      )
+
+      // Also remove from currentTab if it matches
+      if (contextAttachments.currentTab?.value.id === attachmentId) {
+        contextAttachments.currentTab = undefined
+      }
+
+      // Only save if something was actually removed
+      if (contextAttachments.attachments.length !== initialLength
+        || contextAttachments.currentTab === undefined) {
+        contextAttachments.lastInteractedAt = Date.now()
+        return await this.saveContextAttachments(contextAttachments)
+      }
+
+      return { success: true }
+    }
+    catch (error) {
+      log.error('Failed to remove context attachment:', error)
+      return { success: false, error: String(error) }
+    }
+  }
+
+  /**
+   * Batch remove context attachments by type
+   */
+  async batchRemoveContextAttachmentsByType<T extends ContextAttachment['type']>(
+    chatId: string,
+    type: T,
+  ): Promise<{ success: boolean, removedCount: number, error?: string }> {
+    try {
+      const contextAttachments = await this.getContextAttachments(chatId)
+      if (!contextAttachments) {
+        return { success: true, removedCount: 0 } // Nothing to remove
+      }
+
+      const initialLength = contextAttachments.attachments.length
+      let currentTabRemoved = false
+
+      // Remove all attachments of the specified type
+      contextAttachments.attachments = contextAttachments.attachments.filter(
+        (attachment) => attachment.type !== type,
+      )
+
+      // Also remove from currentTab if it matches the type
+      if (contextAttachments.currentTab?.type === type) {
+        contextAttachments.currentTab = undefined
+        currentTabRemoved = true
+      }
+
+      const removedCount = initialLength - contextAttachments.attachments.length + (currentTabRemoved ? 1 : 0)
+
+      // Only save if something was actually removed
+      if (removedCount > 0) {
+        contextAttachments.lastInteractedAt = Date.now()
+        const result = await this.saveContextAttachments(contextAttachments)
+        if (result.success) {
+          log.debug(`Batch removed ${removedCount} context attachments of type:`, type)
+          return { success: true, removedCount }
+        }
+        return { success: false, removedCount: 0, error: result.error }
+      }
+
+      return { success: true, removedCount: 0 }
+    }
+    catch (error) {
+      log.error('Failed to batch remove context attachments by type:', error)
+      return { success: false, removedCount: 0, error: String(error) }
+    }
+  }
+
+  /**
+   * Update a context attachment
+   */
+  async updateContextAttachment(
+    chatId: string,
+    attachmentId: string,
+    updates: Partial<ContextAttachment>,
+  ): Promise<{ success: boolean, error?: string }> {
+    try {
+      const contextAttachments = await this.getContextAttachments(chatId)
+      if (!contextAttachments) {
+        return { success: false, error: 'Context attachments not found' }
+      }
+
+      let updated = false
+
+      // Update in attachments array
+      const attachmentIndex = contextAttachments.attachments.findIndex(
+        (attachment) => attachment.value.id === attachmentId,
+      )
+
+      if (attachmentIndex >= 0) {
+        contextAttachments.attachments[attachmentIndex] = {
+          ...contextAttachments.attachments[attachmentIndex],
+          ...updates,
+        } as ContextAttachment
+        updated = true
+      }
+
+      // Update current tab if it matches
+      if (contextAttachments.currentTab?.value.id === attachmentId) {
+        contextAttachments.currentTab = {
+          ...contextAttachments.currentTab,
+          ...updates,
+        } as ContextAttachment
+        updated = true
+      }
+
+      if (updated) {
+        contextAttachments.lastInteractedAt = Date.now()
+        return await this.saveContextAttachments(contextAttachments)
+      }
+
+      return { success: false, error: 'Attachment not found' }
+    }
+    catch (error) {
+      log.error('Failed to update context attachment:', error)
+      return { success: false, error: String(error) }
+    }
+  }
+
+  /**
+   * Set the current tab attachment
+   */
+  async setCurrentTabAttachment(
+    chatId: string,
+    attachment?: ContextAttachment,
+  ): Promise<{ success: boolean, error?: string }> {
+    try {
+      const contextAttachments = await this.getContextAttachments(chatId) || {
+        id: chatId,
+        lastInteractedAt: Date.now(),
+        attachments: [],
+      }
+
+      contextAttachments.currentTab = attachment
+      contextAttachments.lastInteractedAt = Date.now()
+
+      return await this.saveContextAttachments(contextAttachments)
+    }
+    catch (error) {
+      log.error('Failed to set current tab attachment:', error)
       return { success: false, error: String(error) }
     }
   }
@@ -445,6 +695,7 @@ export class BackgroundChatHistoryService {
    * Generate chat title based on first user and assistant messages using LLM
    */
   private async generateChatTitle(userMessage: string, assistantMessage: string): Promise<string> {
+    const i18n = await useGlobalI18n()
     try {
       const userConfig = await getUserConfig()
       const localeInConfig = userConfig.locale.current.toRef()
@@ -466,7 +717,7 @@ export class BackgroundChatHistoryService {
 
       if (!generatedTitle || generatedTitle.length === 0) {
         log.warn('Generated title is empty, using fallback')
-        return 'New Chat'
+        return i18n.t('chat_history.new_chat') // Fallback to i18n "New Chat"
       }
 
       // TODO: Simple validation for inappropriate titles
@@ -476,7 +727,7 @@ export class BackgroundChatHistoryService {
     }
     catch (error) {
       log.error('Failed to generate title:', error)
-      return 'New Chat'
+      return i18n.t('chat_history.new_chat') // Fallback to i18n "New Chat"
     }
   }
 
@@ -484,17 +735,20 @@ export class BackgroundChatHistoryService {
    * Auto-generate title if conditions are met
    */
   async autoGenerateTitleIfNeeded(chatHistory: ChatHistoryV1): Promise<void> {
-    // Only generate if title is still "New Chat"
-    if (chatHistory.title !== 'New Chat') {
-      return
-    }
+    const i18n = await useGlobalI18n()
 
     // Check if we have exactly one user message and one assistant message
     const completedMessages = chatHistory.history.filter((item) => item.done)
     const userMessages = completedMessages.filter((item) => item.role === 'user')
     const assistantMessages = completedMessages.filter((item) => item.role === 'assistant')
 
-    if (userMessages.length >= 1 && assistantMessages.length >= 1) {
+    // Skip when title is not "New Chat" and there are multiple user and assistant messages
+    // Only skip if we have a custom title AND multiple conversation rounds
+    if (chatHistory.title !== i18n.t('chat_history.new_chat') && userMessages.length > 0 && assistantMessages.length > 0) {
+      return
+    }
+
+    if (userMessages.length === 1 && assistantMessages.length >= 1) {
       const firstUser = userMessages[0]
       const firstAssistant = assistantMessages[0]
 
@@ -502,7 +756,7 @@ export class BackgroundChatHistoryService {
         try {
           log.debug('Auto-generating chat title for chat:', chatHistory.id)
           const newTitle = await this.generateChatTitle(firstUser.content, firstAssistant.content)
-          if (newTitle !== 'New Chat') {
+          if (newTitle !== i18n.t('chat_history.new_chat')) {
             // Update the title in the chat history
             chatHistory.title = newTitle
 

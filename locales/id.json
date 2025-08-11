@@ -40,6 +40,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "Apakah Anda yakin ingin menghapus percakapan ini? Tindakan ini tidak dapat dibatalkan.",
+    "delete": "Menghapus",
+    "rename": "Ganti nama",
+    "unpin": "Lepas Pin",
+    "pin": "Pin",
+    "title": "Riwayat Obrolan",
+    "pinned_section": "Dipasang",
+    "recent_section": "Terbaru",
+    "empty_state": "Belum ada percakapan",
+    "untitled_chat": "Obrolan Tanpa Judul",
+    "new_chat": "Obrolan Baru",
+    "save": "Simpan",
+    "cancel": "Batal"
+  },
   "onboarding": {
     "banner": {
       "description": "Privat dan aman, dengan fitur-fitur canggih yang sepenuhnya berjalan di perangkat Anda.",
@@ -308,6 +323,8 @@
     "settings": "Pengaturan",
     "pin_sidebar": "Sematkan",
     "unpin_sidebar": "Lepas sematan",
-    "close": "Tutup"
+    "close": "Tutup",
+    "chat_history": "Sejarah",
+    "new_chat": "Obrolan baru"
   }
 }

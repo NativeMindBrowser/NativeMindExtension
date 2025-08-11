@@ -2,6 +2,7 @@ import { ContextAttachmentStorage, ImageAttachment, PDFAttachment, TabAttachment
 import { Base64ImageData } from '@/types/image'
 import dayjs from '@/utils/time'
 
+import logger from '../logger'
 import { getUserConfig } from '../user-config'
 import { definePrompt, renderPrompt, TagBuilder, TextBuilder, UserPrompt } from './helpers'
 
@@ -25,17 +26,36 @@ export const chatWithEnvironment = definePrompt(async (question: string, context
   }
 
   const pdfContextBuilder = new TextBuilder('# Available PDFs')
-  const pdfMeta = contextAttachmentStorage.attachments.find((a): a is PDFAttachment => a.type === 'pdf')?.value
-  pdfContextBuilder.insertContent(pdfMeta ? `- PDF ID ${pdfMeta.id}: ${pdfMeta?.name} (${pdfMeta?.pageCount ?? 'unknown'} pages)` : `(No available PDFs)`)
+  // Check for PDFs in both currentTab and attachments
+  const currentPdf = contextAttachmentStorage.currentTab?.type === 'pdf' ? contextAttachmentStorage.currentTab : undefined
+  const pdfFromAttachments = contextAttachmentStorage.attachments.find((a): a is PDFAttachment => a.type === 'pdf')
+  const pdfMeta = currentPdf?.value || pdfFromAttachments?.value
+
+  if (pdfMeta) {
+    const isCurrentPdf = currentPdf !== undefined
+    const status = isCurrentPdf ? ' (CURRENT)' : ''
+    pdfContextBuilder.insertContent(`- PDF ID ${pdfMeta.id}: ${pdfMeta?.name} (${pdfMeta?.pageCount ?? 'unknown'} pages)${status}`)
+  }
+  else {
+    pdfContextBuilder.insertContent('(No available PDFs)')
+  }
 
   const imageContextBuilder = new TextBuilder('# Available Images')
-  const imagesMeta = contextAttachmentStorage.attachments.filter((a): a is ImageAttachment => a.type === 'image')
-  if (imagesMeta.length === 0) {
+  // Check for images in both currentTab and attachments
+  const currentImage = contextAttachmentStorage.currentTab?.type === 'image' ? contextAttachmentStorage.currentTab : undefined
+  const imagesFromAttachments = contextAttachmentStorage.attachments.filter((a): a is ImageAttachment => a.type === 'image')
+
+  // Combine current image with attachment images, avoiding duplicates
+  const allImages = currentImage ? [currentImage, ...imagesFromAttachments.filter((img) => img.value.id !== currentImage.value.id)] : imagesFromAttachments
+
+  if (allImages.length === 0) {
     imageContextBuilder.insertContent('(No available images)')
   }
-  for (let i = 0; i < imagesMeta.length; i++) {
-    const img = imagesMeta[i]
-    imageContextBuilder.insertContent(`- Image ID ${img.value.id}: ${img.value.name}`)
+  for (let i = 0; i < allImages.length; i++) {
+    const img = allImages[i]
+    const isCurrent = currentImage && img.value.id === currentImage.value.id
+    const status = isCurrent ? ' (CURRENT)' : ''
+    imageContextBuilder.insertContent(`- Image ID ${img.value.id}: ${img.value.name}${status}`)
   }
 
   const environmentTagBuilder = new TagBuilder('environment_details').insertContent(renderPrompt`
@@ -53,5 +73,10 @@ ${userMessageTagBuilder}
 
 ${environmentTagBuilder}`.trim()
 
+  logger.debug('Chat with environment prompt', {
+    user,
+    images,
+    system,
+  })
   return { user: UserPrompt.fromTextAndImages(user, images), system }
 })
