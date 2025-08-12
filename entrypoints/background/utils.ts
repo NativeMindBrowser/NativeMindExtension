@@ -4,7 +4,7 @@ import { b2sRpc } from '@/utils/rpc'
 const checkSidepanelLoaded = async () => {
   try {
     return await Promise.race([
-      b2sRpc.getSidepanelStatus().then((status) => !!status.loaded),
+      b2sRpc.getSidepanelStatus().then((status) => !!status),
       sleep(500).then(() => false),
     ])
   }
@@ -19,6 +19,6 @@ export async function waitForSidepanelLoaded() {
     if (Date.now() - start > 10000) {
       throw new Error('Timeout waiting for sidepanel to load')
     }
-    await sleep(500)
+    await sleep(1000)
   }
 }

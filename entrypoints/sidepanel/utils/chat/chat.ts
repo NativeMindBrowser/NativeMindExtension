@@ -2,7 +2,7 @@ import { CoreMessage } from 'ai'
 import EventEmitter from 'events'
 import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 
-import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
+import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
 import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
 import { debounce } from '@/utils/debounce'
@@ -194,6 +194,31 @@ export class ReactiveHistoryManager extends EventEmitter {
       newMsg = this.history.value[this.history.value.length - 1] as TaskMessageV1
     }
     return newMsg as TaskMessageV1
+  }
+
+  appendAgentTaskGroupMessage() {
+    const msg: AgentTaskGroupMessageV1 = {
+      id: this.generateId(),
+      role: 'agent-task-group',
+      done: true,
+      timestamp: Date.now(),
+      tasks: [],
+    }
+    this.history.value.push(msg)
+    return this.history.value[this.history.value.length - 1] as AgentTaskGroupMessageV1
+  }
+
+  appendAgentTaskMessage(groupMessage: AgentTaskGroupMessageV1, { summary, details }: { summary: AgentTaskMessageV1['summary'], details?: AgentTaskMessageV1['details'] }) {
+    const msg: AgentTaskMessageV1 = {
+      id: this.generateId(),
+      role: 'agent-task',
+      done: false,
+      timestamp: Date.now(),
+      summary,
+      details,
+    }
+    groupMessage.tasks.push(msg)
+    return groupMessage.tasks[groupMessage.tasks.length - 1]
   }
 
   appendActionMessage(actions: ActionMessageV1['actions'], title?: string) {

@@ -1,6 +1,6 @@
 import { useGlobalI18n } from './i18n'
 
-export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType' | 'fetchError' | 'parseFunctionCallError'
+export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType' | 'fetchError' | 'parseFunctionCallError' | 'aiSDKError'
 
 export abstract class AppError<Code extends ErrorCode> extends Error {
   private _appError = true
@@ -136,6 +136,16 @@ export class ParseFunctionCallError extends AppError<'parseFunctionCallError'> {
   }
 }
 
+export class AiSDKError extends AppError<'aiSDKError'> {
+  constructor(message: string) {
+    super('aiSDKError', message)
+  }
+
+  async toLocaleMessage() {
+    return this.message
+  }
+}
+
 const errors = {
   unknown: UnknownError,
   requestError: ModelRequestError,
@@ -148,6 +158,7 @@ const errors = {
   unsupportedEndpointType: UnsupportedEndpointType,
   fetchError: FetchError,
   parseFunctionCallError: ParseFunctionCallError,
+  aiSDKError: AiSDKError,
 } satisfies Record<ErrorCode, typeof AppError<ErrorCode>>
 
 export function fromError(error: unknown): AppError<ErrorCode> {

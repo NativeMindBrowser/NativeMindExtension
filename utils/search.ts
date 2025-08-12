@@ -30,13 +30,14 @@ async function _searchByGoogle(query: string, options?: SearchByGoogleOptions) {
         .map((block) => {
           const link = block.querySelector('a[jsname]') as HTMLAnchorElement | null
           const h = link?.querySelector('h3,h2,h1') as HTMLHeadingElement | null
+          const favicon = link?.querySelector('img') as HTMLImageElement | null
           const title = h?.textContent
           const url = link?.href
           const descriptionDiv = block.querySelector('div[data-snf]') as HTMLDivElement | null
           const description = descriptionDiv?.textContent
-          return { url, title, description }
+          return { url, title, description, favicon: favicon?.src }
         })
-        .filter((m) => m.url) as { url: string, title?: string, description?: string }[]
+        .filter((m) => m.url) as { url: string, title?: string, description?: string, favicon?: string }[]
       return result
     },
   })
@@ -97,14 +98,20 @@ async function scrapePages(links: string[], options: ScrapePagesOptions) {
       const tabInfo = await tab.getInfo()
       const content = await tab.executeScript({
         func: () => {
-          return document.body.innerText
+          return {
+            html: document.documentElement.outerHTML,
+            title: document.title,
+            url: location.href,
+          }
         },
       })
       log.debug('search progress: end', idx, tabInfo.url, tabInfo.title, link, content)
-      const textContent = content[0].result ?? ''
+      const html = content[0].result?.html ?? ''
+      const title = content[0].result?.title ?? ''
       linksWithContent.push({
+        title,
         url: link,
-        textContent,
+        html,
       })
     }
     catch (error) {

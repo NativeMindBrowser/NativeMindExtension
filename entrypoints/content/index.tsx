@@ -8,6 +8,7 @@ import { Suspense } from 'vue'
 import { defineContentScript } from 'wxt/utils/define-content-script'
 
 import RootProvider from '@/components/RootProvider.vue'
+import logger from '@/utils/logger'
 
 import App from './App.vue'
 import { createShadowRootOverlay } from './ui'
@@ -28,5 +29,6 @@ export default defineContentScript({
       )
     })
     ui.mount()
+    logger.debug('content ui injected', { ui })
   },
 })

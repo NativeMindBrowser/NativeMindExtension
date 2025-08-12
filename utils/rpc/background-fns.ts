@@ -1,5 +1,6 @@
 import { safeParseJSON } from '@ai-sdk/provider-utils'
 import { generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
+import { AISDKError } from 'ai'
 import { EventEmitter } from 'events'
 import { Browser, browser } from 'wxt/browser'
 import { z } from 'zod'
@@ -11,7 +12,7 @@ import logger from '@/utils/logger'
 import { sleep } from '../async'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
-import { AppError, CreateTabStreamCaptureError, FetchError, ModelRequestError, UnknownError } from '../error'
+import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, ModelRequestError, UnknownError } from '../error'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
 import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
@@ -63,6 +64,10 @@ const normalizeError = (_error: unknown) => {
   }
   else if (_error instanceof Error && _error.message.includes('Failed to fetch')) {
     error = new ModelRequestError(_error.message)
+  }
+  else if (AISDKError.isInstance(_error)) {
+    error = new AiSDKError(_error.message)
+    error.name = _error.name
   }
   else {
     error = new UnknownError(`Unexpected error occurred during request: ${_error}`)

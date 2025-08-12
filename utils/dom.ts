@@ -57,3 +57,12 @@ export async function deepCloneDocumentWithShadowDOM(doc: Document, options: Dee
   }
   return clonedDoc
 }
+
+export async function deepCloneDocument(doc: Document, options: DeepCloneOptions = {}): Promise<Document> {
+  const clonedDoc = doc.cloneNode(true) as Document
+  const excludeClasses = options.excludeClasses || []
+  const excludeTags = options.excludeTags || []
+  clonedDoc.querySelectorAll(excludeTags.map((tag) => `${tag}`).join(', ')).forEach((el) => el.remove())
+  clonedDoc.querySelectorAll(excludeClasses.map((cls) => `.${cls}`).join(', ')).forEach((el) => el.remove())
+  return clonedDoc
+}

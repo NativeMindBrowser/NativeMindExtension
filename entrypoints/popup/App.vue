@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  <div>NativeMind</div>
+  <div>This browser is currently not supported by NativeMind.</div>
 </template>
