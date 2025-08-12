@@ -22,7 +22,7 @@
         "unsupported_image_type": "Nicht unterstütztes Bildformat. Bitte laden Sie JPEG- oder PNG-Dateien hoch.",
         "unsupported_model": "Das Hochladen von Bildern erfordert ein sehfähiges Modell. Bitte wechseln Sie zu Gemma3 oder einem ähnlichen Vision-Modell.",
         "pdf_oversize": "PDF-Dateigröße muss kleiner als {size} sein",
-        "pdf_text_extract_error": "Textextraktion fehlgeschlagen - diese PDF könnte gescannt oder bildbasiert sein. Wir empfehlen dringend, zu Gemma3 zu wechseln, um bessere Ergebnisse zu erzielen.",
+        "pdf_text_extract_error": "Textextraktion fehlgeschlagen - diese PDF könnte gescannt oder bildbasiert sein.",
         "too_many_pdfs": "Maximal {max} PDF-Datei erlaubt",
         "pdf_page_count_exceeded": "PDF muss weniger als {max} Seiten haben",
         "only_load_partial_pages": "Aufgrund der Dateigröße werden nur die ersten {max} Seiten geladen"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "Seite zusammenfassen"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Suche: \"{query}\"...",
+        "search_completed": "Suche abgeschlossen: \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "Lektüre abgeschlossen: {title}",
+        "read_failed": "Lesen fehlgeschlagen: {error}",
+        "error_no_content": "kein Inhalt gefunden",
+        "reading": "Lektüre: {title}"
+      },
+      "view_image": {
+        "analyzing": "Analysiere: {title}",
+        "analyze_failed": "Analyse fehlgeschlagen: {error}",
+        "analyze_success": "Analyse abgeschlossen: {title}",
+        "image_not_found": "Bild nicht gefunden"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF nicht gefunden"
+      },
+      "view_tab": {
+        "tab_not_found": "Registerkarte nicht gefunden"
       }
     }
   },

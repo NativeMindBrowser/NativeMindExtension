@@ -22,7 +22,7 @@
         "unsupported_image_type": "サポートされていない画像形式です。JPEGまたはPNGファイルをアップロードしてください。",
         "unsupported_model": "画像のアップロードには視覚対応モデルが必要です。Gemma3または同様の視覚モデルに切り替えてください。",
         "pdf_oversize": "PDFファイルサイズは{size}未満である必要があります",
-        "pdf_text_extract_error": "テキスト抽出に失敗しました - このPDFはスキャンされたものか画像ベースの可能性があります。より良い結果を得るためにGemma3への切り替えを強くお勧めします。",
+        "pdf_text_extract_error": "テキスト抽出に失敗しました - このPDFはスキャンされたものか画像ベースの可能性があります。",
         "too_many_pdfs": "最大{max}個のPDFファイルまで許可されています",
         "pdf_page_count_exceeded": "PDFは{max}ページ以下である必要があります",
         "only_load_partial_pages": "ファイルサイズのため、最初の{max}ページのみが読み込まれました"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "ページを要約する"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "検索中: \"{query}\"...",
+        "search_completed": "検索完了: \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "読了: {title}",
+        "read_failed": "読み込みに失敗しました: {error}",
+        "error_no_content": "コンテンツが見つかりません",
+        "reading": "読書: {title}"
+      },
+      "view_image": {
+        "analyzing": "分析中: {title}",
+        "analyze_failed": "解析に失敗しました: {error}",
+        "analyze_success": "分析完了: {title}",
+        "image_not_found": "画像が見つかりません"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDFが見つかりません"
+      },
+      "view_tab": {
+        "tab_not_found": "タブが見つかりません"
       }
     }
   },

@@ -22,7 +22,7 @@
         "unsupported_image_type": "Неподдерживаемый формат изображения. Пожалуйста, загрузите файлы JPEG или PNG.",
         "unsupported_model": "Загрузка изображений требует модель с возможностями компьютерного зрения. Пожалуйста, переключитесь на Gemma3 или аналогичную модель с поддержкой зрения.",
         "pdf_oversize": "Размер PDF-файла должен быть меньше {size}",
-        "pdf_text_extract_error": "Извлечение текста не удалось - этот PDF может быть отсканированным или основанным на изображениях. Мы настоятельно рекомендуем переключиться на Gemma3 для получения лучших результатов.",
+        "pdf_text_extract_error": "Извлечение текста не удалось - этот PDF может быть отсканированным или основанным на изображениях.",
         "too_many_pdfs": "Максимально разрешено {max} PDF файлов",
         "pdf_page_count_exceeded": "PDF должен содержать менее {max} страниц",
         "only_load_partial_pages": "Загружены только первые {max} страниц из-за размера файла"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "Резюмировать страницу"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Поиск: \"{query}\"...",
+        "search_completed": "Поиск завершен: \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "Завершено чтение: {title}",
+        "read_failed": "Ошибка чтения: {error}",
+        "error_no_content": "контент не найден",
+        "reading": "Чтение: {title}"
+      },
+      "view_image": {
+        "analyzing": "Анализируется: {title}",
+        "analyze_failed": "Анализ не удался: {error}",
+        "analyze_success": "Анализ завершен: {title}",
+        "image_not_found": "изображение не найдено"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF не найден"
+      },
+      "view_tab": {
+        "tab_not_found": "вкладка не найдена"
       }
     }
   },

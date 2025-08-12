@@ -22,7 +22,7 @@
         "unsupported_image_type": "Format d'image non pris en charge. Veuillez télécharger des fichiers JPEG ou PNG.",
         "unsupported_model": "Le téléchargement d'image nécessite un modèle capable de vision. Veuillez passer à Gemma3 ou un modèle de vision similaire.",
         "pdf_oversize": "La taille du fichier PDF doit être inférieure à {size}",
-        "pdf_text_extract_error": "L'extraction de texte a échoué - ce PDF peut être numérisé ou basé sur des images. Nous recommandons fortement de passer à Gemma3 pour de meilleurs résultats.",
+        "pdf_text_extract_error": "L'extraction de texte a échoué - ce PDF peut être numérisé ou basé sur des images.",
         "too_many_pdfs": "Maximum {max} fichier PDF autorisé",
         "pdf_page_count_exceeded": "Le PDF doit contenir moins de {max} pages",
         "only_load_partial_pages": "Seules les {max} premières pages sont chargées en raison de la taille du fichier"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "Résumer la page"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Recherche : \"{query}\"...",
+        "search_completed": "Recherche terminée : \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "Lecture terminée : {title}",
+        "read_failed": "Échec de la lecture : {error}",
+        "error_no_content": "aucun contenu trouvé",
+        "reading": "Lecture : {title}"
+      },
+      "view_image": {
+        "analyzing": "Analyse : {title}",
+        "analyze_failed": "Échec de l'analyse : {error}",
+        "analyze_success": "Analyse terminée : {title}",
+        "image_not_found": "image introuvable"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF introuvable"
+      },
+      "view_tab": {
+        "tab_not_found": "onglet introuvable"
       }
     }
   },

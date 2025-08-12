@@ -22,7 +22,7 @@
         "unsupported_image_type": "지원되지 않는 이미지 형식입니다. JPEG 또는 PNG 파일을 업로드해 주세요.",
         "unsupported_model": "이미지 업로드에는 비전 기능이 있는 모델이 필요합니다. Gemma3 또는 유사한 비전 모델로 전환해 주세요.",
         "pdf_oversize": "PDF 파일 크기는 {size}보다 작아야 합니다",
-        "pdf_text_extract_error": "텍스트 추출 실패 - 이 PDF는 스캔되었거나 이미지 기반일 수 있습니다. 더 나은 결과를 위해 Gemma3로 전환하는 것을 강력히 권장합니다.",
+        "pdf_text_extract_error": "PDF에서 텍스트 추출에 실패했습니다 - 이 PDF는 스캔되었거나 이미지 기반일 수 있습니다.",
         "too_many_pdfs": "최대 {max}개의 PDF 파일이 허용됩니다",
         "pdf_page_count_exceeded": "PDF는 {max}페이지 미만이어야 합니다",
         "only_load_partial_pages": "파일 크기로 인해 처음 {max}페이지만 로드됩니다"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "페이지 요약"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "검색 중: \"{query}\"...",
+        "search_completed": "검색 완료: \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "읽기 완료: {title}",
+        "read_failed": "읽기 실패: {error}",
+        "error_no_content": "콘텐츠를 찾을 수 없습니다",
+        "reading": "읽기: {title}"
+      },
+      "view_image": {
+        "analyzing": "분석 중: {title}",
+        "analyze_failed": "분석 실패: {error}",
+        "analyze_success": "분석 완료: {title}",
+        "image_not_found": "이미지를 찾을 수 없습니다"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF를 찾을 수 없습니다"
+      },
+      "view_tab": {
+        "tab_not_found": "탭을 찾을 수 없음"
       }
     }
   },
