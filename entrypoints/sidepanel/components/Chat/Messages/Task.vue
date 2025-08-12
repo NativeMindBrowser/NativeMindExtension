@@ -38,8 +38,8 @@
 <script setup lang="ts">
 import Loading from '@/components/Loading.vue'
 import Text from '@/components/ui/Text.vue'
+import { TaskMessageV1 } from '@/types/chat'
 import { getIconSvg } from '@/utils/markdown/content'
-import { TaskMessageV1 } from '@/utils/tab-store/history'
 import { classNames, type ComponentClassAttr } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'

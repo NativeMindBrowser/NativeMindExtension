@@ -25,12 +25,12 @@
           >
             <div class="text-sm inline-block bg-[#24B960] rounded-md p-3 max-w-full">
               <div class="wrap-anywhere text-white">
-                <MarkdownViewer :text="item.content" />
+                <MarkdownViewer :text="item.displayContent ?? item.content" />
               </div>
             </div>
           </div>
           <MessageAssistant
-            v-else-if="item.role === 'assistant'"
+            v-else-if="item.role === 'assistant' || item.role === 'agent'"
             :message="item"
           />
           <div v-else-if="item.role === 'task'">

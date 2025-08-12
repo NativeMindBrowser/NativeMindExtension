@@ -1,6 +1,6 @@
 {
   "name": "nativemind-extension",
-  "version": "1.7.0-beta.3",
+  "version": "1.7.0-beta.6",
   "private": false,
   "author": "NativeMind",
   "keywords": [
@@ -79,6 +79,7 @@
     "dayjs": "^1.11.13",
     "devalue": "^5.1.1",
     "dompurify": "^3.2.5",
+    "es-toolkit": "^1.39.8",
     "eslint-plugin-vue": "^10.1.0",
     "events": "^3.3.0",
     "fake-indexeddb": "^6.0.1",
@@ -100,7 +101,6 @@
     "partial-json": "^0.1.7",
     "pinia": "^3.0.2",
     "prettier-plugin-packagejson": "^2.5.11",
-    "radash": "^12.1.0",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.7",
     "temporal-polyfill": "^0.3.0",

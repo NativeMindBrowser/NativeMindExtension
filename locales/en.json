@@ -285,7 +285,7 @@
     "unknown_error": "An unexpected error occurred: {message}",
     "model_request_error": "Oops! Something went wrong. Please check your Ollama connection in settings and try again.",
     "model_not_found": "Oops! Something went wrong. Please check your Ollama connection in settings and try again.",
-    "model_request_timeout": "'Request timeout, please check your Ollama connection or consider starting a new session as long contexts may affect response times.'",
+    "model_request_timeout": "Request timeout, please check your Ollama connection or consider starting a new session as long contexts may affect response times.",
     "timeout_error": "Operation timed out: {message}",
     "webllm_not_supported": "WebLLM not supported on your device."
   },

@@ -367,6 +367,9 @@ export async function _getUserConfig() {
       agent: {
         maxIterations: await new Config('chat.agent.maxIterations').default(5).build(),
       },
+      environmentDetails: {
+        fullUpdateFrequency: await new Config('chat.environmentDetails.fullUpdateFrequency').default(10).build(), // update full environment details every 5 messages
+      },
       systemPrompt: await new Config('chat.systemPrompt').default(DEFAULT_CHAT_SYSTEM_PROMPT).build(),
       history: {
         currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),

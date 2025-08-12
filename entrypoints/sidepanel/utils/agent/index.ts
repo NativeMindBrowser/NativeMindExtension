@@ -1,27 +1,30 @@
 import { CoreAssistantMessage, CoreMessage, CoreUserMessage } from 'ai'
+import { isEqual } from 'es-toolkit'
 import { Ref, ref } from 'vue'
 
-import { ContextAttachment, ContextAttachmentStorage, TabAttachment } from '@/types/chat'
+import { AgentMessageV1, AssistantMessageV1, ContextAttachment, ContextAttachmentStorage, TabAttachment, TaskMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
-import { Base64ImageData } from '@/types/image'
+import { Base64ImageData, ImageDataWithId } from '@/types/image'
+import { TagBuilderJSON } from '@/types/prompt'
 import { AbortError, fromError, ParseFunctionCallError } from '@/utils/error'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
-import { GetPromptBasedTool, PromptBasedToolName } from '@/utils/llm/tools/prompt-based/tools'
+import { GetPromptBasedTool, PromptBasedToolName, PromptBasedToolNameAndParams } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
-import { chatWithEnvironment } from '@/utils/prompts'
 import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
 import { s2bRpc } from '@/utils/rpc'
-import { AssistantMessageV1, TaskMessageV1 } from '@/utils/tab-store/history'
 
 import { ReactiveHistoryManager } from '../chat'
 import { streamTextInBackground } from '../llm'
 
-// Tool results for next agent loop
-export type AgentToolExecuteResult = {
-  type: 'user-message'
-  content: string
+export type AgentToolExecuteResultToolResult = {
+  type: 'tool-result'
+  toolName: string
+  results: TagBuilderJSON
 }
+
+// Tool results for next agent loop
+export type AgentToolExecuteResult = AgentToolExecuteResultToolResult
 
 export type AgentToolCallExecute<T extends PromptBasedToolName> = {
   (options: {
@@ -31,7 +34,7 @@ export type AgentToolCallExecute<T extends PromptBasedToolName> = {
     loopImages: (Base64ImageData & { id: string })[]
     statusMessageModifier: StatusMessageModifier
     abortSignal: AbortSignal
-  }): PromiseOr<AgentToolExecuteResult[]>
+  }): PromiseOr<Omit<AgentToolExecuteResult, 'toolName'>[]>
 }
 
 export type AgentToolCall<T extends PromptBasedToolName> = {
@@ -74,6 +77,19 @@ export class AgentStorage {
   getAllPDFs() {
     return this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'pdf')
   }
+
+  persistCurrentTab() {
+    const currentTab = this.attachmentStorage.currentTab
+    if (currentTab?.type !== 'tab') return
+    const currentTabId = currentTab.value.tabId
+    if (this.attachmentStorage.attachments.some((attachment) => attachment.type === 'tab' && attachment.value.tabId === currentTabId)) return
+    this.attachmentStorage.attachments.push(currentTab)
+  }
+
+  isCurrentTab(tabId: number) {
+    const currentTab = this.attachmentStorage.currentTab
+    return currentTab?.type === 'tab' && currentTab.value.tabId === tabId
+  }
 }
 
 interface AgentOptions<T extends PromptBasedToolName> {
@@ -113,8 +129,7 @@ export class Agent<T extends PromptBasedToolName> {
     }
   }
 
-  injectImagesToLastMessage(rawMessages: CoreMessage[], images: Base64ImageData[]) {
-    const messages = structuredClone(rawMessages)
+  injectImagesLastMessage(messages: CoreMessage[], images: Base64ImageData[]) {
     const lastMessage = messages[messages.length - 1]
     if (lastMessage && lastMessage.role === 'user') {
       if (typeof lastMessage.content === 'string') {
@@ -124,10 +139,28 @@ export class Agent<T extends PromptBasedToolName> {
         ]
       }
       else {
+        lastMessage.content.push(...images.map((img) => ({ type: 'image' as const, image: img.data, mimeType: img.type })))
+      }
+    }
+    return messages
+  }
+
+  injectContentToLastMessage(messages: CoreMessage[], content?: string, newLine = true) {
+    if (!content) return messages
+    content = newLine ? `\n${content}` : content
+    const lastMessage = messages[messages.length - 1]
+    if (lastMessage && lastMessage.role === 'user') {
+      if (typeof lastMessage.content === 'string') {
+        lastMessage.content = [
+          { type: 'text', text: lastMessage.content },
+          { type: 'text', text: content },
+        ]
+      }
+      else {
         const text = lastMessage.content.map((c) => c.type === 'text' ? c.text : '').join('')
         lastMessage.content = [
-          { type: 'text', text },
-          ...images.map((img) => ({ type: 'image' as const, image: img.data, mimeType: img.type })),
+          { type: 'text', text: text },
+          { type: 'text', text: content },
         ]
       }
     }
@@ -163,31 +196,55 @@ export class Agent<T extends PromptBasedToolName> {
     }
   }
 
-  makeTempAssistantMessageManager() {
-    let assistantMessage: AssistantMessageV1 | undefined
-    const getAssistantMessage = () => {
-      return assistantMessage
+  makeTempAgentMessageManager() {
+    let agentMessage: AgentMessageV1 | undefined
+    const getAgentMessage = () => {
+      return agentMessage
     }
-    const getOrAddAssistantMessage = () => {
-      if (!assistantMessage) assistantMessage = this.historyManager.appendAssistantMessage()
-      return assistantMessage
+    const getOrAddAgentMessage = () => {
+      if (!agentMessage) agentMessage = this.historyManager.appendAgentMessage()
+      return agentMessage
     }
-    const deleteAssistantMessageIfEmpty = () => {
-      if (assistantMessage) {
-        const normalizedText = this.normalizeText(assistantMessage.content)
-        if (!normalizedText) {
-          this.historyManager.deleteMessage(assistantMessage)
+    const deleteAgentMessageIfEmpty = (includeReasoning = true) => {
+      if (agentMessage) {
+        const normalizedText = this.normalizeText(agentMessage.content)
+        if (!normalizedText && (!includeReasoning || !agentMessage.reasoning)) {
+          this.historyManager.deleteMessage(agentMessage)
         }
       }
     }
+    // make this message available to the next user task
+    const convertToAssistantMessage = () => {
+      if (agentMessage) {
+        (agentMessage as unknown as AssistantMessageV1).role = 'assistant'
+      }
+    }
     return {
-      getAssistantMessage,
-      getOrAddAssistantMessage,
-      deleteAssistantMessageIfEmpty,
+      getAgentMessage,
+      getOrAddAgentMessage,
+      deleteAgentMessageIfEmpty,
+      convertToAssistantMessage,
     }
   }
 
-  async runWithPrompt(input: string) {
+  private toolResultsToPrompt(toolResults: (AgentToolExecuteResult & { type: 'tool-result' })[]): string {
+    const prompts = []
+    for (const toolResult of toolResults) {
+      const toolName = toolResult.toolName
+      const results = toolResult.results
+      const prompt = TagBuilder.fromStructured('tool_result', {
+        tool_type: toolName,
+        ...results,
+      }).build()
+      prompts.push(prompt)
+    }
+    if (prompts.length <= 1) {
+      return prompts[0] || ''
+    }
+    return TagBuilder.fromStructured('tool_results', prompts).build()
+  }
+
+  async runWithPrompt(baseMessages: CoreMessage[]) {
     this.stop()
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
@@ -198,14 +255,12 @@ export class Agent<T extends PromptBasedToolName> {
       throw new Error('Failed to get context attachments for chat')
     }
     this.log.debug('Latest context attachments', latestContextAttachments)
-    this.log.debug('Agent started', { input })
+    this.log.debug('baseMessages', baseMessages)
     // clone the message to avoid ui changes in agent's running process
-    const prompt = await chatWithEnvironment(input, latestContextAttachments, [])
-    const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
 
     // this messages only used for the agent iteration but not user-facing
     const loopMessages: (CoreAssistantMessage | CoreUserMessage)[] = []
-    const loopImages: (Base64ImageData & { id: string })[] = []
+    const loopImages: ImageDataWithId[] = []
 
     using _status = this.statusScope('running')
     let iteration = 0
@@ -216,86 +271,55 @@ export class Agent<T extends PromptBasedToolName> {
       }
       iteration++
       const shouldForceAnswer = iteration === this.maxIterations
-      const currentLoopToolCalls = []
       this.log.debug('Agent iteration', iteration)
 
       const thisLoopMessages: CoreMessage[] = [...baseMessages, ...loopMessages]
       if (shouldForceAnswer) {
         thisLoopMessages.push({ role: 'user', content: `Answer Language: Strictly follow the LANGUAGE POLICY above.\nBased on all the information collected above, please provide a comprehensive final answer.\nDo not use any tools.` })
       }
-      const assistantMessageManager = this.makeTempAssistantMessageManager()
-      const assistantMessage = assistantMessageManager.getOrAddAssistantMessage()
+      const agentMessageManager = this.makeTempAgentMessageManager()
+      const agentMessage = agentMessageManager.getOrAddAgentMessage()
       const response = streamTextInBackground({
         abortSignal: abortController.signal,
-        messages: this.injectImagesToLastMessage(thisLoopMessages, loopImages),
+        // do not modify the original messages to avoid duplicated images in history
+        messages: this.injectImagesLastMessage(thisLoopMessages, loopImages),
       })
       let hasError = false
       let text = ''
       const currentLoopAssistantRawMessage: AssistantMessageV1 = { role: 'assistant', content: '', done: true, id: generateRandomId() }
+      const currentLoopToolCalls: PromptBasedToolNameAndParams<T>[] = []
       loopMessages.push(currentLoopAssistantRawMessage)
       try {
         for await (const chunk of response) {
           if (abortController.signal.aborted) {
-            assistantMessage.done = true
+            agentMessage.done = true
             this.status.value = 'idle'
             return
           }
           if (chunk.type === 'text-delta') {
             text += chunk.textDelta
             currentLoopAssistantRawMessage.content += chunk.textDelta
-            assistantMessage.content += chunk.textDelta
+            agentMessage.content += chunk.textDelta
           }
           else if (chunk.type === 'reasoning') {
             reasoningStart = reasoningStart || Date.now()
-            assistantMessage.reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
-            assistantMessage.reasoning = (assistantMessage.reasoning || '') + chunk.textDelta
+            agentMessage.reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
+            agentMessage.reasoning = (agentMessage.reasoning || '') + chunk.textDelta
           }
           else if (chunk.type === 'tool-call') {
-            currentLoopToolCalls.push(chunk.toolName as T)
             this.log.debug('Tool call received', chunk)
-            const tagText = chunk.args?.__tagText ?? TagBuilder.fromStructured('tool_calls', {
+            const tagText = TagBuilder.fromStructured('tool_calls', {
               [chunk.toolName]: chunk.args,
             }).build()
-            currentLoopAssistantRawMessage.content += tagText ?? ''
-            const toolName = chunk.toolName as T
-            const tool = this.tools[toolName]
-            if (tool) {
-              const params = chunk.args
-              this.log.debug('Tool call start', chunk)
-              const abortController = new AbortController()
-              this.abortControllers.push(abortController)
-              try {
-                const statusMessageModifier = this.makeTaskMessageProxy()
-                const executedResults = await tool.execute({
-                  params,
-                  agentStorage: this.agentStorage,
-                  historyManager: this.historyManager,
-                  loopImages,
-                  abortSignal: abortController.signal,
-                  statusMessageModifier,
-                })
-                statusMessageModifier.done()
-                for (const result of executedResults) {
-                  if (result.type === 'user-message') {
-                    loopMessages.push({ role: 'user', content: result.content })
-                  }
-                }
-                this.log.debug('Tool call executed', toolName, executedResults)
-              }
-              catch (e) {
-                if (e instanceof AbortError) {
-                  this.log.debug('Tool call aborted', toolName)
-                  break
-                }
-                this.log.error('Tool call error', toolName, e)
-              }
-            }
-            else {
-              this.log.warn('Tool not found', toolName)
-            }
+            currentLoopAssistantRawMessage.content += tagText
+            currentLoopToolCalls.push({ toolName: chunk.toolName as T, params: chunk.args as PromptBasedToolNameAndParams<T>['params'] })
           }
         }
-        assistantMessage.done = true
+        agentMessage.done = true
+        if (currentLoopToolCalls.length > 0) {
+          const toolResults = await this.executeToolCalls(currentLoopToolCalls, loopImages)
+          loopMessages.push({ role: 'user', content: this.toolResultsToPrompt(toolResults) })
+        }
       }
       catch (e) {
         const error = fromError(e)
@@ -310,12 +334,76 @@ export class Agent<T extends PromptBasedToolName> {
       }
       const normalizedText = this.normalizeText(text)
       this.log.debug('Agent iteration end', iteration, { currentLoopToolCalls, text, normalizedText, hasError })
-      if (currentLoopToolCalls.length === 0 && normalizedText && !hasError) {
+      if ((currentLoopToolCalls.length === 0 && normalizedText && !hasError) || shouldForceAnswer) {
         this.log.debug('No tool call, ending iteration')
+        agentMessageManager.convertToAssistantMessage()
         break
       }
-      assistantMessageManager.deleteAssistantMessageIfEmpty()
+      agentMessageManager.deleteAgentMessageIfEmpty()
     }
+  }
+
+  deduplicateToolCalls(toolCalls: PromptBasedToolNameAndParams<T>[]) {
+    const seen = new Map<string, unknown>()
+    return toolCalls.filter((call) => {
+      if (seen.has(call.toolName)) {
+        const params = seen.get(call.toolName)
+        if (isEqual(params, call.params)) {
+          this.log.debug('Duplicate tool call detected', call.toolName, call.params)
+          return false
+        }
+      }
+      const { toolName, params } = call
+      seen.set(toolName, params)
+      return true
+    })
+  }
+
+  async executeToolCalls(toolCalls: PromptBasedToolNameAndParams<T>[], loopImages: ImageDataWithId[] = []) {
+    toolCalls = this.deduplicateToolCalls(toolCalls)
+    const currentLoopToolResults: AgentToolExecuteResult[] = []
+    for (const chunk of toolCalls) {
+      const toolName = chunk.toolName as T
+      const tool = this.tools[toolName]
+      if (tool) {
+        const params = chunk.params
+        this.log.debug('Tool call start', chunk)
+        const abortController = new AbortController()
+        this.abortControllers.push(abortController)
+        try {
+          const statusMessageModifier = this.makeTaskMessageProxy()
+          const executedResults = await tool.execute({
+            params,
+            agentStorage: this.agentStorage,
+            historyManager: this.historyManager,
+            loopImages,
+            abortSignal: abortController.signal,
+            statusMessageModifier,
+          })
+          statusMessageModifier.done()
+          for (const result of executedResults) {
+            if (result.type === 'tool-result') {
+              currentLoopToolResults.push({ ...result, toolName })
+            }
+            else {
+              throw new Error(`Unexpected tool result type: ${result.type}`)
+            }
+          }
+          this.log.debug('Tool call executed', toolName, executedResults)
+        }
+        catch (e) {
+          if (e instanceof AbortError) {
+            this.log.debug('Tool call aborted', toolName)
+            break
+          }
+          this.log.error('Tool call error', toolName, e)
+        }
+      }
+      else {
+        this.log.warn('Tool not found', toolName)
+      }
+    }
+    return currentLoopToolResults
   }
 
   normalizeText(text: string) {

@@ -2,6 +2,7 @@ import { UserContent } from 'ai'
 
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData } from '@/types/image'
+import { TagBuilderJSON, TagBuilderValue } from '@/types/prompt'
 
 import { nonNullable } from '../array'
 import { PromptBasedTool, PromptBasedToolParams } from '../llm/tools/prompt-based/helpers'
@@ -53,17 +54,11 @@ export function extractTextContent(userContent: UserContent): string {
   }
 }
 
-abstract class Builder {
+export abstract class PromptBuilder {
   abstract build(): string
 }
 
-interface TagBuilderJSON {
-  [tagName: string]: string | number | TagBuilderJSON | TagBuilderValue[]
-}
-
-type TagBuilderValue = string | number | TagBuilderJSON | TagBuilderValue[]
-
-export class TagBuilder extends Builder {
+export class TagBuilder extends PromptBuilder {
   private contentList: (string | TagBuilder)[] = []
   constructor(private tagName: string, private attrs: Record<string, string | number> = {}) {
     super()
@@ -166,7 +161,7 @@ ${content}
   }
 }
 
-export class TextBuilder extends Builder {
+export class TextBuilder extends PromptBuilder {
   constructor(private content: string) {
     super()
   }
@@ -181,12 +176,12 @@ export class TextBuilder extends Builder {
   }
 }
 
-export class ConditionBuilder extends Builder {
-  constructor(private contentList: Builder[] = [], private condition = true) {
+export class ConditionBuilder extends PromptBuilder {
+  constructor(private contentList: PromptBuilder[] = [], private condition = true) {
     super()
   }
 
-  insert(builder: Builder) {
+  insert(builder: PromptBuilder) {
     this.contentList.push(builder)
     return this
   }
@@ -201,7 +196,7 @@ export class ConditionBuilder extends Builder {
   }
 }
 
-export class JSONBuilder extends Builder {
+export class JSONBuilder extends PromptBuilder {
   constructor(private json: Record<string, unknown>) {
     super()
   }
@@ -211,7 +206,7 @@ export class JSONBuilder extends Builder {
   }
 }
 
-export class PromptBasedToolBuilder<T extends PromptBasedTool<string, PromptBasedToolParams>> extends Builder {
+export class PromptBasedToolBuilder<T extends PromptBasedTool<string, PromptBasedToolParams>> extends PromptBuilder {
   constructor(public tool: T) {
     super()
   }
@@ -232,7 +227,7 @@ export function renderPrompt(arr: TemplateStringsArray, ...values: unknown[]) {
   return arr.reduce((result, str, i) => {
     const value = values[i]
     if (value !== undefined) {
-      if (value instanceof Builder) {
+      if (value instanceof PromptBuilder) {
         return result + str + value.build()
       }
       else if (typeof value === 'string') {

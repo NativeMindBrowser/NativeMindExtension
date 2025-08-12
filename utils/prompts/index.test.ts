@@ -303,7 +303,7 @@ Purpose: Analyze a specific image
 Format:
 <tool_calls>
 <view_image>
-<image_id>1</image_id>
+<image_id>{{IMAGE_ID}}</image_id>
 </view_image>
 </tool_calls>`)
   })

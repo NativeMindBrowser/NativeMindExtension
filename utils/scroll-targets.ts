@@ -1,7 +1,7 @@
-export const settingsScrollTargets = [
+import { SettingsScrollTarget } from '@/types/scroll-targets'
+
+export const settingsScrollTargets: SettingsScrollTarget[] = [
   'quick-actions-block',
   'model-download-section',
   'server-address-section',
-] as const
-
-export type SettingsScrollTarget = typeof settingsScrollTargets[number]
+]

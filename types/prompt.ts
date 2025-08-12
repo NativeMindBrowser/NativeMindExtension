@@ -14,3 +14,9 @@ export interface TabInfoWithStatus extends TabInfo {
 export type ImageFileMetadata = {
   name: string // Original file name
 }
+
+export interface TagBuilderJSON {
+  [tagName: string]: string | number | TagBuilderJSON | TagBuilderValue[]
+}
+
+export type TagBuilderValue = string | number | TagBuilderJSON | TagBuilderValue[]

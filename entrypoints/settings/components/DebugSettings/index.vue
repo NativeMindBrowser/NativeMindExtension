@@ -285,18 +285,17 @@
                 class="border-b border-gray-200"
               />
             </div>
-          </div>
-        </Block>
-        <Block title="Online Search">
-          <div class="mt-1">
             <div class="flex gap-3 justify-start items-center">
-              <div>Max pages to read</div>
-              <Input
-                v-model.number="onlineSearchPageReadCount"
-                type="number"
-                min="0"
-                class="border-b border-gray-200"
-              />
+              <Block title="Full environment details update frequency">
+                <div class="font-light text-xs">
+                  Every <Input
+                    v-model.number="updateEnvironmentDetailsFrequency"
+                    type="number"
+                    min="0"
+                    class="border-b border-gray-200 w-12"
+                  /> messages (including user and assistant messages)
+                </div>
+              </Block>
             </div>
           </div>
         </Block>
@@ -479,12 +478,12 @@ import Selector from '@/components/Selector.vue'
 import Switch from '@/components/Switch.vue'
 import Button from '@/components/ui/Button.vue'
 import UILanguageSelector from '@/components/UILanguageSelector.vue'
+import { SettingsScrollTarget } from '@/types/scroll-targets'
 import { INVALID_URLS } from '@/utils/constants'
 import { formatSize } from '@/utils/formatter'
 import { SUPPORTED_MODELS, WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
 import { settings2bRpc } from '@/utils/rpc'
-import { SettingsScrollTarget } from '@/utils/scroll-targets'
 import { CacheStats, translationCache } from '@/utils/translation-cache'
 import { getUserConfig } from '@/utils/user-config'
 
@@ -503,7 +502,6 @@ const translationSystemPrompt = userConfig.translation.systemPrompt.toRef()
 const chatSystemPrompt = userConfig.chat.systemPrompt.toRef()
 const summarizeSystemPrompt = userConfig.llm.summarizeSystemPrompt.toRef()
 const enableReasoning = userConfig.llm.reasoning.toRef()
-const onlineSearchPageReadCount = userConfig.chat.onlineSearch.pageReadCount.toRef()
 const onboardingVersion = userConfig.ui.onboarding.version.toRef()
 const enabledChromeAIPolyfill = userConfig.browserAI.polyfill.enable.toRef()
 const writingToolsRewritePrompt = userConfig.writingTools.rewrite.systemPrompt.toRef()
@@ -517,6 +515,7 @@ const enableTranslationCache = userConfig.translation.cache.enabled.toRef()
 const cacheRetentionDays = userConfig.translation.cache.retentionDays.toRef()
 
 const maxAgentIterations = userConfig.chat.agent.maxIterations.toRef()
+const updateEnvironmentDetailsFrequency = userConfig.chat.environmentDetails.fullUpdateFrequency.toRef()
 const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.toRef()
 
 const translationSystemPromptError = ref('')

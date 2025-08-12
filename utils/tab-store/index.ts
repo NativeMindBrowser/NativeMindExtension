@@ -2,6 +2,7 @@ import { ref, toRaw, watch } from 'vue'
 import { browser } from 'wxt/browser'
 import { storage } from 'wxt/utils/storage'
 
+import type { HistoryItemV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 
 import { TAB_STORE_STORAGE_KEY_PREFIX } from '../constants'
@@ -9,7 +10,6 @@ import { debounce } from '../debounce'
 import { generateRandomId } from '../id'
 import { lazyInitialize } from '../memo'
 import { tabToTabInfo } from '../tab'
-import type { HistoryItemV1 } from './history'
 
 export { HistoryItemV1 }
 
