@@ -22,7 +22,7 @@
         "unsupported_image_type": "不支援的圖片格式。請上傳 JPEG 或 PNG 檔案。",
         "unsupported_model": "圖片上傳需要具備視覺能力的模型。請切換至 Gemma3 或類似的視覺模型。",
         "pdf_oversize": "PDF 檔案大小必須小於 {size}",
-        "pdf_text_extract_error": "文字提取失敗 - 此 PDF 可能是掃描檔或基於圖像的檔案。我們強烈建議切換到 Gemma3 以獲得更好的結果。",
+        "pdf_text_extract_error": "文字擷取失敗 - 此 PDF 可能是掃描檔或圖像格式。",
         "too_many_pdfs": "最多允許 {max} 個 PDF 檔案",
         "pdf_page_count_exceeded": "PDF 必須少於 {max} 頁",
         "only_load_partial_pages": "由於檔案大小限制，僅載入前 {max} 頁"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "總結頁面"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "搜尋中：「{query}」...",
+        "search_completed": "搜尋完成：「{query}」"
+      },
+      "fetch_page": {
+        "reading_success": "已完成閱讀：{title}",
+        "read_failed": "讀取失敗：{error}",
+        "error_no_content": "找不到內容",
+        "reading": "閱讀：{title}"
+      },
+      "view_image": {
+        "analyzing": "分析中：{title}",
+        "analyze_failed": "分析失敗：{error}",
+        "analyze_success": "已完成分析：{title}",
+        "image_not_found": "找不到圖片"
+      },
+      "view_pdf": {
+        "pdf_not_found": "找不到 PDF"
+      },
+      "view_tab": {
+        "tab_not_found": "找不到分頁"
       }
     }
   },

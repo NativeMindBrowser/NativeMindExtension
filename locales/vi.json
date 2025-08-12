@@ -22,7 +22,7 @@
         "unsupported_image_type": "Định dạng hình ảnh không được hỗ trợ. Vui lòng tải lên tệp JPEG hoặc PNG.",
         "unsupported_model": "Tải lên hình ảnh yêu cầu mô hình có khả năng thị giác. Vui lòng chuyển sang Gemma3 hoặc mô hình thị giác tương tự.",
         "pdf_oversize": "Kích thước file PDF phải nhỏ hơn {size}",
-        "pdf_text_extract_error": "Trích xuất văn bản thất bại - tệp PDF này có thể được quét hoặc dựa trên hình ảnh. Chúng tôi đặc biệt khuyến nghị chuyển sang Gemma3 để có kết quả tốt hơn.",
+        "pdf_text_extract_error": "Trích xuất văn bản thất bại - tệp PDF này có thể được quét hoặc dựa trên hình ảnh.",
         "too_many_pdfs": "Tối đa {max} tệp PDF được phép",
         "pdf_page_count_exceeded": "PDF phải có ít hơn {max} trang",
         "only_load_partial_pages": "Chỉ {max} trang đầu tiên được tải do kích thước tệp"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "Tóm tắt trang"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Đang tìm kiếm: \"{query}\"...",
+        "search_completed": "Tìm kiếm hoàn tất: \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "Đã hoàn thành đọc: {title}",
+        "read_failed": "Đọc thất bại: {error}",
+        "error_no_content": "không tìm thấy nội dung",
+        "reading": "Bài đọc: {title}"
+      },
+      "view_image": {
+        "analyzing": "Đang phân tích: {title}",
+        "analyze_failed": "Phân tích thất bại: {error}",
+        "analyze_success": "Hoàn thành phân tích: {title}",
+        "image_not_found": "ảnh không tìm thấy"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF không tìm thấy"
+      },
+      "view_tab": {
+        "tab_not_found": "tab không tìm thấy"
       }
     }
   },

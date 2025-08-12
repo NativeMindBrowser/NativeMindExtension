@@ -22,7 +22,7 @@
         "unsupported_image_type": "Formato de imagem não suportado. Por favor, carregue arquivos JPEG ou PNG.",
         "unsupported_model": "O upload de imagem requer um modelo com capacidade de visão. Por favor, mude para Gemma3 ou modelo de visão similar.",
         "pdf_oversize": "O tamanho do arquivo PDF deve ser menor que {size}",
-        "pdf_text_extract_error": "A extração de texto falhou - este PDF pode estar digitalizado ou ser baseado em imagem. Recomendamos vivamente mudar para o Gemma3 para melhores resultados.",
+        "pdf_text_extract_error": "A extração de texto falhou - este PDF pode estar digitalizado ou ser baseado em imagem.",
         "too_many_pdfs": "Máximo de {max} arquivo PDF permitido",
         "pdf_page_count_exceeded": "O PDF deve ter menos de {max} páginas",
         "only_load_partial_pages": "Apenas as primeiras {max} páginas são carregadas devido ao tamanho do arquivo"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "Resumir a página"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Pesquisando: \"{query}\"...",
+        "search_completed": "Pesquisa concluída: \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "Leitura concluída: {title}",
+        "read_failed": "Falha na leitura: {error}",
+        "error_no_content": "nenhum conteúdo encontrado",
+        "reading": "Leitura: {title}"
+      },
+      "view_image": {
+        "analyzing": "Analisando: {title}",
+        "analyze_failed": "Análise falhou: {error}",
+        "analyze_success": "Análise concluída: {title}",
+        "image_not_found": "imagem não encontrada"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF não encontrado"
+      },
+      "view_tab": {
+        "tab_not_found": "aba não encontrada"
       }
     }
   },

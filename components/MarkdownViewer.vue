@@ -17,6 +17,7 @@ import IconMDLink from '@/assets/icons/md-link.svg?raw'
 import logger from '@/utils/logger'
 
 import { getIconSvg, IconName, unescapeDirectiveText } from '../entrypoints/sidepanel/utils/markdown/content'
+import { webComponents } from './web-components'
 
 const log = logger.child('MarkdownViewer')
 
@@ -188,7 +189,7 @@ dompurify.addHook('afterSanitizeAttributes', function (node) {
 })
 
 const renderMarkdown = async (md: string) => {
-  return dompurify.sanitize(await marked.parse(md, { renderer }), { USE_PROFILES: { html: true, svg: true, svgFilters: true }, ALLOWED_ATTR: ['target', 'title'] })
+  return dompurify.sanitize(await marked.parse(md, { renderer }), { USE_PROFILES: { html: true, svg: true, svgFilters: true }, ADD_ATTR: ['target', 'title', 'name'], ADD_TAGS: [...webComponents.map((c) => c.name)] })
 }
 
 const html = ref('')

@@ -117,6 +117,7 @@ export const normalizeToolCallsMiddleware: LanguageModelV1Middleware = {
       transform(chunk, controller) {
         if (chunk.type === 'tool-call' && chunk.toolName === 'tool_calls' && chunk.args) {
           const newToolCall = safeParseJSON({ text: chunk.args, schema: z.object({ name: z.string(), arguments: z.any() }) })
+          logger.debug('Normalizing tool call', chunk, newToolCall)
           if (newToolCall.success) {
             chunk.toolName = newToolCall.value.name
             chunk.args = JSON.stringify(newToolCall.value.arguments)

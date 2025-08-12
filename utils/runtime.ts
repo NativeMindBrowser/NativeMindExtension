@@ -11,21 +11,21 @@ export function only<T>(entrypoints: EntrypointName[], fn: () => T) {
   return undefined as T
 }
 
-type EntrypointFn<T> = Partial<Record<EntrypointName, () => T>>
-type EntrypointWithDefaultFn<T> = EntrypointFn<T> & { default: () => T }
-type EntrypointWithOptionalDefaultFn<T> = EntrypointFn<T> & { default?: () => T }
+type EntrypointFnMap = { [K in EntrypointName]?: () => void }
+type EntrypointWithDefaultFnMap = EntrypointFnMap & { default: () => void }
+type EntrypointWithOptionalDefaultFnMap = EntrypointFnMap & { default?: () => void }
 
-export function forRuntimes<T>(runtimesFn: EntrypointFn<T>): T | undefined
-export function forRuntimes<T>(runtimesFn: EntrypointWithDefaultFn<T>): T
-export function forRuntimes<T>(runtimesFn: EntrypointWithOptionalDefaultFn<T>) {
+type EntrypointReturnType<T extends EntrypointFnMap> = {
+  [K in keyof T]: T[K] extends () => infer R ? R : never
+}[keyof T]
+
+export function forRuntimes<T extends EntrypointWithDefaultFnMap>(runtimesFn: T): EntrypointReturnType<T>
+export function forRuntimes<T extends EntrypointFnMap>(runtimesFn: T): EntrypointReturnType<T> | undefined
+export function forRuntimes<T extends EntrypointWithOptionalDefaultFnMap>(runtimesFn: T): EntrypointReturnType<T> | undefined {
   const appMetadata = getAppMetadata()
   const currentEntrypointName = appMetadata.entrypoint
   if (currentEntrypointName && runtimesFn[currentEntrypointName]) {
-    return runtimesFn[currentEntrypointName]()
+    return runtimesFn[currentEntrypointName]!() as EntrypointReturnType<T>
   }
-  return runtimesFn.default?.()
-}
-
-export function isRuntime(entrypointName: EntrypointName) {
-  return getAppMetadata().entrypoint === entrypointName
+  return runtimesFn.default?.() as EntrypointReturnType<T>
 }

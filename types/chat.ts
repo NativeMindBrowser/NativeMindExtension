@@ -1,6 +1,6 @@
 import * as CSS from 'csstype'
 
-import { IconName } from '@/utils/markdown/content'
+import { IconName } from '@/utils/icon'
 
 import { PromiseOr } from './common'
 import { Base64ImageData } from './image'
@@ -119,6 +119,24 @@ export interface TaskMessageV1 extends BaseMessage {
   subTasks?: TaskMessageV1[]
 }
 
+export interface AgentTaskMessageV1 extends BaseMessage {
+  role: 'agent-task'
+  summary: string
+  details?: {
+    content: string
+    expanded: boolean
+  }
+  timestamp: number
+  icon?: IconName
+  subTasks?: AgentTaskMessageV1[]
+}
+
+export interface AgentTaskGroupMessageV1 extends BaseMessage {
+  role: 'agent-task-group'
+  timestamp: number
+  tasks: AgentTaskMessageV1[]
+}
+
 // Action is a type that defines the structure of interactive buttons/links or anything that can by clicked by the user
 export type ActionV1 = {
   customInput: { prompt: string }
@@ -142,7 +160,7 @@ export interface ActionMessageV1<ActionType extends ActionTypeV1 = ActionTypeV1>
   timestamp: number
 }
 
-export type HistoryItemV1 = UserMessageV1 | AssistantMessageV1 | TaskMessageV1 | SystemMessageV1 | ActionMessageV1 | AgentMessageV1
+export type HistoryItemV1 = UserMessageV1 | AssistantMessageV1 | TaskMessageV1 | SystemMessageV1 | ActionMessageV1 | AgentMessageV1 | AgentTaskGroupMessageV1
 export type Role = HistoryItemV1['role']
 export type ChatHistoryV1 = {
   id: string

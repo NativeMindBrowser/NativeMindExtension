@@ -3,6 +3,8 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "vue",
-    "types": ["@webgpu/types"]
+    "types": ["@webgpu/types"],
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
   }
 }

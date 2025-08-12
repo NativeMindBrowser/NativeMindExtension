@@ -342,6 +342,30 @@
                 </button>
               </div>
             </div>
+            <div class="flex flex-col gap-2">
+              <span>Parser <span class="font-light text-xs">(this option will affect the parser used by agent)</span></span>
+              <Switch
+                v-model="documentParserType"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-6 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[
+                  {
+                    label: 'Auto',
+                    key: 'auto',
+                  },
+                  {
+                    label: 'Readability',
+                    key: 'readability',
+                  },
+                  {
+                    label: 'Turndown',
+                    key: 'turndown',
+                  }
+                ]"
+              />
+            </div>
             <details
               v-for="(article, idx) of articles"
               :key="idx"
@@ -349,9 +373,9 @@
             >
               <summary
                 class="flex justify-start items-stretch text-xs cursor-pointer wrap-anywhere"
-                :title="`${article.type} - ${article.title} - ${article.url}`"
+                :title="`${article.type} - ${article.title} - ${article.url} - parser: [${article.parser}]`"
               >
-                <span class="whitespace-nowrap">[{{ article.type }}]</span> <span class="font-light">{{ article.title }}</span>
+                <span class="whitespace-nowrap">[{{ article.type }}]</span> <span class="font-light">{{ article.title }} - parser: {{ article.parser }}</span>
               </summary>
               <div class="flex flex-col gap-3 mt-2">
                 <div class="flex flex-col gap-3 justify-start items-stretch">
@@ -518,12 +542,13 @@ const maxAgentIterations = userConfig.chat.agent.maxIterations.toRef()
 const updateEnvironmentDetailsFrequency = userConfig.chat.environmentDetails.fullUpdateFrequency.toRef()
 const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.toRef()
 
+const documentParserType = userConfig.documentParser.parserType.toRef()
 const translationSystemPromptError = ref('')
 const newModelId = ref('')
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }[]>([])
 const webllmCacheStatus = ref<{ modelId: WebLLMSupportedModel, hasCache: boolean }[]>([])
 
-const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string }[]>()
+const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string, parser: string }[]>()
 const modelProviderOptions = [
   { id: 'ollama' as const, label: 'Ollama' },
   { id: 'web-llm' as const, label: 'Web LLM' },
@@ -572,6 +597,7 @@ const parseAllDocuments = async () => {
           title: pdfContent.fileName,
           url,
           content: pdfContent.texts.join('\n'),
+          parser: 'pdf',
         })
       }
       else {
@@ -581,8 +607,9 @@ const parseAllDocuments = async () => {
             type: 'html',
             title: article.title,
             content: article.textContent,
-            html: article.content ?? undefined,
+            html: article.html ?? undefined,
             url,
+            parser: article.parser,
           })
         }
       }

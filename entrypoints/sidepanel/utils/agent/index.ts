@@ -1,12 +1,13 @@
 import { CoreAssistantMessage, CoreMessage, CoreUserMessage } from 'ai'
-import { isEqual } from 'es-toolkit'
+import { cloneDeep, isEqual } from 'es-toolkit'
 import { Ref, ref } from 'vue'
 
-import { AgentMessageV1, AssistantMessageV1, ContextAttachment, ContextAttachmentStorage, TabAttachment, TaskMessageV1 } from '@/types/chat'
+import { AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, ContextAttachment, ContextAttachmentStorage, TabAttachment } from '@/types/chat'
+import { AssistantMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData, ImageDataWithId } from '@/types/image'
 import { TagBuilderJSON } from '@/types/prompt'
-import { AbortError, fromError, ParseFunctionCallError } from '@/utils/error'
+import { AbortError, AiSDKError, AppError, ErrorCode, fromError, ParseFunctionCallError } from '@/utils/error'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
 import { GetPromptBasedTool, PromptBasedToolName, PromptBasedToolNameAndParams } from '@/utils/llm/tools/prompt-based/tools'
@@ -25,13 +26,17 @@ export type AgentToolExecuteResultToolResult = {
 // Tool results for next agent loop
 export type AgentToolExecuteResult = AgentToolExecuteResultToolResult
 
+type Distribute<T extends PromptBasedToolName> = T extends unknown ? PromptBasedToolNameAndParams<T> : never
+type PromptBasedToolNameAndParamsDistributed = Distribute<PromptBasedToolName>
+
 export type AgentToolCallExecute<T extends PromptBasedToolName> = {
   (options: {
     params: InferredParams<GetPromptBasedTool<T>['parameters']>
     agentStorage: AgentStorage
     historyManager: ReactiveHistoryManager
     loopImages: (Base64ImageData & { id: string })[]
-    statusMessageModifier: StatusMessageModifier
+    taskMessageModifier: TaskMessageModifier
+    taskScopeToolCalls: PromptBasedToolNameAndParamsDistributed[]
     abortSignal: AbortSignal
   }): PromiseOr<Omit<AgentToolExecuteResult, 'toolName'>[]>
 }
@@ -43,15 +48,21 @@ export type AgentToolCall<T extends PromptBasedToolName> = {
 }
 
 // status message is what tools use to show their progress in the UI
-export type StatusMessageModifier = {
-  setContent: (content: string) => void
-  getContent: () => string
-  done(): void
-  content: string
+export type TaskMessageModifier = {
+  makeAllTaskDone: () => void
+  addTaskMessage: (msg: Pick<AgentTaskMessageV1, 'summary' | 'details'>) => AgentTaskMessageV1
+}
+
+export type AgentTaskGroupMessageManager = {
+  addTask: (msg: Pick<AgentTaskMessageV1, 'summary' | 'details'>) => AgentTaskMessageV1
 }
 
 export class AgentStorage {
-  constructor(public attachmentStorage: ContextAttachmentStorage) {}
+  private attachmentStorage: ContextAttachmentStorage
+  constructor(private rawAttachmentStorage: ContextAttachmentStorage) {
+    // clone the original storage to avoid changing after agent start
+    this.attachmentStorage = cloneDeep(rawAttachmentStorage)
+  }
 
   getById<T extends ContextAttachment['type']>(type: T, id: string): ContextAttachment & { type: T } | undefined {
     if (this.attachmentStorage.currentTab?.value.id === id && this.attachmentStorage.currentTab.type === type) {
@@ -81,8 +92,8 @@ export class AgentStorage {
     const currentTab = this.attachmentStorage.currentTab
     if (currentTab?.type !== 'tab') return
     const currentTabId = currentTab.value.tabId
-    if (this.attachmentStorage.attachments.some((attachment) => attachment.type === 'tab' && attachment.value.tabId === currentTabId)) return
-    this.attachmentStorage.attachments.push(currentTab)
+    if (this.rawAttachmentStorage.attachments.some((attachment) => attachment.type === 'tab' && attachment.value.tabId === currentTabId)) return
+    this.rawAttachmentStorage.attachments.push(currentTab)
   }
 
   isCurrentTab(tabId: number) {
@@ -167,30 +178,22 @@ export class Agent<T extends PromptBasedToolName> {
   }
 
   // tool use message proxy to modify the assistant message content
-  makeTaskMessageProxy(): StatusMessageModifier {
-    let msg: TaskMessageV1 | undefined
+  makeTaskMessageProxy(): TaskMessageModifier {
+    let groupMsg: AgentTaskGroupMessageV1 | undefined
     const ensureMessage = () => {
-      if (!msg) {
-        msg = this.historyManager.appendTaskMessage()
+      if (!groupMsg) {
+        groupMsg = this.historyManager.appendAgentTaskGroupMessage()
       }
-      return msg
+      return groupMsg
     }
     return {
-      done() {
-        ensureMessage().done = true
+      makeAllTaskDone: () => {
+        if (groupMsg) groupMsg.tasks.forEach((task) => {
+          task.done = true
+        })
       },
-      setContent(content: string) {
-        ensureMessage().content = content
-      },
-      getContent() {
-        if (msg === undefined) return ''
-        return msg.content
-      },
-      get content() {
-        return this.getContent()
-      },
-      set content(content: string) {
-        this.setContent(content)
+      addTaskMessage: (msg: Pick<AgentTaskMessageV1, 'summary' | 'details'>) => {
+        return this.historyManager.appendAgentTaskMessage(ensureMessage(), msg)
       },
     }
   }
@@ -215,7 +218,8 @@ export class Agent<T extends PromptBasedToolName> {
     // make this message available to the next user task
     const convertToAssistantMessage = () => {
       if (agentMessage) {
-        (agentMessage as unknown as AssistantMessageV1).role = 'assistant'
+        agentMessage.done = true
+        ;(agentMessage as unknown as AssistantMessageV1).role = 'assistant'
       }
     }
     return {
@@ -223,6 +227,18 @@ export class Agent<T extends PromptBasedToolName> {
       getOrAddAgentMessage,
       deleteAgentMessageIfEmpty,
       convertToAssistantMessage,
+    }
+  }
+
+  makeAgentTaskGroupMessageManager(): AgentTaskGroupMessageManager {
+    let groupMessage: AgentTaskGroupMessageV1 | undefined
+    return {
+      addTask: (msg: Pick<AgentTaskMessageV1, 'summary' | 'details'>) => {
+        if (!groupMessage) {
+          groupMessage = this.historyManager.appendAgentTaskGroupMessage()
+        }
+        return this.historyManager.appendAgentTaskMessage(groupMessage, msg)
+      },
     }
   }
 
@@ -254,6 +270,7 @@ export class Agent<T extends PromptBasedToolName> {
     // this messages only used for the agent iteration but not user-facing
     const loopMessages: (CoreAssistantMessage | CoreUserMessage)[] = []
     const loopImages: ImageDataWithId[] = []
+    const taskScopeToolCalls: PromptBasedToolNameAndParamsDistributed[] = []
 
     using _status = this.statusScope('running')
     let iteration = 0
@@ -270,6 +287,7 @@ export class Agent<T extends PromptBasedToolName> {
       if (shouldForceAnswer) {
         thisLoopMessages.push({ role: 'user', content: `Answer Language: Strictly follow the LANGUAGE POLICY above.\nBased on all the information collected above, please provide a comprehensive final answer.\nDo not use any tools.` })
       }
+      let taskMessageModifier = this.makeTaskMessageProxy()
       const agentMessageManager = this.makeTempAgentMessageManager()
       const agentMessage = agentMessageManager.getOrAddAgentMessage()
       const response = streamTextInBackground({
@@ -305,24 +323,33 @@ export class Agent<T extends PromptBasedToolName> {
               [chunk.toolName]: chunk.args,
             }).build()
             currentLoopAssistantRawMessage.content += tagText
-            currentLoopToolCalls.push({ toolName: chunk.toolName as T, params: chunk.args as PromptBasedToolNameAndParams<T>['params'] })
+            const toolCall = { toolName: chunk.toolName as T, params: chunk.args as PromptBasedToolNameAndParams<T>['params'] } as PromptBasedToolNameAndParams<T>
+            currentLoopToolCalls.push(toolCall)
+            taskScopeToolCalls.push(toolCall as PromptBasedToolNameAndParamsDistributed)
           }
         }
         agentMessage.done = true
         if (currentLoopToolCalls.length > 0) {
-          const toolResults = await this.executeToolCalls(currentLoopToolCalls, loopImages)
-          loopMessages.push({ role: 'user', content: this.toolResultsToPrompt(toolResults) })
+          if (agentMessage.content || agentMessage.reasoning) {
+            taskMessageModifier = this.makeTaskMessageProxy()
+          }
+          const toolResults = await this.executeToolCalls(currentLoopToolCalls, taskScopeToolCalls, loopImages, taskMessageModifier)
+          if (toolResults.length === 0) {
+            const errorResult = TagBuilder.fromStructured('error', {
+              message: `Tool not found, available tools are: ${Object.keys(this.tools).join(', ')}`,
+            })
+            loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
+          }
+          else {
+            loopMessages.push({ role: 'user', content: this.toolResultsToPrompt(toolResults) })
+          }
         }
       }
       catch (e) {
+        agentMessage.done = true
         const error = fromError(e)
-        if (error instanceof ParseFunctionCallError) {
-          const errorResult = TagBuilder.fromStructured('error', {
-            message: `FORMAT ERROR: ${error.message}. Review system prompt validation phases. Correct format or respond without tools.`,
-          })
-          loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
-        }
-        this.log.error('Error in chat stream', e)
+        this.processGenerationError(error, loopMessages)
+        this.log.error('Error in chat stream', e, error)
         hasError = true
       }
       const normalizedText = this.normalizeText(text)
@@ -333,6 +360,25 @@ export class Agent<T extends PromptBasedToolName> {
         break
       }
       agentMessageManager.deleteAgentMessageIfEmpty()
+    }
+  }
+
+  processGenerationError(error: AppError<ErrorCode>, loopMessages: (CoreAssistantMessage | CoreUserMessage)[]) {
+    if (error instanceof ParseFunctionCallError) {
+      const errorResult = TagBuilder.fromStructured('error', {
+        message: `FORMAT ERROR: ${error.message}. Review system prompt validation phases. Correct format or respond without tools.`,
+      })
+      loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
+    }
+    else if (error instanceof AiSDKError) {
+      this.log.warn('AI SDK error occurred', error)
+      // error names: https://ai-sdk.dev/docs/reference/ai-sdk-errors
+      if (error.name === 'AI_TypeValidationError' || error.name === 'AI_NoSuchToolError') {
+        const errorResult = TagBuilder.fromStructured('error', {
+          message: `TOOL FORMAT ERROR. Review system prompt validation phases. Correct format or respond without tools.`,
+        })
+        loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
+      }
     }
   }
 
@@ -352,7 +398,7 @@ export class Agent<T extends PromptBasedToolName> {
     })
   }
 
-  async executeToolCalls(toolCalls: PromptBasedToolNameAndParams<T>[], loopImages: ImageDataWithId[] = []) {
+  async executeToolCalls(toolCalls: PromptBasedToolNameAndParams<T>[], taskScopeToolCalls: PromptBasedToolNameAndParamsDistributed[], loopImages: ImageDataWithId[] = [], taskMessageModifier: TaskMessageModifier) {
     toolCalls = this.deduplicateToolCalls(toolCalls)
     const currentLoopToolResults: AgentToolExecuteResult[] = []
     for (const chunk of toolCalls) {
@@ -364,16 +410,16 @@ export class Agent<T extends PromptBasedToolName> {
         const abortController = new AbortController()
         this.abortControllers.push(abortController)
         try {
-          const statusMessageModifier = this.makeTaskMessageProxy()
           const executedResults = await tool.execute({
             params,
+            taskScopeToolCalls,
             agentStorage: this.agentStorage,
             historyManager: this.historyManager,
             loopImages,
             abortSignal: abortController.signal,
-            statusMessageModifier,
+            taskMessageModifier,
           })
-          statusMessageModifier.done()
+          taskMessageModifier.makeAllTaskDone()
           for (const result of executedResults) {
             if (result.type === 'tool-result') {
               currentLoopToolResults.push({ ...result, toolName })
@@ -393,7 +439,7 @@ export class Agent<T extends PromptBasedToolName> {
         }
       }
       else {
-        this.log.warn('Tool not found', toolName)
+        this.log.warn('Tool not found', chunk)
       }
     }
     return currentLoopToolResults

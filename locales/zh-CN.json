@@ -189,7 +189,7 @@
         "unsupported_image_type": "不支持的图片格式。请上传JPEG或PNG文件。",
         "unsupported_model": "图片上传需要具备视觉能力的模型。请切换到Gemma3或类似的视觉模型。",
         "pdf_oversize": "PDF文件大小必须小于{size}",
-        "pdf_text_extract_error": "文本提取失败 - 此PDF可能是扫描版或基于图像的。我们强烈建议切换到Gemma3以获得更好的结果。",
+        "pdf_text_extract_error": "文本提取失败 - 此PDF可能是扫描版或基于图像的。",
         "too_many_pdfs": "最多允许 {max} 个 PDF 文件",
         "pdf_page_count_exceeded": "PDF 页数不能超过 {max} 页",
         "only_load_partial_pages": "由于文件大小限制，仅加载前 {max} 页"
@@ -204,6 +204,30 @@
       },
       "summarize_page_content": {
         "title": "总结页面"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "正在搜索：\"{query}\"...",
+        "search_completed": "搜索完成：\"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "已完成阅读：{title}",
+        "read_failed": "读取失败：{error}",
+        "error_no_content": "未找到内容",
+        "reading": "阅读：{title}"
+      },
+      "view_image": {
+        "analyzing": "正在分析：{title}",
+        "analyze_failed": "分析失败：{error}",
+        "analyze_success": "已完成分析：{title}",
+        "image_not_found": "图片未找到"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF未找到"
+      },
+      "view_tab": {
+        "tab_not_found": "未找到标签页"
       }
     }
   },

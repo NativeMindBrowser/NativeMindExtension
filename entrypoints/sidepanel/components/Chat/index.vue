@@ -16,7 +16,7 @@
         <div
           v-for="(item, index) in chat.historyManager.history.value"
           :key="index"
-          :class="[item.role === 'user' ? 'self-end' : 'self-start']"
+          :class="[item.role === 'user' ? 'self-end' : 'self-start', { 'w-full': item.role === 'agent-task-group' }]"
           class="max-w-full relative"
         >
           <div
@@ -40,6 +40,10 @@
             v-else-if="item.role === 'action'"
             :message="item"
             :disabled="chat.isAnswering()"
+          />
+          <MessageTaskGroup
+            v-else-if="item.role === 'agent-task-group'"
+            :message="item"
           />
           <ExhaustiveError v-else />
         </div>
@@ -139,6 +143,7 @@ import {
 } from '../../utils/chat/index'
 import AttachmentSelector from '../AttachmentSelector.vue'
 import MessageAction from './Messages/Action.vue'
+import MessageTaskGroup from './Messages/AgentTaskGroup.vue'
 import MessageAssistant from './Messages/Assistant.vue'
 import MessageTask from './Messages/Task.vue'
 

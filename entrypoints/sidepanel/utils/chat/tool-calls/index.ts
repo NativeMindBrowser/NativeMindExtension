@@ -1,22 +1,34 @@
 import { browser } from 'wxt/browser'
 
 import { makeAbortable } from '@/utils/abort-controller'
+import { parseHTMLWithTurndown } from '@/utils/document-parser'
+import { useGlobalI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
+import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { s2bRpc } from '@/utils/rpc'
 
 import { AgentToolCallExecute } from '../../agent'
 import { SearchScraper } from '../../search'
 
-export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async ({ params, abortSignal, statusMessageModifier }) => {
+export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async ({ params, abortSignal, taskMessageModifier }) => {
+  const { t } = await useGlobalI18n()
+  const HARD_MAX_RESULTS = 10
   const { query, max_results } = params
-  statusMessageModifier.content = `Searching online for "${query}"...`
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.search_online.searching', { query }) })
   const searchScraper = new SearchScraper()
   const links = await searchScraper.searchWebsites(query, { abortSignal, engine: 'google' })
-  const filteredLinks = links.slice(0, max_results)
-  statusMessageModifier.content = `
-Found ${filteredLinks.length} results for "${query}":
-${filteredLinks.map((link) => `\n- ${link.title} [${link.url.substring(0, 35)}...](${link.url})`).join('\n\n')}`.trim()
+  const filteredLinks = links.slice(0, Math.max(max_results, HARD_MAX_RESULTS))
+  taskMsg.summary = t('chat.tool_calls.search_online.search_completed', { query })
+  taskMsg.details = {
+    content: filteredLinks.map((link) => {
+      const faviconUrl = link.favicon?.startsWith('data:') ? link.favicon : undefined
+      const faviconPart = faviconUrl ? makeRawHtmlTag('img', '', { src: faviconUrl, style: 'width: 16px; height: 16px;' }) : makeIcon('web', { color: '#596066' })
+      const linkPart = makeRawHtmlTag('a', link.title || link.url, { href: link.url, target: '_blank', style: 'color: #596066; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' })
+      return makeRawHtmlTag('div', `${faviconPart} ${linkPart}`, { style: 'display: flex; align-items: center; gap: 8px;' })
+    }).join('\n'),
+    expanded: true,
+  }
 
   return [{
     type: 'tool-result',
@@ -34,13 +46,14 @@ ${filteredLinks.map((link) => `\n- ${link.title} [${link.url.substring(0, 35)}..
   }]
 }
 
-export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ params, statusMessageModifier, abortSignal }) => {
+export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ params, taskMessageModifier, abortSignal }) => {
   const { url } = params
-  statusMessageModifier.content = `Fetching page content from "${url}"`
+  const { t } = await useGlobalI18n()
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: params.url }) })
   const searchScraper = new SearchScraper()
   const [content] = await makeAbortable(searchScraper.fetchUrlsContent([url]), abortSignal)
   if (!content) {
-    statusMessageModifier.content = `Failed to fetch content from "${url}"`
+    taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })
     return [{
       type: 'tool-result',
       results: {
@@ -51,31 +64,31 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
     }]
   }
   else {
-    statusMessageModifier.content = `Fetched content from "${url}"`
+    taskMsg.summary = t('chat.tool_calls.fetch_page.reading_success', { title: content.title || content.url })
     return [{
       type: 'tool-result',
       results: {
         url,
         status: 'completed',
-        page_content: `URL: ${content.url}\n\n ${content.textContent}`,
+        page_content: `URL: ${content.url}\n\n ${await parseHTMLWithTurndown(content.html)}`,
       },
     }]
   }
 }
 
-export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params, statusMessageModifier, agentStorage, abortSignal }) => {
+export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params, taskMessageModifier, agentStorage, abortSignal }) => {
   const log = logger.child('view_tab_execute')
   const { tab_id: tabId } = params
-  statusMessageModifier.content = `Reading tab "${tabId}"`
+  const { t } = await useGlobalI18n()
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: tabId }) })
   const tab = agentStorage.getById('tab', tabId)
-  statusMessageModifier.content = `Reading tab "${tabId}"`
   const hasTab = !!tab && await browser.tabs.get(tab.value.tabId).then(() => true).catch((e) => {
     log.error('Failed to get tab info', e)
     return false
   })
   if (!hasTab) {
     const allTabAttachmentIds = [...new Set(agentStorage.getAllTabs().map((tab) => tab.value.id))]
-    statusMessageModifier.content = `Tab "${tabId}" not found`
+    taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.view_tab.tab_not_found') })
     return [{
       type: 'tool-result',
       results: {
@@ -86,11 +99,21 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
       },
     }]
   }
-  statusMessageModifier.content = `Reading tab "${tab.value.title}"`
+  taskMsg.summary = t('chat.tool_calls.fetch_page.reading', { title: tab.value.title })
   if (agentStorage.isCurrentTab(tab.value.tabId)) {
     agentStorage.persistCurrentTab()
   }
   const content = await makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal)
+  if (!content.textContent) {
+    return [{
+      type: 'tool-result',
+      results: {
+        tab_id: tabId,
+        status: 'failed',
+        error_message: `Can not get content of tab "${tabId}", you may need to refresh the page`,
+      },
+    }]
+  }
   return [{
     type: 'tool-result',
     results: {
@@ -101,12 +124,13 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   }]
 }
 
-export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params, statusMessageModifier, agentStorage }) => {
+export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params, taskMessageModifier, agentStorage }) => {
   const { pdf_id: pdfId } = params
-  statusMessageModifier.content = `Viewing PDF with ID "${pdfId}"`
+  const { t } = await useGlobalI18n()
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: pdfId }) })
   const pdf = agentStorage.getById('pdf', pdfId)
   if (!pdf) {
-    statusMessageModifier.content = `PDF with ID "${pdfId}" not found`
+    taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.view_pdf.pdf_not_found') })
     return [{
       type: 'tool-result',
       results: {
@@ -117,8 +141,19 @@ export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params,
       },
     }]
   }
-  statusMessageModifier.content = `Viewing PDF "${pdf.value.name}"`
 
+  if (!pdf.value.textContent.trim()) {
+    taskMsg.summary = t('chat.input.attachment_selector.pdf_text_extract_error')
+    return [{
+      type: 'tool-result',
+      results: {
+        pdf_id: pdfId,
+        status: 'failed',
+        error_message: `PDF text extraction failed - this PDF may be scanned or image-based.`,
+      },
+    }]
+  }
+  taskMsg.summary = t('chat.tool_calls.fetch_page.reading_success', { title: pdf.value.name })
   return [{
     type: 'tool-result',
     results: {
@@ -129,13 +164,14 @@ export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params,
   }]
 }
 
-export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ params, statusMessageModifier, agentStorage, loopImages }) => {
+export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ params, taskMessageModifier, agentStorage, loopImages }) => {
   const { image_id: imageId } = params
+  const { t } = await useGlobalI18n()
   const image = agentStorage.getById('image', imageId)
-  statusMessageModifier.content = `Viewing image with ID "${imageId}"`
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.view_image.analyzing', { title: imageId }) })
   if (!image) {
     const availableImageIds = agentStorage.getAllImages().map((img) => img.value.id)
-    statusMessageModifier.content = `Image with ID "${imageId}" not found`
+    taskMsg.summary = t('chat.tool_calls.view_image.analyze_failed', { error: t('chat.tool_calls.view_image.image_not_found') })
     return [{
       type: 'tool-result',
       results: {
@@ -148,7 +184,7 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
   }
   const supportVision = await useOllamaStatusStore().checkCurrentModelSupportVision()
   if (!supportVision) {
-    statusMessageModifier.content = `Current model does not support image processing`
+    taskMsg.summary = `Current model does not support image processing`
     return [{
       type: 'tool-result',
       results: {
@@ -157,7 +193,7 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
       },
     }]
   }
-  statusMessageModifier.content = `Viewing image "${image.value.name}"`
+  taskMsg.summary = t('chat.tool_calls.view_image.analyze_success', { title: image.value.name })
   const existImageIdxInLoop = loopImages?.findIndex((img) => img.id === imageId)
   const imageIdx = existImageIdxInLoop > -1 ? existImageIdxInLoop : loopImages.length
   if (existImageIdxInLoop === -1) {

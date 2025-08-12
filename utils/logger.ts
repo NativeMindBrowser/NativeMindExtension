@@ -72,7 +72,12 @@ Logger.setLevels(import.meta.env.PROD ? [] : LEVELS.slice())
 export const logger = new Logger()
 export default logger
 
+declare global {
+  interface Window {
+    __NATIVEMIND_LOGGER__?: typeof Logger
+  }
+}
+
 if (typeof self !== 'undefined') {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (self as any).__NATIVEMIND_LOGGER__ = Logger
+  self.__NATIVEMIND_LOGGER__ = Logger
 }

@@ -22,7 +22,7 @@
         "unsupported_image_type": "Format gambar tidak didukung. Silakan unggah file JPEG atau PNG.",
         "unsupported_model": "Unggah gambar memerlukan model yang mampu memproses visual. Silakan beralih ke Gemma3 atau model visual serupa.",
         "pdf_oversize": "Ukuran file PDF harus kurang dari {size}",
-        "pdf_text_extract_error": "Ekstraksi teks gagal - PDF ini mungkin hasil scan atau berbasis gambar. Kami sangat merekomendasikan untuk beralih ke Gemma3 untuk hasil yang lebih baik.",
+        "pdf_text_extract_error": "Ekstraksi teks gagal - PDF ini mungkin hasil scan atau berbasis gambar.",
         "too_many_pdfs": "Maksimal {max} file PDF diizinkan",
         "pdf_page_count_exceeded": "PDF harus kurang dari {max} halaman",
         "only_load_partial_pages": "Hanya {max} halaman pertama yang dimuat karena ukuran file"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "Ringkas halaman"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Mencari: \"{query}\"...",
+        "search_completed": "Pencarian selesai: \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "Selesai membaca: {title}",
+        "read_failed": "Gagal membaca: {error}",
+        "error_no_content": "tidak ada konten yang ditemukan",
+        "reading": "Bacaan: {title}"
+      },
+      "view_image": {
+        "analyzing": "Menganalisis: {title}",
+        "analyze_failed": "Analisis gagal: {error}",
+        "analyze_success": "Analisis selesai: {title}",
+        "image_not_found": "gambar tidak ditemukan"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF tidak ditemukan"
+      },
+      "view_tab": {
+        "tab_not_found": "tab tidak ditemukan"
       }
     }
   },

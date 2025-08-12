@@ -22,7 +22,7 @@
         "unsupported_image_type": "รูปแบบไฟล์รูปภาพไม่รองรับ กรุณาอัปโหลดไฟล์ JPEG หรือ PNG",
         "unsupported_model": "การอัปโหลดรูปภาพต้องใช้โมเดลที่มีความสามารถด้านการมองเห็น กรุณาเปลี่ยนไปใช้ Gemma3 หรือโมเดลที่มีความสามารถด้านการมองเห็นที่คล้ายกัน",
         "pdf_oversize": "ขนาดไฟล์ PDF ต้องน้อยกว่า {size}",
-        "pdf_text_extract_error": "การดึงข้อความล้มเหลว - PDF นี้อาจเป็นไฟล์สแกนหรือเป็นรูปภาพ เราขอแนะนำอย่างยิ่งให้เปลี่ยนไปใช้ Gemma3 เพื่อผลลัพธ์ที่ดีกว่า",
+        "pdf_text_extract_error": "การดึงข้อความล้มเหลว - PDF นี้อาจเป็นไฟล์สแกนหรือเป็นรูปภาพ",
         "too_many_pdfs": "อนุญาตไฟล์ PDF สูงสุด {max} ไฟล์",
         "pdf_page_count_exceeded": "PDF ต้องมีจำนวนหน้าไม่เกิน {max} หน้า",
         "only_load_partial_pages": "โหลดเฉพาะ {max} หน้าแรกเท่านั้นเนื่องจากขนาดไฟล์"
@@ -37,6 +37,30 @@
       },
       "summarize_page_content": {
         "title": "สรุปหน้าเว็บ"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "กำลังค้นหา: \"{query}\"...",
+        "search_completed": "การค้นหาเสร็จสิ้น: \"{query}\""
+      },
+      "fetch_page": {
+        "reading_success": "อ่านเสร็จแล้ว: {title}",
+        "read_failed": "การอ่านล้มเหลว: {error}",
+        "error_no_content": "ไม่พบเนื้อหา",
+        "reading": "การอ่าน: {title}"
+      },
+      "view_image": {
+        "analyzing": "กำลังวิเคราะห์: {title}",
+        "analyze_failed": "การวิเคราะห์ล้มเหลว: {error}",
+        "analyze_success": "การวิเคราะห์เสร็จสิ้น: {title}",
+        "image_not_found": "ไม่พบรูปภาพ"
+      },
+      "view_pdf": {
+        "pdf_not_found": "ไม่พบไฟล์ PDF"
+      },
+      "view_tab": {
+        "tab_not_found": "ไม่พบแท็บ"
       }
     }
   },

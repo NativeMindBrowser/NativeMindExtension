@@ -44,6 +44,7 @@ export const DEFAULT_CHAT_SYSTEM_PROMPT = renderPrompt`You are an intelligent AI
 4. Accuracy First: Prefer accurate information over speculation
 5. Natural Communication: Never mention you want to use tools, just do it
 6. If user message mentions this tab, this page, this article or current context, always use view_tab to get the content of SELECTED tab
+7. Finalization Priority (OVERRIDES all tool rules): If the latest message explicitly says "Do not use any tools" or similar, you MUST NOT call any tools and MUST NOT emit <tool_calls> or any tool tags. Answer only from the existing conversation context.
 
 # TOOL USAGE GUIDELINES:
 PRIORITY ORDER - Always check available resources FIRST:
@@ -362,6 +363,9 @@ export async function _getUserConfig() {
       llmAPI: {
         enable: await new Config('chromeAI.llmAPI.enable').default(false).build(),
       },
+    },
+    documentParser: {
+      parserType: await new Config('documentParser.parserType').default('auto' as 'readability' | 'turndown' | 'auto').build(),
     },
     chat: {
       agent: {

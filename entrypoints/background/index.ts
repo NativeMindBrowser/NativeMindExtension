@@ -10,6 +10,7 @@ import { useGlobalI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
 import { b2sRpc, bgBroadcastRpc } from '@/utils/rpc'
 import { registerTabStoreCleanupListener } from '@/utils/tab-store'
+import { timeout } from '@/utils/timeout'
 import { translationCache } from '@/utils/translation-cache'
 import { registerDeclarativeNetRequestRule } from '@/utils/web-request'
 
@@ -67,7 +68,39 @@ export default defineBackground(() => {
     })
   }
 
-  browser.runtime.onInstalled.addListener(async () => {
+  const initContentScript = async (testBeforeInit = true) => {
+    // inject content script into all tabs which are opened before the extension is installed
+    const tabs = await browser.tabs.query({})
+    for (const tab of tabs) {
+      if (tab.id && tab.url) {
+        const tabUrl = tab.url
+        if (INVALID_URLS.some((regex) => regex.test(tabUrl))) continue
+        const tabId = tab.id
+        ;(async () => {
+          let hasRegistered = false
+          if (testBeforeInit) hasRegistered = await timeout(bgBroadcastRpc.ping({ _toTab: tabId }), 5000).then(() => true, () => false)
+          if (!hasRegistered) {
+            await browser.scripting.executeScript({
+              files: ['/content-scripts/content.js'],
+              target: { tabId },
+              world: 'ISOLATED',
+            }).then(() => {
+              logger.info('Content script injected', { tabId })
+            }).catch((error) => {
+              logger.error('Failed to inject content script', { tabId, error })
+            })
+          }
+        })()
+      }
+    }
+  }
+
+  // use enable extension in chrome extension settings
+  browser.management.onEnabled.addListener((info) => {
+    if (info.id === browser.runtime.id) initContentScript()
+  })
+
+  browser.runtime.onInstalled.addListener(async (ev) => {
     ContextMenuManager.getInstance().then(async (instance) => {
       const { t } = await useGlobalI18n()
       for (const menu of CONTEXT_MENU) {
@@ -77,24 +110,8 @@ export default defineBackground(() => {
         })
       }
     })
-    logger.debug('Extension Installed')
-    // inject content script into all tabs which are opened before the extension is installed
-    const tabs = await browser.tabs.query({})
-    for (const tab of tabs) {
-      if (tab.id && tab.url) {
-        const tabUrl = tab.url
-        if (INVALID_URLS.some((regex) => regex.test(tabUrl))) continue
-        await browser.scripting.executeScript({
-          files: ['/content-scripts/content.js'],
-          target: { tabId: tab.id },
-          world: 'ISOLATED',
-        }).then(() => {
-          logger.info('Content script injected', { tabId: tab.id })
-        }).catch((error) => {
-          logger.error('Failed to inject content script', { tabId: tab.id, error })
-        })
-      }
-    }
+    initContentScript(false)
+    logger.debug(`Extension Installed, reason: ${ev.reason}`)
   })
 
   browser.contextMenus.onClicked.addListener(async (info, tab) => {

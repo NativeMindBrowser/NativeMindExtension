@@ -200,7 +200,7 @@
         "pdf_page_count_exceeded": "PDF must be less than {max} pages",
         "pdf_oversize": "PDF file size must be less than {size}",
         "too_many_pdfs": "Maximum {max} PDF file allowed",
-        "pdf_text_extract_error": "Text extraction failed - this PDF may be scanned or image-based. We strongly recommend switching to Gemma3 for better results.",
+        "pdf_text_extract_error": "Text extraction failed - this PDF may be scanned or image-based.",
         "only_load_partial_pages": "Only the first {max} pages are loaded due to file size"
       }
     },
@@ -213,6 +213,30 @@
       },
       "search_more": {
         "title": "Search for more content like this"
+      }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Searching: \"{query}\"...",
+        "search_completed": "Search completed: \"{query}\""
+      },
+      "fetch_page": {
+        "reading": "Reading: {title}",
+        "read_failed": "Reading failed: {error}",
+        "error_no_content": "no content found",
+        "reading_success": "Completed reading: {title}"
+      },
+      "view_tab": {
+        "tab_not_found": "tab not found"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF not found"
+      },
+      "view_image": {
+        "analyzing": "Analyzing: {title}",
+        "image_not_found": "image not found",
+        "analyze_failed": "Analysis failed: {error}",
+        "analyze_success": "Completed analysis: {title}"
       }
     }
   },
