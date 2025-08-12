@@ -124,8 +124,8 @@ import IconStarOutline from '@/assets/icons/star-outline.svg?component'
 import IconTrash from '@/assets/icons/trash.svg?component'
 import Input from '@/components/Input.vue'
 import Button from '@/components/ui/Button.vue'
+import type { ChatListItem } from '@/types/chat'
 import { useI18n } from '@/utils/i18n'
-import type { ChatListItem } from '@/utils/tab-store/history'
 
 interface Props {
   chat: ChatListItem

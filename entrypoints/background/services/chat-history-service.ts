@@ -7,14 +7,13 @@
 
 import { generateObject as originalGenerateObject } from 'ai'
 
-import { ContextAttachment, ContextAttachmentStorage } from '@/types/chat'
+import { ChatHistoryV1, ChatList, ContextAttachment, ContextAttachmentStorage, HistoryItemV1 } from '@/types/chat'
 import { useGlobalI18n } from '@/utils/i18n'
 import { getLocaleName } from '@/utils/i18n/constants'
 import { getModel, getModelUserConfig } from '@/utils/llm/models'
 import { selectSchema } from '@/utils/llm/output-schema'
 import logger from '@/utils/logger'
 import { generateChatTitle } from '@/utils/prompts'
-import { ChatHistoryV1, ChatList, HistoryItemV1 } from '@/utils/tab-store/history'
 import { getUserConfig } from '@/utils/user-config'
 
 import {
