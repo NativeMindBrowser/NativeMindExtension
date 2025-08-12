@@ -215,7 +215,7 @@ import { hashFile } from '@/utils/hash'
 import { useI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { convertImageFileToJpegBase64 } from '@/utils/image'
-import { extractPdfText, getPdfPageCount } from '@/utils/pdf'
+import { checkReadableTextContent, extractPdfText } from '@/utils/pdf'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { s2bRpc } from '@/utils/rpc'
 import { ByteSize } from '@/utils/sizes'
@@ -357,11 +357,19 @@ const SUPPORTED_ATTACHMENT_TYPES: AttachmentItem[] = [
         return false
       }
       let pageCount: number
+      let textContent = ''
       if (file instanceof PdfTextFile) {
         pageCount = file.pageCount
+        textContent = (await file.textContent()).join('')
       }
       else {
-        pageCount = await getPdfPageCount(file)
+        const textInfo = await extractPdfText(file)
+        pageCount = textInfo.pdfProxy.numPages
+        textContent = textInfo.mergedText
+      }
+      if (!await checkReadableTextContent(textContent)) {
+        showErrorMessage(t('chat.input.attachment_selector.pdf_text_extract_error'))
+        return false
       }
       if (pageCount > MAX_PDF_PAGE_COUNT) {
         // show error but allow this file
