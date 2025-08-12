@@ -12,7 +12,6 @@ import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
 import { GetPromptBasedTool, PromptBasedToolName, PromptBasedToolNameAndParams } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
 import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
-import { s2bRpc } from '@/utils/rpc'
 
 import { ReactiveHistoryManager } from '../chat'
 import { streamTextInBackground } from '../llm'
@@ -249,12 +248,6 @@ export class Agent<T extends PromptBasedToolName> {
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
     let reasoningStart: number | undefined
-    // Get the latest context attachments from the database to ensure we have current state
-    const latestContextAttachments = await s2bRpc.getContextAttachments(this.options.chatId)
-    if (!latestContextAttachments) {
-      throw new Error('Failed to get context attachments for chat')
-    }
-    this.log.debug('Latest context attachments', latestContextAttachments)
     this.log.debug('baseMessages', baseMessages)
     // clone the message to avoid ui changes in agent's running process
 

@@ -115,7 +115,7 @@ export const chatWithEnvironment = definePrompt(async (question: string, environ
   const user = renderPrompt`
 ${userMessageTagBuilder}${environmentDetails ? `\n\n${environmentDetails}` : ''}`.trim()
 
-  logger.debug('Chat with environment prompt', {
+  logger.debug('Agent generateFull', {
     user,
     images,
     system,

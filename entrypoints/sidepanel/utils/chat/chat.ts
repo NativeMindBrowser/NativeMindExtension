@@ -511,7 +511,15 @@ export class Chat {
 
   private async generateEnvironmentDetails(currentUserMessageId: string) {
     const fullEnvironmentDetailsFrequency = (await getUserConfig()).chat.environmentDetails.fullUpdateFrequency.get()
-    const environmentDetailsBuilder = new EnvironmentDetailsBuilder(this.contextAttachmentStorage.value)
+    // Get the latest context attachments from the database to ensure we have current state
+    const latestContextAttachments = await s2bRpc.getContextAttachments(this.contextAttachmentStorage.value.id)
+    if (!latestContextAttachments) {
+      throw new Error('Failed to get context attachments for chat')
+    }
+    // Update local storage with latest data from DB
+    Object.assign(this.contextAttachmentStorage.value, latestContextAttachments)
+
+    const environmentDetailsBuilder = new EnvironmentDetailsBuilder(latestContextAttachments)
     const contextUpdateInfo = this.historyManager.chatHistory.value.contextUpdateInfo
     if (contextUpdateInfo) {
       const lastFullUpdateMessageId = contextUpdateInfo.lastFullUpdateMessageId

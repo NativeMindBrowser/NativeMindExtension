@@ -8,6 +8,7 @@ export interface ChatHistoryRecord {
   title: string
   lastInteractedAt?: number
   history: string // JSON serialized HistoryItemV1[]
+  // TODO: compatible with ContextAttachmentRecord
   createdAt: number
   updatedAt: number
 }
