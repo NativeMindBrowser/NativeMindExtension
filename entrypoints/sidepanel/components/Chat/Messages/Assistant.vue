@@ -2,8 +2,8 @@
   <div>
     <div
       class="text-sm rounded-md relative max-w-full inline-flex items-center min-w-0 gap-2"
-      :style="{ backgroundColor: message.style?.backgroundColor || 'white' }"
-      :class="[message.content || message.reasoning ? 'p-3 pt-2' : 'pt-2 pb-3']"
+      :style="{ backgroundColor: message.style?.backgroundColor }"
+      :class="[message.content || message.reasoning ? 'p-0' : 'pt-2 pb-3']"
     >
       <div
         v-if="message.isError"
@@ -20,8 +20,8 @@
             v-if="message.content || message.done"
             class="flex items-center gap-1"
           >
-            <IconReasoningFinished class="w-4" />
-            <Text color="placeholder">
+            <IconTickCircle class="w-4 text-success" />
+            <Text color="tertiary">
               {{ t('chat.messages.thought_for_seconds', Math.ceil(message.reasoningTime / 1000), { named: { second: Math.ceil(message.reasoningTime / 1000) } }) }}
             </Text>
           </div>
@@ -39,26 +39,12 @@
             :class="{ 'rotate-180': expanded }"
             @click="expanded = !expanded"
           >
-            <svg
-              width="15"
-              height="16"
-              viewBox="0 0 15 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M13.0556 5.77734L7.50001 11.3329L1.94446 5.77734"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <IconArrowDown class="w-4" />
           </div>
         </div>
         <div
           v-if="message.reasoning && (!message.content || expanded)"
-          class="wrap-anywhere border-l-2 pl-3 border-[#AEB5BD]"
+          class="wrap-anywhere pl-5 border-[#AEB5BD]"
           :class="expanded ? '' : 'line-clamp-3'"
         >
           <MarkdownViewer
@@ -67,7 +53,10 @@
           />
         </div>
         <div v-if="message.content">
-          <MarkdownViewer :text="message.content" />
+          <MarkdownViewer
+            :text="message.content"
+            class="text-text-primary"
+          />
         </div>
       </div>
       <div
@@ -87,7 +76,8 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import IconReasoningFinished from '@/assets/icons/reasoning-finished.svg?component'
+import IconArrowDown from '@/assets/icons/arrow-down.svg?component'
+import IconTickCircle from '@/assets/icons/tick-circle.svg?component'
 import IconWarning from '@/assets/icons/warning-circle.svg?component'
 import Loading from '@/components/Loading.vue'
 import Text from '@/components/ui/Text.vue'
