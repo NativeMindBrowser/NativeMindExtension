@@ -76,6 +76,15 @@
     "provider_model": {
       "title": "配置 Ollama"
     },
+    "cache": {
+      "title": "翻译缓存",
+      "enable": "启用缓存",
+      "enabled": "已启用",
+      "disabled": "已禁用",
+      "max_size": "最大大小",
+      "retention_days": "保留期限",
+      "days": "天"
+    },
     "advanced": {
       "title": "高级设置"
     },

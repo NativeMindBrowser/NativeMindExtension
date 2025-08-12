@@ -114,6 +114,15 @@
     "ollama_is_running": "Ollamaが実行中です"
   },
   "settings": {
+    "cache": {
+      "title": "翻訳キャッシュ",
+      "enable": "キャッシュを有効にする",
+      "enabled": "有効",
+      "disabled": "無効",
+      "max_size": "最大サイズ",
+      "retention_days": "保持期間",
+      "days": "日"
+    },
     "advanced": {
       "title": "詳細設定"
     },

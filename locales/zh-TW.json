@@ -114,6 +114,15 @@
     "ollama_is_running": "Ollama 正在運行"
   },
   "settings": {
+    "cache": {
+      "title": "翻譯快取",
+      "enable": "啟用快取",
+      "enabled": "已啟用",
+      "disabled": "已停用",
+      "max_size": "最大大小",
+      "retention_days": "保留期限",
+      "days": "天"
+    },
     "advanced": {
       "title": "進階"
     },

@@ -114,6 +114,15 @@
     "ollama_is_running": "Ollama запущена"
   },
   "settings": {
+    "cache": {
+      "title": "Кэш Переводов",
+      "enable": "Включить Кэш",
+      "enabled": "Включен",
+      "disabled": "Отключен",
+      "max_size": "Максимальный Размер",
+      "retention_days": "Период Хранения",
+      "days": "дней"
+    },
     "advanced": {
       "title": "Расширенные"
     },

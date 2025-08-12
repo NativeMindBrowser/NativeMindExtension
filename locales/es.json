@@ -138,6 +138,15 @@
     "ollama_is_running": "Ollama está ejecutándose"
   },
   "settings": {
+    "cache": {
+      "title": "Caché de Traducción",
+      "enable": "Habilitar Caché",
+      "enabled": "Habilitado",
+      "disabled": "Deshabilitado",
+      "max_size": "Tamaño Máximo",
+      "retention_days": "Período de Retención",
+      "days": "días"
+    },
     "advanced": {
       "title": "Avanzado"
     },

@@ -114,6 +114,15 @@
     "ollama_is_running": "Ollama กำลังทำงานอยู่"
   },
   "settings": {
+    "cache": {
+      "title": "แคชการแปล",
+      "enable": "เปิดใช้งานแคช",
+      "enabled": "เปิดใช้งาน",
+      "disabled": "ปิดใช้งาน",
+      "max_size": "ขนาดสูงสุด",
+      "retention_days": "ระยะเวลาเก็บข้อมูล",
+      "days": "วัน"
+    },
     "advanced": {
       "title": "การตั้งค่าขั้นสูง"
     },

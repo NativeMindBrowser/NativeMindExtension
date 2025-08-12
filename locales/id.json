@@ -114,6 +114,15 @@
     "ollama_is_running": "Ollama sedang berjalan"
   },
   "settings": {
+    "cache": {
+      "title": "Cache Terjemahan",
+      "enable": "Aktifkan Cache",
+      "enabled": "Diaktifkan",
+      "disabled": "Dinonaktifkan",
+      "max_size": "Ukuran Maksimal",
+      "retention_days": "Periode Penyimpanan",
+      "days": "hari"
+    },
     "advanced": {
       "title": "Canggih"
     },

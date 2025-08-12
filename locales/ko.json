@@ -114,6 +114,15 @@
     "ollama_is_running": "Ollama가 실행 중입니다"
   },
   "settings": {
+    "cache": {
+      "title": "번역 캐시",
+      "enable": "캐시 활성화",
+      "enabled": "활성화됨",
+      "disabled": "비활성화됨",
+      "max_size": "최대 크기",
+      "retention_days": "보존 기간",
+      "days": "일"
+    },
     "advanced": {
       "title": "고급 설정"
     },

@@ -114,6 +114,15 @@
     "ollama_is_running": "Ollama đang chạy"
   },
   "settings": {
+    "cache": {
+      "title": "Bộ nhớ đệm Dịch thuật",
+      "enable": "Bật Bộ nhớ đệm",
+      "enabled": "Đã bật",
+      "disabled": "Đã tắt",
+      "max_size": "Kích thước Tối đa",
+      "retention_days": "Thời gian Lưu trữ",
+      "days": "ngày"
+    },
     "advanced": {
       "title": "Nâng cao"
     },
