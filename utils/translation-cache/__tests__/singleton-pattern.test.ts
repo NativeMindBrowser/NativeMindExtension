@@ -7,6 +7,8 @@ import 'fake-indexeddb/auto'
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { BackgroundDatabaseManager } from '@/entrypoints/background/database'
+
 // Mock user config
 const mockUserConfig = {
   translation: {
@@ -50,7 +52,17 @@ vi.mock('@/entrypoints/background/database', () => ({
 }))
 
 describe('Singleton Pattern Implementation', () => {
-  let mockDB: any
+  let mockDB: {
+    get: ReturnType<typeof vi.fn>
+    put: ReturnType<typeof vi.fn>
+    delete: ReturnType<typeof vi.fn>
+    clear: ReturnType<typeof vi.fn>
+    count: ReturnType<typeof vi.fn>
+    transaction: ReturnType<typeof vi.fn>
+    objectStoreNames: {
+      contains: ReturnType<typeof vi.fn>
+    }
+  }
 
   beforeEach(async () => {
     vi.clearAllMocks()
@@ -90,7 +102,7 @@ describe('Singleton Pattern Implementation', () => {
       expect(BackgroundCacheServiceManager.getInstance()).toBeNull()
 
       // Initialize creates instance
-      const service1 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as any)
+      const service1 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as unknown as BackgroundDatabaseManager)
       expect(service1).toBeDefined()
 
       // Subsequent calls return same instance
@@ -98,7 +110,7 @@ describe('Singleton Pattern Implementation', () => {
       expect(service2).toBe(service1)
 
       // Initialize again returns same instance
-      const service3 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as any)
+      const service3 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as unknown as BackgroundDatabaseManager)
       expect(service3).toBe(service1)
     })
 
@@ -106,7 +118,7 @@ describe('Singleton Pattern Implementation', () => {
       const { BackgroundCacheServiceManager } = await import('@/entrypoints/background/services/cache-service')
 
       // Initialize service
-      const service1 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as any)
+      const service1 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as unknown as BackgroundDatabaseManager)
       expect(service1).toBeDefined()
       expect(BackgroundCacheServiceManager.getInstance()).toBe(service1)
 
@@ -115,7 +127,7 @@ describe('Singleton Pattern Implementation', () => {
       expect(BackgroundCacheServiceManager.getInstance()).toBeNull()
 
       // Can initialize new instance after reset
-      const service2 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as any)
+      const service2 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as unknown as BackgroundDatabaseManager)
       expect(service2).toBeDefined()
       expect(service2).not.toBe(service1) // New instance
     })
@@ -127,7 +139,7 @@ describe('Singleton Pattern Implementation', () => {
       mockDatabaseManager.initialize.mockRejectedValueOnce(new Error('Database error'))
 
       // Should throw error and not create instance
-      await expect(BackgroundCacheServiceManager.initialize(mockDatabaseManager as any))
+      await expect(BackgroundCacheServiceManager.initialize(mockDatabaseManager as unknown as BackgroundDatabaseManager))
         .rejects.toThrow('Database error')
 
       expect(BackgroundCacheServiceManager.getInstance()).toBeNull()
@@ -148,7 +160,7 @@ describe('Singleton Pattern Implementation', () => {
         done: Promise.resolve(),
       })
 
-      const service = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as any)
+      const service = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as unknown as BackgroundDatabaseManager)
 
       // Test type-safe method access
       expect(typeof service.getEntry).toBe('function')
@@ -166,7 +178,7 @@ describe('Singleton Pattern Implementation', () => {
     it('should maintain service state across singleton access', async () => {
       const { BackgroundCacheServiceManager } = await import('@/entrypoints/background/services/cache-service')
 
-      const service1 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as any)
+      const service1 = await BackgroundCacheServiceManager.initialize(mockDatabaseManager as unknown as BackgroundDatabaseManager)
 
       // Modify service configuration
       service1.updateConfig({ enabled: false, retentionDays: 60 })
@@ -188,7 +200,7 @@ describe('Singleton Pattern Implementation', () => {
       const { BackgroundCacheServiceManager } = await import('@/entrypoints/background/services/cache-service')
 
       // Initialize service
-      await BackgroundCacheServiceManager.initialize(mockDatabaseManager as any)
+      await BackgroundCacheServiceManager.initialize(mockDatabaseManager as unknown as BackgroundDatabaseManager)
 
       // Simulate RPC function accessing singleton
       const service = BackgroundCacheServiceManager.getInstance()

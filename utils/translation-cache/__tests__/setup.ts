@@ -4,21 +4,23 @@
 
 import { vi } from 'vitest'
 
+import type { CacheConfig, CacheMetadata, TranslationEntry } from '../types'
+
 // Mock IndexedDB for testing environment
 export function setupIndexedDBMocks() {
   const mockRequest = {
-    onsuccess: null as any,
-    onerror: null as any,
-    onupgradeneeded: null as any,
-    result: null as any,
-    error: null as any,
+    onsuccess: null as (() => void) | null,
+    onerror: null as (() => void) | null,
+    onupgradeneeded: null as (() => void) | null,
+    result: null as unknown,
+    error: null as DOMException | null,
   }
 
   const mockTransaction = {
     objectStore: vi.fn(),
-    oncomplete: null as any,
-    onerror: null as any,
-    onabort: null as any,
+    oncomplete: null as (() => void) | null,
+    onerror: null as (() => void) | null,
+    onabort: null as (() => void) | null,
   }
 
   const mockObjectStore = {
@@ -48,9 +50,9 @@ export function setupIndexedDBMocks() {
     },
     version: 1,
     name: 'TestDB',
-    onclose: null as any,
-    onerror: null as any,
-    onversionchange: null as any,
+    onclose: null as (() => void) | null,
+    onerror: null as (() => void) | null,
+    onversionchange: null as (() => void) | null,
   }
 
   const mockIndexedDB = {
@@ -58,7 +60,7 @@ export function setupIndexedDBMocks() {
       const request = { ...mockRequest, result: mockDatabase }
       setTimeout(() => {
         if (request.onsuccess) {
-          request.onsuccess({ target: request })
+          request.onsuccess()
         }
       }, 0)
       return request
@@ -74,11 +76,11 @@ export function setupIndexedDBMocks() {
   }
 
   // Set up global mocks
-  global.indexedDB = mockIndexedDB as any
-  global.IDBKeyRange = mockIDBKeyRange as any
-  global.IDBRequest = class {} as any
-  global.IDBTransaction = class {} as any
-  global.IDBDatabase = class {} as any
+  global.indexedDB = mockIndexedDB as unknown as typeof indexedDB
+  global.IDBKeyRange = mockIDBKeyRange as unknown as typeof IDBKeyRange
+  global.IDBRequest = class {} as unknown as typeof IDBRequest
+  global.IDBTransaction = class {} as unknown as typeof IDBTransaction
+  global.IDBDatabase = class {} as unknown as typeof IDBDatabase
 
   return {
     mockIndexedDB,
@@ -101,7 +103,7 @@ export function setupPerformanceMocks() {
     getEntriesByType: vi.fn(() => []),
   }
 
-  global.performance = mockPerformance as any
+  global.performance = mockPerformance as unknown as typeof performance
 
   return mockPerformance
 }
@@ -142,7 +144,7 @@ export function setupLoggerMocks() {
 // Mock browser APIs
 export function setupBrowserMocks() {
   // Mock browser.system.memory
-  ;(global as any).browser = {
+  ;(global as unknown as { browser: unknown }).browser = {
     system: {
       memory: {
         getInfo: vi.fn(() => Promise.resolve({ capacity: 8 * 1024 * 1024 * 1024 })), // 8GB
@@ -188,7 +190,7 @@ export function setupRpcMocks() {
 }
 
 // Create test translation entry
-export function createTestTranslationEntry(overrides: Partial<any> = {}) {
+export function createTestTranslationEntry(overrides: Partial<TranslationEntry> = {}) {
   return {
     id: 'test-id-123',
     sourceText: 'Hello world',
@@ -206,7 +208,7 @@ export function createTestTranslationEntry(overrides: Partial<any> = {}) {
 }
 
 // Create test cache metadata
-export function createTestCacheMetadata(overrides: Partial<any> = {}) {
+export function createTestCacheMetadata(overrides: Partial<CacheMetadata> = {}) {
   return {
     id: 'global',
     totalEntries: 100,
@@ -218,7 +220,7 @@ export function createTestCacheMetadata(overrides: Partial<any> = {}) {
 }
 
 // Create test cache configuration
-export function createTestCacheConfig(overrides: Partial<any> = {}) {
+export function createTestCacheConfig(overrides: Partial<CacheConfig> = {}) {
   return {
     enabled: true,
     maxSizeMB: 50,
@@ -234,10 +236,10 @@ export function waitForNextTick() {
 }
 
 // Mock successful IndexedDB operation
-export function mockSuccessfulOperation(result?: any) {
+export function mockSuccessfulOperation(result?: unknown) {
   return {
-    onsuccess: null as any,
-    onerror: null as any,
+    onsuccess: null as (() => void) | null,
+    onerror: null as (() => void) | null,
     result,
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
@@ -247,8 +249,8 @@ export function mockSuccessfulOperation(result?: any) {
 // Mock failed IndexedDB operation
 export function mockFailedOperation(error: Error) {
   return {
-    onsuccess: null as any,
-    onerror: null as any,
+    onsuccess: null as (() => void) | null,
+    onerror: null as (() => void) | null,
     error,
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),

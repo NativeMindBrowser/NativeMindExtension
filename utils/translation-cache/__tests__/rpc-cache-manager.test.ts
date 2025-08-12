@@ -29,7 +29,7 @@ vi.mock('@/utils/logger', () => ({
 }))
 
 describe('RpcTranslationCacheManager', () => {
-  let cacheManager: any
+  let cacheManager: import('../rpc-cache-manager').RpcTranslationCacheManager
 
   beforeEach(async () => {
     vi.clearAllMocks()
