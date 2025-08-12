@@ -51,7 +51,7 @@ export type StatusMessageModifier = {
 }
 
 export class AgentStorage {
-  constructor(private chatId: string, public attachmentStorage: ContextAttachmentStorage) {}
+  constructor(public attachmentStorage: ContextAttachmentStorage) {}
 
   getById<T extends ContextAttachment['type']>(type: T, id: string): ContextAttachment & { type: T } | undefined {
     if (this.attachmentStorage.currentTab?.value.id === id && this.attachmentStorage.currentTab.type === type) {
@@ -112,7 +112,7 @@ export class Agent<T extends PromptBasedToolName> {
   constructor(public options: AgentOptions<T>) {
     this.historyManager = options.historyManager
     this.tools = options.tools
-    this.agentStorage = new AgentStorage(options.chatId, options.attachmentStorage)
+    this.agentStorage = new AgentStorage(options.attachmentStorage)
     this.maxIterations = options.maxIterations || 6
   }
 
