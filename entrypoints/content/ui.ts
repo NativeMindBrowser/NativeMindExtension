@@ -5,8 +5,10 @@ import { ContentScriptContext } from 'wxt/utils/content-script-context'
 import { createShadowRootUi } from 'wxt/utils/content-script-ui/shadow-root'
 
 import { initToast } from '@/composables/useToast'
+import { CONTENT_UI_SHADOW_ROOT_NAME } from '@/utils/constants'
 import { extractFontFace, injectStyleSheetToDocument, loadContentScriptStyleSheet } from '@/utils/css'
 import { createI18nInstance } from '@/utils/i18n/index'
+import logger from '@/utils/logger'
 
 async function loadStyleSheet(shadowRoot: ShadowRoot) {
   const styleSheet = await loadContentScriptStyleSheet(import.meta.env.ENTRYPOINT)
@@ -17,8 +19,19 @@ async function loadStyleSheet(shadowRoot: ShadowRoot) {
 }
 
 export async function createShadowRootOverlay(ctx: ContentScriptContext, component: Component<{ rootElement: HTMLDivElement }>) {
+  const existingUI = document.querySelector(CONTENT_UI_SHADOW_ROOT_NAME)
+  if (existingUI) {
+    try {
+      logger.debug('Removing existing UI')
+      existingUI.remove()
+    }
+    catch (error) {
+      logger.error('Failed to remove existing UI', { error })
+    }
+  }
+
   const ui = await createShadowRootUi(ctx, {
-    name: 'nativemind-container',
+    name: CONTENT_UI_SHADOW_ROOT_NAME,
     position: 'overlay',
     isolateEvents: true,
     mode: 'open',

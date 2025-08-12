@@ -1,4 +1,4 @@
-import { extractText, getDocumentProxy as originalGetDocumentProxy, renderPageAsImage } from 'unpdf'
+import { getDocumentProxy as originalGetDocumentProxy, renderPageAsImage } from 'unpdf'
 
 import { isTypedArray, TypedArray } from '@/types/common'
 
@@ -102,10 +102,8 @@ export async function renderPdfPagesAsImages(pdfFile: PDFFile, options: { scale?
   }
 }
 
-export async function checkReadablePdf(pdfFile: PDFFile): Promise<boolean> {
-  const proxy = await getDocumentProxy(pdfFile)
-  const textContent = await extractText(proxy, { mergePages: true })
-  const trimmedText = textContent.text.replace(/(\s|\t)+/g, ' ').replace(/\n+/g, '\n').trim()
+export async function checkReadableTextContent(textContent: string): Promise<boolean> {
+  const trimmedText = textContent.replace(/(\s|\t)+/g, ' ').replace(/\n+/g, '\n').trim()
   if (trimmedText.length === 0) {
     return false
   }
