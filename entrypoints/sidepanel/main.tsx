@@ -5,9 +5,12 @@ import { createPinia } from 'pinia'
 import { createApp, Suspense } from 'vue'
 
 import RootProvider from '@/components/RootProvider.vue'
+import { registerWebComponents } from '@/components/web-components'
 import { createI18nInstance } from '@/utils/i18n'
 
 import App from './App.vue'
+
+registerWebComponents()
 
 const pinia = createPinia()
 
