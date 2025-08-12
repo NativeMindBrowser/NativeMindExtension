@@ -121,7 +121,7 @@ describe('Shared Database Architecture', () => {
           },
         ],
       }
-
+      // @ts-ignore TODO: compatible with agent mode
       const saveResult = await chatHistoryService.saveChatHistory(chatHistory)
       expect(saveResult.success).toBe(true)
 
@@ -129,7 +129,9 @@ describe('Shared Database Architecture', () => {
       expect(retrievedChat).toBeTruthy()
       expect(retrievedChat!.title).toBe('Test Chat')
       expect(retrievedChat!.history).toHaveLength(2)
+      // @ts-ignore TODO: compatible with agent mode
       expect(retrievedChat!.history[0].content).toBe('Hello, how are you?')
+      // @ts-ignore TODO: compatible with agent mode
       expect(retrievedChat!.history[1].content).toBe('I am doing well, thank you!')
     })
 
@@ -151,7 +153,9 @@ describe('Shared Database Architecture', () => {
         history: [{ id: '2', role: 'user' as const, content: 'Hi there', done: true }],
       }
 
+      // @ts-ignore TODO: compatible with agent mode
       await chatHistoryService.saveChatHistory(chat1)
+      // @ts-ignore TODO: compatible with agent mode
       await chatHistoryService.saveChatHistory(chat2)
 
       // Get chat list
@@ -172,6 +176,7 @@ describe('Shared Database Architecture', () => {
         history: [{ id: '1', role: 'user' as const, content: 'Hello', done: true }],
       }
 
+      // @ts-ignore TODO: compatible with agent mode
       await chatHistoryService.saveChatHistory(chatHistory)
 
       // Toggle star on
@@ -214,6 +219,7 @@ describe('Shared Database Architecture', () => {
         lastInteractedAt: Date.now(),
         history: [{ id: '1', role: 'user' as const, content: 'Test message', done: true }],
       }
+      // @ts-ignore TODO: compatible with agent mode
       await chatHistoryService.saveChatHistory(chatHistory)
 
       // Verify both services can access their data
@@ -259,11 +265,12 @@ describe('Shared Database Architecture', () => {
         lastInteractedAt: Date.now(),
         history: [{ id: '1', role: 'user' as const, content: 'Test cleanup', done: true }],
       }
+      // @ts-ignore TODO: compatible with agent mode
       await chatHistoryService.saveChatHistory(chatHistory)
 
       // Verify data exists
       let cacheEntry = await cacheService.getEntry('cleanup-test')
-      let chatData = await chatHistoryService.getChatHistory('cleanup-test-chat')
+      const chatData = await chatHistoryService.getChatHistory('cleanup-test-chat')
       expect(cacheEntry).toBeTruthy()
       expect(chatData).toBeTruthy()
 
