@@ -11,8 +11,12 @@ import logger from '@/utils/logger'
 import { b2sRpc, bgBroadcastRpc } from '@/utils/rpc'
 import { registerTabStoreCleanupListener } from '@/utils/tab-store'
 import { timeout } from '@/utils/timeout'
+import { translationCache } from '@/utils/translation-cache'
 import { registerDeclarativeNetRequestRule } from '@/utils/web-request'
 
+import { BackgroundDatabaseManager } from './database'
+import { BackgroundCacheServiceManager } from './services/cache-service'
+import { BackgroundChatHistoryServiceManager } from './services/chat-history-service'
 import { waitForSidepanelLoaded } from './utils'
 
 export default defineBackground(() => {
@@ -126,6 +130,70 @@ export default defineBackground(() => {
       }
     }
   })
+
+  // Initialize the background services with shared database
+  async function initializeBackgroundServices() {
+    try {
+      logger.debug('Starting background services initialization')
+      logger.debug('Extension ID:', browser.runtime.id)
+      logger.debug('Context info:', {
+        location: typeof location !== 'undefined' ? location.origin : 'undefined',
+        isServiceWorker: typeof importScripts === 'function',
+        hasIndexedDB: typeof indexedDB !== 'undefined',
+      })
+
+      // Initialize shared database manager
+      const databaseManager = BackgroundDatabaseManager.getInstance()
+      await databaseManager.initialize()
+      logger.debug('Shared database manager initialized successfully')
+
+      // Initialize services using singleton managers
+      await BackgroundCacheServiceManager.initialize(databaseManager)
+      logger.debug('Background cache service initialized successfully')
+
+      await BackgroundChatHistoryServiceManager.initialize(databaseManager)
+      logger.debug('Background chat history service initialized successfully')
+
+      // Initialize translation cache (RPC-based cache manager)
+      await translationCache.initialize()
+      logger.debug('Translation cache initialized successfully')
+
+      // ================================
+      // Debug Code
+      // ================================
+
+      // Insert test data for development
+      // if (import.meta.env.DEV) {
+      //   const cacheService = BackgroundCacheServiceManager.getInstance()
+      //   if (cacheService) {
+      //     logger.debug('Inserting test mock data for development')
+      //     await cacheService.insertTestMockData(10)
+      //     logger.debug('Test mock data inserted successfully')
+
+      //     // Test getting stats
+      //     const stats = await cacheService.getStats()
+      //     logger.debug('Cache stats after test data:', stats)
+      //   }
+      // }
+
+      // @ts-expect-error - this is a global variable
+      globalThis.backgroundCacheService = BackgroundCacheServiceManager.getInstance()
+
+      // @ts-expect-error - this is a global variable
+      globalThis.backgroundChatHistoryService = BackgroundChatHistoryServiceManager.getInstance()
+
+      // @ts-expect-error - this is a global variable
+      globalThis.databaseManager = databaseManager
+
+      logger.debug('All background services initialized successfully')
+    }
+    catch (error) {
+      logger.error('Failed to initialize background services:', error)
+    }
+  }
+
+  // Initialize background services
+  initializeBackgroundServices()
 
   logger.info('Hello from background!', { id: browser.runtime.id })
 })

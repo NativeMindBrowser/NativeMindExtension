@@ -1,14 +1,16 @@
 import { safeParseJSON } from '@ai-sdk/provider-utils'
-import { generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
-import { AISDKError } from 'ai'
+import { AISDKError, generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
 import { EventEmitter } from 'events'
 import { Browser, browser } from 'wxt/browser'
 import { z } from 'zod'
 import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 
+import { ChatHistoryV1, ContextAttachmentStorage } from '@/types/chat'
 import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
+import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
+import { BackgroundChatHistoryServiceManager } from '../../entrypoints/background/services/chat-history-service'
 import { sleep } from '../async'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
@@ -22,9 +24,10 @@ import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
 import { parsePdfFileOfUrl } from '../pdf'
 import { openAndFetchUrlsContent, searchWebsites } from '../search'
 import { showSettingsForBackground } from '../settings'
+import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
 import { b2sRpc, bgBroadcastRpc } from '.'
-import { preparePortConnection } from './utils'
+import { preparePortConnection, shouldGenerateChatTitle } from './utils'
 
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
@@ -620,9 +623,251 @@ function ping() {
   return 'pong'
 }
 
+// Translation cache functions
+async function cacheGetEntry(id: string) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getEntry(id) || null
+  }
+  catch (error) {
+    logger.error('Cache RPC getEntry failed:', error)
+    return null
+  }
+}
+
+async function cacheSetEntry(entry: TranslationEntry) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.setEntry(entry) || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC setEntry failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheDeleteEntry(id: string) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.deleteEntry(id) || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC deleteEntry failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheGetStats() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getStats() || {
+      totalEntries: 0,
+      totalSizeMB: 0,
+      modelNamespaces: [],
+    }
+  }
+  catch (error) {
+    logger.error('Cache RPC getStats failed:', error)
+    return {
+      totalEntries: 0,
+      totalSizeMB: 0,
+      modelNamespaces: [],
+    }
+  }
+}
+
+async function cacheClear() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.clear() || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC clear failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheUpdateConfig() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    await service?.loadUserConfig()
+    return { success: true }
+  }
+  catch (error) {
+    logger.error('Cache RPC updateConfig failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheGetConfig() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return service?.getConfig() || null
+  }
+  catch (error) {
+    logger.error('Cache RPC getConfig failed:', error)
+    return null
+  }
+}
+
+async function cacheGetDebugInfo() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getDebugInfo() || {
+      isInitialized: false,
+      contextInfo: {
+        location: 'unknown',
+        isServiceWorker: false,
+        isExtensionContext: false,
+      },
+    }
+  }
+  catch (error) {
+    logger.error('Cache RPC getDebugInfo failed:', error)
+    return {
+      isInitialized: false,
+      contextInfo: {
+        location: 'unknown',
+        isServiceWorker: false,
+        isExtensionContext: false,
+      },
+    }
+  }
+}
+
 async function updateSidepanelModelList() {
   b2sRpc.emit('updateModelList')
   return true
+}
+
+// Chat history functions
+async function getChatHistory(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getChatHistory(chatId) || null
+  }
+  catch (error) {
+    logger.error('Chat history RPC getChatHistory failed:', error)
+    return null
+  }
+}
+
+async function saveChatHistory(chatHistory: ChatHistoryV1) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.saveChatHistory(chatHistory) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC saveChatHistory failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function getContextAttachments(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getContextAttachments(chatId) || null
+  }
+  catch (error) {
+    logger.error('Chat history RPC getContextAttachments failed:', error)
+    return null
+  }
+}
+
+async function saveContextAttachments(contextAttachments: ContextAttachmentStorage) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.saveContextAttachments(contextAttachments) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC saveContextAttachments failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function getChatList() {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getChatList() || []
+  }
+  catch (error) {
+    logger.error('Chat history RPC getChatList failed:', error)
+    return []
+  }
+}
+
+async function deleteChat(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.deleteChat(chatId) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC deleteChat failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function toggleChatStar(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.toggleChatStar(chatId) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC toggleChatStar failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function updateChatTitle(chatId: string, newTitle: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.updateChatTitle(chatId, newTitle) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC updateChatTitle failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
+  try {
+    logger.debug('autoGenerateChatTitleIfNeeded called for chat', chatHistory.id)
+
+    const shouldAutoGenerate = shouldGenerateChatTitle(chatHistory)
+
+    if (!shouldAutoGenerate) {
+      return { success: true, updatedTitle: chatHistory.title }
+    }
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      return { success: false, error: 'Chat history service not available' }
+    }
+
+    const originalTitle = chatHistory.title
+    await service.autoGenerateTitleIfNeeded(chatHistory)
+
+    // Get the updated chat history to see the new title
+    const updatedChatHistory = await service.getChatHistory(chatHistory.id)
+    const newTitle = updatedChatHistory?.title || originalTitle
+
+    logger.debug('Title generation result:', { originalTitle, newTitle, titleChanged: newTitle !== originalTitle })
+    return { success: true, updatedTitle: newTitle, titleChanged: newTitle !== originalTitle }
+  }
+  catch (error) {
+    logger.error('Chat history RPC autoGenerateChatTitle failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function getPinnedChats() {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getPinnedChats() || []
+  }
+  catch (error) {
+    logger.error('Chat history RPC getPinnedChats failed:', error)
+    return []
+  }
 }
 
 export const backgroundFunctions = {
@@ -664,6 +909,26 @@ export const backgroundFunctions = {
   getSystemMemoryInfo,
   testOllamaConnection,
   captureVisibleTab,
+  // Translation cache functions
+  cacheGetEntry,
+  cacheSetEntry,
+  cacheDeleteEntry,
+  cacheGetStats,
+  cacheClear,
+  cacheUpdateConfig,
+  cacheGetConfig,
+  cacheGetDebugInfo,
+  // Chat history functions
+  getChatHistory,
+  saveChatHistory,
+  getContextAttachments,
+  saveContextAttachments,
+  getChatList,
+  deleteChat,
+  toggleChatStar,
+  updateChatTitle,
+  autoGenerateChatTitle: autoGenerateChatTitleIfNeeded,
+  getPinnedChats,
   showSidepanel,
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,

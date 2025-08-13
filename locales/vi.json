@@ -64,6 +64,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "Bạn có chắc chắn muốn xóa cuộc trò chuyện này không? Hành động này không thể hoàn tác.",
+    "delete": "Xóa bỏ",
+    "rename": "Đổi tên",
+    "unpin": "Bỏ ghim",
+    "pin": "Ghim",
+    "title": "Lịch sử Trò chuyện",
+    "pinned_section": "Đã Ghim",
+    "recent_section": "Gần Đây",
+    "empty_state": "Chưa có cuộc trò chuyện nào",
+    "untitled_chat": "Trò chuyện Không Tiêu đề",
+    "new_chat": "Trò chuyện Mới",
+    "save": "Lưu",
+    "cancel": "Hủy"
+  },
   "onboarding": {
     "banner": {
       "description": "Riêng tư và an toàn, với các tính năng mạnh mẽ chạy hoàn toàn trong thiết bị của bạn.",
@@ -105,6 +120,15 @@
     "ollama_is_running": "Ollama đang chạy"
   },
   "settings": {
+    "cache": {
+      "title": "Bộ nhớ đệm Dịch thuật",
+      "enable": "Bật Bộ nhớ đệm",
+      "enabled": "Đã bật",
+      "disabled": "Đã tắt",
+      "max_size": "Kích thước Tối đa",
+      "retention_days": "Thời gian Lưu trữ",
+      "days": "ngày"
+    },
     "advanced": {
       "title": "Nâng cao"
     },
@@ -338,6 +362,8 @@
     "settings": "Cài đặt",
     "pin_sidebar": "Ghim",
     "unpin_sidebar": "Bỏ ghim",
-    "close": "Đóng"
+    "close": "Đóng",
+    "chat_history": "Lịch sử",
+    "new_chat": "Trò chuyện mới"
   }
 }

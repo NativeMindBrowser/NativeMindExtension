@@ -64,6 +64,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "¿Estás seguro de que quieres eliminar esta conversación? Esta acción no se puede deshacer.",
+    "delete": "Borrar",
+    "rename": "Rebautizar",
+    "unpin": "Desanclar",
+    "pin": "Anclar",
+    "title": "Historial de Chat",
+    "pinned_section": "Anclados",
+    "recent_section": "Recientes",
+    "empty_state": "Aún no hay conversaciones",
+    "untitled_chat": "Chat Sin Título",
+    "new_chat": "Nuevo Chat",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
   "context_menu": {
     "quick_actions": {
       "title": "Acciones Rápidas"
@@ -129,6 +144,15 @@
     "ollama_is_running": "Ollama está ejecutándose"
   },
   "settings": {
+    "cache": {
+      "title": "Caché de Traducción",
+      "enable": "Habilitar Caché",
+      "enabled": "Habilitado",
+      "disabled": "Deshabilitado",
+      "max_size": "Tamaño Máximo",
+      "retention_days": "Período de Retención",
+      "days": "días"
+    },
     "advanced": {
       "title": "Avanzado"
     },
@@ -338,6 +362,8 @@
     "settings": "Configuración",
     "pin_sidebar": "Fijar",
     "unpin_sidebar": "Desfijar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "chat_history": "Historia",
+    "new_chat": "Nuevo chat"
   }
 }

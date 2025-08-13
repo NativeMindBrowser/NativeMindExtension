@@ -66,7 +66,9 @@ export class AgentStorage {
   }
 
   getById<T extends ContextAttachment['type']>(type: T, id: string): ContextAttachment & { type: T } | undefined {
-    if (this.attachmentStorage.currentTab?.value.id === id && this.attachmentStorage.currentTab.type === type) return this.attachmentStorage.currentTab as ContextAttachment & { type: T } | undefined
+    if (this.attachmentStorage.currentTab?.value.id === id && this.attachmentStorage.currentTab.type === type) {
+      return this.attachmentStorage.currentTab as ContextAttachment & { type: T } | undefined
+    }
     return this.attachmentStorage.attachments.find((attachment) => attachment.value.id === id && attachment.type === type) as ContextAttachment & { type: T } | undefined
   }
 
@@ -80,11 +82,21 @@ export class AgentStorage {
   }
 
   getAllImages() {
-    return this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'image')
+    const imageAttachments = []
+    if (this.attachmentStorage.currentTab?.type === 'image') {
+      imageAttachments.push(this.attachmentStorage.currentTab)
+    }
+    imageAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'image'))
+    return imageAttachments
   }
 
   getAllPDFs() {
-    return this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'pdf')
+    const pdfAttachments = []
+    if (this.attachmentStorage.currentTab?.type === 'pdf') {
+      pdfAttachments.push(this.attachmentStorage.currentTab)
+    }
+    pdfAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'pdf'))
+    return pdfAttachments
   }
 
   persistCurrentTab() {
@@ -104,6 +116,7 @@ export class AgentStorage {
 interface AgentOptions<T extends PromptBasedToolName> {
   historyManager: ReactiveHistoryManager
   attachmentStorage: ContextAttachmentStorage
+  chatId: string
   tools: AgentToolCall<T>
   maxIterations?: number
 }
@@ -262,6 +275,7 @@ export class Agent<T extends PromptBasedToolName> {
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
     let reasoningStart: number | undefined
+    this.log.debug('baseMessages', baseMessages)
     // clone the message to avoid ui changes in agent's running process
 
     // this messages only used for the agent iteration but not user-facing

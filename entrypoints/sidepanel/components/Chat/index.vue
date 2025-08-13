@@ -59,13 +59,15 @@
           v-model:attachmentStorage="contextAttachmentStorage"
         />
       </div>
-      <div class="flex gap-1 relative">
+      <div class="gap-1 flex relative shadow-02 bg-white rounded-md px-3 pt-2 pb-9 max-h-36">
         <ScrollContainer
-          class="max-h-72 grow shadow-02 bg-white rounded-md overflow-hidden"
-          itemContainerClass="px-2 py-[7px]"
-          :style="{ paddingRight: `${sendButtonContainerWidth}px` }"
+          class="overflow-hidden w-full"
+          :arrivalShadow="{
+            top: { color: '#FFFFFF', size: 32 },
+            bottom: { color: '#FFFFFF', size: 32 }
+          }"
         >
-          <div class="h-max min-h-[30px] grid place-items-center">
+          <div class="h-max min-h-[48px] place-items-center">
             <AutoExpandTextArea
               v-model="userInput"
               maxlength="2000"
@@ -75,7 +77,7 @@
                 ? t('chat.input.placeholder.ask_anything')
                 : t('chat.input.placeholder.ask_follow_up')
               "
-              class="w-full block outline-none border-none resize-none field-sizing-content leading-5 text-sm wrap-anywhere"
+              class="w-full block outline-none border-none resize-none field-sizing-content leading-5 text-sm wrap-anywhere grow h-full"
               @paste="onPaste"
               @keydown="onKeydown"
               @compositionstart="isComposing = true"
@@ -83,27 +85,34 @@
             />
           </div>
         </ScrollContainer>
-        <div
-          ref="sendButtonContainerRef"
-          class="absolute right-0 top-0 bottom-0 p-2 pl-0"
-        >
-          <Button
-            v-if="chat.isAnswering()"
-            variant="secondary"
-            class="px-[6px] grow-0 shrink-0 h-7"
-            @click="onStop"
+        <!-- Toolbar -->
+        <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
+          <ModelSelector
+            containerClass="h-7"
+            class="max-w-44"
+            dropdownAlign="left"
+            triggerStyle="ghost"
+          />
+          <div
+            ref="sendButtonContainerRef"
           >
-            {{ "Stop" }}
-          </Button>
-          <Button
-            v-else
-            variant="primary"
-            class="px-[6px] grow-0 shrink-0 h-7"
-            :disabled="!allowAsk"
-            @click="onSubmit"
-          >
-            <IconSendFill class="w-4 h-4 text-white" />
-          </Button>
+            <Button
+              v-if="chat.isAnswering()"
+              variant="secondary"
+              class="px-[6px] grow-0 shrink-0"
+              @click="onStop"
+            >
+              {{ "Stop" }}
+            </Button>
+            <button
+              v-else
+              :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-[#24B960]/80 bg-[#24B960] cursor-pointer' : 'cursor-not-allowed')"
+              :disabled="!allowAsk"
+              @click="onSubmit"
+            >
+              <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-[#9EA3A8]')" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -112,17 +121,18 @@
 
 <script setup lang="ts">
 import { useElementBounding } from '@vueuse/core'
-import { onMounted } from 'vue'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 import IconSendFill from '@/assets/icons/send-fill.svg?component'
 import AutoExpandTextArea from '@/components/AutoExpandTextArea.vue'
 import ExhaustiveError from '@/components/ExhaustiveError.vue'
+import ModelSelector from '@/components/ModelSelector.vue'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
+import { classNames } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../components/MarkdownViewer.vue'
 import { showSettings } from '../../../../utils/settings'
@@ -140,7 +150,6 @@ import MessageTask from './Messages/Task.vue'
 const inputContainerRef = ref<HTMLDivElement>()
 const sendButtonContainerRef = ref<HTMLDivElement>()
 const { height: inputContainerHeight } = useElementBounding(inputContainerRef)
-const { width: sendButtonContainerWidth } = useElementBounding(sendButtonContainerRef)
 
 const { t } = useI18n()
 const userInput = ref('')

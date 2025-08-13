@@ -2,6 +2,7 @@ import { ContextAttachment, ContextAttachmentStorage, ImageAttachment, PDFAttach
 import { Base64ImageData } from '@/types/image'
 import dayjs from '@/utils/time'
 
+import { nonNullable } from '../array'
 import logger from '../logger'
 import { getUserConfig } from '../user-config'
 import { definePrompt, renderPrompt, TagBuilder, TextBuilder, UserPrompt } from './helpers'
@@ -46,20 +47,22 @@ export class EnvironmentDetailsBuilder {
       }
     }
 
+    const currentTabPdf = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'pdf' ? this.contextAttachmentStorage.currentTab : undefined)
     const pdfs = attachments.filter((a): a is PDFAttachment => a.type === 'pdf')
-    const currentPdf = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'pdf' ? this.contextAttachmentStorage.currentTab : undefined)
-    if (currentPdf) pdfs.unshift(currentPdf)
-    if (pdfs.length) {
+    const allPdfs = [currentTabPdf, ...pdfs].filter(nonNullable)
+    if (allPdfs.length) {
       envBuilder.insertContent('# Updated PDFs')
-      for (const pdfMeta of pdfs) {
+      for (const pdfMeta of allPdfs) {
         envBuilder.insertContent(`- PDF ID ${pdfMeta.value.id}: ${pdfMeta.value.name} (${pdfMeta.value.pageCount ?? 'unknown'} pages)`)
       }
     }
 
+    const currentTabImage = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'image' ? this.contextAttachmentStorage.currentTab : undefined)
     const imagesMeta = attachments.filter((a): a is ImageAttachment => a.type === 'image')
-    if (imagesMeta.length) {
+    const allImages = [currentTabImage, ...imagesMeta].filter(Boolean) as ImageAttachment[]
+    if (allImages.length) {
       envBuilder.insertContent(`# Updated Images`)
-      for (const img of imagesMeta) {
+      for (const img of allImages) {
         envBuilder.insertContent(`- Image ID ${img.value.id}: ${img.value.name}`)
       }
     }
@@ -84,22 +87,25 @@ export class EnvironmentDetailsBuilder {
     }
 
     const pdfContextBuilder = new TextBuilder('# Available PDFs')
-    const pdfMetas = this.contextAttachmentStorage.attachments.filter((a): a is PDFAttachment => a.type === 'pdf').map((p) => p.value)
-    if (this.contextAttachmentStorage.currentTab?.type === 'pdf') pdfMetas.push(this.contextAttachmentStorage.currentTab.value)
-    if (!pdfMetas.length) {
+    const currentTabPdf = this.contextAttachmentStorage.currentTab?.type === 'pdf' ? this.contextAttachmentStorage.currentTab : undefined
+    const attachmentPdfs = this.contextAttachmentStorage.attachments.filter((a): a is PDFAttachment => a.type === 'pdf')
+    const allPdfs = [currentTabPdf, ...attachmentPdfs].filter(nonNullable) as PDFAttachment[]
+    if (allPdfs.length === 0) {
       pdfContextBuilder.insertContent('(No available PDFs)')
     }
-    for (const pdfMeta of pdfMetas) {
-      pdfContextBuilder.insertContent(`- PDF ID ${pdfMeta.id}: ${pdfMeta?.name} (${pdfMeta?.pageCount ?? 'unknown'} pages)`)
+    for (const pdf of allPdfs) {
+      pdfContextBuilder.insertContent(`- PDF ID ${pdf.value.id}: ${pdf.value.name} (${pdf.value.pageCount ?? 'unknown'} pages)`)
     }
 
     const imageContextBuilder = new TextBuilder('# Available Images')
-    const imagesMeta = this.contextAttachmentStorage.attachments.filter((a): a is ImageAttachment => a.type === 'image')
-    if (imagesMeta.length === 0) {
+    const currentTabImage = this.contextAttachmentStorage.currentTab?.type === 'image' ? this.contextAttachmentStorage.currentTab : undefined
+    const attachmentImages = this.contextAttachmentStorage.attachments.filter((a): a is ImageAttachment => a.type === 'image')
+    const allImages = [currentTabImage, ...attachmentImages].filter(Boolean) as ImageAttachment[]
+    if (allImages.length === 0) {
       imageContextBuilder.insertContent('(No available images)')
     }
-    for (let i = 0; i < imagesMeta.length; i++) {
-      const img = imagesMeta[i]
+    for (let i = 0; i < allImages.length; i++) {
+      const img = allImages[i]
       imageContextBuilder.insertContent(`- Image ID ${img.value.id}: ${img.value.name}`)
     }
 
@@ -122,6 +128,12 @@ export const chatWithEnvironment = definePrompt(async (question: string, environ
 
   const user = renderPrompt`
 ${userMessageTagBuilder}${environmentDetails ? `\n\n${environmentDetails}` : ''}`.trim()
+
+  logger.debug('Agent generateFull', {
+    user,
+    images,
+    system,
+  })
 
   return { user: UserPrompt.fromTextAndImages(user, images ?? []), system }
 })

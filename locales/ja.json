@@ -64,6 +64,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "この会話を削除してもよろしいですか？この操作は元に戻すことができません。",
+    "delete": "消去",
+    "rename": "名前を変更します",
+    "unpin": "ピンを外す",
+    "pin": "ピン留め",
+    "title": "チャット履歴",
+    "pinned_section": "ピン留め済み",
+    "recent_section": "最近",
+    "empty_state": "まだ会話がありません",
+    "untitled_chat": "無題のチャット",
+    "new_chat": "新しいチャット",
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
   "onboarding": {
     "banner": {
       "description": "プライバシーと安全性を確保しながら、デバイス内で完全に動作する強力な機能を体験できます。",
@@ -105,6 +120,15 @@
     "ollama_is_running": "Ollamaが実行中です"
   },
   "settings": {
+    "cache": {
+      "title": "翻訳キャッシュ",
+      "enable": "キャッシュを有効にする",
+      "enabled": "有効",
+      "disabled": "無効",
+      "max_size": "最大サイズ",
+      "retention_days": "保持期間",
+      "days": "日"
+    },
     "advanced": {
       "title": "詳細設定"
     },
@@ -338,6 +362,8 @@
     "settings": "設定",
     "pin_sidebar": "固定",
     "unpin_sidebar": "固定を解除",
-    "close": "閉じる"
+    "close": "閉じる",
+    "chat_history": "歴史",
+    "new_chat": "新しいチャット"
   }
 }

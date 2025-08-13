@@ -64,6 +64,21 @@
       }
     }
   },
+  "chat_history": {
+    "delete_confirm": "이 대화를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "delete": "삭제",
+    "rename": "이름 바꾸기",
+    "unpin": "고정 해제",
+    "pin": "고정",
+    "title": "채팅 기록",
+    "pinned_section": "고정됨",
+    "recent_section": "최근",
+    "empty_state": "아직 대화가 없습니다",
+    "untitled_chat": "제목 없는 채팅",
+    "new_chat": "새 채팅",
+    "save": "저장",
+    "cancel": "취소"
+  },
   "onboarding": {
     "banner": {
       "description": "사용자의 기기에서만 실행되는 강력한 기능으로 개인 정보를 보호하고 안전합니다.",
@@ -105,6 +120,15 @@
     "ollama_is_running": "Ollama가 실행 중입니다"
   },
   "settings": {
+    "cache": {
+      "title": "번역 캐시",
+      "enable": "캐시 활성화",
+      "enabled": "활성화됨",
+      "disabled": "비활성화됨",
+      "max_size": "최대 크기",
+      "retention_days": "보존 기간",
+      "days": "일"
+    },
     "advanced": {
       "title": "고급 설정"
     },
@@ -338,6 +362,8 @@
     "settings": "설정",
     "pin_sidebar": "고정",
     "unpin_sidebar": "고정 해제",
-    "close": "닫기"
+    "close": "닫기",
+    "chat_history": "역사",
+    "new_chat": "새로운 채팅"
   }
 }

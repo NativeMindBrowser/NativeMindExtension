@@ -408,13 +408,92 @@
             </details>
           </div>
         </Block>
+        <Block
+          title="Translation Cache"
+          class="gap-4"
+        >
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div class="flex flex-col gap-3 justify-start items-start">
+              Enable
+              <Switch
+                v-model="enableTranslationCache"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-6 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[
+                  {
+                    label: 'Enable',
+                    key: true,
+                  },
+                  {
+                    label: 'Disable',
+                    key: false,
+                    activeThumbClass: 'bg-gray-200',
+                  }
+                ]"
+              />
+            </div>
+            <div class="flex flex-col gap-3 justify-start items-start">
+              <div class="flex gap-3 items-center">
+                <span class="text-xs">Retention Days</span>
+                <Input
+                  v-model.number="cacheRetentionDays"
+                  type="number"
+                  min="1"
+                  class="border-b border-gray-200 py-1 disabled:opacity-50 w-20"
+                />
+              </div>
+            </div>
+          </div>
+        </Block>
+        <Block
+          title="Cache Stats"
+          class="gap-4"
+        >
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div class="flex flex-col gap-2">
+              <div>
+                Total Entries
+              </div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.totalEntries ?? 'N/A' }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <div>
+                Total Size (MB)
+              </div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.totalSizeMB.toFixed(2) ?? 'N/A' }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <div>
+                Model Namespaces
+              </div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.modelNamespaces.join(', ') ?? 'N/A' }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 justify-start items-start">
+              <span class="text-xs">Clear Cache</span>
+              <button
+                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+                @click="handleClearCache"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </Block>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="tsx">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import IconDelete from '@/assets/icons/delete.svg?component'
 import Input from '@/components/Input.vue'
@@ -429,6 +508,7 @@ import { formatSize } from '@/utils/formatter'
 import { SUPPORTED_MODELS, WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
 import { settings2bRpc } from '@/utils/rpc'
+import { CacheStats, translationCache } from '@/utils/translation-cache'
 import { getUserConfig } from '@/utils/user-config'
 
 import { pullOllamaModel } from '../../utils/llm'
@@ -454,9 +534,14 @@ const writingToolsListPrompt = userConfig.writingTools.list.systemPrompt.toRef()
 const writingToolsSparklePrompt = userConfig.writingTools.sparkle.systemPrompt.toRef()
 const endpointType = userConfig.llm.endpointType.toRef()
 const localeInConfig = userConfig.locale.current.toRef()
+// Translation Cache Part
+const enableTranslationCache = userConfig.translation.cache.enabled.toRef()
+const cacheRetentionDays = userConfig.translation.cache.retentionDays.toRef()
+
 const maxAgentIterations = userConfig.chat.agent.maxIterations.toRef()
 const updateEnvironmentDetailsFrequency = userConfig.chat.environmentDetails.fullUpdateFrequency.toRef()
 const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.toRef()
+
 const documentParserType = userConfig.documentParser.parserType.toRef()
 const translationSystemPromptError = ref('')
 const newModelId = ref('')
@@ -468,6 +553,12 @@ const modelProviderOptions = [
   { id: 'ollama' as const, label: 'Ollama' },
   { id: 'web-llm' as const, label: 'Web LLM' },
 ]
+
+const cacheStats = ref<CacheStats>()
+
+onMounted(async () => {
+  cacheStats.value = await settings2bRpc.cacheGetStats()
+})
 
 const resetOnboarding = async () => {
   onboardingVersion.value = 0
@@ -562,6 +653,11 @@ const onPullModel = async () => {
   }
 }
 
+const handleClearCache = async () => {
+  await settings2bRpc.cacheClear()
+  cacheStats.value = await settings2bRpc.cacheGetStats()
+}
+
 watch(translationSystemPrompt, (newValue) => {
   if (!/\{\{LANGUAGE\}\}/.test(newValue)) {
     translationSystemPromptError.value = 'system prompt must contain {{LANGUAGE}}'
@@ -570,4 +666,14 @@ watch(translationSystemPrompt, (newValue) => {
     translationSystemPromptError.value = ''
   }
 })
+
+// watch cache config changes and invoke update functions
+watch([enableTranslationCache, cacheRetentionDays], async () => {
+  await settings2bRpc.cacheUpdateConfig()
+})
+
+watch(enableTranslationCache, async () => {
+  await translationCache.updateConfig()
+})
+
 </script>
