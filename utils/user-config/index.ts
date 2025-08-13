@@ -324,7 +324,7 @@ export async function _getUserConfig() {
     },
     llm: {
       defaultFirstTokenTimeout: await new Config('llm.firstTokenTimeout').default(60 * 1000).build(), // 60 seconds
-      endpointType: await new Config('llm.endpointType').default('web-llm' as LLMEndpointType).build(),
+      endpointType: await new Config('llm.endpointType').default('ollama' as LLMEndpointType).build(),
       baseUrl: await new Config('llm.baseUrl').default('http://localhost:11434/api').build(),
       model: await new Config<string, undefined>('llm.model').build(),
       apiKey: await new Config('llm.apiKey').default('ollama').build(),

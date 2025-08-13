@@ -88,43 +88,59 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
       abortController.abort()
     })
 
-    const response = originalStreamText({
-      model: await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) }),
-      messages: options.messages,
-      prompt: options.prompt,
-      system: options.system,
-      // this is a trick workaround to use prompt based tools in the vercel ai sdk
-      tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
-      experimental_activeTools: [],
-      maxTokens: options.maxTokens,
-      abortSignal: abortController.signal,
-    })
-    for await (const chunk of response.fullStream) {
-      if (chunk.type === 'error') {
-        logger.error(chunk.error)
-        port.postMessage({ type: 'error', error: normalizeError(chunk.error) })
+    try {
+      const response = originalStreamText({
+        model: await getModel({
+          ...(await getModelUserConfig()),
+          onLoadingModel: makeLoadingModelListener(port),
+          ...generateExtraModelOptions(options) },
+        ),
+        messages: options.messages,
+        prompt: options.prompt,
+        system: options.system,
+        // this is a trick workaround to use prompt based tools in the vercel ai sdk
+        tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
+        experimental_activeTools: [],
+        maxTokens: options.maxTokens,
+        abortSignal: abortController.signal,
+      })
+      for await (const chunk of response.fullStream) {
+        if (chunk.type === 'error') {
+          logger.error(chunk.error)
+          port.postMessage({ type: 'error', error: normalizeError(chunk.error) })
+        }
+        else {
+          port.postMessage(chunk)
+        }
       }
-      else {
-        port.postMessage(chunk)
-      }
+      port.disconnect()
     }
-    port.disconnect()
+    catch (err) {
+      logger.error(err)
+      port.postMessage({ type: 'error', error: normalizeError(err) })
+      port.disconnect()
+    }
   }
   preparePortConnection(portName).then(onStart)
   return { portName }
 }
 
 const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens'> & ExtraGenerateOptionsWithTools) => {
-  const response = originalGenerateText({
-    model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
-    messages: options.messages,
-    prompt: options.prompt,
-    system: options.system,
-    tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
-    maxTokens: options.maxTokens,
-    experimental_activeTools: [],
-  })
-  return response
+  try {
+    const response = originalGenerateText({
+      model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+      messages: options.messages,
+      prompt: options.prompt,
+      system: options.system,
+      tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
+      maxTokens: options.maxTokens,
+      experimental_activeTools: [],
+    })
+    return response
+  }
+  catch (err) {
+    throw normalizeError(err)
+  }
 }
 
 const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'toolChoice' | 'maxTokens' | 'temperature' | 'topK' | 'topP'> & ExtraGenerateOptionsWithTools) => {
@@ -139,23 +155,30 @@ const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'pro
       logger.debug('port disconnected from client')
       abortController.abort()
     })
-    const response = await originalGenerateText({
-      model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
-      messages: options.messages,
-      prompt: options.prompt,
-      system: options.system,
-      tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
-      temperature: options.temperature,
-      topK: options.topK,
-      topP: options.topP,
-      toolChoice: options.toolChoice,
-      maxTokens: options.maxTokens,
-      experimental_activeTools: [],
-      abortSignal: abortController.signal,
-    })
-    logger.debug('generateText response', response)
-    port.postMessage(response)
-    port.disconnect()
+    try {
+      const response = await originalGenerateText({
+        model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+        messages: options.messages,
+        prompt: options.prompt,
+        system: options.system,
+        tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
+        temperature: options.temperature,
+        topK: options.topK,
+        topP: options.topP,
+        toolChoice: options.toolChoice,
+        maxTokens: options.maxTokens,
+        experimental_activeTools: [],
+        abortSignal: abortController.signal,
+      })
+      logger.debug('generateText response', response)
+      port.postMessage(response)
+      port.disconnect()
+    }
+    catch (err) {
+      logger.error(err)
+      port.postMessage({ type: 'error', error: normalizeError(err) })
+      port.disconnect()
+    }
   }
   preparePortConnection(portName).then(onStart)
   return { portName }
@@ -173,22 +196,28 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
       logger.debug('port disconnected from client')
       abortController.abort()
     })
-    const response = originalStreamObject({
-      model: await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) }),
-      output: 'object',
-      schema: parseSchema(options),
-      prompt: options.prompt,
-      system: options.system,
-      messages: options.messages,
-      abortSignal: abortController.signal,
-    })
-    for await (const chunk of response.fullStream) {
-      if (chunk.type === 'error') {
-        logger.error(chunk.error)
+    try {
+      const response = originalStreamObject({
+        model: await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) }),
+        output: 'object',
+        schema: parseSchema(options),
+        prompt: options.prompt,
+        system: options.system,
+        messages: options.messages,
+        abortSignal: abortController.signal,
+      })
+      for await (const chunk of response.fullStream) {
+        if (chunk.type === 'error') {
+          logger.error(chunk.error)
+        }
+        port.postMessage(chunk)
       }
-      port.postMessage(chunk)
+      port.disconnect()
     }
-    port.disconnect()
+    catch (err) {
+      logger.error(err)
+      port.postMessage({ type: 'error', error: normalizeError(err) })
+    }
   }
   preparePortConnection(portName).then(onStart)
   return { portName }
@@ -198,8 +227,8 @@ const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<Gene
   const s = parseSchema(options)
   const isEnum = s instanceof z.ZodEnum
   let ret
-  const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
   try {
+    const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
     if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(modelInfo.model))) {
       const response = await originalGenerateText({
         model: await getModel(modelInfo),
