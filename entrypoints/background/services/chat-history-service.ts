@@ -744,7 +744,7 @@ export class BackgroundChatHistoryService {
     const userMessages = completedMessages.filter((item) => item.role === 'user')
     const assistantMessages = completedMessages.filter((item) => item.role === 'assistant')
 
-    const shouldAutoGenerate = shouldGenerateChatTitle(chatHistory)
+    const shouldAutoGenerate = await shouldGenerateChatTitle(chatHistory)
 
     if (!shouldAutoGenerate) {
       return

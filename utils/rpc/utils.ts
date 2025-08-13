@@ -2,6 +2,8 @@ import { Browser, browser } from 'wxt/browser'
 
 import { AssistantMessageV1, ChatHistoryV1, UserMessageV1 } from '@/types/chat'
 
+import { getAllLocaleValues } from '../i18n'
+
 export function preparePortConnection(portName: string) {
   return new Promise<Browser.runtime.Port>((resolve, reject) => {
     const onConnected = async (port: Browser.runtime.Port) => {
@@ -66,7 +68,7 @@ export function makeMessage<D>(data: D, source: MessageSource, targets: MessageS
   }
 }
 
-export function shouldGenerateChatTitle(chatHistory: ChatHistoryV1): boolean {
+export async function shouldGenerateChatTitle(chatHistory: ChatHistoryV1): Promise<boolean> {
   /**
    * Conditions
    * 1. Chat title is under i18n t('chat_history.new_chat')
@@ -81,21 +83,8 @@ export function shouldGenerateChatTitle(chatHistory: ChatHistoryV1): boolean {
   const assistantMessages = completedMessages.filter((item) => item.role === 'assistant')
 
   // Check if title is likely a default "New Chat" title in various languages
-  // TODO: more elegant way to handle default titles
-  const isDefaultTitle = [
-    'New Chat', // English
-    'Nuevo Chat', // Spanish
-    'แชทใหม่', // Thai
-    'Obrolan Baru', // Indonesian
-    'Trò chuyện Mới', // Vietnamese
-    '新聊天', // Chinese (Simplified/Traditional)
-    '새 채팅', // Korean
-    'Nouvelle Conversation', // French
-    'Nova Conversa', // Portuguese
-    '新しいチャット', // Japanese
-    'Новый чат', // Russian
-    'Neuer Chat', // German
-  ].some((defaultTitle) => chatHistory.title === defaultTitle)
+  const defaultTitles = await getAllLocaleValues('chat_history.new_chat')
+  const isDefaultTitle = defaultTitles.some((title) => chatHistory.title === title)
 
   // Should generate title when:
   // 1. Chat title is still the default "New Chat" title

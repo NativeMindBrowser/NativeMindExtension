@@ -831,9 +831,9 @@ async function updateChatTitle(chatId: string, newTitle: string) {
 
 async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
   try {
-    logger.debug('autoGenerateChatTitleIfNeeded called for chat', chatHistory.id)
+    const shouldAutoGenerate = await shouldGenerateChatTitle(chatHistory)
 
-    const shouldAutoGenerate = shouldGenerateChatTitle(chatHistory)
+    logger.debug('autoGenerateChatTitleIfNeeded called for chat', chatHistory.id, shouldAutoGenerate)
 
     if (!shouldAutoGenerate) {
       return { success: true, updatedTitle: chatHistory.title }
