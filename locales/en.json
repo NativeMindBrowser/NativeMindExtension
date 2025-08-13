@@ -253,7 +253,11 @@
       "download_model_to_begin": "Download a model to begin.",
       "select_model_to_start": "Select and download a model to get started",
       "download_and_install": "Download & Install",
-      "choose_model": "Choose Model"
+      "choose_model": "Choose Model",
+      "no_sure_which_one": "🤔 Not sure which one to choose?",
+      "learn_about_models": "Learn about models",
+      "looking_for_more_options": "🔍 Looking for more options?",
+      "browse_more_models": "Browse more models"
     },
     "webllm_tutorial": {
       "title": "Not ready to install? Try it instantly.",

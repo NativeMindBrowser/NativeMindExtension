@@ -86,7 +86,11 @@
       "download_model_to_begin": "Téléchargez un modèle pour commencer.",
       "select_model_to_start": "Sélectionnez et téléchargez un modèle pour commencer",
       "download_and_install": "Télécharger & Installer",
-      "choose_model": "Choisir un modèle"
+      "choose_model": "Choisir un modèle",
+      "no_sure_which_one": "🤔 Pas sûr lequel choisir ?",
+      "learn_about_models": "En savoir plus sur les modèles",
+      "looking_for_more_options": "🔍 Vous cherchez plus d'options ?",
+      "browse_more_models": "Parcourir plus de modèles"
     },
     "webllm_tutorial": {
       "desc": "Utilisez un modèle léger (Qwen 0.6b) directement dans votre navigateur - sans configuration, sans attente.",
@@ -107,8 +111,8 @@
     "choose_model": "Choisir un modèle",
     "download": "Télécharger",
     "feedback": {
-      "contact_msg": "📧 Des questions ou des commentaires ? \nRejoignez notre {discord} ou envoyez-nous un e-mail à {email}.",
-      "join_waitlist": "💼 Vous souhaitez l'utiliser au travail ? \n{join_waitlist_link} pour les mises à jour professionnelles.",
+      "contact_msg": "📧 Des questions ou des commentaires ? Rejoignez notre {discord} ou envoyez-nous un e-mail à {email}.",
+      "join_waitlist": "💼 Vous souhaitez l'utiliser au travail ? {join_waitlist_link} pour les mises à jour professionnelles.",
       "join_waitlist_link": "Rejoignez la liste d'attente",
       "discord": "Discord"
     },

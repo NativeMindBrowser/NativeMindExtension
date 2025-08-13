@@ -86,7 +86,11 @@
       "download_model_to_begin": "Laden Sie ein Modell herunter, um zu beginnen.",
       "select_model_to_start": "Wählen Sie ein Modell aus und laden Sie es herunter, um zu beginnen",
       "download_and_install": "Herunterladen & Installieren",
-      "choose_model": "Modell auswählen"
+      "choose_model": "Modell auswählen",
+      "no_sure_which_one": "🤔 Nicht sicher, welches Sie wählen sollen?",
+      "learn_about_models": "Erfahren Sie mehr über Modelle",
+      "looking_for_more_options": "🔍 Suchen Sie nach weiteren Optionen?",
+      "browse_more_models": "Weitere Modelle durchsuchen"
     },
     "webllm_tutorial": {
       "desc": "Verwenden Sie ein leichtes Modell (QWEN 0,6B) direkt in Ihrem Browser - kein Setup, kein Warten.",
@@ -107,14 +111,14 @@
     "choose_model": "Modell auswählen",
     "download": "Herunterladen",
     "feedback": {
-      "contact_msg": "📧Questions oder Feedback? \nSchließen Sie sich unserem {Discord} an oder senden Sie uns eine E-Mail unter {email}.",
-      "join_waitlist": "💼Möchten Sie es beruflich nutzen? \n{join_waitlist_link} für Unternehmensupdates.",
-      "join_waitlist_link": "Treten Sie der Warteliste bei",
+      "contact_msg": "📧 Fragen oder Feedback? Treten Sie unserem {discord} bei oder senden Sie uns eine E-Mail an {email}.",
+      "join_waitlist": "💼 Berufliche Nutzung gewünscht? {join_waitlist_link} für Unternehmens-Updates.",
+      "join_waitlist_link": "Der Warteliste beitreten",
       "discord": "Discord"
     },
     "get_ollama": "Holen Sie sich Ollama",
     "models": {
-      "title": "Aktives Modell",
+      "title": "Modelle",
       "discover_more": "Entdecken Sie weitere Modelle",
       "no_model": "⚠️ Kein Modell",
       "add_model_to_start": "Fügen Sie ein Modell hinzu, um zu beginnen"
@@ -272,8 +276,8 @@
       "title": "Schnelle Aktionen"
     },
     "translation": {
-      "show_original": "Original zeigen",
-      "translate_page_into": "Übersetzen Sie diese Seite in {Sprache}",
+      "show_original": "Original anzeigen",
+      "translate_page_into": "Diese Seite ins {language} übersetzen",
       "translate_selected_text": "Ausgewählten Text übersetzen"
     },
     "add_image": {
@@ -284,11 +288,11 @@
     }
   },
   "errors": {
-    "model_not_found": "Hoppla! \nEtwas ist schiefgelaufen. \nBitte überprüfen Sie Ihre Ollama-Verbindung in den Einstellungen und versuchen Sie es erneut.",
-    "model_request_error": "Hoppla! \nEtwas ist schiefgelaufen. \nBitte überprüfen Sie Ihre Ollama-Verbindung in den Einstellungen und versuchen Sie es erneut.",
-    "model_request_timeout": "Anfordern Sie eine Zeitüberschreitung, überprüfen Sie bitte Ihre Ollama -Verbindung oder in Betracht, eine neue Sitzung zu starten, da lange Kontexte die Antwortzeiten beeinflussen können.",
-    "timeout_error": "Operation zeitlich ausgegeben: {message}",
-    "unknown_error": "Es ist ein unerwarteter Fehler aufgetreten: {message}",
+    "model_not_found": "Ups! Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Ollama-Verbindung in den Einstellungen und versuchen Sie es erneut.",
+    "model_request_error": "Ups! Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Ollama-Verbindung in den Einstellungen und versuchen Sie es erneut.",
+    "model_request_timeout": "Anfrage-Timeout. Bitte überprüfen Sie Ihre Ollama-Verbindung oder starten Sie eine neue Sitzung, da lange Kontexte die Antwortzeiten beeinträchtigen können.",
+    "timeout_error": "Zeitüberschreitung bei der Operation: {message}",
+    "unknown_error": "Ein unerwarteter Fehler ist aufgetreten: {message}",
     "webllm_not_supported": "WebLLM wird auf Ihrem Gerät nicht unterstützt."
   },
   "popup": {
