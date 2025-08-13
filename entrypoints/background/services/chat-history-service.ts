@@ -14,6 +14,7 @@ import { getModel, getModelUserConfig } from '@/utils/llm/models'
 import { selectSchema } from '@/utils/llm/output-schema'
 import logger from '@/utils/logger'
 import { generateChatTitle } from '@/utils/prompts'
+import { shouldGenerateChatTitle } from '@/utils/rpc/utils'
 import { getUserConfig } from '@/utils/user-config'
 
 import {
@@ -743,33 +744,30 @@ export class BackgroundChatHistoryService {
     const userMessages = completedMessages.filter((item) => item.role === 'user')
     const assistantMessages = completedMessages.filter((item) => item.role === 'assistant')
 
-    // Skip when title is not "New Chat" and there are multiple user and assistant messages
-    // Only skip if we have a custom title AND multiple conversation rounds
-    if (chatHistory.title !== i18n.t('chat_history.new_chat') && userMessages.length > 0 && assistantMessages.length > 0) {
+    const shouldAutoGenerate = shouldGenerateChatTitle(chatHistory)
+
+    if (!shouldAutoGenerate) {
       return
     }
+    else {
+      try {
+        const firstUser = userMessages[0] // FIXME: when user cancel first msg and send another again, it will be wrong
+        const firstAssistant = assistantMessages[0]
 
-    if (userMessages.length === 1 && assistantMessages.length >= 1) {
-      const firstUser = userMessages[0]
-      const firstAssistant = assistantMessages[0]
+        log.debug('Auto-generating chat title for chat:', chatHistory.id)
+        const newTitle = await this.generateChatTitle(firstUser.content, firstAssistant.content)
+        if (newTitle !== i18n.t('chat_history.new_chat')) {
+          // Update the title in the chat history
+          chatHistory.title = newTitle
 
-      if (firstUser.content && firstAssistant.content) {
-        try {
-          log.debug('Auto-generating chat title for chat:', chatHistory.id)
-          const newTitle = await this.generateChatTitle(firstUser.content, firstAssistant.content)
-          if (newTitle !== i18n.t('chat_history.new_chat')) {
-            // Update the title in the chat history
-            chatHistory.title = newTitle
-
-            log.debug('Setting new chat history:', chatHistory)
-            // Save the updated chat history
-            await this.saveChatHistory(chatHistory)
-            log.info('Auto-generated chat title:', newTitle)
-          }
+          log.debug('Setting new chat history:', chatHistory)
+          // Save the updated chat history
+          await this.saveChatHistory(chatHistory)
+          log.info('Auto-generated chat title:', newTitle)
         }
-        catch (error) {
-          log.error('Failed to auto-generate title:', error)
-        }
+      }
+      catch (error) {
+        log.error('Failed to auto-generate title:', error)
       }
     }
   }

@@ -1,6 +1,5 @@
 import { safeParseJSON } from '@ai-sdk/provider-utils'
-import { generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
-import { AISDKError } from 'ai'
+import { AISDKError, generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
 import { EventEmitter } from 'events'
 import { Browser, browser } from 'wxt/browser'
 import { z } from 'zod'
@@ -8,7 +7,6 @@ import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 
 import { ChatHistoryV1, ContextAttachmentStorage } from '@/types/chat'
 import { TabInfo } from '@/types/tab'
-import { useGlobalI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
 
 import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
@@ -29,7 +27,7 @@ import { showSettingsForBackground } from '../settings'
 import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
 import { b2sRpc, bgBroadcastRpc } from '.'
-import { preparePortConnection } from './utils'
+import { preparePortConnection, shouldGenerateChatTitle } from './utils'
 
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
@@ -835,14 +833,9 @@ async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
   try {
     logger.debug('autoGenerateChatTitleIfNeeded called for chat', chatHistory.id)
 
-    const { t } = await useGlobalI18n()
-    const newChatTitle = t('chat_history.new_chat')
+    const shouldAutoGenerate = shouldGenerateChatTitle(chatHistory)
 
-    // Skip when title is not "New Chat" and there are multiple user and assistant messages
-    // TODO: implement a reusable function for this
-    const userMessages = chatHistory.history.filter((msg) => msg.role === 'user')
-    const assistantMessages = chatHistory.history.filter((msg) => msg.role === 'assistant')
-    if (chatHistory.title !== newChatTitle && userMessages.length > 0 && assistantMessages.length > 0) {
+    if (!shouldAutoGenerate) {
       return { success: true, updatedTitle: chatHistory.title }
     }
     const service = BackgroundChatHistoryServiceManager.getInstance()
