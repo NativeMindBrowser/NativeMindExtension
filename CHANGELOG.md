@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v1.7.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.8...v1.7.0-beta.9)
+
+### 🚀 Enhancements
+
+- **chat:** Update ChatHistory bg color and enhance layout scroll, hide title when list is empty ([20b039d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/20b039d))
+- **chat:** Enhance chat message reasoning layout ([cffe2df](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cffe2df))
+
+### 🩹 Fixes
+
+- **Main.vue:** Adjust height of chat header to 48px for better layout ([010ee3f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/010ee3f))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.7.0-beta.8
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.7...v1.7.0-beta.8)
