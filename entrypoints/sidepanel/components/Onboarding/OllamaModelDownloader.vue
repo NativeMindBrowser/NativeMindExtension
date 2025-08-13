@@ -45,7 +45,7 @@
             </span>
           </div>
           <div v-else>
-            Choose Model
+            {{ t('onboarding.guide.choose_model') }}
           </div>
         </template>
         <template #option="{ option }">
@@ -84,7 +84,7 @@
       :disabled="!selectedModel"
       @click="modelToDownload = selectedModel"
     >
-      Download & Install
+      {{ t('onboarding.guide.download_and_install') }}
     </Button>
     <div class="flex flex-col items-center justify-center">
       <Text
@@ -115,7 +115,6 @@
     </div>
     <DownloadConfirmModal
       v-if="modelToDownload"
-      mountPoint="sidebar"
       :model="modelToDownload"
       @finished="emit('finished')"
       @cancel="modelToDownload = undefined"
@@ -138,7 +137,7 @@ import { formatSize } from '@/utils/formatter'
 import { useI18n } from '@/utils/i18n'
 import { PREDEFINED_OLLAMA_MODELS } from '@/utils/llm/predefined-models'
 
-import DownloadConfirmModal from '../../../settings/components/OllamaDownloadModal.vue'
+import DownloadConfirmModal from './OllamaDownloadModal.vue'
 
 const emit = defineEmits(['finished'])
 const { t } = useI18n()

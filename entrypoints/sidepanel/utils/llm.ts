@@ -48,7 +48,7 @@ export async function* streamObjectInBackground(options: Parameters<typeof s2bRp
 }
 
 export async function generateObjectInBackground<S extends SchemaName>(options: Parameters<typeof s2bRpc.generateObjectFromSchema<S>>[0] & ExtraOptions) {
-  const { promise: abortPromise, resolve, reject } = Promise.withResolvers<Awaited<ReturnType<typeof s2bRpc.generateObjectFromSchema<S>>>>()
+  const { promise: abortPromise, reject } = Promise.withResolvers<Awaited<ReturnType<typeof s2bRpc.generateObjectFromSchema<S>>>>()
   const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, ...restOptions } = options
   const aliveKeeper = new BackgroundAliveKeeper()
   abortSignal?.addEventListener('abort', () => {
@@ -60,14 +60,13 @@ export async function generateObjectInBackground<S extends SchemaName>(options: 
     log.warn('generate object request timeout', restOptions)
     reject(new ModelRequestTimeoutError())
   }, timeout)
-  const promise = await s2bRpc
+  const promise = s2bRpc
     .generateObjectFromSchema({
       ...restOptions,
     })
     .then((result) => {
       clearTimeout(timeoutTimer)
       log.debug('generate object result', result)
-      resolve(result)
       return result
     }).catch((error) => {
       throw fromError(error)

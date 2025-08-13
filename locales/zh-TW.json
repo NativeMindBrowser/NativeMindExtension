@@ -84,7 +84,9 @@
       "setup": "設置",
       "step1": "步驟1",
       "download_model_to_begin": "下載模型以開始。",
-      "select_model_to_start": "選擇並下載模型以開始使用"
+      "select_model_to_start": "選擇並下載模型以開始使用",
+      "download_and_install": "下載 & 安裝",
+      "choose_model": "選擇模型"
     },
     "webllm_tutorial": {
       "desc": "在瀏覽器中使用輕巧的模型（QWEN 0.6B） - 無需設置，無需等待。",

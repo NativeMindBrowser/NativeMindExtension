@@ -41,6 +41,49 @@
 ### 🚀 Enhancements
 
 - **agent:** Add methods to persist and check current tab in AgentStorage ([510c90a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/510c90a))
+## v1.6.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.4...v1.6.5)
+
+### 🩹 Fixes
+
+- **settings:** Filter running models by expiration instead of VRAM size ([9173c98](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9173c98))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.3...v1.6.4)
+
+### 🩹 Fixes
+
+- **onboarding:** Sidepanel model downloader ([ca46667](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ca46667))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.2...v1.6.3)
+
+### 🩹 Fixes
+
+- **manifest:** Remove unused 'system.display' permission ([c86a776](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c86a776))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.1...v1.6.2)
+
+### 🏡 Chore
+
+- **i18n:** Update Russian extension name ([4745c59](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4745c59))
 
 ### ❤️ Contributors
 

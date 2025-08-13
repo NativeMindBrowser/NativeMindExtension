@@ -84,7 +84,9 @@
       "setup": "Cài đặt",
       "step1": "Bước 1",
       "download_model_to_begin": "Tải xuống một mô hình để bắt đầu.",
-      "select_model_to_start": "Chọn và tải xuống một mô hình để bắt đầu"
+      "select_model_to_start": "Chọn và tải xuống một mô hình để bắt đầu",
+      "download_and_install": "Tải xuống & Cài đặt",
+      "choose_model": "Chọn Mô hình"
     },
     "webllm_tutorial": {
       "desc": "Sử dụng mô hình nhẹ (QWEN 0,6B) ngay trong trình duyệt của bạn - không thiết lập, không chờ đợi.",
@@ -102,7 +104,7 @@
     "advanced": {
       "title": "Nâng cao"
     },
-    "choose_model": "Chọn mô hình",
+    "choose_model": "Chọn Mô hình",
     "download": "Tải xuống",
     "feedback": {
       "contact_msg": "📧 Có câu hỏi hay phản hồi? Tham gia {discord} của chúng tôi hoặc gửi email cho chúng tôi tại {email}.",

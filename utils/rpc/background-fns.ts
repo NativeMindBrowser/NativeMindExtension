@@ -12,7 +12,7 @@ import logger from '@/utils/logger'
 import { sleep } from '../async'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
-import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, ModelRequestError, UnknownError } from '../error'
+import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
 import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
@@ -210,7 +210,7 @@ const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<Gene
       const parsed = safeParseJSON<z.infer<Schemas[S]>>({ text: response.text, schema: s })
       if (!parsed.success) {
         logger.error('Failed to parse response with schema', s, 'response:', response)
-        throw new Error(`Response does not match schema: ${parsed.error.message}`)
+        throw new GenerateObjectSchemaError(`Response does not match schema: ${parsed.error.message}`)
       }
       const result: GenerateObjectResult<z.infer<Schemas[S]>> = {
         ...response,

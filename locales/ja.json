@@ -84,7 +84,9 @@
       "setup": "セットアップ",
       "step1": "ステップ 1",
       "download_model_to_begin": "モデルをダウンロードして開始してください。",
-      "select_model_to_start": "モデルを選択してダウンロードし、開始してください"
+      "select_model_to_start": "モデルを選択してダウンロードし、開始してください",
+      "download_and_install": "ダウンロード & インストール",
+      "choose_model": "モデルを選択"
     },
     "webllm_tutorial": {
       "desc": "ブラウザで直接軽量モデル（Qwen 0.6b）を使用できます。セットアップ不要、待ち時間なし。",

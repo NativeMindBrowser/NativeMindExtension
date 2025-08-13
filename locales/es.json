@@ -108,7 +108,9 @@
       "setup": "Configuración",
       "step1": "PASO 1",
       "download_model_to_begin": "Descarga un modelo para comenzar.",
-      "select_model_to_start": "Selecciona y descarga un modelo para comenzar"
+      "select_model_to_start": "Selecciona y descarga un modelo para comenzar",
+      "download_and_install": "Descargar & Instalar",
+      "choose_model": "Elegir Modelo"
     },
     "webllm_tutorial": {
       "desc": "Usa un modelo ligero (Qwen 0.6b) directamente en tu navegador — sin configuración, sin espera.",

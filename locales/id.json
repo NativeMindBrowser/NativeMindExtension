@@ -84,7 +84,9 @@
       "setup": "Pengaturan",
       "step1": "LANGKAH 1",
       "download_model_to_begin": "Unduh model untuk memulai.",
-      "select_model_to_start": "Pilih dan unduh model untuk memulai"
+      "select_model_to_start": "Pilih dan unduh model untuk memulai",
+      "download_and_install": "Unduh & Instal",
+      "choose_model": "Pilih Model"
     },
     "webllm_tutorial": {
       "desc": "Gunakan model ringan (Qwen 0.6b) langsung di browser Anda — tanpa pengaturan, tanpa menunggu.",

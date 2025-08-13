@@ -251,7 +251,9 @@
       "need_help": "Need help?",
       "follow_our_tutorial": "Follow our installation guide",
       "download_model_to_begin": "Download a model to begin.",
-      "select_model_to_start": "Select and download a model to get started"
+      "select_model_to_start": "Select and download a model to get started",
+      "download_and_install": "Download & Install",
+      "choose_model": "Choose Model"
     },
     "webllm_tutorial": {
       "title": "Not ready to install? Try it instantly.",

@@ -84,7 +84,9 @@
       "setup": "Configurar",
       "step1": "Etapa 1",
       "download_model_to_begin": "Baixe um modelo para começar.",
-      "select_model_to_start": "Selecione e baixe um modelo para começar"
+      "select_model_to_start": "Selecione e baixe um modelo para começar",
+      "download_and_install": "Baixar & Instalar",
+      "choose_model": "Escolher Modelo"
     },
     "webllm_tutorial": {
       "desc": "Use um modelo leve (QWEN 0.6B) diretamente no seu navegador - sem configuração, sem espera.",
@@ -102,7 +104,7 @@
     "advanced": {
       "title": "Avançado"
     },
-    "choose_model": "Escolha o modelo",
+    "choose_model": "Escolher Modelo",
     "download": "Download",
     "feedback": {
       "contact_msg": "📧 Dúvidas ou sugestões? Participe do nosso {discord} ou envie um email para {email}.",

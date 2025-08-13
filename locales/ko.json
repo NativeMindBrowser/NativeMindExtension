@@ -84,7 +84,9 @@
       "setup": "설정",
       "step1": "1단계",
       "download_model_to_begin": "시작하려면 모델을 다운로드하세요.",
-      "select_model_to_start": "시작하려면 모델을 선택하고 다운로드하세요"
+      "select_model_to_start": "시작하려면 모델을 선택하고 다운로드하세요",
+      "download_and_install": "다운로드 & 설치",
+      "choose_model": "모델 선택"
     },
     "webllm_tutorial": {
       "desc": "브라우저에서 바로 경량 모델(Qwen 0.6B)을 사용해 보세요. 설정 없이 바로 시작할 수 있습니다.",
