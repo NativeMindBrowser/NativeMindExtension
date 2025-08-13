@@ -42,7 +42,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "Mencari: \"{query}\"...",
-        "search_completed": "Pencarian selesai: \"{query}\""
+        "search_completed": "Pencarian selesai: \"{query}\"",
+        "search_failed": "Pencarian gagal: {query}"
       },
       "fetch_page": {
         "reading_success": "Selesai membaca: {title}",

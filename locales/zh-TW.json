@@ -42,7 +42,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "搜尋中：「{query}」...",
-        "search_completed": "搜尋完成：「{query}」"
+        "search_completed": "搜尋完成：「{query}」",
+        "search_failed": "搜尋失敗：{query}"
       },
       "fetch_page": {
         "reading_success": "已完成閱讀：{title}",

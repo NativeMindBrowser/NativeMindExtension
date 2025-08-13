@@ -42,7 +42,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "Đang tìm kiếm: \"{query}\"...",
-        "search_completed": "Tìm kiếm hoàn tất: \"{query}\""
+        "search_completed": "Tìm kiếm hoàn tất: \"{query}\"",
+        "search_failed": "Tìm kiếm thất bại: {query}"
       },
       "fetch_page": {
         "reading_success": "Đã hoàn thành đọc: {title}",

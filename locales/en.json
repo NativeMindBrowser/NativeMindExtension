@@ -218,7 +218,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "Searching: \"{query}\"...",
-        "search_completed": "Search completed: \"{query}\""
+        "search_completed": "Search completed: \"{query}\"",
+        "search_failed": "Search failed: {query}"
       },
       "fetch_page": {
         "reading": "Reading: {title}",

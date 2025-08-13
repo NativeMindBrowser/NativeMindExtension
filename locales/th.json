@@ -42,7 +42,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "กำลังค้นหา: \"{query}\"...",
-        "search_completed": "การค้นหาเสร็จสิ้น: \"{query}\""
+        "search_completed": "การค้นหาเสร็จสิ้น: \"{query}\"",
+        "search_failed": "การค้นหาล้มเหลว: {query}"
       },
       "fetch_page": {
         "reading_success": "อ่านเสร็จแล้ว: {title}",

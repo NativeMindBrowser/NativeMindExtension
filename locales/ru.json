@@ -42,7 +42,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "Поиск: \"{query}\"...",
-        "search_completed": "Поиск завершен: \"{query}\""
+        "search_completed": "Поиск завершен: \"{query}\"",
+        "search_failed": "Поиск не удался: {query}"
       },
       "fetch_page": {
         "reading_success": "Завершено чтение: {title}",

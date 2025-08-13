@@ -42,7 +42,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "Suche: \"{query}\"...",
-        "search_completed": "Suche abgeschlossen: \"{query}\""
+        "search_completed": "Suche abgeschlossen: \"{query}\"",
+        "search_failed": "Suche fehlgeschlagen: {query}"
       },
       "fetch_page": {
         "reading_success": "Lektüre abgeschlossen: {title}",

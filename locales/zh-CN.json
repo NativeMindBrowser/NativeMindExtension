@@ -218,7 +218,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "正在搜索：\"{query}\"...",
-        "search_completed": "搜索完成：\"{query}\""
+        "search_completed": "搜索完成：\"{query}\"",
+        "search_failed": "搜索失败：{query}"
       },
       "fetch_page": {
         "reading_success": "已完成阅读：{title}",

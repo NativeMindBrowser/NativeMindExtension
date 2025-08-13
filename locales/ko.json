@@ -42,7 +42,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "검색 중: \"{query}\"...",
-        "search_completed": "검색 완료: \"{query}\""
+        "search_completed": "검색 완료: \"{query}\"",
+        "search_failed": "검색 실패: {query}"
       },
       "fetch_page": {
         "reading_success": "읽기 완료: {title}",

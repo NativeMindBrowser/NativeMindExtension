@@ -42,7 +42,8 @@
     "tool_calls": {
       "search_online": {
         "searching": "検索中: \"{query}\"...",
-        "search_completed": "検索完了: \"{query}\""
+        "search_completed": "検索完了: \"{query}\"",
+        "search_failed": "検索に失敗しました: {query}"
       },
       "fetch_page": {
         "reading_success": "読了: {title}",
