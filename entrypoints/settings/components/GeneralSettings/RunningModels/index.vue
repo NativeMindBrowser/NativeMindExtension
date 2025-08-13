@@ -61,7 +61,7 @@ const onUnloadModel = (model: string) => {
 }
 
 const runningModels = computed(() => {
-  return modelList.value.filter((model) => model.sizeVRam)
+  return modelList.value.filter((model) => model.expiresAt)
 })
 
 onMounted(() => {

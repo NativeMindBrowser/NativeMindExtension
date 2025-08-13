@@ -1,7 +1,7 @@
 {
   "chat": {
     "messages": {
-      "thought_for_seconds": "{second}초 동안 생각 중 | \n{second}초 동안 생각 중",
+      "thought_for_seconds": "{second}초 동안 생각 중 | {second}초 동안 생각 중",
       "thinking": "생각하는 중...",
       "reading": "읽는 중",
       "search_locally": "브라우저에서 검색 중..."
@@ -87,7 +87,7 @@
     "guide": {
       "already_installed": "이미 Ollama를 설치하고 실행 중인가요?",
       "features": {
-        "1": "DeepSeek, Qwen, Llama와 같은 고급 모델을 실행할 수 있습니다",
+        "1": "고급 모델들인 gpt-oss, DeepSeek, Qwen, Llama를 실행하세요",
         "2": "모델을 완전히 제어하여 사용자 지정하고 전환할 수 있습니다",
         "3": "사용자의 데이터는 기기에서 안전하게 유지됩니다"
       },
@@ -99,7 +99,13 @@
       "setup": "설정",
       "step1": "1단계",
       "download_model_to_begin": "시작하려면 모델을 다운로드하세요.",
-      "select_model_to_start": "시작하려면 모델을 선택하고 다운로드하세요"
+      "select_model_to_start": "시작하려면 모델을 선택하고 다운로드하세요",
+      "download_and_install": "다운로드 & 설치",
+      "choose_model": "모델 선택",
+      "no_sure_which_one": "🤔 어떤 것을 선택해야 할지 확실하지 않나요?",
+      "learn_about_models": "모델에 대해 알아보기",
+      "looking_for_more_options": "🔍 더 많은 옵션을 찾고 계신가요?",
+      "browse_more_models": "더 많은 모델 둘러보기"
     },
     "webllm_tutorial": {
       "desc": "브라우저에서 바로 경량 모델(Qwen 0.6B)을 사용해 보세요. 설정 없이 바로 시작할 수 있습니다.",
@@ -129,8 +135,8 @@
     "choose_model": "모델 선택",
     "download": "다운로드",
     "feedback": {
-      "contact_msg": "📧 질문이나 피드백이 있으신가요? \n{discord}에 가입하거나 {email}로 이메일을 보내주세요.",
-      "join_waitlist": "💼 직장에서 사용하고 싶으신가요? \n기업용 업데이트를 위해 {join_waitlist_link}하세요.",
+      "contact_msg": "📧 질문이나 피드백이 있으신가요? {discord}에 가입하거나 {email}로 이메일을 보내주세요.",
+      "join_waitlist": "💼 직장에서 사용하고 싶으신가요? 기업용 업데이트를 위해 {join_waitlist_link}하세요.",
       "join_waitlist_link": "대기자 명단 가입하기",
       "discord": "Discord"
     },
@@ -265,7 +271,7 @@
       "description": "채팅 기능 및 빠른 작업 구성",
       "basic_config": {
         "title": "기본 구성",
-        "chat_model": "I'd be happy to help you translate from English to Korean! However, I don't see any English text provided for translation. Could you please share the English text you'd like me to translate into Korean?",
+        "chat_model": "채팅 모델",
         "chat_model_description": "채팅 대화를 위한 AI 모델을 선택하세요",
         "chat_system_prompt": "채팅 시스템 프롬프트",
         "chat_system_prompt_description": "채팅 대화 중 AI의 행동과 역할을 정의하세요"
@@ -285,7 +291,7 @@
       "interface_language_desc": "NativeMind 인터페이스의 표시 언어를 선택하세요"
     },
     "header": {
-      "starts_on_github": "Stars on GitHub",
+      "starts_on_github": "GitHub에서 별점 주기",
       "goto_website": "웹사이트로 이동"
     }
   },

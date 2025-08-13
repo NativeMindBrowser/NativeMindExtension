@@ -87,7 +87,7 @@
     "guide": {
       "already_installed": "すでにOllamaをインストールして実行していますか？",
       "features": {
-        "1": "DeepSeek、Qwen、Llamaなどの高度なモデルを実行できます",
+        "1": "高度なモデル（gpt-oss、DeepSeek、Qwen、Llama）を実行する",
         "2": "完全な制御でモデルをカスタマイズし切り替えられます",
         "3": "あなたのデータはデバイス上でプライベートに保たれます"
       },
@@ -99,7 +99,13 @@
       "setup": "セットアップ",
       "step1": "ステップ 1",
       "download_model_to_begin": "モデルをダウンロードして開始してください。",
-      "select_model_to_start": "モデルを選択してダウンロードし、開始してください"
+      "select_model_to_start": "モデルを選択してダウンロードし、開始してください",
+      "download_and_install": "ダウンロード & インストール",
+      "choose_model": "モデルを選択",
+      "no_sure_which_one": "🤔 どれを選べばよいかわからない？",
+      "learn_about_models": "モデルについて学ぶ",
+      "looking_for_more_options": "🔍 より多くのオプションをお探しですか？",
+      "browse_more_models": "他のモデルを見る"
     },
     "webllm_tutorial": {
       "desc": "ブラウザで直接軽量モデル（Qwen 0.6b）を使用できます。セットアップ不要、待ち時間なし。",
@@ -285,7 +291,7 @@
       "interface_language_desc": "NativeMindインターフェースの表示言語を選択してください"
     },
     "header": {
-      "starts_on_github": "Stars on GitHub",
+      "starts_on_github": "GitHubでスター",
       "goto_website": "ウェブサイトに移動"
     }
   },

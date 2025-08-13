@@ -1,6 +1,39 @@
 # Changelog
 
 
+## v1.7.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.6...v1.7.0-beta.7)
+
+### 🚀 Enhancements
+
+- **Settings:** Display version information on settings sidebar ([16ebfc6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/16ebfc6))
+- **locales:** Update PDF text extraction error messages and add tool call translations ([e839009](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e839009))
+- **web-components:** Add NMIcon component and register web components ([4458088](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4458088))
+- **chat:** Add AgentTaskGroup component and related types for task management ([1ded1e0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1ded1e0))
+- **document-parser:** Implement document parsing with Readability and Turndown, add tests ([ffd2c51](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ffd2c51))
+- **background:** Inject content script into existing tabs on extension installation/update/reactivate and improve logging ([cdcb238](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cdcb238))
+- **prompt:** Add finalization priority rule to chat system prompt ([18f70fb](https://github.com/NativeMindBrowser/NativeMindExtension/commit/18f70fb))
+- **agent:** Improve agent tool calls and error handling ([417424e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/417424e))
+
+### 🩹 Fixes
+
+- **logger:** Clean up global logger assignment and improve type safety ([0aaa177](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0aaa177))
+- **attachment-selector:** Improve PDF text extraction and validation logic ([a0187b9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a0187b9))
+
+### 💅 Refactors
+
+- **runtime:** Streamline entrypoint type definitions and enhance return type inference ([504193d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/504193d))
+
+### 🏡 Chore
+
+- **tsconfig:** Enable experimental decorators and class fields ([8bcae38](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8bcae38))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.7.0-beta.6
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.5...v1.7.0-beta.6)
@@ -8,6 +41,49 @@
 ### 🚀 Enhancements
 
 - **agent:** Add methods to persist and check current tab in AgentStorage ([510c90a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/510c90a))
+## v1.6.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.4...v1.6.5)
+
+### 🩹 Fixes
+
+- **settings:** Filter running models by expiration instead of VRAM size ([9173c98](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9173c98))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.3...v1.6.4)
+
+### 🩹 Fixes
+
+- **onboarding:** Sidepanel model downloader ([ca46667](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ca46667))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.2...v1.6.3)
+
+### 🩹 Fixes
+
+- **manifest:** Remove unused 'system.display' permission ([c86a776](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c86a776))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.6.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.1...v1.6.2)
+
+### 🏡 Chore
+
+- **i18n:** Update Russian extension name ([4745c59](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4745c59))
 
 ### ❤️ Contributors
 

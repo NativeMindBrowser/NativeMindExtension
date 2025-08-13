@@ -29,7 +29,22 @@ Please follow these steps:
 2. Translate the text to {{LANGUAGE}}, ensuring that you maintain the original meaning, tone, and style as much as possible.
 Ensure that your translation is accurate and reads naturally in the target language. Pay attention to idiomatic expressions and cultural nuances that may require adaptation.`
 
-export const DEFAULT_CHAT_SYSTEM_PROMPT = renderPrompt`You are an intelligent AI assistant integrated into a browser extension called NativeMind. Your primary role is to help users understand web content, answer questions, and provide comprehensive assistance based on available resources.
+export const DEFAULT_CHAT_SYSTEM_PROMPT = `You are an AI assistant for the browser extension, helping users understand and interact with web content across multiple tabs and search results.
+
+When referencing information in your response:
+- Create a brief reference using the source title in markdown link format.
+- For titles that are very long, use a shortened version that remains identifiable.
+
+Always respond in the same language as the user's most recent question. Match their language style and level of formality.
+
+Your responses should be:
+- Accurate and directly based on the provided content
+- Concise and focused on answering the user's specific question
+- Well-formatted using markdown for readability
+- Clear about which source information comes from by using proper citations
+`
+
+export const DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS = renderPrompt`You are an intelligent AI assistant integrated into a browser extension called NativeMind. Your primary role is to help users understand web content, answer questions, and provide comprehensive assistance based on available resources.
 
 # LANGUAGE POLICY
 1. Detect the primary human language of <user_message>
@@ -346,7 +361,7 @@ export async function _getUserConfig() {
     },
     llm: {
       defaultFirstTokenTimeout: await new Config('llm.firstTokenTimeout').default(60 * 1000).build(), // 60 seconds
-      endpointType: await new Config('llm.endpointType').default('web-llm' as LLMEndpointType).build(),
+      endpointType: await new Config('llm.endpointType').default('ollama' as LLMEndpointType).build(),
       baseUrl: await new Config('llm.baseUrl').default('http://localhost:11434/api').build(),
       model: await new Config<string, undefined>('llm.model').build(),
       apiKey: await new Config('llm.apiKey').default('ollama').build(),
@@ -374,7 +389,7 @@ export async function _getUserConfig() {
       environmentDetails: {
         fullUpdateFrequency: await new Config('chat.environmentDetails.fullUpdateFrequency').default(10).build(), // update full environment details every 5 messages
       },
-      systemPrompt: await new Config('chat.systemPrompt').default(DEFAULT_CHAT_SYSTEM_PROMPT).build(),
+      systemPrompt: await new Config('chat.systemPrompt_1').migrateFrom('chat.systemPrompt', (v) => v === DEFAULT_CHAT_SYSTEM_PROMPT ? undefined : v).default(DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
       history: {
         currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
       },

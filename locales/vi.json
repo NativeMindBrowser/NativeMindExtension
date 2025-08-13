@@ -87,7 +87,7 @@
     "guide": {
       "already_installed": "Bạn đã cài đặt và chạy Ollama?",
       "features": {
-        "1": "Chạy các mô hình nâng cao như Deepseek, Qwen, Llama",
+        "1": "Chạy các mô hình tiên tiến như gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Tùy chỉnh và chuyển đổi các mô hình với toàn bộ điều khiển",
         "3": "Dữ liệu của bạn vẫn riêng tư, trên thiết bị của bạn"
       },
@@ -99,7 +99,13 @@
       "setup": "Cài đặt",
       "step1": "Bước 1",
       "download_model_to_begin": "Tải xuống một mô hình để bắt đầu.",
-      "select_model_to_start": "Chọn và tải xuống một mô hình để bắt đầu"
+      "select_model_to_start": "Chọn và tải xuống một mô hình để bắt đầu",
+      "download_and_install": "Tải xuống & Cài đặt",
+      "choose_model": "Chọn Mô hình",
+      "no_sure_which_one": "🤔 Không chắc chọn cái nào?",
+      "learn_about_models": "Tìm hiểu về các mô hình",
+      "looking_for_more_options": "🔍 Đang tìm kiếm thêm tùy chọn?",
+      "browse_more_models": "Duyệt qua các mô hình khác"
     },
     "webllm_tutorial": {
       "desc": "Sử dụng mô hình nhẹ (QWEN 0,6B) ngay trong trình duyệt của bạn - không thiết lập, không chờ đợi.",
@@ -126,7 +132,7 @@
     "advanced": {
       "title": "Nâng cao"
     },
-    "choose_model": "Chọn mô hình",
+    "choose_model": "Chọn Mô hình",
     "download": "Tải xuống",
     "feedback": {
       "contact_msg": "📧 Có câu hỏi hay phản hồi? Tham gia {discord} của chúng tôi hoặc gửi email cho chúng tôi tại {email}.",
@@ -224,7 +230,7 @@
       "download_model": "Tải xuống \"{model}\"",
       "downloading": "Mô hình của bạn đang được tải xuống. Vui lòng đợi…",
       "download": "Tải xuống",
-      "retry": "\"Retry\" in Vietnamese is:\n\n**Thử lại**",
+      "retry": "Thử lại",
       "unable_to_download": "Không thể bắt đầu tải xuống",
       "could_not_connect_ollama": "Chúng tôi không thể kết nối với Ollama. Vui lòng đảm bảo Ollama đang chạy và thử lại."
     },
@@ -277,7 +283,7 @@
       }
     },
     "common": {
-      "saved": "\"Saved\" in Vietnamese is \"Đã lưu\""
+      "saved": "Đã lưu"
     },
     "interface": {
       "title": "Giao diện",
@@ -285,7 +291,7 @@
       "interface_language_desc": "Chọn ngôn ngữ hiển thị cho giao diện NativeMind"
     },
     "header": {
-      "starts_on_github": "Stars on GitHub",
+      "starts_on_github": "Sao trên GitHub",
       "goto_website": "Đi đến Trang web"
     }
   },

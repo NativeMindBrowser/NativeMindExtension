@@ -1,7 +1,7 @@
 {
   "chat": {
     "messages": {
-      "thought_for_seconds": "Pensando por {second} segundo | \nPensando por {second} segundos",
+      "thought_for_seconds": "Pensando por {second} segundo | Pensando por {second} segundos",
       "thinking": "Pensando...",
       "reading": "Lendo",
       "search_locally": "Pesquisando localmente no navegador..."
@@ -87,7 +87,7 @@
     "guide": {
       "already_installed": "Já instalou e está executando o Ollama?",
       "features": {
-        "1": "Execute modelos avançados como Deepseek, Qwen, Llama",
+        "1": "Execute modelos avançados como gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Personalize e alterne entre modelos com controle total",
         "3": "Seus dados permanecem privados no seu dispositivo"
       },
@@ -99,7 +99,13 @@
       "setup": "Configurar",
       "step1": "Etapa 1",
       "download_model_to_begin": "Baixe um modelo para começar.",
-      "select_model_to_start": "Selecione e baixe um modelo para começar"
+      "select_model_to_start": "Selecione e baixe um modelo para começar",
+      "download_and_install": "Baixar & Instalar",
+      "choose_model": "Escolher Modelo",
+      "no_sure_which_one": "🤔 Não tem certeza de qual escolher?",
+      "learn_about_models": "Aprenda sobre modelos",
+      "looking_for_more_options": "🔍 Procurando por mais opções?",
+      "browse_more_models": "Navegue por mais modelos"
     },
     "webllm_tutorial": {
       "desc": "Use um modelo leve (QWEN 0.6B) diretamente no seu navegador - sem configuração, sem espera.",
@@ -126,7 +132,7 @@
     "advanced": {
       "title": "Avançado"
     },
-    "choose_model": "Escolha o modelo",
+    "choose_model": "Escolher Modelo",
     "download": "Download",
     "feedback": {
       "contact_msg": "📧 Dúvidas ou sugestões? Participe do nosso {discord} ou envie um email para {email}.",
@@ -295,7 +301,7 @@
     },
     "translation": {
       "show_original": "Mostrar original",
-      "translate_page_into": "Traduzir esta página para {idioma}",
+      "translate_page_into": "Traduzir esta página para {language}",
       "translate_selected_text": "Traduzir texto selecionado"
     },
     "add_image": {

@@ -1,6 +1,6 @@
 import { useGlobalI18n } from './i18n'
 
-export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType' | 'fetchError' | 'parseFunctionCallError' | 'aiSDKError'
+export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType' | 'fetchError' | 'parseFunctionCallError' | 'aiSDKError' | 'generateObjectSchemaError'
 
 export abstract class AppError<Code extends ErrorCode> extends Error {
   private _appError = true
@@ -136,6 +136,16 @@ export class ParseFunctionCallError extends AppError<'parseFunctionCallError'> {
   }
 }
 
+export class GenerateObjectSchemaError extends AppError<'generateObjectSchemaError'> {
+  constructor(message: string) {
+    super('generateObjectSchemaError', message)
+  }
+
+  async toLocaleMessage() {
+    return this.message
+  }
+}
+
 export class AiSDKError extends AppError<'aiSDKError'> {
   constructor(message: string) {
     super('aiSDKError', message)
@@ -159,6 +169,7 @@ const errors = {
   fetchError: FetchError,
   parseFunctionCallError: ParseFunctionCallError,
   aiSDKError: AiSDKError,
+  generateObjectSchemaError: GenerateObjectSchemaError,
 } satisfies Record<ErrorCode, typeof AppError<ErrorCode>>
 
 export function fromError(error: unknown): AppError<ErrorCode> {

@@ -87,7 +87,7 @@
     "guide": {
       "already_installed": "Sudah menginstal dan menjalankan Ollama?",
       "features": {
-        "1": "Jalankan model canggih seperti DeepSeek, Qwen, Llama",
+        "1": "Jalankan model canggih seperti gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Sesuaikan dan beralih antar model dengan kontrol penuh",
         "3": "Data Anda tetap pribadi, tersimpan di perangkat Anda"
       },
@@ -99,7 +99,13 @@
       "setup": "Pengaturan",
       "step1": "LANGKAH 1",
       "download_model_to_begin": "Unduh model untuk memulai.",
-      "select_model_to_start": "Pilih dan unduh model untuk memulai"
+      "select_model_to_start": "Pilih dan unduh model untuk memulai",
+      "download_and_install": "Unduh & Instal",
+      "choose_model": "Pilih Model",
+      "no_sure_which_one": "🤔 Tidak yakin yang mana yang dipilih?",
+      "learn_about_models": "Pelajari tentang model",
+      "looking_for_more_options": "🔍 Mencari lebih banyak opsi?",
+      "browse_more_models": "Jelajahi lebih banyak model"
     },
     "webllm_tutorial": {
       "desc": "Gunakan model ringan (Qwen 0.6b) langsung di browser Anda — tanpa pengaturan, tanpa menunggu.",
@@ -285,7 +291,7 @@
       "interface_language_desc": "Pilih bahasa tampilan untuk antarmuka NativeMind"
     },
     "header": {
-      "starts_on_github": "Stars on GitHub",
+      "starts_on_github": "Bintang di GitHub",
       "goto_website": "Kunjungi Situs Web"
     }
   },

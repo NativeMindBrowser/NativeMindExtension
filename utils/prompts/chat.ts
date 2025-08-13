@@ -2,6 +2,7 @@ import { ContextAttachment, ContextAttachmentStorage, ImageAttachment, PDFAttach
 import { Base64ImageData } from '@/types/image'
 import dayjs from '@/utils/time'
 
+import { nonNullable } from '../array'
 import logger from '../logger'
 import { getUserConfig } from '../user-config'
 import { definePrompt, renderPrompt, TagBuilder, TextBuilder, UserPrompt } from './helpers'
@@ -48,7 +49,7 @@ export class EnvironmentDetailsBuilder {
 
     const currentTabPdf = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'pdf' ? this.contextAttachmentStorage.currentTab : undefined)
     const pdfs = attachments.filter((a): a is PDFAttachment => a.type === 'pdf')
-    const allPdfs = [currentTabPdf, ...pdfs].filter(Boolean) as PDFAttachment[]
+    const allPdfs = [currentTabPdf, ...pdfs].filter(nonNullable)
     if (allPdfs.length) {
       envBuilder.insertContent('# Updated PDFs')
       for (const pdfMeta of allPdfs) {
@@ -88,7 +89,7 @@ export class EnvironmentDetailsBuilder {
     const pdfContextBuilder = new TextBuilder('# Available PDFs')
     const currentTabPdf = this.contextAttachmentStorage.currentTab?.type === 'pdf' ? this.contextAttachmentStorage.currentTab : undefined
     const attachmentPdfs = this.contextAttachmentStorage.attachments.filter((a): a is PDFAttachment => a.type === 'pdf')
-    const allPdfs = [currentTabPdf, ...attachmentPdfs].filter(Boolean) as PDFAttachment[]
+    const allPdfs = [currentTabPdf, ...attachmentPdfs].filter(nonNullable) as PDFAttachment[]
     if (allPdfs.length === 0) {
       pdfContextBuilder.insertContent('(No available PDFs)')
     }

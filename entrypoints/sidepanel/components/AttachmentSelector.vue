@@ -492,7 +492,13 @@ const updateAllTabs = async () => {
   allTabs.value = await getValidTabs()
   attachments.value = attachments.value.filter((attachment) => {
     if (attachment.type === 'tab') {
-      return allTabs.value.some((tab) => tab.tabId === attachment.value.tabId)
+      const existTab = allTabs.value.find((tab) => tab.tabId === attachment.value.tabId)
+      if (existTab) {
+        attachment.value.title = existTab.title
+        attachment.value.faviconUrl = existTab.faviconUrl
+        attachment.value.url = existTab.url
+      }
+      return !!existTab
     }
     return true // Keep other types of attachments
   })
@@ -594,9 +600,13 @@ const removeAttachment = (attachment: ContextAttachment) => {
   if (attachment.value.id === attachmentStorage.value.currentTab?.value.id) {
     attachmentStorage.value.currentTab = undefined
   }
-  else {
-    attachments.value = attachments.value.filter((a) => a !== attachment)
+  if (attachment.type === 'tab') {
+    const existTabIdx = attachments.value.findIndex((a) => a.type === 'tab' && a.value.tabId === attachment.value.tabId)
+    if (existTabIdx !== -1) {
+      attachments.value.splice(existTabIdx, 1)
+    }
   }
+  attachments.value = attachments.value.filter((a) => a.value.id !== attachment.value.id)
 }
 
 const updateCurrentTabAttachment = async () => {

@@ -7,7 +7,8 @@ import { AssistantMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData, ImageDataWithId } from '@/types/image'
 import { TagBuilderJSON } from '@/types/prompt'
-import { AbortError, AiSDKError, AppError, ErrorCode, fromError, ParseFunctionCallError } from '@/utils/error'
+import { AbortError, AiSDKError, AppError, ErrorCode, fromError, ModelNotFoundError, ParseFunctionCallError } from '@/utils/error'
+import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
 import { GetPromptBasedTool, PromptBasedToolName, PromptBasedToolNameAndParams } from '@/utils/llm/tools/prompt-based/tools'
@@ -226,11 +227,11 @@ export class Agent<T extends PromptBasedToolName> {
       }
     }
     // make this message available to the next user task
-    const convertToAssistantMessage = () => {
-      if (agentMessage) {
-        agentMessage.done = true
-        ;(agentMessage as unknown as AssistantMessageV1).role = 'assistant'
-      }
+    const convertToAssistantMessage = (): AssistantMessageV1 => {
+      const agentMessage = getOrAddAgentMessage()
+      agentMessage.done = true
+      ;(agentMessage as unknown as AssistantMessageV1).role = 'assistant'
+      return agentMessage as unknown as AssistantMessageV1
     }
     return {
       getAgentMessage,
@@ -344,6 +345,7 @@ export class Agent<T extends PromptBasedToolName> {
             taskMessageModifier = this.makeTaskMessageProxy()
           }
           const toolResults = await this.executeToolCalls(currentLoopToolCalls, taskScopeToolCalls, loopImages, taskMessageModifier)
+          this.log.debug('Tool calls executed', currentLoopToolCalls, toolResults)
           if (toolResults.length === 0) {
             const errorResult = TagBuilder.fromStructured('error', {
               message: `Tool not found, available tools are: ${Object.keys(this.tools).join(', ')}`,
@@ -358,7 +360,8 @@ export class Agent<T extends PromptBasedToolName> {
       catch (e) {
         agentMessage.done = true
         const error = fromError(e)
-        this.processGenerationError(error, loopMessages)
+        const shouldContinue = await this.processGenerationError(error, loopMessages, agentMessageManager)
+        if (!shouldContinue) return
         this.log.error('Error in chat stream', e, error)
         hasError = true
       }
@@ -373,7 +376,7 @@ export class Agent<T extends PromptBasedToolName> {
     }
   }
 
-  processGenerationError(error: AppError<ErrorCode>, loopMessages: (CoreAssistantMessage | CoreUserMessage)[]) {
+  async processGenerationError(error: AppError<ErrorCode>, loopMessages: (CoreAssistantMessage | CoreUserMessage)[], agentMessageManager: ReturnType<typeof this.makeTempAgentMessageManager>) {
     if (error instanceof ParseFunctionCallError) {
       const errorResult = TagBuilder.fromStructured('error', {
         message: `FORMAT ERROR: ${error.message}. Review system prompt validation phases. Correct format or respond without tools.`,
@@ -390,6 +393,15 @@ export class Agent<T extends PromptBasedToolName> {
         loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
       }
     }
+    else if (error instanceof ModelNotFoundError) {
+      const { t } = await useGlobalI18n()
+      const errorMsg = agentMessageManager.convertToAssistantMessage()
+      errorMsg.isError = true
+      errorMsg.content = t('errors.model_not_found')
+      // unresolvable error, break the loop
+      return false
+    }
+    return true // continue loop
   }
 
   deduplicateToolCalls(toolCalls: PromptBasedToolNameAndParams<T>[]) {

@@ -263,7 +263,7 @@
     "guide": {
       "already_installed": "已安装并运行Ollama？",
       "features": {
-        "1": "运行DeepSeek、Qwen、Llama等高级模型",
+        "1": "运行高级模型，如 gpt-oss、DeepSeek、Qwen、Llama",
         "2": "完全掌控模型的自定义和切换",
         "3": "您的数据始终保持在本地设备上"
       },
@@ -275,7 +275,13 @@
       "setup": "开始设置",
       "step1": "步骤1",
       "download_model_to_begin": "下载模型以开始。",
-      "select_model_to_start": "选择并下载模型以开始使用"
+      "select_model_to_start": "选择并下载模型以开始使用",
+      "download_and_install": "下载并安装",
+      "choose_model": "选择模型",
+      "no_sure_which_one": "🤔 不确定选择哪一个？",
+      "learn_about_models": "了解模型",
+      "looking_for_more_options": "🔍 寻找更多选项？",
+      "browse_more_models": "浏览更多模型"
     },
     "webllm_tutorial": {
       "desc": "在浏览器中使用轻量级模型（Qwen 0.6B）- 无需设置，即刻体验。",

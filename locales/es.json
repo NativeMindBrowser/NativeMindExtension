@@ -111,7 +111,7 @@
     "guide": {
       "already_installed": "¿Ya instalaste y ejecutaste Ollama?",
       "features": {
-        "1": "Ejecuta modelos avanzados como DeepSeek, Qwen, Llama",
+        "1": "Ejecuta modelos avanzados como gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Personaliza y cambia modelos con control total",
         "3": "Tus datos permanecen privados, en tu dispositivo"
       },
@@ -123,7 +123,13 @@
       "setup": "Configuración",
       "step1": "PASO 1",
       "download_model_to_begin": "Descarga un modelo para comenzar.",
-      "select_model_to_start": "Selecciona y descarga un modelo para comenzar"
+      "select_model_to_start": "Selecciona y descarga un modelo para comenzar",
+      "download_and_install": "Descargar & Instalar",
+      "choose_model": "Elegir Modelo",
+      "no_sure_which_one": "🤔 ¿No estás seguro cuál elegir?",
+      "learn_about_models": "Aprende sobre modelos",
+      "looking_for_more_options": "🔍 ¿Buscas más opciones?",
+      "browse_more_models": "Explorar más modelos"
     },
     "webllm_tutorial": {
       "desc": "Usa un modelo ligero (Qwen 0.6b) directamente en tu navegador — sin configuración, sin espera.",

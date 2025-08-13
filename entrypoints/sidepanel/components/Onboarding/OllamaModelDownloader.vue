@@ -45,7 +45,7 @@
             </span>
           </div>
           <div v-else>
-            Choose Model
+            {{ t('onboarding.guide.choose_model') }}
           </div>
         </template>
         <template #option="{ option }">
@@ -72,7 +72,7 @@
       </Selector>
       <a
         href="https://ollama.com/search"
-        class="underline text-xs"
+        class="underline text-xs self-start"
         target="_blank"
       >
         {{ t('settings.models.discover_more') }}
@@ -84,7 +84,7 @@
       :disabled="!selectedModel"
       @click="modelToDownload = selectedModel"
     >
-      Download & Install
+      {{ t('onboarding.guide.download_and_install') }}
     </Button>
     <div class="flex flex-col items-center justify-center">
       <Text
@@ -92,30 +92,29 @@
         class="font-normal text-[11px] leading-5"
       >
         <div class="flex gap-1">
-          <span>🤔 Not sure which one to choose?</span>
+          <span>{{ t('onboarding.guide.no_sure_which_one') }}</span>
           <a
             :href="tutorialUrl"
             target="_blank"
             class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
           >
-            Learn about models
+            {{ t('onboarding.guide.learn_about_models') }}
           </a>
         </div>
         <div class="flex gap-1">
-          <span>🔍 Looking for more options?</span>
+          <span>{{ t('onboarding.guide.looking_for_more_options') }}</span>
           <a
             href="https://ollama.com/search"
             target="_blank"
             class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
           >
-            Browse more models
+            {{ t('onboarding.guide.browse_more_models') }}
           </a>
         </div>
       </Text>
     </div>
     <DownloadConfirmModal
       v-if="modelToDownload"
-      mountPoint="sidebar"
       :model="modelToDownload"
       @finished="emit('finished')"
       @cancel="modelToDownload = undefined"
@@ -138,7 +137,7 @@ import { formatSize } from '@/utils/formatter'
 import { useI18n } from '@/utils/i18n'
 import { PREDEFINED_OLLAMA_MODELS } from '@/utils/llm/predefined-models'
 
-import DownloadConfirmModal from '../../../settings/components/OllamaDownloadModal.vue'
+import DownloadConfirmModal from './OllamaDownloadModal.vue'
 
 const emit = defineEmits(['finished'])
 const { t } = useI18n()
