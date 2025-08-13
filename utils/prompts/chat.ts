@@ -47,6 +47,8 @@ export class EnvironmentDetailsBuilder {
     }
 
     const pdfs = attachments.filter((a): a is PDFAttachment => a.type === 'pdf')
+    const currentPdf = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'pdf' ? this.contextAttachmentStorage.currentTab : undefined)
+    if (currentPdf) pdfs.unshift(currentPdf)
     if (pdfs.length) {
       envBuilder.insertContent('# Updated PDFs')
       for (const pdfMeta of pdfs) {
@@ -82,8 +84,14 @@ export class EnvironmentDetailsBuilder {
     }
 
     const pdfContextBuilder = new TextBuilder('# Available PDFs')
-    const pdfMeta = this.contextAttachmentStorage.attachments.find((a): a is PDFAttachment => a.type === 'pdf')?.value
-    pdfContextBuilder.insertContent(pdfMeta ? `- PDF ID ${pdfMeta.id}: ${pdfMeta?.name} (${pdfMeta?.pageCount ?? 'unknown'} pages)` : `(No available PDFs)`)
+    const pdfMetas = this.contextAttachmentStorage.attachments.filter((a): a is PDFAttachment => a.type === 'pdf').map((p) => p.value)
+    if (this.contextAttachmentStorage.currentTab?.type === 'pdf') pdfMetas.push(this.contextAttachmentStorage.currentTab.value)
+    if (!pdfMetas.length) {
+      pdfContextBuilder.insertContent('(No available PDFs)')
+    }
+    for (const pdfMeta of pdfMetas) {
+      pdfContextBuilder.insertContent(`- PDF ID ${pdfMeta.id}: ${pdfMeta?.name} (${pdfMeta?.pageCount ?? 'unknown'} pages)`)
+    }
 
     const imageContextBuilder = new TextBuilder('# Available Images')
     const imagesMeta = this.contextAttachmentStorage.attachments.filter((a): a is ImageAttachment => a.type === 'image')
