@@ -241,7 +241,7 @@
       "install_desc": "Install Ollama to set up your local AI.",
       "ollama_desc": "Unlock full local AI power with Ollama.",
       "features": {
-        "1": "Run advanced models like DeepSeek, Qwen, Llama",
+        "1": "Run advanced models like gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Customize and switch models with full control",
         "3": "Your data stays private, on your device"
       },

@@ -72,7 +72,7 @@
     "guide": {
       "already_installed": "Sudah menginstal dan menjalankan Ollama?",
       "features": {
-        "1": "Jalankan model canggih seperti DeepSeek, Qwen, Llama",
+        "1": "Jalankan model canggih seperti gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Sesuaikan dan beralih antar model dengan kontrol penuh",
         "3": "Data Anda tetap pribadi, tersimpan di perangkat Anda"
       },

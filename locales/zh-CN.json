@@ -239,7 +239,7 @@
     "guide": {
       "already_installed": "已安装并运行Ollama？",
       "features": {
-        "1": "运行DeepSeek、Qwen、Llama等高级模型",
+        "1": "运行高级模型，如 gpt-oss、DeepSeek、Qwen、Llama",
         "2": "完全掌控模型的自定义和切换",
         "3": "您的数据始终保持在本地设备上"
       },

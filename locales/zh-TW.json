@@ -72,7 +72,7 @@
     "guide": {
       "already_installed": "已經安裝並執行Ollama？",
       "features": {
-        "1": "執行DeepSeek、Qwen、Llama等高級模型",
+        "1": "執行進階模型，如 gpt-oss、DeepSeek、Qwen、Llama",
         "2": "自訂和切換模型完全控制",
         "3": "您的資料在裝置上保持私密"
       },

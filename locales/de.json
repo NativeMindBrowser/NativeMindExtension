@@ -72,7 +72,7 @@
     "guide": {
       "already_installed": "Haben Sie Ollama bereits installiert und gestartet?",
       "features": {
-        "1": "Führen Sie fortschrittliche Modelle wie Deepseek, Qwen, Lama aus",
+        "1": "Führen Sie erweiterte Modelle wie gpt-oss, DeepSeek, Qwen, Llama aus",
         "2": "Passen Sie die Modelle mit voller Steuerung an und wechseln Sie sie",
         "3": "Ihre Daten bleiben privat auf Ihrem Gerät"
       },

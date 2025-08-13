@@ -72,7 +72,7 @@
     "guide": {
       "already_installed": "이미 Ollama를 설치하고 실행 중인가요?",
       "features": {
-        "1": "DeepSeek, Qwen, Llama와 같은 고급 모델을 실행할 수 있습니다",
+        "1": "고급 모델들인 gpt-oss, DeepSeek, Qwen, Llama를 실행하세요",
         "2": "모델을 완전히 제어하여 사용자 지정하고 전환할 수 있습니다",
         "3": "사용자의 데이터는 기기에서 안전하게 유지됩니다"
       },

@@ -23,7 +23,7 @@ export const PREDEFINED_OLLAMA_MODELS: PredefinedOllamaModel[] = [
   {
     name: 'qwen3:4b',
     id: 'qwen3:4b',
-    size: 2.44 * GB,
+    size: 2.33 * GB,
   },
   {
     name: 'qwen3:8b',
@@ -64,5 +64,10 @@ export const PREDEFINED_OLLAMA_MODELS: PredefinedOllamaModel[] = [
     name: 'mistral:7b',
     id: 'mistral:7b',
     size: 3.83 * GB,
+  },
+  {
+    name: 'gpt-oss:20b',
+    id: 'gpt-oss:20b',
+    size: 12.83 * GB,
   },
 ]

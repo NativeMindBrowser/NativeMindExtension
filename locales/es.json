@@ -96,7 +96,7 @@
     "guide": {
       "already_installed": "¿Ya instalaste y ejecutaste Ollama?",
       "features": {
-        "1": "Ejecuta modelos avanzados como DeepSeek, Qwen, Llama",
+        "1": "Ejecuta modelos avanzados como gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Personaliza y cambia modelos con control total",
         "3": "Tus datos permanecen privados, en tu dispositivo"
       },

@@ -72,7 +72,7 @@
     "guide": {
       "already_installed": "すでにOllamaをインストールして実行していますか？",
       "features": {
-        "1": "DeepSeek、Qwen、Llamaなどの高度なモデルを実行できます",
+        "1": "高度なモデル（gpt-oss、DeepSeek、Qwen、Llama）を実行する",
         "2": "完全な制御でモデルをカスタマイズし切り替えられます",
         "3": "あなたのデータはデバイス上でプライベートに保たれます"
       },

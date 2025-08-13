@@ -72,7 +72,7 @@
     "guide": {
       "already_installed": "Bạn đã cài đặt và chạy Ollama?",
       "features": {
-        "1": "Chạy các mô hình nâng cao như Deepseek, Qwen, Llama",
+        "1": "Chạy các mô hình tiên tiến như gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Tùy chỉnh và chuyển đổi các mô hình với toàn bộ điều khiển",
         "3": "Dữ liệu của bạn vẫn riêng tư, trên thiết bị của bạn"
       },
