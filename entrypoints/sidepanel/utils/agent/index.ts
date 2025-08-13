@@ -81,11 +81,21 @@ export class AgentStorage {
   }
 
   getAllImages() {
-    return this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'image')
+    const imageAttachments = []
+    if (this.attachmentStorage.currentTab?.type === 'image') {
+      imageAttachments.push(this.attachmentStorage.currentTab)
+    }
+    imageAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'image'))
+    return imageAttachments
   }
 
   getAllPDFs() {
-    return this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'pdf')
+    const pdfAttachments = []
+    if (this.attachmentStorage.currentTab?.type === 'pdf') {
+      pdfAttachments.push(this.attachmentStorage.currentTab)
+    }
+    pdfAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'pdf'))
+    return pdfAttachments
   }
 
   persistCurrentTab() {
