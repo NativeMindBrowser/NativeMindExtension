@@ -35,7 +35,7 @@
             :class="{ 'rotate-180': task.details?.expanded }"
             @click="task.details.expanded = !task.details.expanded"
           >
-            <IconArrowDown />
+            <IconArrowDown class="w-4 text-text-tertiary" />
           </div>
         </div>
         <div
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import IconArrowDown from '@/assets/icons/arrow-down.svg?component'
+import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
 import IconTickCircle from '@/assets/icons/tick-circle.svg?component'
 import Loading from '@/components/Loading.vue'
 import MarkdownViewer from '@/components/MarkdownViewer.vue'

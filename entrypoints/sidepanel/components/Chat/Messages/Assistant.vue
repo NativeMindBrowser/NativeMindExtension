@@ -39,7 +39,7 @@
             :class="{ 'rotate-180': expanded }"
             @click="expanded = !expanded"
           >
-            <IconArrowDown class="w-4" />
+            <IconArrowDown class="w-4 text-text-tertiary" />
           </div>
         </div>
         <div
@@ -76,7 +76,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import IconArrowDown from '@/assets/icons/arrow-down.svg?component'
+import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
 import IconTickCircle from '@/assets/icons/tick-circle.svg?component'
 import IconWarning from '@/assets/icons/warning-circle.svg?component'
 import Loading from '@/components/Loading.vue'

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-[#E9E9EC]"
+    class="bg-[#F5F6FB]"
     @messageAction="actionEventHandler"
   >
     <ScrollContainer
@@ -8,8 +8,8 @@
       :autoSnap="{ bottom: true }"
       :style="{ height: `calc(100% - ${inputContainerHeight}px)` }"
       :arrivalShadow="{
-        top: { color: '#E9E9EC', size: 36 },
-        bottom: { color: '#E9E9EC', size: 36 }
+        top: { color: '#F5F6FB', size: 36 },
+        bottom: { color: '#F5F6FB', size: 36 }
       }"
     >
       <div class="flex flex-col gap-2 px-4 py-4 pt-2">

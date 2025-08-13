@@ -79,7 +79,7 @@ const onClickTitle = () => {
       <div class="w-60 shrink-0 grow-0">
         <Sidebar :debug="enabledDebug" />
       </div>
-      <div class="flex-1 flex justify-center bg-[#E9E9EC] overflow-auto h-full min-w-80 px-4">
+      <div class="flex-1 flex justify-center bg-[#F5F6FB] overflow-auto h-full min-w-80 px-4">
         <div class="max-w-[640px] min-w-0 grow-1 shrink-1">
           <RouterView v-slot="{ Component }">
             <Suspense>

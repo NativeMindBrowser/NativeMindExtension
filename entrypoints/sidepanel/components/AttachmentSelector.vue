@@ -113,7 +113,7 @@
         class="shrink grow min-w-0"
         itemContainerClass="flex gap-2 w-max items-center"
         :redirect="{ vertical: 'horizontal', horizontal: 'horizontal' }"
-        :arrivalShadow="{ left: { color: '#E9E9EC', size: 60 }, right: { color: '#E9E9EC', size: 60 } }"
+        :arrivalShadow="{ left: { color: '#F5F6FB', size: 60 }, right: { color: '#F5F6FB', size: 60 } }"
       >
         <div
           v-for="(attachment, index) in attachmentsToShow"

@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isShow"
-    class="bg-[#E9E9EC]"
+    class="bg-[#F5F6FB]"
   >
     <div ref="topRef">
       <div class="h-12 px-3 flex items-center justify-start border-b border-gray-200">

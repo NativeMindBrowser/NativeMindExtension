@@ -11,7 +11,7 @@
         v-for="menuItem of menu"
         :key="menuItem.to"
         class="rounded-md py-[6px] px-[10px] min-h-8 transition-all text-xs font-medium flex gap-2 items-center"
-        activeClass="bg-[#E9E9EC]"
+        activeClass="bg-[#F5F6FB]"
         :to="menuItem.to"
       >
         <div class="flex items-center w-4">

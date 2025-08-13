@@ -2,9 +2,9 @@
   <div>
     <div
       ref="topRef"
-      class="bg-[#E9E9EC]"
+      class="bg-[#F5F6FB]"
     >
-      <div class="h-12 px-4 flex items-center justify-between border-b border-gray-200 ">
+      <div class="h-15 px-4 flex items-center justify-between">
         <div class="left flex items-center gap-2">
           <!-- Back button for chat history page -->
           <div
