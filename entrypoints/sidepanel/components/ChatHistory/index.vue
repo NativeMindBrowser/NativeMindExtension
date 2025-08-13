@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-[#E9E9EC]">
+  <div class="h-full flex flex-col bg-[#F5F6FB]">
     <!-- Header -->
     <div class="p-[14px]">
       <h2 class="text-[15px] font-semibold text-gray-900 text-center leading-[20px]">
@@ -8,7 +8,13 @@
     </div>
 
     <!-- Content -->
-    <div class="flex-1 overflow-hidden">
+    <ScrollContainer
+      class="w-full h-full overflow-hidden"
+      :arrivalShadow="{
+        top: { color: '#F5F6FB', size: 48 },
+        bottom: { color: '#F5F6FB', size: 48 }
+      }"
+    >
       <div class="px-4 py-2 space-y-2">
         <!-- Pinned Section -->
         <div v-if="pinnedChats.length > 0">
@@ -38,7 +44,7 @@
         <!-- Recent Section -->
         <div>
           <h3
-            v-if="recentChats.length !== 0 || pinnedChats.length !== 0"
+            v-if="recentChats.length > 0"
             class="text-xs font-medium text-text-secondary mb-2 leading-[16px]"
           >
             {{ t('chat_history.recent_section') }}
@@ -63,7 +69,6 @@
           </div>
         </div>
       </div>
-
       <!-- Empty State -->
       <div
         v-if="recentChats.length === 0 && pinnedChats.length === 0"
@@ -76,7 +81,7 @@
           </div>
         </div>
       </div>
-    </div>xr
+    </ScrollContainer>
   </div>
 </template>
 
@@ -84,6 +89,7 @@
 import { computed, ref } from 'vue'
 
 import IconChatEmpty from '@/assets/icons/chat-empty.svg?component'
+import ScrollContainer from '@/components/ScrollContainer.vue'
 import { useConfirm } from '@/composables/useConfirm'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'

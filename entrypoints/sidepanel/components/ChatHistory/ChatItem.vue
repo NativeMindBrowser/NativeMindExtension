@@ -3,7 +3,7 @@
     :class="[
       'flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors group',
       isCurrent
-        ? 'bg-green-50 border border-green-200 hover:bg-green-50/80'
+        ? 'bg-[#EAECEF] hover:bg-[#EAECEF]/80'
         : 'bg-white hover:bg-white/80'
     ]"
     @click="handleClick"
