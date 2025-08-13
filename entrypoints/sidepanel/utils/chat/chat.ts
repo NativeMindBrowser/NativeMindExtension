@@ -343,13 +343,14 @@ export class Chat {
           instance.stop()
 
           // Load the new chat data
-          const newChatHistory = await s2bRpc.getChatHistory(newId) ?? {
+          const newChatHistory: ChatHistoryV1 = await s2bRpc.getChatHistory(newId) ?? {
             history: [],
             id: newId,
             title: defaultTitle,
             lastInteractedAt: Date.now(),
+            contextUpdateInfo: undefined,
           }
-          const newContextAttachments = await s2bRpc.getContextAttachments(newId) ?? {
+          const newContextAttachments: ContextAttachmentStorage = await s2bRpc.getContextAttachments(newId) ?? {
             attachments: [],
             id: newId,
             lastInteractedAt: Date.now(),
