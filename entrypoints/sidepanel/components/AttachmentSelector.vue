@@ -600,6 +600,12 @@ const removeAttachment = (attachment: ContextAttachment) => {
   if (attachment.value.id === attachmentStorage.value.currentTab?.value.id) {
     attachmentStorage.value.currentTab = undefined
   }
+  if (attachment.type === 'tab') {
+    const existTabIdx = attachments.value.findIndex((a) => a.type === 'tab' && a.value.tabId === attachment.value.tabId)
+    if (existTabIdx !== -1) {
+      attachments.value.splice(existTabIdx, 1)
+    }
+  }
   attachments.value = attachments.value.filter((a) => a.value.id !== attachment.value.id)
 }
 

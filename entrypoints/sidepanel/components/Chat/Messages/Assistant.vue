@@ -1,5 +1,5 @@
 <template>
-  <div v-if="message.content || message.reasoning">
+  <div v-if="message.content || message.reasoning || !message.done">
     <div
       class="text-sm rounded-md relative max-w-full inline-flex items-center min-w-0 gap-2"
       :style="{ backgroundColor: message.style?.backgroundColor }"
