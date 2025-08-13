@@ -1,7 +1,7 @@
 <template>
   <Modal
     :modelValue="true"
-    class="p-4 rounded-md w-full flex flex-col gap-2 fixed"
+    class="p-4 w-full flex flex-col gap-2 fixed"
     noCloseButton
     :fadeInAnimation="false"
   >

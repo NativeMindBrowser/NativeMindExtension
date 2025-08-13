@@ -7,18 +7,23 @@ import logger from '@/utils/logger'
 import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { s2bRpc } from '@/utils/rpc'
+import { timeout } from '@/utils/timeout'
 
 import { AgentToolCallExecute } from '../../agent'
 import { SearchScraper } from '../../search'
 
 export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async ({ params, abortSignal, taskMessageModifier }) => {
   const { t } = await useGlobalI18n()
+  const log = logger.child('tool:executeSearchOnline')
   const HARD_MAX_RESULTS = 10
   const { query, max_results } = params
   const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.search_online.searching', { query }) })
   taskMsg.icon = 'taskSearch'
   const searchScraper = new SearchScraper()
-  const links = await searchScraper.searchWebsites(query, { abortSignal, engine: 'google' })
+  const links = await timeout(searchScraper.searchWebsites(query, { abortSignal, engine: 'google' }), 15000).catch((err) => {
+    log.error('Search online failed', err)
+    return []
+  })
   const filteredLinks = links.slice(0, Math.max(max_results, HARD_MAX_RESULTS))
 
   if (!filteredLinks.length) {
@@ -63,11 +68,15 @@ export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async 
 
 export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ params, taskMessageModifier, abortSignal }) => {
   const { url } = params
+  const log = logger.child('tool:executeFetchPage')
   const { t } = await useGlobalI18n()
   const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: params.url }) })
   taskMsg.icon = 'taskFetchPage'
   const searchScraper = new SearchScraper()
-  const [content] = await makeAbortable(searchScraper.fetchUrlsContent([url]), abortSignal)
+  const [content] = await makeAbortable(timeout(searchScraper.fetchUrlsContent([url]), 15000), abortSignal).catch((err) => {
+    log.error('Fetch page failed', err)
+    return []
+  })
   if (!content) {
     taskMsg.icon = 'warningColored'
     taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })

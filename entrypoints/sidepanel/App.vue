@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-screen h-screen relative overflow-hidden">
     <Transition name="wrapper">
       <Onboarding
         class="absolute inset-0"

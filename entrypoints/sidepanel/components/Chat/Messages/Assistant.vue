@@ -1,7 +1,10 @@
 <template>
-  <div v-if="message.content || message.reasoning || !message.done">
+  <div
+    v-if="message.content || message.reasoning || !message.done"
+    class="w-full"
+  >
     <div
-      class="text-sm rounded-md relative max-w-full inline-flex items-center min-w-0 gap-2"
+      class="text-sm rounded-md relative max-w-full inline-flex items-center min-w-0 gap-2 w-full"
       :style="{ backgroundColor: message.style?.backgroundColor }"
       :class="[message.content || message.reasoning ? 'p-0' : 'pt-2 pb-3']"
     >
@@ -30,7 +33,7 @@
             class="flex items-center justify-between gap-2"
           >
             <Loading :size="16" />
-            <Text color="placeholder">
+            <Text color="tertiary">
               {{ t('chat.messages.thinking') }}
             </Text>
           </div>
@@ -43,9 +46,9 @@
           </div>
         </div>
         <div
-          v-if="message.reasoning && (!message.content || expanded)"
+          v-if="showReasoning"
           class="wrap-anywhere pl-5 border-[#AEB5BD]"
-          :class="expanded ? '' : 'line-clamp-3'"
+          :class="showClampedReasoning && 'line-clamp-3'"
         >
           <MarkdownViewer
             :text="message.reasoning"
@@ -61,10 +64,10 @@
       </div>
       <div
         v-if="!message.done && !message.content && !message.reasoning"
-        class="absolute bottom-0 -right-4"
+        class="absolute -top-1 left-0"
       >
         <Loading
-          :size="14"
+          :size="16"
           class="text-gray-400"
         />
       </div>
@@ -95,6 +98,9 @@ const message = computed(() => {
     reasoning: props.message.reasoning?.trim(),
   }
 })
+
 const { t } = useI18n()
 const expanded = ref(false)
+const showReasoning = computed(() => message.value.reasoning && ((!message.value.content && !message.value.done) || expanded.value))
+const showClampedReasoning = computed(() => showReasoning.value && !expanded.value)
 </script>

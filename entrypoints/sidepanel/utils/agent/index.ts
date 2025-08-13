@@ -199,9 +199,12 @@ export class Agent<T extends PromptBasedToolName> {
     }
     return {
       makeAllTaskDone: () => {
-        if (groupMsg) groupMsg.tasks.forEach((task) => {
-          task.done = true
-        })
+        if (groupMsg) {
+          groupMsg.done = true
+          groupMsg.tasks.forEach((task) => {
+            task.done = true
+          })
+        }
       },
       addTaskMessage: (msg: Pick<AgentTaskMessageV1, 'summary' | 'details'>) => {
         return this.historyManager.appendAgentTaskMessage(ensureMessage(), msg)

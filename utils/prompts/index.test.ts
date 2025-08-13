@@ -293,8 +293,8 @@ Purpose: Search for current and latest information
 Format:
 <tool_calls>
 <search_online>
-<query>2-6 specific keywords</query>
-<max_results>5</max_results>
+<query></query>
+<max_results></max_results>
 </search_online>
 </tool_calls>`)
 
@@ -303,7 +303,7 @@ Purpose: Analyze a specific image
 Format:
 <tool_calls>
 <view_image>
-<image_id>{{IMAGE_ID}}</image_id>
+<image_id></image_id>
 </view_image>
 </tool_calls>`)
   })
