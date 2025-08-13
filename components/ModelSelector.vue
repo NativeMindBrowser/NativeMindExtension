@@ -8,6 +8,7 @@
       :href="OLLAMA_SEARCH_URL"
       rel="noopener noreferrer"
       target="_blank"
+      @click.stop
     >
       <Button
         variant="secondary"
