@@ -218,6 +218,22 @@ export class BackgroundDatabaseManager {
     }
   }
 
+  /**
+   * Reset the singleton instance (used for re-initialization)
+   */
+  static reset(): void {
+    if (this.instance) {
+      // Close the database connection if it exists
+      if (this.instance.db) {
+        this.instance.db.close()
+        this.instance.db = null
+        this.instance.initPromise = null
+      }
+      this.instance = null
+      log.debug('Database manager singleton instance reset')
+    }
+  }
+
   async clearObjectStore(objectStoreName: ObjectStoreName): Promise<void> {
     if (this.db) {
       await this.db.clear(objectStoreName)

@@ -112,6 +112,12 @@ export default defineBackground(() => {
     })
     initContentScript(false)
     logger.debug(`Extension Installed, reason: ${ev.reason}`)
+
+    // Handle extension update: re-initialize background services
+    if (ev.reason === 'update') {
+      logger.debug('Extension updated, re-initializing background services')
+      await initializeBackgroundServices(true) // Force re-initialization
+    }
   })
 
   browser.contextMenus.onClicked.addListener(async (info, tab) => {
@@ -132,15 +138,21 @@ export default defineBackground(() => {
   })
 
   // Initialize the background services with shared database
-  async function initializeBackgroundServices() {
+  async function initializeBackgroundServices(forceReinit = false) {
     try {
-      logger.debug('Starting background services initialization')
+      logger.debug('Starting background services initialization', { forceReinit })
       logger.debug('Extension ID:', browser.runtime.id)
       logger.debug('Context info:', {
         location: typeof location !== 'undefined' ? location.origin : 'undefined',
         isServiceWorker: typeof importScripts === 'function',
         hasIndexedDB: typeof indexedDB !== 'undefined',
       })
+
+      // If forcing re-initialization, reset all singleton instances first
+      if (forceReinit) {
+        logger.debug('Force re-initialization requested, resetting singleton instances')
+        await resetBackgroundServices()
+      }
 
       // Initialize shared database manager
       const databaseManager = BackgroundDatabaseManager.getInstance()
@@ -176,19 +188,45 @@ export default defineBackground(() => {
       //   }
       // }
 
-      // @ts-expect-error - this is a global variable
-      globalThis.backgroundCacheService = BackgroundCacheServiceManager.getInstance()
+      if (import.meta.env.ENV !== 'production') {
+        // @ts-expect-error - this is a global variable
+        globalThis.backgroundCacheService = BackgroundCacheServiceManager.getInstance()
 
-      // @ts-expect-error - this is a global variable
-      globalThis.backgroundChatHistoryService = BackgroundChatHistoryServiceManager.getInstance()
+        // @ts-expect-error - this is a global variable
+        globalThis.backgroundChatHistoryService = BackgroundChatHistoryServiceManager.getInstance()
 
-      // @ts-expect-error - this is a global variable
-      globalThis.databaseManager = databaseManager
+        // @ts-expect-error - this is a global variable
+        globalThis.databaseManager = databaseManager
+      }
 
       logger.debug('All background services initialized successfully')
     }
     catch (error) {
       logger.error('Failed to initialize background services:', error)
+    }
+  }
+
+  // Reset and re-initialize background services
+  async function resetBackgroundServices() {
+    try {
+      logger.debug('Resetting background services singleton instances')
+
+      // Reset cache service singleton
+      BackgroundCacheServiceManager.reset()
+      logger.debug('Cache service manager reset')
+
+      // Shutdown chat history service singleton
+      await BackgroundChatHistoryServiceManager.shutdown()
+      logger.debug('Chat history service manager shutdown')
+
+      // Reset database manager singleton
+      BackgroundDatabaseManager.reset()
+      logger.debug('Database manager reset')
+
+      logger.debug('Background services reset completed')
+    }
+    catch (error) {
+      logger.error('Failed to reset background services:', error)
     }
   }
 
