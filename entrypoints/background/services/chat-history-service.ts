@@ -687,6 +687,43 @@ export class BackgroundChatHistoryService {
   }
 
   /**
+   * Clear all chat history and context attachments
+   */
+  async clearAllChatHistory(): Promise<{ success: boolean, deletedCount: number, error?: string }> {
+    const db = this.databaseManager.getDatabase()
+    if (!db || !this.config.enabled) {
+      return { success: false, deletedCount: 0, error: 'Chat history disabled or not initialized' }
+    }
+
+    try {
+      const tx = db.transaction([
+        CHAT_OBJECT_STORES.CHAT_HISTORY,
+        CHAT_OBJECT_STORES.CONTEXT_ATTACHMENTS,
+        CHAT_OBJECT_STORES.CHAT_METADATA,
+      ], 'readwrite')
+
+      // Count existing records
+      let deletedCount = 0
+      for await (const _cursor of tx.objectStore(CHAT_OBJECT_STORES.CHAT_METADATA)) {
+        deletedCount++
+      }
+
+      // Clear all object stores
+      await tx.objectStore(CHAT_OBJECT_STORES.CHAT_HISTORY).clear()
+      await tx.objectStore(CHAT_OBJECT_STORES.CONTEXT_ATTACHMENTS).clear()
+      await tx.objectStore(CHAT_OBJECT_STORES.CHAT_METADATA).clear()
+
+      await tx.done
+      log.debug(`Cleared all chat history - deleted ${deletedCount} chats`)
+      return { success: true, deletedCount }
+    }
+    catch (error) {
+      log.error('Failed to clear all chat history:', error)
+      return { success: false, deletedCount: 0, error: String(error) }
+    }
+  }
+
+  /**
    * Get current configuration
    */
   getConfig(): ChatHistoryConfig {

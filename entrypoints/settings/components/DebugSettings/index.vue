@@ -487,6 +487,35 @@
             </div>
           </div>
         </Block>
+        <Block
+          title="Chat History"
+          class="gap-4"
+        >
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div class="flex flex-col gap-2 justify-start items-start">
+              <span class="text-xs">Clear All Chat History</span>
+              <button
+                class="bg-red-400 hover:bg-red-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+                :disabled="clearingChatHistory"
+                @click="handleClearAllChatHistory"
+              >
+                {{ clearingChatHistory ? 'Clearing...' : 'Clear All' }}
+              </button>
+              <div
+                v-if="clearChatHistoryResult"
+                class="text-xs"
+                :class="clearChatHistoryResult.success ? 'text-green-600' : 'text-red-500'"
+              >
+                {{ clearChatHistoryResult.success
+                  ? `Successfully deleted ${clearChatHistoryResult.deletedCount} chat${clearChatHistoryResult.deletedCount !== 1 ? 's' : ''}`
+                  : `Error: ${clearChatHistoryResult.error}` }}
+              </div>
+              <div class="text-[10px] text-gray-400 font-light">
+                This will permanently delete all chat history, context attachments, and metadata. This action cannot be undone.
+              </div>
+            </div>
+          </div>
+        </Block>
       </div>
     </div>
   </div>
@@ -555,6 +584,8 @@ const modelProviderOptions = [
 ]
 
 const cacheStats = ref<CacheStats>()
+const clearingChatHistory = ref(false)
+const clearChatHistoryResult = ref<{ success: boolean, deletedCount: number, error?: string } | null>(null)
 
 onMounted(async () => {
   cacheStats.value = await settings2bRpc.cacheGetStats()
@@ -656,6 +687,28 @@ const onPullModel = async () => {
 const handleClearCache = async () => {
   await settings2bRpc.cacheClear()
   cacheStats.value = await settings2bRpc.cacheGetStats()
+}
+
+const handleClearAllChatHistory = async () => {
+  if (clearingChatHistory.value) return
+
+  clearingChatHistory.value = true
+  clearChatHistoryResult.value = null
+
+  try {
+    const result = await settings2bRpc.clearAllChatHistory()
+    clearChatHistoryResult.value = result
+  }
+  catch (error) {
+    clearChatHistoryResult.value = {
+      success: false,
+      deletedCount: 0,
+      error: String(error),
+    }
+  }
+  finally {
+    clearingChatHistory.value = false
+  }
 }
 
 watch(translationSystemPrompt, (newValue) => {

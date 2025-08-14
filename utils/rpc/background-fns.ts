@@ -920,6 +920,17 @@ async function getPinnedChats() {
   }
 }
 
+async function clearAllChatHistory() {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.clearAllChatHistory() || { success: false, deletedCount: 0, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC clearAllChatHistory failed:', error)
+    return { success: false, deletedCount: 0, error: String(error) }
+  }
+}
+
 export const backgroundFunctions = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)
@@ -979,6 +990,7 @@ export const backgroundFunctions = {
   updateChatTitle,
   autoGenerateChatTitle: autoGenerateChatTitleIfNeeded,
   getPinnedChats,
+  clearAllChatHistory,
   showSidepanel,
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,

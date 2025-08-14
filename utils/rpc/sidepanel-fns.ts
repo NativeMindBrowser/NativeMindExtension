@@ -10,6 +10,7 @@ const eventEmitter = new EventEmitter()
 export type Events = {
   contextMenuClicked(options: Browser.contextMenus.OnClickData & { menuItemId: ContextMenuId }): void
   updateModelList(): void
+  updateChatList(): void
 }
 
 export type EventKey = keyof Events

@@ -78,7 +78,7 @@
       <!-- Empty State -->
       <div
         v-if="recentChats.length === 0 && pinnedChats.length === 0"
-        class="text-center text-[#9EA3A8] h-full pb-40"
+        class="text-center text-[#9EA3A8] mt-[30vh]"
       >
         <div class="flex flex-col items-center h-full justify-center">
           <IconChatEmpty class="w-10 mb-6" />
@@ -92,13 +92,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import IconChatEmpty from '@/assets/icons/chat-empty.svg?component'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import { useConfirm } from '@/composables/useConfirm'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
+import { s2bRpc } from '@/utils/rpc'
 import { getUserConfig } from '@/utils/user-config'
 
 import { Chat } from '../../utils/chat'
@@ -128,6 +129,17 @@ const pinnedChats = computed(() =>
 const recentChats = computed(() =>
   chatList.value.filter((chat) => !chat.isPinned),
 )
+
+// Refresh chat list when component is mounted
+onMounted(async () => {
+  try {
+    logger.debug('ChatHistory mounted, refreshing chat list from database')
+    chatList.value = await s2bRpc.getChatList()
+  }
+  catch (error) {
+    logger.error('Failed to refresh chat list on mount:', error)
+  }
+})
 
 const onSwitchChatAndGoBack = async (chatId: string) => {
   if (currentChatId.value === chatId) {

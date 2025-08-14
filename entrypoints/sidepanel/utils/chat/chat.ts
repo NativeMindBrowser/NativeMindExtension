@@ -14,6 +14,7 @@ import logger from '@/utils/logger'
 import { chatWithEnvironment, EnvironmentDetailsBuilder } from '@/utils/prompts'
 import { UserPrompt } from '@/utils/prompts/helpers'
 import { s2bRpc } from '@/utils/rpc'
+import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { pickByRoles } from '@/utils/tab-store/history'
 import { getUserConfig } from '@/utils/user-config'
 
@@ -369,6 +370,12 @@ export class Chat {
         watch(chatHistory, async () => debounceSaveHistory(), { deep: true })
         watch(contextAttachments, async () => debounceSaveContextAttachment(), { deep: true })
         updateChatList()
+
+        // Register RPC event listener for updateChatList
+        // FIXME: not work
+        registerSidepanelRpcEvent('updateChatList', async () => {
+          await updateChatList()
+        })
 
         // Create the Chat instance
         const instance = new this(new ReactiveHistoryManager(chatHistory), contextAttachments, chatList)
