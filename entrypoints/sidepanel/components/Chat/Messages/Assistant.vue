@@ -63,7 +63,6 @@
             </motion.div>
           </div>
           <div
-            v-if="message.content || message.done"
             class="ml-2 transform transition-transform cursor-pointer"
             :class="{ 'rotate-180': expanded }"
             @click="expanded = !expanded"
