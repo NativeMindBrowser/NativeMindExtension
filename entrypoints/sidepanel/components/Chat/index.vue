@@ -63,8 +63,8 @@
         <ScrollContainer
           class="overflow-hidden w-full"
           :arrivalShadow="{
-            top: { color: '#FFFFFF', size: 32 },
-            bottom: { color: '#FFFFFF', size: 32 }
+            top: { color: '#FFFFFF', size: 12, offset: 8 },
+            bottom: { color: '#FFFFFF', size: 12, offset: 8 }
           }"
         >
           <div class="h-max min-h-[48px] place-items-center">
