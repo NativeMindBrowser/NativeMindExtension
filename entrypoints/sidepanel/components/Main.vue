@@ -142,6 +142,12 @@ const onBackToChat = () => {
 
 const onNewChat = async () => {
   try {
+    // Check if already in a new chat (empty or only has default messages)
+    if (chat.historyManager.isEmpty() || chat.historyManager.onlyHasDefaultMessages()) {
+      // Already in a new chat, do nothing
+      return
+    }
+
     await chat.createNewChat()
   }
   catch (error) {
