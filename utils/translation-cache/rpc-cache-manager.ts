@@ -252,6 +252,11 @@ export class RpcTranslationCacheManager {
         return { success: false, error: 'Cache is disabled' }
       }
 
+      // Skip caching if translated text is the same as original text
+      if (translatedText.trim().toLocaleLowerCase() === components.sourceText.trim().toLocaleLowerCase()) {
+        return { success: true }
+      }
+
       const cacheKey = generateCacheKey(components)
       const modelNamespace = generateModelNamespace(components)
 
