@@ -1,7 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import MotionResolver from 'motion-v/resolver'
-import Components from 'unplugin-vue-components/vite'
 import { analyzer } from 'vite-bundle-analyzer'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgLoader from 'vite-svg-loader'
@@ -70,12 +68,6 @@ export default defineConfig({
         vueJsx({ babelPlugins: ['@babel/plugin-proposal-explicit-resource-management'] }),
         tailwindcss(),
         svgLoaderPlugin,
-        Components({
-          dts: true,
-          resolvers: [
-            MotionResolver(),
-          ],
-        }),
       ],
     }
   },
