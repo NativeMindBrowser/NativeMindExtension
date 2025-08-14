@@ -1,30 +1,44 @@
 <template>
-  <div :class="classNames('text-sm rounded-md relative inline-block max-w-full p-0 w-full', props.class)">
+  <div :class="classNames('text-sm rounded-md relative max-w-full p-0 w-full gap-4 flex flex-col', props.class)">
     <div
-      v-for="task of message.tasks"
+      v-for="(task, idx) of message.tasks"
       :key="task.id"
-      class="w-full flex gap-[6px]"
+      class="w-full flex gap-[6px] relative"
     >
-      <div
+      <motion.div
         v-if="!task.done"
-        class="shrink-0 grow-0 self-start mt-[3px]"
+        class="shrink-0 grow-0 self-start size-5 p-0.5"
+        :initial="{ opacity: 1 }"
+        :animate="{ opacity: [1, 0.3, 1] }"
+        :transition="{
+          opacity: {
+            duration: 1.5,
+            repeat: Infinity,
+            ease: 'easeOut'
+          }
+        }"
       >
         <Loading :size="16" />
-      </div>
+      </motion.div>
       <div
         v-else-if="task.icon"
-        class="shrink-0 grow-0 self-start mt-[3px]"
+        class="shrink-0 grow-0 self-start size-5 p-0.5"
       >
         <div v-html="getIconSvg(task.icon)" />
+        <!-- vertical line -->
+        <div
+          v-if="idx!==message.tasks.length - 1"
+          class="absolute w-[1.5px] top-6 -bottom-3 left-2.5 bg-quaternary"
+        />
       </div>
       <div
         v-else
-        class="shrink-0 grow-0 self-start mt-[3px]"
+        class="shrink-0 grow-0 self-start mt-[3px] size-5 p-0.5"
       >
         <IconTickCircle class="w-4 text-success" />
       </div>
       <div class="grow min-w-0">
-        <div class="flex grow gap-1 w-full justify-between items-center text-[#747A80]">
+        <div class="flex grow gap-1 w-full justify-between items-center text-text-secondary">
           <MarkdownViewer
             :text="task.summary"
             class="min-w-0"
@@ -53,6 +67,8 @@
 </template>
 
 <script setup lang="ts">
+import { motion } from 'motion-v'
+
 import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
 import IconTickCircle from '@/assets/icons/tick-circle.svg?component'
 import Loading from '@/components/Loading.vue'

@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="message.content || message.reasoning || !message.done"
-    class="w-full"
+    class="w-full flex"
   >
     <div
       class="text-sm rounded-md relative max-w-full inline-flex items-center min-w-0 gap-2 w-full"
@@ -17,27 +17,53 @@
       <div class="max-w-full flex-1 flex flex-col gap-1">
         <div
           v-if="message.reasoning && message.reasoningTime"
-          class="text-gray-400 text-sm flex items-center justify-between"
+          class="text-text-primary text-sm flex items-center justify-between overflow-hidden"
         >
+          <div class="flex flex-grow">
+            <motion.div
+              v-if="message.content || message.done"
+              :initial="{ width: 0 }"
+              :animate="{ width: '100%' }"
+              :transition="{
+                duration: 0.5,
+                ease: 'linear'
+              }"
+              class="flex items-center gap-1.5 overflow-hidden whitespace-nowrap"
+            >
+              <div class="shrink-0 grow-0 size-5 p-0.5">
+                <IconTickCircle class="w-4 text-success shrink-0" />
+              </div>
+              <Text color="primary">
+                {{ t('chat.messages.thought_for_seconds', Math.ceil(message.reasoningTime / 1000), { named: { second: Math.ceil(message.reasoningTime / 1000) } }) }}
+              </Text>
+            </motion.div>
+            <motion.div
+              v-else
+              :initial="{ width: 0, opacity: 1 }"
+              :animate="{
+                width: '100%',
+                opacity: [1, 0.3, 1]
+              }"
+              :transition="{
+                width: { duration: 0.5, ease: 'linear' },
+                opacity: {
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: 'easeOut'
+                }
+              }"
+              class="flex items-center justify-start gap-1.5 overflow-hidden whitespace-nowrap"
+            >
+              <div class="shrink-0 grow-0 size-5 p-0.5">
+                <Loading :size="16" />
+              </div>
+              <Text color="primary">
+                {{ t('chat.messages.thinking') }}
+              </Text>
+            </motion.div>
+          </div>
           <div
             v-if="message.content || message.done"
-            class="flex items-center gap-1"
-          >
-            <IconTickCircle class="w-4 text-success" />
-            <Text color="tertiary">
-              {{ t('chat.messages.thought_for_seconds', Math.ceil(message.reasoningTime / 1000), { named: { second: Math.ceil(message.reasoningTime / 1000) } }) }}
-            </Text>
-          </div>
-          <div
-            v-else
-            class="flex items-center justify-between gap-2"
-          >
-            <Loading :size="16" />
-            <Text color="tertiary">
-              {{ t('chat.messages.thinking') }}
-            </Text>
-          </div>
-          <div
             class="ml-2 transform transition-transform cursor-pointer"
             :class="{ 'rotate-180': expanded }"
             @click="expanded = !expanded"
@@ -47,12 +73,12 @@
         </div>
         <div
           v-if="showReasoning"
-          class="wrap-anywhere pl-5 border-[#AEB5BD]"
+          class="wrap-anywhere pl-6 border-[#AEB5BD]"
           :class="showClampedReasoning && 'line-clamp-3'"
         >
           <MarkdownViewer
             :text="message.reasoning"
-            class="text-sm text-text-secondary"
+            class="text-sm text-text-quaternary"
           />
         </div>
         <div v-if="message.content">
@@ -62,20 +88,30 @@
           />
         </div>
       </div>
-      <div
+      <motion.div
         v-if="!message.done && !message.content && !message.reasoning"
         class="absolute -top-1 left-0"
+        :initial="{ opacity: 1 }"
+        :animate="{ opacity: [1, 0.3, 1] }"
+        :transition="{
+          opacity: {
+            duration: 1.5,
+            repeat: Infinity,
+            ease: 'easeOut'
+          }
+        }"
       >
         <Loading
           :size="16"
-          class="text-gray-400"
+          class="text-text-secondary"
         />
-      </div>
+      </motion.div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { motion } from 'motion-v'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

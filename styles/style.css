@@ -77,10 +77,12 @@
   --color-text-tertiary: #747a80;
   --color-text-placeholder: #aeb5bd;
   --color-text-disabled: #aeb5bd;
+  --color-text-quaternary: #9ea3a8;
   --color-bg-component: hsla(0, 0%, 98%, 1);
   --color-icon-link: #0f62fe;
   --color-danger: #bf2a2a;
   --color-success: #60c959;
+  --color-quaternary: #bdc2c7;
 
   --color-bg-hover: #eaecef;
 

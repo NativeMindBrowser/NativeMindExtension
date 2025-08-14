@@ -3,17 +3,26 @@
     <Text :color="level === 0 ? 'placeholder' : 'primary'">
       <div
         v-if="message.content"
-        class="flex items-center gap-2"
+        class="flex items-center gap-1.5"
       >
-        <div
+        <motion.div
           v-if="!message.done"
-          class="shrink-0 grow-0 w-4 h-4"
+          class="shrink-0 grow-0 size-5 p-0.5"
+          :initial="{ opacity: 1 }"
+          :animate="{ opacity: [1, 0.3, 1] }"
+          :transition="{
+            opacity: {
+              duration: 1.5,
+              repeat: Infinity,
+              ease: 'easeOut'
+            }
+          }"
         >
           <Loading :size="16" />
-        </div>
+        </motion.div>
         <div
           v-else-if="message.icon"
-          class="shrink-0 grow-0"
+          class="shrink-0 grow-0 size-5 p-0.5"
         >
           <div v-html="getIconSvg(message.icon)" />
         </div>
@@ -36,6 +45,8 @@
 </template>
 
 <script setup lang="ts">
+import { motion } from 'motion-v'
+
 import Loading from '@/components/Loading.vue'
 import Text from '@/components/ui/Text.vue'
 import { TaskMessageV1 } from '@/types/chat'

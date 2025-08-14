@@ -16,8 +16,8 @@
         <div
           v-for="(item, index) in chat.historyManager.history.value"
           :key="index"
-          :class="[item.role === 'user' ? 'self-end' : 'self-start', { 'w-full': ['agent-task-group', 'assistant', 'agent'].includes(item.role) }]"
-          class="max-w-full relative"
+          :class="[item.role === 'user' ? 'self-end' : 'self-start', { 'w-full': ['agent-task-group', 'assistant', 'agent'].includes(item.role) ,'mt-2': ['agent-task-group', 'assistant', 'agent'].includes(item.role) }]"
+          class="max-w-full relative flex"
         >
           <div
             v-if="item.role === 'user'"
