@@ -102,7 +102,8 @@
     "model_request_timeout": "Tiempo de espera agotado. Por favor verifica tu conexión de Ollama o considera iniciar una nueva sesión, ya que los contextos largos pueden afectar los tiempos de respuesta.",
     "timeout_error": "La operación agotó el tiempo de espera: {message}",
     "unknown_error": "Se produjo un error inesperado: {message}",
-    "webllm_not_supported": "WebLLM no es compatible con tu dispositivo."
+    "webllm_not_supported": "WebLLM no es compatible con tu dispositivo.",
+    "max_characters_error": "Máximo {count} caracteres permitidos"
   },
   "onboarding": {
     "banner": {

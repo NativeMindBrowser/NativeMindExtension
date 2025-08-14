@@ -318,7 +318,8 @@
     "model_request_timeout": "요청 시간이 초과되었습니다. Ollama 연결을 확인하거나, 긴 컨텍스트가 응답 시간에 영향을 미칠 수 있으므로 새 세션 시작을 고려해 주세요.",
     "timeout_error": "작업 시간 초과: {message}",
     "unknown_error": "예기치 않은 오류가 발생했습니다: {message}",
-    "webllm_not_supported": "WebLLM이 귀하의 기기에서 지원되지 않습니다."
+    "webllm_not_supported": "WebLLM이 귀하의 기기에서 지원되지 않습니다.",
+    "max_characters_error": "최대 {count}자까지 입력 가능합니다"
   },
   "common": {
     "cancel": "취소",

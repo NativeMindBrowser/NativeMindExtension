@@ -318,7 +318,8 @@
     "unknown_error": "予期しないエラーが発生しました：{message}",
     "model_request_error": "おっと！何か問題が発生しました。設定でOllama接続を確認し、再度お試しください。",
     "model_request_timeout": "リクエストがタイムアウトしました。Ollama接続を確認するか、長いコンテキストが応答時間に影響を与える可能性があるため、新しいセッションの開始をご検討ください。",
-    "webllm_not_supported": "WebLLMはお使いのデバイスではサポートされていません。"
+    "webllm_not_supported": "WebLLMはお使いのデバイスではサポートされていません。",
+    "max_characters_error": "最大 {count} 文字まで入力可能です"
   },
   "common": {
     "cancel": "キャンセル",

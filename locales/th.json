@@ -318,7 +318,8 @@
     "model_request_timeout": "หมดเวลาการตอบสนอง โปรดตรวจสอบการเชื่อมต่อ Ollama ของคุณ หรือพิจารณาเริ่มต้นเซสชั่นใหม่ เนื่องจากบริบทที่ยาวอาจส่งผลต่อเวลาการตอบสนอง",
     "timeout_error": "การดำเนินการหมดเวลา: {message}",
     "unknown_error": "เกิดข้อผิดพลาดที่ไม่คาดคิด: {message}",
-    "webllm_not_supported": "WebLLM ไม่รองรับบนอุปกรณ์ของคุณ"
+    "webllm_not_supported": "WebLLM ไม่รองรับบนอุปกรณ์ของคุณ",
+    "max_characters_error": "อนุญาตอักขระสูงสุด {count} ตัว"
   },
   "common": {
     "cancel": "ยกเลิก",

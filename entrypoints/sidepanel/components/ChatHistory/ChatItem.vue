@@ -32,7 +32,7 @@
           <Input
             ref="editInput"
             v-model="editTitle"
-            :maxlength="40"
+            :maxlength="MAX_TITLE_LENGTH"
             class="w-full rounded-md px-2 py-1.5 text-[13px]"
             @blur="handleSave"
             @keydown.enter="handleSave"
@@ -49,6 +49,7 @@
             <Button
               variant="primary"
               class="px-2.5 py-2 text-xs min-h-8"
+              :disabled="editTitle.length === 0 || editTitle.length > MAX_TITLE_LENGTH"
               @click.stop="handleSave"
             >
               {{ t('chat_history.save') }}
@@ -78,7 +79,7 @@
         <!-- Dropdown Menu -->
         <div
           v-if="props.isMenuOpen"
-          class="absolute right-0 mt-3 w-32 p-1 bg-white border border-gray-200 rounded-lg shadow-lg z-30"
+          class="absolute right-0 mt-3 p-1 bg-white border border-gray-200 rounded-lg shadow-lg z-30"
         >
           <button
             class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer"
@@ -126,6 +127,8 @@ import Input from '@/components/Input.vue'
 import Button from '@/components/ui/Button.vue'
 import type { ChatListItem } from '@/types/chat'
 import { useI18n } from '@/utils/i18n'
+
+const MAX_TITLE_LENGTH = 40
 
 interface Props {
   chat: ChatListItem

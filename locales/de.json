@@ -318,7 +318,8 @@
     "model_request_timeout": "Anfrage-Timeout. Bitte überprüfen Sie Ihre Ollama-Verbindung oder starten Sie eine neue Sitzung, da lange Kontexte die Antwortzeiten beeinträchtigen können.",
     "timeout_error": "Zeitüberschreitung bei der Operation: {message}",
     "unknown_error": "Ein unerwarteter Fehler ist aufgetreten: {message}",
-    "webllm_not_supported": "WebLLM wird auf Ihrem Gerät nicht unterstützt."
+    "webllm_not_supported": "WebLLM wird auf Ihrem Gerät nicht unterstützt.",
+    "max_characters_error": "Maximal {count} Zeichen erlaubt"
   },
   "popup": {
     "reload_page": "Bitte laden Sie die Seite neu, um NativeMind zu verwenden.",

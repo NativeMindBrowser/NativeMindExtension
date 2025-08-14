@@ -318,7 +318,8 @@
     "model_request_timeout": "Tempo limite da solicitação esgotado. Verifique sua conexão com o Ollama ou considere iniciar uma nova sessão, pois contextos longos podem afetar os tempos de resposta.",
     "timeout_error": "Operação expirou: {message}",
     "unknown_error": "Ocorreu um erro inesperado: {message}",
-    "webllm_not_supported": "WebLLM não é suportado no seu dispositivo."
+    "webllm_not_supported": "WebLLM não é suportado no seu dispositivo.",
+    "max_characters_error": "Máximo {count} caracteres permitidos"
   },
   "common": {
     "cancel": "Cancelar",

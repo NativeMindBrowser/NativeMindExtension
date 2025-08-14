@@ -318,7 +318,8 @@
     "model_request_timeout": "Waktu permintaan habis. Silakan periksa koneksi Ollama Anda atau pertimbangkan untuk memulai sesi baru karena konteks yang panjang dapat memengaruhi waktu respons.",
     "timeout_error": "Operasi waktu habis: {message}",
     "unknown_error": "Terjadi kesalahan yang tidak terduga: {message}",
-    "webllm_not_supported": "WebLLM tidak didukung pada perangkat Anda."
+    "webllm_not_supported": "WebLLM tidak didukung pada perangkat Anda.",
+    "max_characters_error": "Maksimal {count} karakter diizinkan"
   },
   "common": {
     "cancel": "Batal",

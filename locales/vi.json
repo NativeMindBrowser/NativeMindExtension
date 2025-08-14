@@ -318,7 +318,8 @@
     "model_request_timeout": "Yêu cầu đã hết thời gian. Vui lòng kiểm tra kết nối Ollama của bạn hoặc xem xét bắt đầu một phiên mới, vì bối cảnh dài có thể ảnh hưởng đến thời gian phản hồi.",
     "timeout_error": "Thao tác đã hết thời gian: {message}",
     "unknown_error": "Đã xảy ra lỗi không xác định: {message}",
-    "webllm_not_supported": "WebLLM không được hỗ trợ trên thiết bị của bạn."
+    "webllm_not_supported": "WebLLM không được hỗ trợ trên thiết bị của bạn.",
+    "max_characters_error": "Tối đa {count} ký tự được phép"
   },
   "common": {
     "cancel": "Hủy",
