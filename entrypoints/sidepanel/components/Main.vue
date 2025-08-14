@@ -4,28 +4,16 @@
       ref="topRef"
       class="bg-[#F5F6FB]"
     >
-      <div class="h-12 px-4 flex items-center justify-between">
-        <div class="left flex items-center gap-2">
-          <!-- Back button for chat history page -->
-          <div
-            v-if="currentPage === 'chat-history'"
-            class="p-1 cursor-pointer hover:text-gray-500"
-            @click="onBackToChat"
-          >
-            <IconBack class="size-4" />
-          </div>
-
+      <div class="h-12 px-4 flex items-center justify-between w-full">
+        <div class="flex items-center gap-2 grow overflow-hidden max-w-[70%]">
           <div class="size-6 flex items-center justify-center">
             <Logo
               class="font-bold text-base"
             />
           </div>
 
-          <!-- Show chat history button only on main chat page -->
-          <Tooltip
-            v-if="currentPage === 'chat'"
-            :content="t('tooltips.chat_history')"
-          >
+          <!-- Show chat history button -->
+          <Tooltip :content="t('tooltips.chat_history')">
             <div
               class="p-1 cursor-pointer hover:text-gray-500"
               @click="onOpenChatHistory"
@@ -36,11 +24,8 @@
             </div>
           </Tooltip>
 
-          <!-- Show new chat button only on main chat page -->
-          <Tooltip
-            v-if="currentPage === 'chat'"
-            :content="t('tooltips.new_chat')"
-          >
+          <!-- Show new chat button -->
+          <Tooltip :content="t('tooltips.new_chat')">
             <div
               class="p-1 cursor-pointer hover:text-gray-500"
               @click="onNewChat"
@@ -51,7 +36,7 @@
             </div>
           </Tooltip>
         </div>
-        <div class="right flex items-center gap-2">
+        <div class="flex items-center gap-2 shrink-0">
           <Tooltip :content="t('tooltips.settings')">
             <div
               class="p-1 cursor-pointer hover:text-gray-500"
@@ -66,38 +51,68 @@
       </div>
     </div>
 
-    <!-- Main Chat View -->
-    <div v-if="currentPage === 'chat'">
-      <div class="px-5 py-2">
-        <div
-          class="absolute bottom-0 left-0 right-0"
-          :style="{ top: `${topBounding.height.value}px` }"
-        >
-          <ChatComponent
-            ref="chatRef"
-            class="h-full"
-          />
-        </div>
+    <!-- Main Chat View (Always rendered) -->
+    <div class="px-5 py-2">
+      <div
+        class="absolute bottom-0 left-0 right-0"
+        :style="{ top: `${topBounding.height.value}px` }"
+      >
+        <ChatComponent
+          ref="chatRef"
+          class="h-full"
+        />
       </div>
     </div>
 
-    <!-- Chat History Full Page View -->
-    <div
-      v-else-if="currentPage === 'chat-history'"
-      class="absolute bottom-0 left-0 right-0"
-      :style="{ top: `${topBounding.height.value}px` }"
-    >
-      <ChatHistory
-        @backToChat="onBackToChat"
-        @switchChat="onSwitchChat"
-      />
-    </div>
+    <!-- Chat History Drawer -->
+    <AnimatePresence>
+      <Motion
+        v-if="showChatHistoryDrawer"
+        key="chat-history-drawer"
+        :initial="{ opacity: 0, x: '100%' }"
+        :animate="{ opacity: 1, x: 0 }"
+        :exit="{ opacity: 0, x: '100%' }"
+        :transition="{ duration: 0.2 }"
+        class="fixed inset-0 z-50"
+      >
+        <!-- Drawer content with header -->
+        <Motion
+          class="absolute right-0 top-0 bottom-0 w-full bg-white shadow-xl"
+        >
+          <!-- Header -->
+          <div class="bg-[#F5F6FB]">
+            <div class="h-12 px-4 flex items-center justify-between w-full">
+              <div class="flex items-center gap-2 grow overflow-hidden">
+                <div
+                  class="p-1 cursor-pointer hover:text-gray-500 flex flex-row overflow-hidden items-center gap-2"
+                  @click="onCloseChatHistory"
+                >
+                  <IconBack class="size-4 shrink-0" />
+                  <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs leading-4">
+                    {{ currentChatTitle }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat History Content -->
+          <div class="absolute bottom-0 left-0 right-0 top-12">
+            <ChatHistory
+              @backToChat="onCloseChatHistory"
+              @switchChat="onSwitchChat"
+            />
+          </div>
+        </Motion>
+      </Motion>
+    </AnimatePresence>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useElementBounding } from '@vueuse/core'
-import { ref } from 'vue'
+import { AnimatePresence, Motion } from 'motion-v'
+import { computed, ref } from 'vue'
 
 import IconBack from '@/assets/icons/back-arrow.svg?component'
 import IconChatHistory from '@/assets/icons/chat-history.svg?component'
@@ -107,18 +122,17 @@ import Logo from '@/components/Logo.vue'
 import Tooltip from '@/components/ui/Tooltip.vue'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
+import { getUserConfig } from '@/utils/user-config'
 
 import { showSettings } from '../../../utils/settings'
 import { Chat } from '../utils/chat'
 import ChatComponent from './Chat/index.vue'
 import ChatHistory from './ChatHistory/index.vue'
 
-type PageType = 'chat' | 'chat-history'
-
 const chatRef = ref<InstanceType<typeof ChatComponent>>()
 const topRef = ref<HTMLDivElement>()
 const topBounding = useElementBounding(topRef)
-const currentPage = ref<PageType>('chat')
+const showChatHistoryDrawer = ref(false)
 
 const { t } = useI18n()
 
@@ -127,17 +141,24 @@ defineExpose({
 })
 
 const chat = await Chat.getInstance()
+const userConfig = await getUserConfig()
+
+const currentChatId = computed(() => userConfig.chat.history.currentChatId.get())
+const currentChatTitle = computed(() => {
+  const currentChat = chat.chatList.value.find((c) => c.id === currentChatId.value)
+  return currentChat ? currentChat.title : ''
+})
 
 const onClickSetting = () => {
   showSettings()
 }
 
 const onOpenChatHistory = () => {
-  currentPage.value = 'chat-history'
+  showChatHistoryDrawer.value = true
 }
 
-const onBackToChat = () => {
-  currentPage.value = 'chat'
+const onCloseChatHistory = () => {
+  showChatHistoryDrawer.value = false
 }
 
 const onNewChat = async () => {
@@ -158,6 +179,8 @@ const onNewChat = async () => {
 const onSwitchChat = async (chatId: string) => {
   try {
     await chat.switchToChat(chatId)
+    // Close the drawer after switching chat
+    showChatHistoryDrawer.value = false
   }
   catch (error) {
     logger.error('Failed to switch chat:', error)
