@@ -82,7 +82,7 @@
           class="absolute right-0 mt-3 p-1 bg-white border border-gray-200 rounded-lg shadow-lg z-30"
         >
           <button
-            class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer"
+            class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
             @click.stop="handleRename"
           >
             <IconEditPencil class="w-4 h-4" />
