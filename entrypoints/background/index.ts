@@ -5,8 +5,7 @@ import { browser } from 'wxt/browser'
 import { defineBackground } from 'wxt/utils/define-background'
 
 import { INVALID_URLS } from '@/utils/constants'
-import { CONTEXT_MENU, CONTEXT_MENU_ITEM_TRANSLATE_PAGE, ContextMenuId, ContextMenuManager } from '@/utils/context-menu'
-import { useGlobalI18n } from '@/utils/i18n'
+import { CONTEXT_MENU_ITEM_TRANSLATE_PAGE, ContextMenuId, ContextMenuManager } from '@/utils/context-menu'
 import logger from '@/utils/logger'
 import { b2sRpc, bgBroadcastRpc } from '@/utils/rpc'
 import { registerTabStoreCleanupListener } from '@/utils/tab-store'
@@ -51,6 +50,10 @@ export default defineBackground(() => {
 
   browser.runtime.onSuspend.addListener(() => {
     logger.debug('Extension is suspending')
+  })
+
+  ContextMenuManager.getInstance().then(async (instance) => {
+    instance.registerListeners()
   })
 
   if (import.meta.env.FIREFOX) {
@@ -101,15 +104,6 @@ export default defineBackground(() => {
   })
 
   browser.runtime.onInstalled.addListener(async (ev) => {
-    ContextMenuManager.getInstance().then(async (instance) => {
-      const { t } = await useGlobalI18n()
-      for (const menu of CONTEXT_MENU) {
-        instance.createContextMenu(menu.id, {
-          title: t(menu.titleKey),
-          contexts: menu.contexts,
-        })
-      }
-    })
     initContentScript(false)
     logger.debug(`Extension Installed, reason: ${ev.reason}`)
 

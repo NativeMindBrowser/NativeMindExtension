@@ -4,10 +4,12 @@ import { storage } from 'wxt/utils/storage'
 import { ContextType } from '@/types/browser'
 
 import { nonNullable } from './array'
-import { CONTEXT_MENU_STORAGE_KEY } from './constants'
+import { CONTEXT_MENU_STORAGE_KEY, INVALID_URLS } from './constants'
 import { ComposerTranslation, TranslationKey, useGlobalI18n } from './i18n'
 import logger from './logger'
+import { bgBroadcastRpc } from './rpc'
 import { only } from './runtime'
+import { timeout } from './timeout'
 import { ArrayNonEmpty } from './type-utils'
 
 const log = logger.child('context-menu')
@@ -74,6 +76,7 @@ class PrivateContextMenuManager {
   private static instance: PrivateContextMenuManager | null = null
   private reconstructing = false
   private pendingReconstruct = false
+  private disabled = false
   private constructor(private t: ComposerTranslation) {}
 
   static async getInstance() {
@@ -126,6 +129,7 @@ class PrivateContextMenuManager {
     try {
       log.debug('Reconstructing context menu', this.currentMenuMap)
       await browser.contextMenus.removeAll()
+      if (this.disabled) return
       const firstLevelMenus = Array.from(this.currentMenuMap.values()).filter((item) => item.parentId === undefined)
       const reconstructMenuItem = async (parentId: string | undefined, items: ContextMenuMapItem[], titlePrefix?: string) => {
         for (const item of items) {
@@ -264,6 +268,59 @@ class PrivateContextMenuManager {
   isNeedOpenSidepanel(id: ContextMenuId) {
     const item = this.currentMenuMap.get(id)
     return item?.needOpenSidepanel
+  }
+
+  async disable() {
+    this.disabled = true
+    await this.reconstructContextMenu()
+  }
+
+  async enable() {
+    this.disabled = false
+    await this.reconstructContextMenu()
+  }
+
+  registerListeners() {
+    let updateId = 0
+    const changeContextMenuStatusByTabId = async (tabId: number) => {
+      const tab = await browser.tabs.get(tabId)
+      if (!tab.active) return
+      const url = tab.url
+      if (!url || INVALID_URLS.some((regex) => regex.test(url))) {
+        ContextMenuManager.getInstance().then((instance) => instance.disable())
+      }
+      else {
+        const curUpdateId = ++updateId
+        const type = await timeout(bgBroadcastRpc.getPageContentType({ _toTab: tabId }), 3000).catch(() => undefined)
+        // prevent racing status
+        if (updateId === curUpdateId) {
+          if (type?.includes('html')) {
+            ContextMenuManager.getInstance().then((instance) => instance.enable())
+          }
+          else {
+            ContextMenuManager.getInstance().then((instance) => instance.disable())
+          }
+        }
+      }
+    }
+
+    browser.runtime.onInstalled.addListener(async () => {
+      const { t } = await useGlobalI18n()
+      for (const menu of CONTEXT_MENU) {
+        this.createContextMenu(menu.id, {
+          title: t(menu.titleKey),
+          contexts: menu.contexts,
+        })
+      }
+    })
+
+    browser.tabs.onUpdated.addListener((tabId) => {
+      changeContextMenuStatusByTabId(tabId)
+    })
+
+    browser.tabs.onActivated.addListener(async (activeInfo) => {
+      changeContextMenuStatusByTabId(activeInfo.tabId)
+    })
   }
 }
 
