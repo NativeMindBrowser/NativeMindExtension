@@ -264,6 +264,19 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
     return toolSet
   }
 
+  static createFakeAnyTools() {
+    const toolSet: ToolSet = new Proxy({}, {
+      get: () => {
+        return tool({
+          type: 'function',
+          description: 'Placeholder for any tool call',
+          parameters: z.any(),
+        })
+      },
+    })
+    return toolSet
+  }
+
   get xmlParams(): string {
     return this.convertToXMLParams(this.parameters)
   }

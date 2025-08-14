@@ -104,24 +104,24 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
 
 export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params, taskMessageModifier, agentStorage, abortSignal }) => {
   const log = logger.child('view_tab_execute')
-  const { tab_id: tabId } = params
+  const { tab_id: attachmentId } = params
   const { t } = await useGlobalI18n()
-  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: tabId }) })
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: attachmentId }) })
   taskMsg.icon = 'taskReadFile'
-  const tab = agentStorage.getById('tab', tabId)
-  const hasTab = !!tab && await browser.tabs.get(tab.value.tabId).then(() => true).catch((e) => {
-    log.error('Failed to get tab info', e)
+  const tab = agentStorage.getById('tab', attachmentId)
+  const allTabAttachmentIds = [...new Set(agentStorage.getAllTabs().map((tab) => tab.value.id))]
+  const hasTab = !!tab && await browser.tabs.get(tab.value.tabId).then(() => true).catch((error) => {
+    log.error('Failed to get tab info', { error, attachmentId, tabId: tab.value.id, allTabAttachmentIds })
     return false
   })
   if (!hasTab) {
     taskMsg.icon = 'warningColored'
-    const allTabAttachmentIds = [...new Set(agentStorage.getAllTabs().map((tab) => tab.value.id))]
     taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.view_tab.tab_not_found') })
     return [{
       type: 'tool-result',
       results: {
-        tab_id: tabId,
-        error_message: `Tab with id "${tabId}" not found`,
+        tab_id: attachmentId,
+        error_message: `Tab with id "${attachmentId}" not found`,
         available_tab_ids: allTabAttachmentIds.join(', '),
         status: 'failed',
       },
@@ -131,25 +131,45 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   if (agentStorage.isCurrentTab(tab.value.tabId)) {
     agentStorage.persistCurrentTab()
   }
-  const content = await makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal).catch((err) => {
-    log.error('Failed to get tab content', err)
-    return null
-  })
+
+  let content
+  try {
+    const docContent = await makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal)
+    content = docContent
+  }
+  catch (err) {
+    log.error('Failed to get tab content', { err, attachmentId, tabId: tab.value.id })
+    try {
+      const htmlContent = await makeAbortable(s2bRpc.getHtmlContentOfTab(tab.value.tabId), abortSignal)
+      if (htmlContent) {
+        const textContent = parseHTMLWithTurndown(htmlContent?.html)
+        content = {
+          title: tab.value.title,
+          url: tab.value.url,
+          textContent,
+        }
+      }
+    }
+    catch (err) {
+      log.error('Failed to get HTML content of tab', { err, attachmentId, tabId: tab.value.id })
+    }
+  }
+
   if (!content?.textContent) {
     taskMsg.icon = 'warningColored'
     return [{
       type: 'tool-result',
       results: {
-        tab_id: tabId,
+        tab_id: attachmentId,
         status: 'failed',
-        error_message: `Can not get content of tab "${tabId}", you may need to refresh the page`,
+        error_message: `Can not get content of tab "${attachmentId}", you may need to refresh the page`,
       },
     }]
   }
   return [{
     type: 'tool-result',
     results: {
-      tab_id: tabId,
+      tab_id: attachmentId,
       status: 'completed',
       tab_content: `Title: ${content.title}\nURL: ${content.url}\n\n${content.textContent}`,
     },

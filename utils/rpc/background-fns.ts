@@ -20,7 +20,6 @@ import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/
 import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
 import { PromptBasedTool } from '../llm/tools/prompt-based/helpers'
-import { promptBasedTools } from '../llm/tools/prompt-based/tools'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
 import { parsePdfFileOfUrl } from '../pdf'
 import { openAndFetchUrlsContent, searchWebsites } from '../search'
@@ -103,7 +102,7 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
         prompt: options.prompt,
         system: options.system,
         // this is a trick workaround to use prompt based tools in the vercel ai sdk
-        tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
+        tools: PromptBasedTool.createFakeAnyTools(),
         experimental_activeTools: [],
         maxTokens: options.maxTokens,
         abortSignal: abortController.signal,
@@ -136,7 +135,7 @@ const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' |
       messages: options.messages,
       prompt: options.prompt,
       system: options.system,
-      tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
+      tools: PromptBasedTool.createFakeAnyTools(),
       maxTokens: options.maxTokens,
       experimental_activeTools: [],
     })
@@ -165,7 +164,7 @@ const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'pro
         messages: options.messages,
         prompt: options.prompt,
         system: options.system,
-        tools: PromptBasedTool.toAiSDKTools(promptBasedTools),
+        tools: PromptBasedTool.createFakeAnyTools(),
         temperature: options.temperature,
         topK: options.topK,
         topP: options.topP,
@@ -349,6 +348,25 @@ const getDocumentContentOfTab = async (tabId?: number) => {
   if (!tabId) throw new Error('No tab id provided')
   const article = await bgBroadcastRpc.getDocumentContent({ _toTab: tabId })
   return { ...article, tabId } as const
+}
+
+const getHtmlContentOfTab = async (tabId?: number) => {
+  if (!tabId) {
+    const currentTab = (await browser.tabs.query({ active: true, currentWindow: true }))[0]
+    tabId = currentTab.id
+  }
+  if (!tabId) throw new Error('No tab id provided')
+  const content = await browser.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      return {
+        html: document.documentElement.outerHTML,
+        title: document.title,
+        url: location.href,
+      }
+    },
+  })
+  return content[0]?.result
 }
 
 const getPagePDFContent = async (tabId: number) => {
@@ -952,6 +970,7 @@ export const backgroundFunctions = {
   searchWebsites,
   generateObjectFromSchema,
   getDocumentContentOfTab,
+  getHtmlContentOfTab,
   getPageContentType,
   getPagePDFContent,
   fetchAsDataUrl,

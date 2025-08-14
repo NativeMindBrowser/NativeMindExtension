@@ -391,7 +391,8 @@ export class Agent<T extends PromptBasedToolName> {
       // error names: https://ai-sdk.dev/docs/reference/ai-sdk-errors
       if (error.name === 'AI_TypeValidationError' || error.name === 'AI_NoSuchToolError') {
         const errorResult = TagBuilder.fromStructured('error', {
-          message: `TOOL FORMAT ERROR. Review system prompt validation phases. Correct format or respond without tools.`,
+          message: `FORMAT ERROR. Review system prompt validation phases. Correct format with provided tools.`,
+          available_tools: Object.keys(this.tools).join(', '),
         })
         loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
       }
