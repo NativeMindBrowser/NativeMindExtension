@@ -55,11 +55,13 @@ interface RedirectDirection {
 type Color = string
 
 type ArrivalShadowInfo = Color | boolean | {
-  color: Color
-  size: number
+  color?: Color
+  size?: number
+  offset?: number
 }
 
 const DEFAULT_SHADOW_SIZE = 16
+const DEFAULT_ARRIVAL_SHADOW_COLOR = '#92929225'
 
 const props = withDefaults(
   defineProps<{
@@ -84,58 +86,45 @@ const props = withDefaults(
   },
 )
 
-const DEFAULT_ARRIVAL_SHADOW = {
-  top: '#92929225',
-  bottom: '#92929225',
-  left: '#92929225',
-  right: '#92929225',
-}
 const arrivalShadow = computed(() => {
-  if (typeof props.arrivalShadow === 'boolean') {
-    const s = props.arrivalShadow
-    return {
-      top: {
-        color: DEFAULT_ARRIVAL_SHADOW.top,
-        size: s ? DEFAULT_SHADOW_SIZE : 0,
-      },
-      bottom: {
-        color: DEFAULT_ARRIVAL_SHADOW.bottom,
-        size: s ? DEFAULT_SHADOW_SIZE : 0,
-      },
-      left: {
-        color: DEFAULT_ARRIVAL_SHADOW.left,
-        size: s ? DEFAULT_SHADOW_SIZE : 0,
-      },
-      right: {
-        color: DEFAULT_ARRIVAL_SHADOW.right,
-        size: s ? DEFAULT_SHADOW_SIZE : 0,
-      },
-    }
-  }
   const normalizeShadow = (shadow: ArrivalShadowInfo | boolean | undefined) => {
     if (!shadow) {
       return {
-        color: DEFAULT_ARRIVAL_SHADOW.top,
+        color: DEFAULT_ARRIVAL_SHADOW_COLOR,
         size: DEFAULT_SHADOW_SIZE,
+        offset: 0,
       }
     }
     else if (typeof shadow === 'string') {
       return {
         color: shadow,
         size: DEFAULT_SHADOW_SIZE,
+        offset: 0,
       }
     }
     else if (typeof shadow === 'boolean') {
       return {
-        color: DEFAULT_ARRIVAL_SHADOW.top,
+        color: DEFAULT_ARRIVAL_SHADOW_COLOR,
         size: shadow ? DEFAULT_SHADOW_SIZE : 0,
+        offset: 0,
       }
     }
     else {
       return {
-        color: shadow.color || DEFAULT_ARRIVAL_SHADOW.top,
+        color: shadow.color || DEFAULT_ARRIVAL_SHADOW_COLOR,
         size: shadow.size || DEFAULT_SHADOW_SIZE,
+        offset: shadow.offset || 0,
       }
+    }
+  }
+  if (typeof props.arrivalShadow === 'boolean') {
+    const s = props.arrivalShadow
+    const shadow = normalizeShadow(s)
+    return {
+      top: shadow,
+      bottom: shadow,
+      left: shadow,
+      right: shadow,
     }
   }
   return {
@@ -147,7 +136,10 @@ const arrivalShadow = computed(() => {
 })
 const scrollContainerRef = ref<HTMLElement>()
 const scrollContentRef = ref<HTMLElement>()
-const scroll = useScroll(scrollContainerRef, { behavior: 'instant' })
+const scroll = useScroll(scrollContainerRef, {
+  behavior: 'instant',
+  offset: { left: arrivalShadow.value.left.offset, top: arrivalShadow.value.top.offset, right: arrivalShadow.value.right.offset, bottom: arrivalShadow.value.bottom.offset },
+})
 const { height: scrollContentHeight, width: scrollContentWidth } = useElementBounding(scrollContentRef)
 const { height: scrollContainerHeight, width: scrollContainerWidth } = useElementBounding(scrollContainerRef)
 const isVerticalOverflow = computed(() => {
