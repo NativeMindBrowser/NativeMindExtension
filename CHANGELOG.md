@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v1.7.0-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.10...v1.7.0-beta.11)
+
+### 🩹 Fixes
+
+- **cache:** Skip caching when translated text matches original text ([55305fb](https://github.com/NativeMindBrowser/NativeMindExtension/commit/55305fb))
+- **translator:** Handle abort signal in translation retries and improve error logging for tab content retrieval ([0f9929a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f9929a))
+
+### 💅 Refactors
+
+- **chat:** WIP update agent msg UI with some decorative line ([cf4deb2](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cf4deb2))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.7.0-beta.10
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.9...v1.7.0-beta.10)
