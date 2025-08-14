@@ -1,5 +1,5 @@
 import { safeParseJSON } from '@ai-sdk/provider-utils'
-import { AISDKError, generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
+import { AISDKError, CoreMessage, generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, Message, ObjectStreamPart, streamObject as originalStreamObject, streamText as originalStreamText, zodSchema } from 'ai'
 import { EventEmitter } from 'events'
 import { Browser, browser } from 'wxt/browser'
 import { z } from 'zod'
@@ -15,6 +15,7 @@ import { sleep } from '../async'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
 import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
+import { parsePartialJson } from '../json/parser/parse-partial-json'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
 import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
@@ -200,20 +201,69 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
       abortController.abort()
     })
     try {
-      const response = originalStreamObject({
-        model: await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) }),
-        output: 'object',
-        schema: parseSchema(options),
-        prompt: options.prompt,
-        system: options.system,
-        messages: options.messages,
-        abortSignal: abortController.signal,
-      })
-      for await (const chunk of response.fullStream) {
-        if (chunk.type === 'error') {
-          logger.error(chunk.error)
+      const model = await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) })
+      if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(model.modelId))) {
+        const schema = parseSchema(options)
+        const s = zodSchema(schema)
+        const injectSchemaToSystemPrompt = (prompt?: string) => {
+          if (!prompt) return undefined
+          return `${prompt}\n\n<output_schema>${JSON.stringify(s.jsonSchema)}</output_schema>`
         }
-        port.postMessage(chunk)
+        const injectSchemaToSystemMessage = (messages?: CoreMessage[] | Omit<Message, 'id'>[]) => {
+          if (!messages) return undefined
+          const cloned = messages.map((msg) => {
+            if (msg.role === 'system') {
+              return {
+                ...msg,
+                content: injectSchemaToSystemPrompt(msg.content),
+              }
+            }
+            return msg
+          })
+          return cloned as CoreMessage[] | Omit<Message, 'id'>[]
+        }
+        const response = originalStreamText({
+          model,
+          prompt: options.prompt,
+          system: injectSchemaToSystemPrompt(options.system),
+          messages: injectSchemaToSystemMessage(options.messages),
+          abortSignal: abortController.signal,
+        })
+        let text = ''
+        for await (const chunk of response.fullStream) {
+          if (chunk.type === 'error') {
+            logger.error(chunk.error)
+          }
+          else if (chunk.type === 'text-delta') {
+            text += chunk.textDelta
+            const obj = await parsePartialJson(text)
+            if (obj.state === 'successful-parse' || obj.state === 'repaired-parse') {
+              const objectChunk: ObjectStreamPart<unknown> = {
+                type: 'object',
+                object: obj.value,
+              }
+              port.postMessage(objectChunk)
+            }
+          }
+          port.postMessage(chunk)
+        }
+      }
+      else {
+        const response = originalStreamObject({
+          model,
+          output: 'object',
+          schema: parseSchema(options),
+          prompt: options.prompt,
+          system: options.system,
+          messages: options.messages,
+          abortSignal: abortController.signal,
+        })
+        for await (const chunk of response.fullStream) {
+          if (chunk.type === 'error') {
+            logger.error(chunk.error)
+          }
+          port.postMessage(chunk)
+        }
       }
       port.disconnect()
     }
