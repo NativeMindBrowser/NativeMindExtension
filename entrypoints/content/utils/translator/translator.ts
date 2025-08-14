@@ -73,7 +73,7 @@ export async function* translateParagraphs(options: {
       }
     }
   }
-  if (translation.length < paragraphs.length && maxRetry > 0) {
+  if (translation.length < paragraphs.length && maxRetry > 0 && !abortSignal?.aborted) {
     const restStartIdx = translation.length
     const rest = paragraphs.slice(restStartIdx)
     const iter = translateParagraphs({

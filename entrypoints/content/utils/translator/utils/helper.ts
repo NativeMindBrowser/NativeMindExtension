@@ -119,7 +119,7 @@ const translateEnv: TranslatorEnv = {
 
 export async function getTranslatorEnv(): Promise<TranslatorEnv> {
   const userConfig = await getUserConfig()
-  return { ...translateEnv, translationModel: userConfig.translation.model.get() }
+  return { ...translateEnv, translationModel: userConfig.translation.model.get() ?? userConfig.llm.model.get() }
 }
 
 export function setTranslatorEnv(newEnv: Partial<TranslatorEnv>) {

@@ -444,7 +444,6 @@ export class Agent<T extends PromptBasedToolName> {
             abortSignal: abortController.signal,
             taskMessageModifier,
           })
-          taskMessageModifier.makeAllTaskDone()
           for (const result of executedResults) {
             if (result.type === 'tool-result') {
               currentLoopToolResults.push({ ...result, toolName })
@@ -462,6 +461,7 @@ export class Agent<T extends PromptBasedToolName> {
           }
           this.log.error('Tool call error', toolName, e)
         }
+        taskMessageModifier.makeAllTaskDone()
       }
       else {
         this.log.warn('Tool not found', chunk)

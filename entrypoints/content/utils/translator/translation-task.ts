@@ -72,6 +72,7 @@ export default class TranslationTask {
     this.pieceNormalQueue.clear()
     this.pieceRetryQueue.forEach((p) => p.cancelLoading())
     this.pieceRetryQueue.clear()
+    this.scrollTimeoutId = undefined
   }
 
   observePiece(piece: TranslationPiece) {

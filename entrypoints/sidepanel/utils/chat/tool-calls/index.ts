@@ -131,8 +131,11 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   if (agentStorage.isCurrentTab(tab.value.tabId)) {
     agentStorage.persistCurrentTab()
   }
-  const content = await makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal)
-  if (!content.textContent) {
+  const content = await makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal).catch((err) => {
+    log.error('Failed to get tab content', err)
+    return null
+  })
+  if (!content?.textContent) {
     taskMsg.icon = 'warningColored'
     return [{
       type: 'tool-result',
