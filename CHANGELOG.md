@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v1.7.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.9...v1.7.0-beta.10)
+
+### 🩹 Fixes
+
+- **AutoExpandTextArea:** Enhance textarea styling and dynamic height adjustment ([16ec49a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/16ec49a))
+- **translator:** Translate with gpt-oss models without format output ([2b152d0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2b152d0))
+
+### 🏡 Chore
+
+- **settings:** Adjust feedback message text size for better readability ([500f1fe](https://github.com/NativeMindBrowser/NativeMindExtension/commit/500f1fe))
+- **chat:** Adjust scroll shadow size and offset for improved visibility ([3ee785b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3ee785b))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.9
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.8...v1.7.0-beta.9)
