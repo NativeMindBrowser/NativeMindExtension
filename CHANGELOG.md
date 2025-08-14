@@ -1,6 +1,32 @@
 # Changelog
 
 
+## v1.7.0-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.11...v1.7.0-beta.12)
+
+### 🚀 Enhancements
+
+- **chat:** Add debug functionality to clear all chat history and context attachments, enhance chatlist data refresh ([3e2290a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e2290a))
+- **services:** Add reset method to singleton instance for re-initialization of background services ([f4101a4](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f4101a4))
+- **input:** Add maxlength validation and error message for character limit ([0f5ae6d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f5ae6d))
+
+### 🩹 Fixes
+
+- **assistant:** Remove unnecessary condition for message expansion ([fbbc13d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fbbc13d))
+- **chat:** Improve menu interaction by adding overlay and closing functionality ([a942bd8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a942bd8))
+- **chat:** Prevent creating a new chat if already in a new chat state ([8c721d3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8c721d3))
+- **agent:** Add createFakeAnyTools method to prevent error on unexpected tools ([81c005a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/81c005a))
+
+### 💅 Refactors
+
+- **dependencies:** Remove unused unplugin-vue-components and related configurations ([66774e1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/66774e1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.7.0-beta.11
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.10...v1.7.0-beta.11)
