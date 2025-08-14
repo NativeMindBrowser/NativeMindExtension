@@ -78,7 +78,7 @@
         <!-- Dropdown Menu -->
         <div
           v-if="props.isMenuOpen"
-          class="absolute right-0 mt-3 w-32 p-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+          class="absolute right-0 mt-3 w-32 p-1 bg-white border border-gray-200 rounded-lg shadow-lg z-30"
         >
           <button
             class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer"
@@ -159,24 +159,6 @@ watch(() => props.isEditing, async (isEditing) => {
     await nextTick()
     editInput.value?.focus()
     editInput.value?.select()
-  }
-})
-
-// Close menu when clicking outside
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as HTMLElement
-  if (!target.closest('.relative')) {
-    emit('toggleMenu', props.chat.id)
-  }
-}
-
-// Add/remove click outside listener
-watch(() => props.isMenuOpen, (show) => {
-  if (show) {
-    document.addEventListener('click', handleClickOutside)
-  }
-  else {
-    document.removeEventListener('click', handleClickOutside)
   }
 })
 
