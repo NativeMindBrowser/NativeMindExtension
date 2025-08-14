@@ -210,16 +210,7 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
         }
         const injectSchemaToSystemMessage = (messages?: CoreMessage[] | Omit<Message, 'id'>[]) => {
           if (!messages) return undefined
-          const cloned = messages.map((msg) => {
-            if (msg.role === 'system') {
-              return {
-                ...msg,
-                content: injectSchemaToSystemPrompt(msg.content),
-              }
-            }
-            return msg
-          })
-          return cloned as CoreMessage[] | Omit<Message, 'id'>[]
+          return messages.map((msg) => msg.role === 'system' ? { ...msg, content: injectSchemaToSystemPrompt(msg.content) } : msg) as CoreMessage[] | Omit<Message, 'id'>[]
         }
         const response = originalStreamText({
           model,
@@ -275,18 +266,27 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
   return { portName }
 }
 
-const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<GenerateObjectOptions, 'prompt' | 'system' | 'messages'> & SchemaOptions<S> & ExtraGenerateOptions) => {
+export const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<GenerateObjectOptions, 'prompt' | 'system' | 'messages'> & SchemaOptions<S> & ExtraGenerateOptions) => {
   const s = parseSchema(options)
   const isEnum = s instanceof z.ZodEnum
   let ret
   try {
     const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
     if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(modelInfo.model))) {
+      const jsonSchema = zodSchema(s).jsonSchema
+      const injectSchemaToSystemPrompt = (prompt?: string) => {
+        if (!prompt) return undefined
+        return `${prompt}\n\n<output_schema>${JSON.stringify(jsonSchema)}</output_schema>`
+      }
+      const injectSchemaToSystemMessage = (messages?: CoreMessage[] | Omit<Message, 'id'>[]) => {
+        if (!messages) return undefined
+        return messages.map((msg) => msg.role === 'system' ? { ...msg, content: injectSchemaToSystemPrompt(msg.content) } : msg) as CoreMessage[] | Omit<Message, 'id'>[]
+      }
       const response = await originalGenerateText({
         model: await getModel(modelInfo),
         prompt: options.prompt,
-        system: options.system,
-        messages: options.messages,
+        system: injectSchemaToSystemPrompt(options.system),
+        messages: injectSchemaToSystemMessage(options.messages),
       })
       const parsed = safeParseJSON<z.infer<Schemas[S]>>({ text: response.text, schema: s })
       if (!parsed.success) {

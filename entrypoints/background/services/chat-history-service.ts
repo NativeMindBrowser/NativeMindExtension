@@ -5,15 +5,12 @@
  * providing persistent storage for chat conversations and context attachments.
  */
 
-import { generateObject as originalGenerateObject } from 'ai'
-
 import { ChatHistoryV1, ChatList, ContextAttachment, ContextAttachmentStorage, HistoryItemV1 } from '@/types/chat'
 import { useGlobalI18n } from '@/utils/i18n'
 import { getLocaleName } from '@/utils/i18n/constants'
-import { getModel, getModelUserConfig } from '@/utils/llm/models'
-import { selectSchema } from '@/utils/llm/output-schema'
 import logger from '@/utils/logger'
 import { generateChatTitle } from '@/utils/prompts'
+import { generateObjectFromSchema } from '@/utils/rpc/background-fns'
 import { shouldGenerateChatTitle } from '@/utils/rpc/utils'
 import { getUserConfig } from '@/utils/user-config'
 
@@ -745,9 +742,8 @@ export class BackgroundChatHistoryService {
       // Use the centralized prompt function
       const prompt = await generateChatTitle(userMessage, assistantMessage, language)
 
-      const result = await originalGenerateObject({
-        model: await getModel(await getModelUserConfig()),
-        schema: selectSchema('chatTitle'),
+      const result = await generateObjectFromSchema({
+        schema: 'chatTitle',
         system: prompt.system,
         prompt: prompt.user.extractText(),
       })
