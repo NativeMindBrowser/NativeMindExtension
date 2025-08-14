@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v1.7.0-beta.13
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.12...v1.7.0-beta.13)
+
+### 🩹 Fixes
+
+- **chat:** Chat title generation with gpt-oss ([3708750](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3708750))
+- **context-menu:** Hide context menu on unsupported pages ([7314d51](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7314d51))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.12
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.11...v1.7.0-beta.12)
