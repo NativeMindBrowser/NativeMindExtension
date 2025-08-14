@@ -86,7 +86,7 @@ const onClickTitle = () => {
               <component :is="Component" />
             </Suspense>
           </RouterView>
-          <div class="font-light text-[10px] text-gray-500 flex flex-col gap-1 py-4">
+          <div class="font-light text-xs text-gray-500 flex flex-col gap-1 py-4">
             <i18n-t
               keypath="settings.feedback.contact_msg"
               tag="div"
