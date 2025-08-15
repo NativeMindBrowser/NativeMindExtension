@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.7.0-beta.14
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.13...v1.7.0-beta.14)
+
+### 🚀 Enhancements
+
+- **chat:** Enhance chat history drawer functionality and UI improvements ([2d5c133](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2d5c133))
+
+### 🩹 Fixes
+
+- **chat:** Prevent text wrapping in chat item action button ([097daa1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/097daa1))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.7.0-beta.13
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.12...v1.7.0-beta.13)
