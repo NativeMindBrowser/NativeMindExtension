@@ -314,23 +314,30 @@ export class Chat {
         }
         // Auto-save chat history and context attachments with debounce
         const debounceSaveHistory = debounce(async () => {
-          log.debug('Debounce save history', chatHistory.value)
+          // If chat history is not interacted with, do not save
           if (!chatHistory.value.lastInteractedAt) return
+          // if user message is empty, do not save
+          const userMessages = chatHistory.value.history.filter((msg) => msg.role === 'user')
+          if (userMessages.length === 0) return
 
+          log.debug('s2bRpc.autoGenerateChatTitle')
           // Auto-generate title if needed (when first message is added)
           const titleResult = await s2bRpc.autoGenerateChatTitle(toRaw(chatHistory.value)) as { success: boolean, updatedTitle?: string, titleChanged?: boolean, error?: string }
+          log.debug('s2bRpc.autoGenerateChatTitle Done', titleResult)
 
           // Update the local chat history title if it was changed
           if (titleResult.success && titleResult.updatedTitle && titleResult.updatedTitle !== chatHistory.value.title) {
             chatHistory.value.title = titleResult.updatedTitle
           }
 
+          log.debug('Debounce save history', chatHistory.value, userMessages)
           await s2bRpc.saveChatHistory(toRaw(chatHistory.value))
 
           // Update chat list to reflect title changes
           updateChatList()
         }, 1000)
         const debounceSaveContextAttachment = debounce(async () => {
+          // FIXME: if user message is empty, chat history won't be saved, but context attachments will be saved
           log.debug('Debounce save context attachments', contextAttachments.value)
           if (!contextAttachments.value.lastInteractedAt) return
           await s2bRpc.saveContextAttachments(toRaw(contextAttachments.value))
