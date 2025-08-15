@@ -36,6 +36,32 @@ type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean }
 type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
 
+// TODO
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createRetryWrapper = <T extends (...args: any[]) => Promise<any>>(fn: T, maxRetries: number = 3, delays: number[] = [200, 500, 1000]): T => {
+  return (async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
+    let lastError: unknown
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn(...args)
+      }
+      catch (error) {
+        lastError = error
+
+        if (attempt === maxRetries) {
+          throw error
+        }
+
+        const delay = delays[attempt] || delays[delays.length - 1]
+        await sleep(delay)
+      }
+    }
+
+    throw lastError
+  }) as T
+}
+
 const parseSchema = <S extends SchemaName>(options: SchemaOptions<S>) => {
   if ('schema' in options) {
     return selectSchema(options.schema)
@@ -853,38 +879,47 @@ async function saveContextAttachments(contextAttachments: ContextAttachmentStora
   }
 }
 
-async function getChatList() {
+const getChatList = createRetryWrapper(async () => {
   try {
     const service = BackgroundChatHistoryServiceManager.getInstance()
-    return await service?.getChatList() || []
+    if (!service) {
+      throw new Error('Chat history service not available')
+    }
+    return await service?.getChatList()
   }
   catch (error) {
     logger.error('Chat history RPC getChatList failed:', error)
-    return []
+    throw new Error('Chat history RPC getChatList failed')
   }
-}
+})
 
-async function deleteChat(chatId: string) {
+const deleteChat = createRetryWrapper(async (chatId: string) => {
   try {
     const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      throw new Error('Chat history service not available')
+    }
     return await service?.deleteChat(chatId) || { success: false, error: 'Chat history service not available' }
   }
   catch (error) {
     logger.error('Chat history RPC deleteChat failed:', error)
     return { success: false, error: String(error) }
   }
-}
+})
 
-async function toggleChatStar(chatId: string) {
+const toggleChatStar = createRetryWrapper(async (chatId: string) => {
   try {
     const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      throw new Error('Chat history service not available')
+    }
     return await service?.toggleChatStar(chatId) || { success: false, error: 'Chat history service not available' }
   }
   catch (error) {
     logger.error('Chat history RPC toggleChatStar failed:', error)
     return { success: false, error: String(error) }
   }
-}
+})
 
 async function updateChatTitle(chatId: string, newTitle: string) {
   try {
@@ -927,16 +962,19 @@ async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
   }
 }
 
-async function getPinnedChats() {
+const getPinnedChats = createRetryWrapper(async () => {
   try {
     const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      throw new Error('Chat history service not available')
+    }
     return await service?.getPinnedChats() || []
   }
   catch (error) {
     logger.error('Chat history RPC getPinnedChats failed:', error)
     return []
   }
-}
+})
 
 async function clearAllChatHistory() {
   try {
