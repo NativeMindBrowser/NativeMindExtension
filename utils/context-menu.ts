@@ -280,7 +280,7 @@ class PrivateContextMenuManager {
     await this.reconstructContextMenu()
   }
 
-  registerListeners() {
+  static registerListeners() {
     let updateId = 0
     const changeContextMenuStatusByTabId = async (tabId: number) => {
       const tab = await browser.tabs.get(tabId)
@@ -305,9 +305,10 @@ class PrivateContextMenuManager {
     }
 
     browser.runtime.onInstalled.addListener(async () => {
+      const instance = await ContextMenuManager.getInstance()
       const { t } = await useGlobalI18n()
       for (const menu of CONTEXT_MENU) {
-        this.createContextMenu(menu.id, {
+        instance.createContextMenu(menu.id, {
           title: t(menu.titleKey),
           contexts: menu.contexts,
         })

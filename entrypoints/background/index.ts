@@ -52,9 +52,7 @@ export default defineBackground(() => {
     logger.debug('Extension is suspending')
   })
 
-  ContextMenuManager.getInstance().then(async (instance) => {
-    instance.registerListeners()
-  })
+  ContextMenuManager.registerListeners()
 
   if (import.meta.env.FIREFOX) {
     // In Chrome extensions, selection and page type context menus are mutually exclusive, so we don't need to handle onShown event
