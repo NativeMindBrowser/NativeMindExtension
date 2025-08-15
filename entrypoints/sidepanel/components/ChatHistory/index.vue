@@ -1,5 +1,12 @@
 <template>
   <div class="h-full flex flex-col bg-[#F5F6FB] relative">
+    <!-- Transparent overlay when menu is open -->
+    <div
+      v-if="openMenuChatId"
+      class="fixed inset-0 z-20 bg-transparent"
+      @click="closeMenu"
+    />
+
     <!-- Content -->
     <ScrollContainer
       class="w-full h-full overflow-hidden"
@@ -186,6 +193,10 @@ const toggleStar = async (chatId: string) => {
 const toggleMenu = (chatId: string) => {
   // If the same menu is clicked, close it; otherwise, open the new one
   openMenuChatId.value = openMenuChatId.value === chatId ? null : chatId
+}
+
+const closeMenu = () => {
+  openMenuChatId.value = null
 }
 
 const onDeleteChat = async (chatId: string) => {
