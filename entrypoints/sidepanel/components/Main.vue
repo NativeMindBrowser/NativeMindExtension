@@ -84,8 +84,7 @@
             <div class="h-12 px-4 flex items-center justify-between w-full">
               <div class="flex items-center gap-2 grow overflow-hidden">
                 <div
-                  class="p-1 cursor-pointer hover:text-gray-500 flex flex-row overflow-hidden items-center gap-2"
-                  @click="onCloseChatHistory"
+                  class="flex flex-row overflow-hidden items-center gap-2"
                 >
                   <div class="size-6 flex items-center justify-center">
                     <Logo
@@ -93,13 +92,21 @@
                     />
                   </div>
                   <Tooltip :content="t('tooltips.back')">
-                    <IconBack class="size-4 shrink-0" />
+                    <div
+                      class="p-1 cursor-pointer hover:text-gray-500"
+                      @click="onCloseChatHistory"
+                    >
+                      <IconBack class="size-4 shrink-0" />
+                    </div>
                   </Tooltip>
                   <!-- Show new chat button -->
                   <Tooltip :content="t('tooltips.new_chat')">
                     <div
                       class="p-1 cursor-pointer hover:text-gray-500"
-                      @click="onNewChat"
+                      @click="() => {
+                        onNewChat()
+                        onCloseChatHistory()
+                      }"
                     >
                       <IconNewChat
                         class="size-4"
