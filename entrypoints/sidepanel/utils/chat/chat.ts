@@ -322,11 +322,11 @@ export class Chat {
 
           log.debug('s2bRpc.autoGenerateChatTitle')
           // Auto-generate title if needed (when first message is added)
-          const titleResult = await s2bRpc.autoGenerateChatTitle(toRaw(chatHistory.value)) as { success: boolean, updatedTitle?: string, titleChanged?: boolean, error?: string }
+          const titleResult = await s2bRpc.autoGenerateChatTitle(toRaw(chatHistory.value), chatHistoryId.value) as { success: boolean, updatedTitle?: string, titleChanged?: boolean, titleShouldBeApplied?: boolean, error?: string }
           log.debug('s2bRpc.autoGenerateChatTitle Done', titleResult)
 
-          // Update the local chat history title if it was changed
-          if (titleResult.success && titleResult.updatedTitle && titleResult.updatedTitle !== chatHistory.value.title) {
+          // Update the local chat history title if it was changed and should be applied to current chat
+          if (titleResult.success && titleResult.updatedTitle && titleResult.updatedTitle !== chatHistory.value.title && titleResult.titleShouldBeApplied) {
             chatHistory.value.title = titleResult.updatedTitle
           }
 

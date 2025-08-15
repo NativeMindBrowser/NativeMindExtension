@@ -932,7 +932,7 @@ async function updateChatTitle(chatId: string, newTitle: string) {
   }
 }
 
-async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
+async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1, currentChatId?: string) {
   try {
     const shouldAutoGenerate = await shouldGenerateChatTitle(chatHistory)
 
@@ -953,8 +953,25 @@ async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1) {
     const updatedChatHistory = await service.getChatHistory(chatHistory.id)
     const newTitle = updatedChatHistory?.title || originalTitle
 
-    logger.debug('Title generation result:', { originalTitle, newTitle, titleChanged: newTitle !== originalTitle })
-    return { success: true, updatedTitle: newTitle, titleChanged: newTitle !== originalTitle }
+    // Validate that the current chat ID still matches the chat we generated the title for
+    // This prevents race condition where user switches chat during title generation
+    const titleShouldBeApplied = !currentChatId || currentChatId === chatHistory.id
+
+    logger.debug('Title generation result:', {
+      originalTitle,
+      newTitle,
+      titleChanged: newTitle !== originalTitle,
+      currentChatId,
+      chatHistoryId: chatHistory.id,
+      titleShouldBeApplied,
+    })
+
+    return {
+      success: true,
+      updatedTitle: newTitle,
+      titleChanged: newTitle !== originalTitle,
+      titleShouldBeApplied,
+    }
   }
   catch (error) {
     logger.error('Chat history RPC autoGenerateChatTitle failed:', error)
