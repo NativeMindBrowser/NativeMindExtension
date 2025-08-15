@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v1.7.0-beta.17
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.16...v1.7.0-beta.17)
+
+### 🩹 Fixes
+
+- **chat:** Update chat section labels and improve UI interactions ([b9c8bf3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b9c8bf3))
+- **chat:** Prevent saving empty user messages and improve auto-save logic ([bc1a388](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bc1a388))
+- **chat:** Update chat-empty icon dimensions and remove unused menu overlay ([98554c1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/98554c1))
+- **chat:** Improve chat history drawer interactions and update button click handling ([3b83b12](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3b83b12))
+- **chat:** Implement retry logic for chat service RPC calls ([15e5257](https://github.com/NativeMindBrowser/NativeMindExtension/commit/15e5257))
+- **chat:** Enhance auto-generate chat title logic to include current chat ID validation ([fb43618](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fb43618))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.7.0-beta.16
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.15...v1.7.0-beta.16)
