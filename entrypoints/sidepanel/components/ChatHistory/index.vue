@@ -1,18 +1,5 @@
 <template>
   <div class="h-full flex flex-col bg-[#F5F6FB] relative">
-    <!-- Transparent overlay when menu is open -->
-    <div
-      v-if="openMenuChatId"
-      class="fixed inset-0 z-20 bg-transparent"
-      @click="closeMenu"
-    />
-    <!-- Header -->
-    <!-- <div class="p-[14px]">
-      <h2 class="text-[15px] font-semibold text-gray-900 text-center leading-[20px]">
-        {{ t('chat_history.title') }}
-      </h2>
-    </div> -->
-
     <!-- Content -->
     <ScrollContainer
       class="w-full h-full overflow-hidden"
@@ -199,10 +186,6 @@ const toggleStar = async (chatId: string) => {
 const toggleMenu = (chatId: string) => {
   // If the same menu is clicked, close it; otherwise, open the new one
   openMenuChatId.value = openMenuChatId.value === chatId ? null : chatId
-}
-
-const closeMenu = () => {
-  openMenuChatId.value = null
 }
 
 const onDeleteChat = async (chatId: string) => {
