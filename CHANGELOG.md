@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.7.0-beta.16
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.15...v1.7.0-beta.16)
+
+### 🩹 Fixes
+
+- **context-menu:** Fix listener registration ([f36cad8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f36cad8))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.15
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.14...v1.7.0-beta.15)
