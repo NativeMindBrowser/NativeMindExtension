@@ -89,7 +89,7 @@
             {{ t('chat_history.rename') }}
           </button>
           <button
-            class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer"
+            class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
             @click.stop="handleToggleStar"
           >
             <IconStarFilled
@@ -103,7 +103,7 @@
             {{ isPinned ? t('chat_history.unpin') : t('chat_history.pin') }}
           </button>
           <button
-            class="w-full px-2 py-1.5 text-left text-[13px] text-[#992121] hover:bg-red-50 flex items-center gap-2 rounded cursor-pointer"
+            class="w-full px-2 py-1.5 text-left text-[13px] text-[#992121] hover:bg-red-50 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
             @click.stop="handleDelete"
           >
             <IconTrash class="w-4 h-4" />
