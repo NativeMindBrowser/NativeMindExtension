@@ -72,8 +72,8 @@
     "unpin": "Lepas Pin",
     "pin": "Pin",
     "title": "Riwayat Obrolan",
-    "pinned_section": "Dipasang",
-    "recent_section": "Terbaru",
+    "pinned_section": "Chat Dipasang",
+    "recent_section": "Chat Terbaru",
     "empty_state": "Belum ada percakapan",
     "untitled_chat": "Obrolan Tanpa Judul",
     "new_chat": "Obrolan Baru",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "Lepas sematan",
     "close": "Tutup",
     "chat_history": "Sejarah",
-    "new_chat": "Obrolan baru"
+    "new_chat": "Obrolan baru",
+    "back": "Kembali"
   }
 }

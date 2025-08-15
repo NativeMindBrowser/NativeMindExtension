@@ -72,8 +72,8 @@
     "unpin": "ยกเลิกการปักหมุด",
     "pin": "ปักหมุด",
     "title": "ประวัติแชท",
-    "pinned_section": "ปักหมุดแล้ว",
-    "recent_section": "ล่าสุด",
+    "pinned_section": "แชทที่ปักหมุด",
+    "recent_section": "แชทล่าสุด",
     "empty_state": "ยังไม่มีการสนทนา",
     "untitled_chat": "แชทไม่มีชื่อ",
     "new_chat": "แชทใหม่",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "ยกเลิกการปักหมุด",
     "close": "ปิด",
     "chat_history": "ประวัติศาสตร์",
-    "new_chat": "แชทใหม่"
+    "new_chat": "แชทใหม่",
+    "back": "กลับ"
   }
 }

@@ -7,11 +7,11 @@
       @click="closeMenu"
     />
     <!-- Header -->
-    <div class="p-[14px]">
+    <!-- <div class="p-[14px]">
       <h2 class="text-[15px] font-semibold text-gray-900 text-center leading-[20px]">
         {{ t('chat_history.title') }}
       </h2>
-    </div>
+    </div> -->
 
     <!-- Content -->
     <ScrollContainer

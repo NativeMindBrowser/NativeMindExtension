@@ -72,8 +72,8 @@
     "unpin": "고정 해제",
     "pin": "고정",
     "title": "채팅 기록",
-    "pinned_section": "고정됨",
-    "recent_section": "최근",
+    "pinned_section": "고정된 채팅",
+    "recent_section": "최근 채팅",
     "empty_state": "아직 대화가 없습니다",
     "untitled_chat": "제목 없는 채팅",
     "new_chat": "새 채팅",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "고정 해제",
     "close": "닫기",
     "chat_history": "역사",
-    "new_chat": "새로운 채팅"
+    "new_chat": "새로운 채팅",
+    "back": "뒤로"
   }
 }

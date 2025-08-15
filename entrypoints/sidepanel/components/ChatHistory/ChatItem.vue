@@ -3,8 +3,8 @@
     :class="[
       'flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors group',
       isCurrent
-        ? 'bg-[#EAECEF] hover:bg-[#EAECEF]/80'
-        : 'bg-white hover:bg-white/80'
+        ? 'bg-white hover:bg-white/80'
+        : 'bg-transparent hover:bg-white/80'
     ]"
     @click="handleClick"
   >
@@ -62,12 +62,12 @@
     <!-- Actions -->
     <div
       v-if="!isEditing"
-      class="flex items-center gap-1 ml-3"
+      class="flex items-center gap-1 ml-3 group"
     >
       <!-- More Options Button -->
       <div class="relative">
         <button
-          class="p-1 text-text-primary hover:bg-bg-hover transition rounded cursor-pointer"
+          class="p-1 text-text-primary opacity-0 group-hover:opacity-100 hover:bg-bg-hover transition rounded cursor-pointer"
           @click.stop="toggleMenu"
         >
           <IconDotsVertical

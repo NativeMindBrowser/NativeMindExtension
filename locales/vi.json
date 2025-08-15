@@ -72,8 +72,8 @@
     "unpin": "Bỏ ghim",
     "pin": "Ghim",
     "title": "Lịch sử Trò chuyện",
-    "pinned_section": "Đã Ghim",
-    "recent_section": "Gần Đây",
+    "pinned_section": "Chats Đã Ghim",
+    "recent_section": "Chats Gần Đây",
     "empty_state": "Chưa có cuộc trò chuyện nào",
     "untitled_chat": "Trò chuyện Không Tiêu đề",
     "new_chat": "Trò chuyện Mới",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "Bỏ ghim",
     "close": "Đóng",
     "chat_history": "Lịch sử",
-    "new_chat": "Trò chuyện mới"
+    "new_chat": "Trò chuyện mới",
+    "back": "Quay lại"
   }
 }

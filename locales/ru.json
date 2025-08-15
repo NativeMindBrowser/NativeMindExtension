@@ -72,8 +72,8 @@
     "unpin": "Открепить",
     "pin": "Закрепить",
     "title": "История чатов",
-    "pinned_section": "Закреплённые",
-    "recent_section": "Недавние",
+    "pinned_section": "Закреплённые чаты",
+    "recent_section": "Недавние чаты",
     "empty_state": "Пока нет разговоров",
     "untitled_chat": "Чат без названия",
     "new_chat": "Новый чат",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "Открепить",
     "close": "Закрыть",
     "chat_history": "История",
-    "new_chat": "Новый чат"
+    "new_chat": "Новый чат",
+    "back": "Назад"
   }
 }

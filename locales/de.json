@@ -72,8 +72,8 @@
     "unpin": "Lösen",
     "pin": "Anheften",
     "title": "Chat-Verlauf",
-    "pinned_section": "Angeheftet",
-    "recent_section": "Kürzlich",
+    "pinned_section": "Angeheftete Chats",
+    "recent_section": "Kürzliche Chats",
     "empty_state": "Noch keine Unterhaltungen",
     "untitled_chat": "Unbenannter Chat",
     "new_chat": "Neuer Chat",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "Anheftung aufheben",
     "close": "Schließen",
     "chat_history": "Geschichte",
-    "new_chat": "Neuer Chat"
+    "new_chat": "Neuer Chat",
+    "back": "Zurück"
   }
 }

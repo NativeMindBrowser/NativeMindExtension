@@ -87,10 +87,25 @@
                   class="p-1 cursor-pointer hover:text-gray-500 flex flex-row overflow-hidden items-center gap-2"
                   @click="onCloseChatHistory"
                 >
-                  <IconBack class="size-4 shrink-0" />
-                  <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs leading-4">
-                    {{ currentChatTitle }}
+                  <div class="size-6 flex items-center justify-center">
+                    <Logo
+                      class="font-bold text-base"
+                    />
                   </div>
+                  <Tooltip :content="t('tooltips.back')">
+                    <IconBack class="size-4 shrink-0" />
+                  </Tooltip>
+                  <!-- Show new chat button -->
+                  <Tooltip :content="t('tooltips.new_chat')">
+                    <div
+                      class="p-1 cursor-pointer hover:text-gray-500"
+                      @click="onNewChat"
+                    >
+                      <IconNewChat
+                        class="size-4"
+                      />
+                    </div>
+                  </Tooltip>
                 </div>
               </div>
             </div>
@@ -112,7 +127,7 @@
 <script setup lang="ts">
 import { useElementBounding } from '@vueuse/core'
 import { AnimatePresence, Motion } from 'motion-v'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 import IconBack from '@/assets/icons/back-arrow.svg?component'
 import IconChatHistory from '@/assets/icons/chat-history.svg?component'
@@ -122,7 +137,6 @@ import Logo from '@/components/Logo.vue'
 import Tooltip from '@/components/ui/Tooltip.vue'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
-import { getUserConfig } from '@/utils/user-config'
 
 import { showSettings } from '../../../utils/settings'
 import { Chat } from '../utils/chat'
@@ -141,13 +155,6 @@ defineExpose({
 })
 
 const chat = await Chat.getInstance()
-const userConfig = await getUserConfig()
-
-const currentChatId = computed(() => userConfig.chat.history.currentChatId.get())
-const currentChatTitle = computed(() => {
-  const currentChat = chat.chatList.value.find((c) => c.id === currentChatId.value)
-  return currentChat ? currentChat.title : ''
-})
 
 const onClickSetting = () => {
   showSettings()

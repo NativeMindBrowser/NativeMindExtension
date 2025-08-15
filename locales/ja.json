@@ -72,8 +72,8 @@
     "unpin": "ピンを外す",
     "pin": "ピン留め",
     "title": "チャット履歴",
-    "pinned_section": "ピン留め済み",
-    "recent_section": "最近",
+    "pinned_section": "ピン留め済みチャット",
+    "recent_section": "最近のチャット",
     "empty_state": "まだ会話がありません",
     "untitled_chat": "無題のチャット",
     "new_chat": "新しいチャット",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "固定を解除",
     "close": "閉じる",
     "chat_history": "歴史",
-    "new_chat": "新しいチャット"
+    "new_chat": "新しいチャット",
+    "back": "戻る"
   }
 }

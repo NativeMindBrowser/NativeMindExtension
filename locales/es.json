@@ -72,8 +72,8 @@
     "unpin": "Desanclar",
     "pin": "Anclar",
     "title": "Historial de Chat",
-    "pinned_section": "Anclados",
-    "recent_section": "Recientes",
+    "pinned_section": "Chats Anclados",
+    "recent_section": "Chats Recientes",
     "empty_state": "Aún no hay conversaciones",
     "untitled_chat": "Chat Sin Título",
     "new_chat": "Nuevo Chat",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "Desfijar",
     "close": "Cerrar",
     "chat_history": "Historia",
-    "new_chat": "Nuevo chat"
+    "new_chat": "Nuevo chat",
+    "back": "Atrás"
   }
 }

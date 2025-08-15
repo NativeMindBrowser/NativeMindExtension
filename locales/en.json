@@ -248,8 +248,8 @@
     "unpin": "Unpin",
     "pin": "Pin",
     "title": "Chat History",
-    "pinned_section": "Pinned",
-    "recent_section": "Recent",
+    "pinned_section": "Pinned Chats",
+    "recent_section": "Recent Chats",
     "empty_state": "No conversations yet",
     "untitled_chat": "Untitled Chat",
     "new_chat": "New Chat",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "Unpin",
     "close": "Close",
     "chat_history": "History",
-    "new_chat": "New Chat"
+    "new_chat": "New Chat",
+    "back": "Back"
   }
 }

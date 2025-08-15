@@ -72,8 +72,8 @@
     "unpin": "Desafixar",
     "pin": "Fixar",
     "title": "Histórico de Conversa",
-    "pinned_section": "Fixadas",
-    "recent_section": "Recentes",
+    "pinned_section": "Chats Fixados",
+    "recent_section": "Chats Recentes",
     "empty_state": "Ainda não há conversas",
     "untitled_chat": "Conversa Sem Título",
     "new_chat": "Nova Conversa",
@@ -366,6 +366,7 @@
     "unpin_sidebar": "Desafixar",
     "close": "Fechar",
     "chat_history": "História",
-    "new_chat": "Novo bate -papo"
+    "new_chat": "Novo bate -papo",
+    "back": "Voltar"
   }
 }
