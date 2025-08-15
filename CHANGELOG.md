@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.7.0-beta.15
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.14...v1.7.0-beta.15)
+
+### 🩹 Fixes
+
+- **quick-actions:** Fix quick action timeout error ([fc44d31](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fc44d31))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.0-beta.14
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.13...v1.7.0-beta.14)
