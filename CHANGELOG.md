@@ -1,6 +1,20 @@
 # Changelog
 
 
+## v1.7.0-beta.18
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.17...v1.7.0-beta.18)
+
+### 🩹 Fixes
+
+- **chat:** Improve button styling for better text handling in chat actions ([1a70944](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1a70944))
+- **chat:** Revert broken changes for dismiss menu ([af7aa5d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/af7aa5d))
+- **input:** Add full width styling to input component ([a5dbdd9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a5dbdd9))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.7.0-beta.17
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.16...v1.7.0-beta.17)
