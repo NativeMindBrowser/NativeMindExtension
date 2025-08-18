@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.0-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.1...v1.8.0-beta.0)
+
+### 🚀 Enhancements
+
+- **browser:** Add cross-browser sidebar compatibility (Firefox & Opera) ([924c209](https://github.com/NativeMindBrowser/NativeMindExtension/commit/924c209))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0...v1.7.1)
