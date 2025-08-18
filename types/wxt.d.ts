@@ -1,5 +1,27 @@
 declare module 'wxt/browser' {
   namespace Browser {
+    // this namespace is only for Opera
+    export namespace sidebarAction {
+      export const setPanel: (options: { panel: string }) => Promise<void>
+      export const open: () => Promise<void>
+      export const close: () => Promise<void>
+      export const isOpen: () => Promise<boolean>
+      export const setTitle: (options: { title: string }) => Promise<void>
+      export const getTitle: () => Promise<string>
+      export const toggle: () => Promise<void>
+    }
+
+    export namespace runtime {
+      export interface ManifestBase {
+        sidebar_action?: {
+          default_icon?: Record<number, string>
+          default_title?: string
+          default_panel?: string
+          open_at_install?: boolean
+        }
+      }
+    }
+
     // this namespace is only for Firefox, as Chrome uses the `browser.contextMenus`
     export namespace menus {
       export type OnShownInfo = {

@@ -77,6 +77,11 @@ registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
 </script>
 
 <style lang="scss">
+body {
+  // chrome will inject font-size: 75% in extension pages's body element, but other browsers may not, so we set it explicitly to 75% to ensure consistency
+  font-size: calc(0.75 * var(--spacing-base));
+}
+
 .wrapper-enter-active,
 .wrapper-leave-active {
   transition: all 0.3s cubic-bezier(0.175, 0.75, 0.19, 1.015);

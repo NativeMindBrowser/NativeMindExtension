@@ -17,6 +17,11 @@ watchEffect(() => {
 
 <style lang="scss">
 html, body {
- min-width: 350px;
+  min-width: 350px;
+}
+
+body {
+  // chrome will inject font-size: 75% in extension pages's body element, but other browsers may not, so we set it explicitly to 75% to ensure consistency
+  font-size: calc(0.75 * var(--spacing-base));
 }
 </style>

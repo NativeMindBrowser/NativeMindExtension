@@ -4,7 +4,7 @@ import '@/utils/rpc'
 import { browser } from 'wxt/browser'
 import { defineBackground } from 'wxt/utils/define-background'
 
-import { INVALID_URLS } from '@/utils/constants'
+import { EXTENSION_SHORT_NAME, INVALID_URLS } from '@/utils/constants'
 import { CONTEXT_MENU_ITEM_TRANSLATE_PAGE, ContextMenuId, ContextMenuManager } from '@/utils/context-menu'
 import logger from '@/utils/logger'
 import { b2sRpc, bgBroadcastRpc } from '@/utils/rpc'
@@ -25,9 +25,17 @@ export default defineBackground(() => {
   registerDeclarativeNetRequestRule()
   registerTabStoreCleanupListener()
 
-  browser.action.setTitle({ title: 'NativeMind' })
-
-  browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
+  browser.action?.setTitle({ title: EXTENSION_SHORT_NAME })
+  // opera and some other browsers do not support side panel api
+  if (browser.sidePanel) {
+    browser.sidePanel?.setPanelBehavior({ openPanelOnActionClick: true })
+  }
+  // firefox support sidebarAction api
+  else if (browser.sidebarAction) {
+    browser.action?.onClicked.addListener(() => {
+      browser.sidebarAction?.toggle()
+    })
+  }
 
   browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
     logger.info('tab removed', { tabId, removeInfo, isFirefox: import.meta.env.FIREFOX })
@@ -111,8 +119,14 @@ export default defineBackground(() => {
     logger.debug('context menu clicked', info, tab)
     if (tab?.id) {
       if (typeof info.menuItemId === 'string' && ['quick-actions', 'add-image-to-chat'].some((id) => info.menuItemId.toString().includes(id))) {
-        await browser.sidePanel.open({ windowId: tab.windowId })
-        await waitForSidepanelLoaded().catch((err) => logger.error(err))
+        if (browser.sidePanel) {
+          await browser.sidePanel.open({ windowId: tab.windowId })
+          await waitForSidepanelLoaded().catch((err) => logger.error(err))
+        }
+        else if (browser.sidebarAction) {
+          await browser.sidebarAction.open()
+          await waitForSidepanelLoaded().catch((err) => logger.error(err))
+        }
         await b2sRpc.emit('contextMenuClicked', { ...info, menuItemId: info.menuItemId as ContextMenuId })
       }
       else {
