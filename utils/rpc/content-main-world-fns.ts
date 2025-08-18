@@ -103,7 +103,7 @@ export async function checkBackendModelReady(model?: string): Promise<{ backend:
 }
 
 export async function toggleContainer() {
-  c2bRpc.showSidepanel(true)
+  c2bRpc.showSidepanel()
 }
 
 export const contentFnsForMainWorld = {

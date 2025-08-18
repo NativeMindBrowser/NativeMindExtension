@@ -43,6 +43,18 @@ export default defineWxtModule<AutoIconsOptions>({
       manifest.icons = Object.fromEntries(
         parsedOptions.sizes.map((size) => [size, `icons/${size}.png`]),
       )
+
+      if (manifest.sidebar_action) {
+        manifest.sidebar_action.default_icon = Object.fromEntries(
+          parsedOptions.sizes.map((size) => [size, `icons/${size}.png`]),
+        )
+      }
+
+      if (manifest.action) {
+        manifest.action.default_icon = Object.fromEntries(
+          parsedOptions.sizes.map((size) => [size, `icons/${size}.png`]),
+        )
+      }
     })
 
     wxt.hooks.hook('build:done', async (wxt, output) => {

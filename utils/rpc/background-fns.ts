@@ -676,14 +676,13 @@ export function registerBackgroundRpcEvent<E extends EventKey>(ev: E, fn: (...ar
   }
 }
 
-export async function showSidepanel(onlyCurrentTab?: boolean) {
-  if (onlyCurrentTab) {
-    const currentTab = await browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => tabs[0])
-    const tabId = currentTab.id
-    browser.sidePanel.open({ tabId, windowId: currentTab.windowId })
-    return
+export async function showSidepanel() {
+  if (browser.sidePanel) {
+    await browser.sidePanel.open({ windowId: browser.windows.WINDOW_ID_CURRENT })
   }
-  browser.sidePanel.open({ windowId: browser.windows.WINDOW_ID_CURRENT })
+  else if (browser.sidebarAction) {
+    await browser.sidebarAction.open()
+  }
 }
 
 function getTabCaptureMediaStreamId(tabId: number, consumerTabId?: number) {

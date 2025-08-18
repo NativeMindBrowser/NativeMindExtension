@@ -6,6 +6,7 @@ import svgLoader from 'vite-svg-loader'
 import { defineConfig } from 'wxt'
 
 import { version } from './package.json'
+import { EXTENSION_SHORT_NAME } from './utils/constants'
 
 export const VERSION = version.split('-')[0]
 
@@ -73,7 +74,7 @@ export default defineConfig({
   },
   manifest: {
     name: IS_FIREFOX ? '__MSG_extNameFirefox__' : '__MSG_extName__',
-    short_name: 'NativeMind',
+    short_name: EXTENSION_SHORT_NAME,
     description: IS_FIREFOX ? '__MSG_extDescFirefox__' : '__MSG_extDesc__',
     version: VERSION,
     default_locale: 'en',
@@ -82,6 +83,14 @@ export default defineConfig({
     declarative_net_request: IS_FIREFOX ? { rule_resources: [{ id: 'ruleset_1', enabled: true, path: 'rules.json' }] } : undefined,
     content_security_policy: {
       extension_pages: `script-src 'self' 'wasm-unsafe-eval'; object-src 'self';`,
+    },
+    // Include the action manifest key to ensure the toolbar button (in the top-right corner) is clickable in Firefox
+    action: IS_FIREFOX ? { default_title: EXTENSION_SHORT_NAME } : undefined,
+    // Opera supports sidebar_action, while Chrome ignores that field
+    sidebar_action: {
+      default_title: EXTENSION_SHORT_NAME,
+      default_panel: 'sidepanel.html',
+      open_at_install: true,
     },
     browser_specific_settings: IS_FIREFOX ? { gecko: { id: FIREFOX_EXTENSION_ID } } : undefined,
     content_scripts: [
