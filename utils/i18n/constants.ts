@@ -54,3 +54,8 @@ export const SUPPORTED_LOCALES = [
 ] as const
 
 export type SupportedLocaleCode = (typeof SUPPORTED_LOCALES)[number]['code']
+
+export function getLocaleName(code: SupportedLocaleCode): string {
+  const locale = SUPPORTED_LOCALES.find((locale) => locale.code === code)
+  return locale ? locale.name : 'English'
+}

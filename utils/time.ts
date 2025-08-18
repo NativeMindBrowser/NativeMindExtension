@@ -7,4 +7,4 @@ import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export default dayjs
+export { dayjs, dayjs as default }

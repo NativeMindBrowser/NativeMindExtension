@@ -76,6 +76,15 @@
     "provider_model": {
       "title": "配置 Ollama"
     },
+    "cache": {
+      "title": "翻译缓存",
+      "enable": "启用缓存",
+      "enabled": "已启用",
+      "disabled": "已禁用",
+      "max_size": "最大大小",
+      "retention_days": "保留期限",
+      "days": "天"
+    },
     "advanced": {
       "title": "高级设置"
     },
@@ -189,7 +198,7 @@
         "unsupported_image_type": "不支持的图片格式。请上传JPEG或PNG文件。",
         "unsupported_model": "图片上传需要具备视觉能力的模型。请切换到Gemma3或类似的视觉模型。",
         "pdf_oversize": "PDF文件大小必须小于{size}",
-        "pdf_text_extract_error": "文本提取失败 - 此PDF可能是扫描版或基于图像的。我们强烈建议切换到Gemma3以获得更好的结果。",
+        "pdf_text_extract_error": "文本提取失败 - 此PDF可能是扫描版或基于图像的。",
         "too_many_pdfs": "最多允许 {max} 个 PDF 文件",
         "pdf_page_count_exceeded": "PDF 页数不能超过 {max} 页",
         "only_load_partial_pages": "由于文件大小限制，仅加载前 {max} 页"
@@ -205,7 +214,47 @@
       "summarize_page_content": {
         "title": "总结页面"
       }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "正在搜索：\"{query}\"...",
+        "search_completed": "搜索完成：\"{query}\"",
+        "search_failed": "搜索失败：{query}"
+      },
+      "fetch_page": {
+        "reading_success": "已完成阅读：{title}",
+        "read_failed": "读取失败：{error}",
+        "error_no_content": "未找到内容",
+        "reading": "阅读：{title}"
+      },
+      "view_image": {
+        "analyzing": "正在分析：{title}",
+        "analyze_failed": "分析失败：{error}",
+        "analyze_success": "已完成分析：{title}",
+        "image_not_found": "图片未找到"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF未找到"
+      },
+      "view_tab": {
+        "tab_not_found": "未找到标签页"
+      }
     }
+  },
+  "chat_history": {
+    "delete_confirm": "您确定要删除此对话吗？此操作无法撤销。",
+    "delete": "删除",
+    "rename": "重命名",
+    "unpin": "取消固定",
+    "pin": "固定",
+    "title": "聊天记录",
+    "pinned_section": "已固定聊天",
+    "recent_section": "最近聊天",
+    "empty_state": "暂无对话",
+    "untitled_chat": "无标题聊天",
+    "new_chat": "新聊天",
+    "save": "保存",
+    "cancel": "取消"
   },
   "onboarding": {
     "banner": {
@@ -215,7 +264,7 @@
     "guide": {
       "already_installed": "已安装并运行Ollama？",
       "features": {
-        "1": "运行DeepSeek、Qwen、Llama等高级模型",
+        "1": "运行高级模型，如 gpt-oss、DeepSeek、Qwen、Llama",
         "2": "完全掌控模型的自定义和切换",
         "3": "您的数据始终保持在本地设备上"
       },
@@ -229,7 +278,11 @@
       "download_model_to_begin": "下载模型以开始。",
       "select_model_to_start": "选择并下载模型以开始使用",
       "download_and_install": "下载并安装",
-      "choose_model": "选择模型"
+      "choose_model": "选择模型",
+      "no_sure_which_one": "🤔 不确定选择哪一个？",
+      "learn_about_models": "了解模型",
+      "looking_for_more_options": "🔍 寻找更多选项？",
+      "browse_more_models": "浏览更多模型"
     },
     "webllm_tutorial": {
       "desc": "在浏览器中使用轻量级模型（Qwen 0.6B）- 无需设置，即刻体验。",
@@ -262,10 +315,11 @@
   "errors": {
     "model_not_found": "哎呀！\n出了点问题。\n请在设置中检查您的Ollama连接，然后重试。",
     "model_request_error": "哎呀！\n出了点问题。\n请在设置中检查您的Ollama连接，然后重试。",
-    "timeout_error": "操作计时：{message}",
+    "timeout_error": "操作超时：{message}",
     "unknown_error": "发生意外错误：{message}",
-    "model_request_timeout": "“请求超时，请检查您的Ollama连接或考虑启动新会话，因为长上下文可能会影响响应时间。”",
-    "webllm_not_supported": "WebLLM 在您的设备上不受支持。"
+    "model_request_timeout": "请求超时，请检查您的Ollama连接或考虑启动新会话，因为长上下文可能会影响响应时间。",
+    "webllm_not_supported": "WebLLM 在您的设备上不受支持。",
+    "max_characters_error": "最多允许 {count} 个字符"
   },
   "common": {
     "cancel": "取消",
@@ -310,6 +364,9 @@
     "settings": "设置",
     "pin_sidebar": "固定",
     "unpin_sidebar": "取消固定",
-    "close": "关闭"
+    "close": "关闭",
+    "chat_history": "历史",
+    "new_chat": "新聊天",
+    "back": "返回"
   }
 }

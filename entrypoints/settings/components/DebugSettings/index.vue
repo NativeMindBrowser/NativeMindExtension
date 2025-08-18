@@ -108,6 +108,15 @@
               />
             </div>
             <div class="flex gap-3 justify-start items-center">
+              <div>Default first token timeout (ms)</div>
+              <Input
+                v-model.number="defaultFirstTokenTimeout"
+                type="number"
+                min="0"
+                class="border-b border-gray-200 py-1 disabled:opacity-50"
+              />
+            </div>
+            <div class="flex gap-3 justify-start items-center">
               Reasoning
               <Switch
                 v-model="enableReasoning"
@@ -265,45 +274,28 @@
             </div>
           </div>
         </Block>
-        <Block title="Online Search">
-          <div class="flex gap-3 justify-start items-stretch">
-            <Switch
-              v-model="enableOnlineSearch"
-              slotClass="rounded-lg border-gray-200 border bg-white"
-              thumbClass="bg-blue-500 w-4 h-4 rounded-md"
-              activeItemClass="text-white"
-              :items="[
-                {
-                  label: 'Force',
-                  key: 'force',
-                },
-                {
-                  label: 'Auto',
-                  key: 'auto',
-                },
-                {
-                  label: 'Disable',
-                  key: 'disable',
-                  activeThumbClass: 'bg-gray-200',
-                },
-              ]"
-            >
-              <template #label="{ item }">
-                <div class="flex p-2 items-center justify-center text-xs">
-                  {{ item.label }}
-                </div>
-              </template>
-            </Switch>
-          </div>
+        <Block title="Agent">
           <div class="mt-1">
             <div class="flex gap-3 justify-start items-center">
-              <div>Max pages to read</div>
+              <div>Max iterations</div>
               <Input
-                v-model.number="onlineSearchPageReadCount"
+                v-model.number="maxAgentIterations"
                 type="number"
                 min="0"
                 class="border-b border-gray-200"
               />
+            </div>
+            <div class="flex gap-3 justify-start items-center">
+              <Block title="Full environment details update frequency">
+                <div class="font-light text-xs">
+                  Every <Input
+                    v-model.number="updateEnvironmentDetailsFrequency"
+                    type="number"
+                    min="0"
+                    class="border-b border-gray-200 w-12"
+                  /> messages (including user and assistant messages)
+                </div>
+              </Block>
             </div>
           </div>
         </Block>
@@ -350,6 +342,30 @@
                 </button>
               </div>
             </div>
+            <div class="flex flex-col gap-2">
+              <span>Parser <span class="font-light text-xs">(this option will affect the parser used by agent)</span></span>
+              <Switch
+                v-model="documentParserType"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-6 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[
+                  {
+                    label: 'Auto',
+                    key: 'auto',
+                  },
+                  {
+                    label: 'Readability',
+                    key: 'readability',
+                  },
+                  {
+                    label: 'Turndown',
+                    key: 'turndown',
+                  }
+                ]"
+              />
+            </div>
             <details
               v-for="(article, idx) of articles"
               :key="idx"
@@ -357,9 +373,9 @@
             >
               <summary
                 class="flex justify-start items-stretch text-xs cursor-pointer wrap-anywhere"
-                :title="`${article.type} - ${article.title} - ${article.url}`"
+                :title="`${article.type} - ${article.title} - ${article.url} - parser: [${article.parser}]`"
               >
-                <span class="whitespace-nowrap">[{{ article.type }}]</span> <span class="font-light">{{ article.title }}</span>
+                <span class="whitespace-nowrap">[{{ article.type }}]</span> <span class="font-light">{{ article.title }} - parser: {{ article.parser }}</span>
               </summary>
               <div class="flex flex-col gap-3 mt-2">
                 <div class="flex flex-col gap-3 justify-start items-stretch">
@@ -392,13 +408,121 @@
             </details>
           </div>
         </Block>
+        <Block
+          title="Translation Cache"
+          class="gap-4"
+        >
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div class="flex flex-col gap-3 justify-start items-start">
+              Enable
+              <Switch
+                v-model="enableTranslationCache"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-6 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[
+                  {
+                    label: 'Enable',
+                    key: true,
+                  },
+                  {
+                    label: 'Disable',
+                    key: false,
+                    activeThumbClass: 'bg-gray-200',
+                  }
+                ]"
+              />
+            </div>
+            <div class="flex flex-col gap-3 justify-start items-start">
+              <div class="flex gap-3 items-center">
+                <span class="text-xs">Retention Days</span>
+                <Input
+                  v-model.number="cacheRetentionDays"
+                  type="number"
+                  min="1"
+                  class="border-b border-gray-200 py-1 disabled:opacity-50 w-20"
+                />
+              </div>
+            </div>
+          </div>
+        </Block>
+        <Block
+          title="Cache Stats"
+          class="gap-4"
+        >
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div class="flex flex-col gap-2">
+              <div>
+                Total Entries
+              </div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.totalEntries ?? 'N/A' }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <div>
+                Total Size (MB)
+              </div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.totalSizeMB.toFixed(2) ?? 'N/A' }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <div>
+                Model Namespaces
+              </div>
+              <div class="font-normal text-gray-600">
+                {{ cacheStats?.modelNamespaces.join(', ') ?? 'N/A' }}
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 justify-start items-start">
+              <span class="text-xs">Clear Cache</span>
+              <button
+                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+                @click="handleClearCache"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </Block>
+        <Block
+          title="Chat History"
+          class="gap-4"
+        >
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div class="flex flex-col gap-2 justify-start items-start">
+              <span class="text-xs">Clear All Chat History</span>
+              <button
+                class="bg-red-400 hover:bg-red-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+                :disabled="clearingChatHistory"
+                @click="handleClearAllChatHistory"
+              >
+                {{ clearingChatHistory ? 'Clearing...' : 'Clear All' }}
+              </button>
+              <div
+                v-if="clearChatHistoryResult"
+                class="text-xs"
+                :class="clearChatHistoryResult.success ? 'text-green-600' : 'text-red-500'"
+              >
+                {{ clearChatHistoryResult.success
+                  ? `Successfully deleted ${clearChatHistoryResult.deletedCount} chat${clearChatHistoryResult.deletedCount !== 1 ? 's' : ''}`
+                  : `Error: ${clearChatHistoryResult.error}` }}
+              </div>
+              <div class="text-[10px] text-gray-400 font-light">
+                This will permanently delete all chat history, context attachments, and metadata. This action cannot be undone.
+              </div>
+            </div>
+          </div>
+        </Block>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="tsx">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import IconDelete from '@/assets/icons/delete.svg?component'
 import Input from '@/components/Input.vue'
@@ -407,12 +531,13 @@ import Selector from '@/components/Selector.vue'
 import Switch from '@/components/Switch.vue'
 import Button from '@/components/ui/Button.vue'
 import UILanguageSelector from '@/components/UILanguageSelector.vue'
+import { SettingsScrollTarget } from '@/types/scroll-targets'
 import { INVALID_URLS } from '@/utils/constants'
 import { formatSize } from '@/utils/formatter'
 import { SUPPORTED_MODELS, WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
 import { settings2bRpc } from '@/utils/rpc'
-import { SettingsScrollTarget } from '@/utils/scroll-targets'
+import { CacheStats, translationCache } from '@/utils/translation-cache'
 import { getUserConfig } from '@/utils/user-config'
 
 import { pullOllamaModel } from '../../utils/llm'
@@ -427,11 +552,9 @@ const userConfig = await getUserConfig()
 const numCtx = userConfig.llm.numCtx.toRef()
 const enableNumCtx = userConfig.llm.enableNumCtx.toRef()
 const translationSystemPrompt = userConfig.translation.systemPrompt.toRef()
-const chatSystemPrompt = userConfig.llm.chatSystemPrompt.toRef()
+const chatSystemPrompt = userConfig.chat.systemPrompt.toRef()
 const summarizeSystemPrompt = userConfig.llm.summarizeSystemPrompt.toRef()
-const enableOnlineSearch = userConfig.chat.onlineSearch.enable.toRef()
 const enableReasoning = userConfig.llm.reasoning.toRef()
-const onlineSearchPageReadCount = userConfig.chat.onlineSearch.pageReadCount.toRef()
 const onboardingVersion = userConfig.ui.onboarding.version.toRef()
 const enabledChromeAIPolyfill = userConfig.browserAI.polyfill.enable.toRef()
 const writingToolsRewritePrompt = userConfig.writingTools.rewrite.systemPrompt.toRef()
@@ -440,16 +563,33 @@ const writingToolsListPrompt = userConfig.writingTools.list.systemPrompt.toRef()
 const writingToolsSparklePrompt = userConfig.writingTools.sparkle.systemPrompt.toRef()
 const endpointType = userConfig.llm.endpointType.toRef()
 const localeInConfig = userConfig.locale.current.toRef()
+// Translation Cache Part
+const enableTranslationCache = userConfig.translation.cache.enabled.toRef()
+const cacheRetentionDays = userConfig.translation.cache.retentionDays.toRef()
+
+const maxAgentIterations = userConfig.chat.agent.maxIterations.toRef()
+const updateEnvironmentDetailsFrequency = userConfig.chat.environmentDetails.fullUpdateFrequency.toRef()
+const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.toRef()
+
+const documentParserType = userConfig.documentParser.parserType.toRef()
 const translationSystemPromptError = ref('')
 const newModelId = ref('')
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }[]>([])
 const webllmCacheStatus = ref<{ modelId: WebLLMSupportedModel, hasCache: boolean }[]>([])
 
-const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string }[]>()
+const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string, parser: string }[]>()
 const modelProviderOptions = [
   { id: 'ollama' as const, label: 'Ollama' },
   { id: 'web-llm' as const, label: 'Web LLM' },
 ]
+
+const cacheStats = ref<CacheStats>()
+const clearingChatHistory = ref(false)
+const clearChatHistoryResult = ref<{ success: boolean, deletedCount: number, error?: string } | null>(null)
+
+onMounted(async () => {
+  cacheStats.value = await settings2bRpc.cacheGetStats()
+})
 
 const resetOnboarding = async () => {
   onboardingVersion.value = 0
@@ -488,6 +628,7 @@ const parseAllDocuments = async () => {
           title: pdfContent.fileName,
           url,
           content: pdfContent.texts.join('\n'),
+          parser: 'pdf',
         })
       }
       else {
@@ -497,8 +638,9 @@ const parseAllDocuments = async () => {
             type: 'html',
             title: article.title,
             content: article.textContent,
-            html: article.content ?? undefined,
+            html: article.html ?? undefined,
             url,
+            parser: article.parser,
           })
         }
       }
@@ -542,6 +684,33 @@ const onPullModel = async () => {
   }
 }
 
+const handleClearCache = async () => {
+  await settings2bRpc.cacheClear()
+  cacheStats.value = await settings2bRpc.cacheGetStats()
+}
+
+const handleClearAllChatHistory = async () => {
+  if (clearingChatHistory.value) return
+
+  clearingChatHistory.value = true
+  clearChatHistoryResult.value = null
+
+  try {
+    const result = await settings2bRpc.clearAllChatHistory()
+    clearChatHistoryResult.value = result
+  }
+  catch (error) {
+    clearChatHistoryResult.value = {
+      success: false,
+      deletedCount: 0,
+      error: String(error),
+    }
+  }
+  finally {
+    clearingChatHistory.value = false
+  }
+}
+
 watch(translationSystemPrompt, (newValue) => {
   if (!/\{\{LANGUAGE\}\}/.test(newValue)) {
     translationSystemPromptError.value = 'system prompt must contain {{LANGUAGE}}'
@@ -550,4 +719,14 @@ watch(translationSystemPrompt, (newValue) => {
     translationSystemPromptError.value = ''
   }
 })
+
+// watch cache config changes and invoke update functions
+watch([enableTranslationCache, cacheRetentionDays], async () => {
+  await settings2bRpc.cacheUpdateConfig()
+})
+
+watch(enableTranslationCache, async () => {
+  await translationCache.updateConfig()
+})
+
 </script>

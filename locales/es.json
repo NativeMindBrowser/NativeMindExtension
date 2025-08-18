@@ -13,7 +13,7 @@
         "unsupported_image_type": "Formato de imagen no compatible. Por favor, sube archivos JPEG o PNG.",
         "unsupported_model": "La carga de imágenes requiere un modelo con capacidad de visión. Por favor, cambie a Gemma3 o un modelo de visión similar.",
         "pdf_oversize": "El tamaño del archivo PDF debe ser menor que {size}",
-        "pdf_text_extract_error": "La extracción de texto falló - este PDF puede estar escaneado o basado en imágenes. Recomendamos encarecidamente cambiar a Gemma3 para obtener mejores resultados.",
+        "pdf_text_extract_error": "La extracción de texto falló - este PDF puede estar escaneado o basado en imágenes.",
         "too_many_pdfs": "Máximo {max} archivo PDF permitido",
         "pdf_page_count_exceeded": "El PDF debe tener menos de {max} páginas",
         "only_load_partial_pages": "Solo se cargan las primeras {max} páginas debido al tamaño del archivo"
@@ -38,7 +38,47 @@
       "summarize_page_content": {
         "title": "Resumir la página"
       }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Buscando: \"{query}\"...",
+        "search_completed": "Búsqueda completada: \"{query}\"",
+        "search_failed": "Búsqueda fallida: {query}"
+      },
+      "fetch_page": {
+        "reading_success": "Lectura completada: {title}",
+        "read_failed": "Error de lectura: {error}",
+        "error_no_content": "no se encontró contenido",
+        "reading": "Lectura: {title}"
+      },
+      "view_image": {
+        "analyzing": "Analizando: {title}",
+        "analyze_failed": "Análisis falló: {error}",
+        "analyze_success": "Análisis completado: {title}",
+        "image_not_found": "imagen no encontrada"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF no encontrado"
+      },
+      "view_tab": {
+        "tab_not_found": "pestaña no encontrada"
+      }
     }
+  },
+  "chat_history": {
+    "delete_confirm": "¿Estás seguro de que quieres eliminar esta conversación? Esta acción no se puede deshacer.",
+    "delete": "Borrar",
+    "rename": "Rebautizar",
+    "unpin": "Desanclar",
+    "pin": "Anclar",
+    "title": "Historial de Chat",
+    "pinned_section": "Chats Anclados",
+    "recent_section": "Chats Recientes",
+    "empty_state": "Aún no hay conversaciones",
+    "untitled_chat": "Chat Sin Título",
+    "new_chat": "Nuevo Chat",
+    "save": "Guardar",
+    "cancel": "Cancelar"
   },
   "context_menu": {
     "quick_actions": {
@@ -62,7 +102,8 @@
     "model_request_timeout": "Tiempo de espera agotado. Por favor verifica tu conexión de Ollama o considera iniciar una nueva sesión, ya que los contextos largos pueden afectar los tiempos de respuesta.",
     "timeout_error": "La operación agotó el tiempo de espera: {message}",
     "unknown_error": "Se produjo un error inesperado: {message}",
-    "webllm_not_supported": "WebLLM no es compatible con tu dispositivo."
+    "webllm_not_supported": "WebLLM no es compatible con tu dispositivo.",
+    "max_characters_error": "Máximo {count} caracteres permitidos"
   },
   "onboarding": {
     "banner": {
@@ -72,7 +113,7 @@
     "guide": {
       "already_installed": "¿Ya instalaste y ejecutaste Ollama?",
       "features": {
-        "1": "Ejecuta modelos avanzados como DeepSeek, Qwen, Llama",
+        "1": "Ejecuta modelos avanzados como gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Personaliza y cambia modelos con control total",
         "3": "Tus datos permanecen privados, en tu dispositivo"
       },
@@ -86,7 +127,11 @@
       "download_model_to_begin": "Descarga un modelo para comenzar.",
       "select_model_to_start": "Selecciona y descarga un modelo para comenzar",
       "download_and_install": "Descargar & Instalar",
-      "choose_model": "Elegir Modelo"
+      "choose_model": "Elegir Modelo",
+      "no_sure_which_one": "🤔 ¿No estás seguro cuál elegir?",
+      "learn_about_models": "Aprende sobre modelos",
+      "looking_for_more_options": "🔍 ¿Buscas más opciones?",
+      "browse_more_models": "Explorar más modelos"
     },
     "webllm_tutorial": {
       "desc": "Usa un modelo ligero (Qwen 0.6b) directamente en tu navegador — sin configuración, sin espera.",
@@ -101,6 +146,15 @@
     "ollama_is_running": "Ollama está ejecutándose"
   },
   "settings": {
+    "cache": {
+      "title": "Caché de Traducción",
+      "enable": "Habilitar Caché",
+      "enabled": "Habilitado",
+      "disabled": "Deshabilitado",
+      "max_size": "Tamaño Máximo",
+      "retention_days": "Período de Retención",
+      "days": "días"
+    },
     "advanced": {
       "title": "Avanzado"
     },
@@ -310,6 +364,9 @@
     "settings": "Configuración",
     "pin_sidebar": "Fijar",
     "unpin_sidebar": "Desfijar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "chat_history": "Historia",
+    "new_chat": "Nuevo chat",
+    "back": "Atrás"
   }
 }

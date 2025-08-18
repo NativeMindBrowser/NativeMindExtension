@@ -22,7 +22,7 @@
         "unsupported_image_type": "サポートされていない画像形式です。JPEGまたはPNGファイルをアップロードしてください。",
         "unsupported_model": "画像のアップロードには視覚対応モデルが必要です。Gemma3または同様の視覚モデルに切り替えてください。",
         "pdf_oversize": "PDFファイルサイズは{size}未満である必要があります",
-        "pdf_text_extract_error": "テキスト抽出に失敗しました - このPDFはスキャンされたものか画像ベースの可能性があります。より良い結果を得るためにGemma3への切り替えを強くお勧めします。",
+        "pdf_text_extract_error": "テキスト抽出に失敗しました - このPDFはスキャンされたものか画像ベースの可能性があります。",
         "too_many_pdfs": "最大{max}個のPDFファイルまで許可されています",
         "pdf_page_count_exceeded": "PDFは{max}ページ以下である必要があります",
         "only_load_partial_pages": "ファイルサイズのため、最初の{max}ページのみが読み込まれました"
@@ -38,7 +38,47 @@
       "summarize_page_content": {
         "title": "ページを要約する"
       }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "検索中: \"{query}\"...",
+        "search_completed": "検索完了: \"{query}\"",
+        "search_failed": "検索に失敗しました: {query}"
+      },
+      "fetch_page": {
+        "reading_success": "読了: {title}",
+        "read_failed": "読み込みに失敗しました: {error}",
+        "error_no_content": "コンテンツが見つかりません",
+        "reading": "読書: {title}"
+      },
+      "view_image": {
+        "analyzing": "分析中: {title}",
+        "analyze_failed": "解析に失敗しました: {error}",
+        "analyze_success": "分析完了: {title}",
+        "image_not_found": "画像が見つかりません"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDFが見つかりません"
+      },
+      "view_tab": {
+        "tab_not_found": "タブが見つかりません"
+      }
     }
+  },
+  "chat_history": {
+    "delete_confirm": "この会話を削除してもよろしいですか？この操作は元に戻すことができません。",
+    "delete": "消去",
+    "rename": "名前を変更します",
+    "unpin": "ピンを外す",
+    "pin": "ピン留め",
+    "title": "チャット履歴",
+    "pinned_section": "ピン留め済みチャット",
+    "recent_section": "最近のチャット",
+    "empty_state": "まだ会話がありません",
+    "untitled_chat": "無題のチャット",
+    "new_chat": "新しいチャット",
+    "save": "保存",
+    "cancel": "キャンセル"
   },
   "onboarding": {
     "banner": {
@@ -48,7 +88,7 @@
     "guide": {
       "already_installed": "すでにOllamaをインストールして実行していますか？",
       "features": {
-        "1": "DeepSeek、Qwen、Llamaなどの高度なモデルを実行できます",
+        "1": "高度なモデル（gpt-oss、DeepSeek、Qwen、Llama）を実行する",
         "2": "完全な制御でモデルをカスタマイズし切り替えられます",
         "3": "あなたのデータはデバイス上でプライベートに保たれます"
       },
@@ -62,7 +102,11 @@
       "download_model_to_begin": "モデルをダウンロードして開始してください。",
       "select_model_to_start": "モデルを選択してダウンロードし、開始してください",
       "download_and_install": "ダウンロード & インストール",
-      "choose_model": "モデルを選択"
+      "choose_model": "モデルを選択",
+      "no_sure_which_one": "🤔 どれを選べばよいかわからない？",
+      "learn_about_models": "モデルについて学ぶ",
+      "looking_for_more_options": "🔍 より多くのオプションをお探しですか？",
+      "browse_more_models": "他のモデルを見る"
     },
     "webllm_tutorial": {
       "desc": "ブラウザで直接軽量モデル（Qwen 0.6b）を使用できます。セットアップ不要、待ち時間なし。",
@@ -77,6 +121,15 @@
     "ollama_is_running": "Ollamaが実行中です"
   },
   "settings": {
+    "cache": {
+      "title": "翻訳キャッシュ",
+      "enable": "キャッシュを有効にする",
+      "enabled": "有効",
+      "disabled": "無効",
+      "max_size": "最大サイズ",
+      "retention_days": "保持期間",
+      "days": "日"
+    },
     "advanced": {
       "title": "詳細設定"
     },
@@ -239,7 +292,7 @@
       "interface_language_desc": "NativeMindインターフェースの表示言語を選択してください"
     },
     "header": {
-      "starts_on_github": "Stars on GitHub",
+      "starts_on_github": "GitHubでスター",
       "goto_website": "ウェブサイトに移動"
     }
   },
@@ -265,7 +318,8 @@
     "unknown_error": "予期しないエラーが発生しました：{message}",
     "model_request_error": "おっと！何か問題が発生しました。設定でOllama接続を確認し、再度お試しください。",
     "model_request_timeout": "リクエストがタイムアウトしました。Ollama接続を確認するか、長いコンテキストが応答時間に影響を与える可能性があるため、新しいセッションの開始をご検討ください。",
-    "webllm_not_supported": "WebLLMはお使いのデバイスではサポートされていません。"
+    "webllm_not_supported": "WebLLMはお使いのデバイスではサポートされていません。",
+    "max_characters_error": "最大 {count} 文字まで入力可能です"
   },
   "common": {
     "cancel": "キャンセル",
@@ -310,6 +364,9 @@
     "settings": "設定",
     "pin_sidebar": "固定",
     "unpin_sidebar": "固定を解除",
-    "close": "閉じる"
+    "close": "閉じる",
+    "chat_history": "歴史",
+    "new_chat": "新しいチャット",
+    "back": "戻る"
   }
 }

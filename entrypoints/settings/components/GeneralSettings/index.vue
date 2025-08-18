@@ -284,7 +284,8 @@ watch(() => settingsQuery.downloadModel.value, (v) => {
   if (v) isShowDownloadOllamaModal.value = true
 })
 const onDownloadOllamaModelFinished = async () => {
-  await ollamaStatusStore.updateModelList()
+  const modelList = await ollamaStatusStore.updateModelList()
+  if (modelList.length) endpointType.value = 'ollama'
   // remove the value to avoid open modal in next navigation
   settingsQuery.downloadModel.remove()
   isShowDownloadOllamaModal.value = false

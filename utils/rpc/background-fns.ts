@@ -1,35 +1,66 @@
 import { safeParseJSON } from '@ai-sdk/provider-utils'
-import { generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, streamObject as originalStreamObject, streamText as originalStreamText } from 'ai'
+import { AISDKError, CoreMessage, generateObject as originalGenerateObject, GenerateObjectResult, generateText as originalGenerateText, Message, ObjectStreamPart, streamObject as originalStreamObject, streamText as originalStreamText, zodSchema } from 'ai'
 import { EventEmitter } from 'events'
 import { Browser, browser } from 'wxt/browser'
 import { z } from 'zod'
 import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 
+import { ChatHistoryV1, ContextAttachmentStorage } from '@/types/chat'
 import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
+import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
+import { BackgroundChatHistoryServiceManager } from '../../entrypoints/background/services/chat-history-service'
 import { sleep } from '../async'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
-import { AppError, CreateTabStreamCaptureError, FetchError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
+import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
+import { parsePartialJson } from '../json/parser/parse-partial-json'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
 import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
-import { selectTools, ToolName, ToolWithName } from '../llm/tools'
+import { PromptBasedTool } from '../llm/tools/prompt-based/helpers'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
 import { parsePdfFileOfUrl } from '../pdf'
-import { searchOnline } from '../search'
+import { openAndFetchUrlsContent, searchWebsites } from '../search'
 import { showSettingsForBackground } from '../settings'
+import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
 import { b2sRpc, bgBroadcastRpc } from '.'
-import { preparePortConnection } from './utils'
+import { preparePortConnection, shouldGenerateChatTitle } from './utils'
 
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
 type GenerateObjectOptions = Omit<Parameters<typeof originalGenerateObject>[0], 'tools'>
 type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean }
-type ExtraGenerateOptionsWithTools = ExtraGenerateOptions & { tools?: (ToolName | ToolWithName)[] }
+type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
+
+// TODO
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createRetryWrapper = <T extends (...args: any[]) => Promise<any>>(fn: T, maxRetries: number = 3, delays: number[] = [200, 500, 1000]): T => {
+  return (async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
+    let lastError: unknown
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn(...args)
+      }
+      catch (error) {
+        lastError = error
+
+        if (attempt === maxRetries) {
+          throw error
+        }
+
+        const delay = delays[attempt] || delays[delays.length - 1]
+        await sleep(delay)
+      }
+    }
+
+    throw lastError
+  }) as T
+}
 
 const parseSchema = <S extends SchemaName>(options: SchemaOptions<S>) => {
   if ('schema' in options) {
@@ -63,13 +94,17 @@ const normalizeError = (_error: unknown) => {
   else if (_error instanceof Error && _error.message.includes('Failed to fetch')) {
     error = new ModelRequestError(_error.message)
   }
+  else if (AISDKError.isInstance(_error)) {
+    error = new AiSDKError(_error.message)
+    error.name = _error.name
+  }
   else {
     error = new UnknownError(`Unexpected error occurred during request: ${_error}`)
   }
   return error
 }
 
-const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt' | 'system' | 'toolChoice' | 'maxTokens' | 'topK' | 'topP'> & ExtraGenerateOptionsWithTools) => {
+const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens' | 'topK' | 'topP'> & ExtraGenerateOptionsWithTools) => {
   const abortController = new AbortController()
   const portName = `streamText-${Date.now().toString(32)}`
   const onStart = async (port: Browser.runtime.Port) => {
@@ -81,42 +116,60 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
       logger.debug('port disconnected from client')
       abortController.abort()
     })
-    const response = originalStreamText({
-      model: await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) }),
-      messages: options.messages,
-      prompt: options.prompt,
-      system: options.system,
-      tools: options.tools?.length ? selectTools(...options.tools) : undefined,
-      toolChoice: options.toolChoice,
-      maxTokens: options.maxTokens,
-      abortSignal: abortController.signal,
-    })
-    for await (const chunk of response.fullStream) {
-      if (chunk.type === 'error') {
-        logger.error(chunk.error)
-        port.postMessage({ type: 'error', error: normalizeError(chunk.error) })
+
+    try {
+      const response = originalStreamText({
+        model: await getModel({
+          ...(await getModelUserConfig()),
+          onLoadingModel: makeLoadingModelListener(port),
+          ...generateExtraModelOptions(options) },
+        ),
+        messages: options.messages,
+        prompt: options.prompt,
+        system: options.system,
+        // this is a trick workaround to use prompt based tools in the vercel ai sdk
+        tools: PromptBasedTool.createFakeAnyTools(),
+        experimental_activeTools: [],
+        maxTokens: options.maxTokens,
+        abortSignal: abortController.signal,
+      })
+      for await (const chunk of response.fullStream) {
+        if (chunk.type === 'error') {
+          logger.error(chunk.error)
+          port.postMessage({ type: 'error', error: normalizeError(chunk.error) })
+        }
+        else {
+          port.postMessage(chunk)
+        }
       }
-      else {
-        port.postMessage(chunk)
-      }
+      port.disconnect()
     }
-    port.disconnect()
+    catch (err) {
+      logger.error(err)
+      port.postMessage({ type: 'error', error: normalizeError(err) })
+      port.disconnect()
+    }
   }
   preparePortConnection(portName).then(onStart)
   return { portName }
 }
 
-const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'toolChoice' | 'maxTokens'> & ExtraGenerateOptionsWithTools) => {
-  const response = originalGenerateText({
-    model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
-    messages: options.messages,
-    prompt: options.prompt,
-    system: options.system,
-    tools: options.tools?.length ? selectTools(...options.tools) : undefined,
-    toolChoice: options.toolChoice,
-    maxTokens: options.maxTokens,
-  })
-  return response
+const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens'> & ExtraGenerateOptionsWithTools) => {
+  try {
+    const response = originalGenerateText({
+      model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+      messages: options.messages,
+      prompt: options.prompt,
+      system: options.system,
+      tools: PromptBasedTool.createFakeAnyTools(),
+      maxTokens: options.maxTokens,
+      experimental_activeTools: [],
+    })
+    return response
+  }
+  catch (err) {
+    throw normalizeError(err)
+  }
 }
 
 const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'toolChoice' | 'maxTokens' | 'temperature' | 'topK' | 'topP'> & ExtraGenerateOptionsWithTools) => {
@@ -131,22 +184,30 @@ const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'pro
       logger.debug('port disconnected from client')
       abortController.abort()
     })
-    const response = await originalGenerateText({
-      model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
-      messages: options.messages,
-      prompt: options.prompt,
-      system: options.system,
-      tools: options.tools?.length ? selectTools(...options.tools) : undefined,
-      temperature: options.temperature,
-      topK: options.topK,
-      topP: options.topP,
-      toolChoice: options.toolChoice,
-      maxTokens: options.maxTokens,
-      abortSignal: abortController.signal,
-    })
-    logger.debug('generateText response', response)
-    port.postMessage(response)
-    port.disconnect()
+    try {
+      const response = await originalGenerateText({
+        model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+        messages: options.messages,
+        prompt: options.prompt,
+        system: options.system,
+        tools: PromptBasedTool.createFakeAnyTools(),
+        temperature: options.temperature,
+        topK: options.topK,
+        topP: options.topP,
+        toolChoice: options.toolChoice,
+        maxTokens: options.maxTokens,
+        experimental_activeTools: [],
+        abortSignal: abortController.signal,
+      })
+      logger.debug('generateText response', response)
+      port.postMessage(response)
+      port.disconnect()
+    }
+    catch (err) {
+      logger.error(err)
+      port.postMessage({ type: 'error', error: normalizeError(err) })
+      port.disconnect()
+    }
   }
   preparePortConnection(portName).then(onStart)
   return { portName }
@@ -164,39 +225,94 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
       logger.debug('port disconnected from client')
       abortController.abort()
     })
-    const response = originalStreamObject({
-      model: await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) }),
-      output: 'object',
-      schema: parseSchema(options),
-      prompt: options.prompt,
-      system: options.system,
-      messages: options.messages,
-      abortSignal: abortController.signal,
-    })
-    for await (const chunk of response.fullStream) {
-      if (chunk.type === 'error') {
-        logger.error(chunk.error)
+    try {
+      const model = await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) })
+      if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(model.modelId))) {
+        const schema = parseSchema(options)
+        const s = zodSchema(schema)
+        const injectSchemaToSystemPrompt = (prompt?: string) => {
+          if (!prompt) return undefined
+          return `${prompt}\n\n<output_schema>${JSON.stringify(s.jsonSchema)}</output_schema>`
+        }
+        const injectSchemaToSystemMessage = (messages?: CoreMessage[] | Omit<Message, 'id'>[]) => {
+          if (!messages) return undefined
+          return messages.map((msg) => msg.role === 'system' ? { ...msg, content: injectSchemaToSystemPrompt(msg.content) } : msg) as CoreMessage[] | Omit<Message, 'id'>[]
+        }
+        const response = originalStreamText({
+          model,
+          prompt: options.prompt,
+          system: injectSchemaToSystemPrompt(options.system),
+          messages: injectSchemaToSystemMessage(options.messages),
+          abortSignal: abortController.signal,
+        })
+        let text = ''
+        for await (const chunk of response.fullStream) {
+          if (chunk.type === 'error') {
+            logger.error(chunk.error)
+          }
+          else if (chunk.type === 'text-delta') {
+            text += chunk.textDelta
+            const obj = await parsePartialJson(text)
+            if (obj.state === 'successful-parse' || obj.state === 'repaired-parse') {
+              const objectChunk: ObjectStreamPart<unknown> = {
+                type: 'object',
+                object: obj.value,
+              }
+              port.postMessage(objectChunk)
+            }
+          }
+          port.postMessage(chunk)
+        }
       }
-      port.postMessage(chunk)
+      else {
+        const response = originalStreamObject({
+          model,
+          output: 'object',
+          schema: parseSchema(options),
+          prompt: options.prompt,
+          system: options.system,
+          messages: options.messages,
+          abortSignal: abortController.signal,
+        })
+        for await (const chunk of response.fullStream) {
+          if (chunk.type === 'error') {
+            logger.error(chunk.error)
+          }
+          port.postMessage(chunk)
+        }
+      }
+      port.disconnect()
     }
-    port.disconnect()
+    catch (err) {
+      logger.error(err)
+      port.postMessage({ type: 'error', error: normalizeError(err) })
+    }
   }
   preparePortConnection(portName).then(onStart)
   return { portName }
 }
 
-const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<GenerateObjectOptions, 'prompt' | 'system' | 'messages'> & SchemaOptions<S> & ExtraGenerateOptions) => {
+export const generateObjectFromSchema = async <S extends SchemaName>(options: Pick<GenerateObjectOptions, 'prompt' | 'system' | 'messages'> & SchemaOptions<S> & ExtraGenerateOptions) => {
   const s = parseSchema(options)
   const isEnum = s instanceof z.ZodEnum
   let ret
-  const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
   try {
+    const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
     if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(modelInfo.model))) {
+      const jsonSchema = zodSchema(s).jsonSchema
+      const injectSchemaToSystemPrompt = (prompt?: string) => {
+        if (!prompt) return undefined
+        return `${prompt}\n\n<output_schema>${JSON.stringify(jsonSchema)}</output_schema>`
+      }
+      const injectSchemaToSystemMessage = (messages?: CoreMessage[] | Omit<Message, 'id'>[]) => {
+        if (!messages) return undefined
+        return messages.map((msg) => msg.role === 'system' ? { ...msg, content: injectSchemaToSystemPrompt(msg.content) } : msg) as CoreMessage[] | Omit<Message, 'id'>[]
+      }
       const response = await originalGenerateText({
         model: await getModel(modelInfo),
         prompt: options.prompt,
-        system: options.system,
-        messages: options.messages,
+        system: injectSchemaToSystemPrompt(options.system),
+        messages: injectSchemaToSystemMessage(options.messages),
       })
       const parsed = safeParseJSON<z.infer<Schemas[S]>>({ text: response.text, schema: s })
       if (!parsed.success) {
@@ -257,7 +373,26 @@ const getDocumentContentOfTab = async (tabId?: number) => {
   }
   if (!tabId) throw new Error('No tab id provided')
   const article = await bgBroadcastRpc.getDocumentContent({ _toTab: tabId })
-  return article
+  return { ...article, tabId } as const
+}
+
+const getHtmlContentOfTab = async (tabId?: number) => {
+  if (!tabId) {
+    const currentTab = (await browser.tabs.query({ active: true, currentWindow: true }))[0]
+    tabId = currentTab.id
+  }
+  if (!tabId) throw new Error('No tab id provided')
+  const content = await browser.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      return {
+        html: document.documentElement.outerHTML,
+        title: document.title,
+        url: location.href,
+      }
+    },
+  })
+  return content[0]?.result
 }
 
 const getPagePDFContent = async (tabId: number) => {
@@ -582,9 +717,291 @@ function ping() {
   return 'pong'
 }
 
+// Translation cache functions
+async function cacheGetEntry(id: string) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getEntry(id) || null
+  }
+  catch (error) {
+    logger.error('Cache RPC getEntry failed:', error)
+    return null
+  }
+}
+
+async function cacheSetEntry(entry: TranslationEntry) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.setEntry(entry) || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC setEntry failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheDeleteEntry(id: string) {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.deleteEntry(id) || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC deleteEntry failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheGetStats() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getStats() || {
+      totalEntries: 0,
+      totalSizeMB: 0,
+      modelNamespaces: [],
+    }
+  }
+  catch (error) {
+    logger.error('Cache RPC getStats failed:', error)
+    return {
+      totalEntries: 0,
+      totalSizeMB: 0,
+      modelNamespaces: [],
+    }
+  }
+}
+
+async function cacheClear() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.clear() || { success: false, error: 'Cache service not available' }
+  }
+  catch (error) {
+    logger.error('Cache RPC clear failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheUpdateConfig() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    await service?.loadUserConfig()
+    return { success: true }
+  }
+  catch (error) {
+    logger.error('Cache RPC updateConfig failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function cacheGetConfig() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return service?.getConfig() || null
+  }
+  catch (error) {
+    logger.error('Cache RPC getConfig failed:', error)
+    return null
+  }
+}
+
+async function cacheGetDebugInfo() {
+  try {
+    const service = BackgroundCacheServiceManager.getInstance()
+    return await service?.getDebugInfo() || {
+      isInitialized: false,
+      contextInfo: {
+        location: 'unknown',
+        isServiceWorker: false,
+        isExtensionContext: false,
+      },
+    }
+  }
+  catch (error) {
+    logger.error('Cache RPC getDebugInfo failed:', error)
+    return {
+      isInitialized: false,
+      contextInfo: {
+        location: 'unknown',
+        isServiceWorker: false,
+        isExtensionContext: false,
+      },
+    }
+  }
+}
+
 async function updateSidepanelModelList() {
   b2sRpc.emit('updateModelList')
   return true
+}
+
+// Chat history functions
+async function getChatHistory(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getChatHistory(chatId) || null
+  }
+  catch (error) {
+    logger.error('Chat history RPC getChatHistory failed:', error)
+    return null
+  }
+}
+
+async function saveChatHistory(chatHistory: ChatHistoryV1) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.saveChatHistory(chatHistory) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC saveChatHistory failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function getContextAttachments(chatId: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.getContextAttachments(chatId) || null
+  }
+  catch (error) {
+    logger.error('Chat history RPC getContextAttachments failed:', error)
+    return null
+  }
+}
+
+async function saveContextAttachments(contextAttachments: ContextAttachmentStorage) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.saveContextAttachments(contextAttachments) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC saveContextAttachments failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+const getChatList = createRetryWrapper(async () => {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      throw new Error('Chat history service not available')
+    }
+    return await service?.getChatList()
+  }
+  catch (error) {
+    logger.error('Chat history RPC getChatList failed:', error)
+    throw new Error('Chat history RPC getChatList failed')
+  }
+})
+
+const deleteChat = createRetryWrapper(async (chatId: string) => {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      throw new Error('Chat history service not available')
+    }
+    return await service?.deleteChat(chatId) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC deleteChat failed:', error)
+    return { success: false, error: String(error) }
+  }
+})
+
+const toggleChatStar = createRetryWrapper(async (chatId: string) => {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      throw new Error('Chat history service not available')
+    }
+    return await service?.toggleChatStar(chatId) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC toggleChatStar failed:', error)
+    return { success: false, error: String(error) }
+  }
+})
+
+async function updateChatTitle(chatId: string, newTitle: string) {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.updateChatTitle(chatId, newTitle) || { success: false, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC updateChatTitle failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1, currentChatId?: string) {
+  try {
+    const shouldAutoGenerate = await shouldGenerateChatTitle(chatHistory)
+
+    logger.debug('autoGenerateChatTitleIfNeeded called for chat', chatHistory.id, shouldAutoGenerate)
+
+    if (!shouldAutoGenerate) {
+      return { success: true, updatedTitle: chatHistory.title }
+    }
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      return { success: false, error: 'Chat history service not available' }
+    }
+
+    const originalTitle = chatHistory.title
+    await service.autoGenerateTitleIfNeeded(chatHistory)
+
+    // Get the updated chat history to see the new title
+    const updatedChatHistory = await service.getChatHistory(chatHistory.id)
+    const newTitle = updatedChatHistory?.title || originalTitle
+
+    // Validate that the current chat ID still matches the chat we generated the title for
+    // This prevents race condition where user switches chat during title generation
+    const titleShouldBeApplied = !currentChatId || currentChatId === chatHistory.id
+
+    logger.debug('Title generation result:', {
+      originalTitle,
+      newTitle,
+      titleChanged: newTitle !== originalTitle,
+      currentChatId,
+      chatHistoryId: chatHistory.id,
+      titleShouldBeApplied,
+    })
+
+    return {
+      success: true,
+      updatedTitle: newTitle,
+      titleChanged: newTitle !== originalTitle,
+      titleShouldBeApplied,
+    }
+  }
+  catch (error) {
+    logger.error('Chat history RPC autoGenerateChatTitle failed:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
+const getPinnedChats = createRetryWrapper(async () => {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    if (!service) {
+      throw new Error('Chat history service not available')
+    }
+    return await service?.getPinnedChats() || []
+  }
+  catch (error) {
+    logger.error('Chat history RPC getPinnedChats failed:', error)
+    return []
+  }
+})
+
+async function clearAllChatHistory() {
+  try {
+    const service = BackgroundChatHistoryServiceManager.getInstance()
+    return await service?.clearAllChatHistory() || { success: false, deletedCount: 0, error: 'Chat history service not available' }
+  }
+  catch (error) {
+    logger.error('Chat history RPC clearAllChatHistory failed:', error)
+    return { success: false, deletedCount: 0, error: String(error) }
+  }
 }
 
 export const backgroundFunctions = {
@@ -604,9 +1021,11 @@ export const backgroundFunctions = {
   pullOllamaModel,
   showOllamaModelDetails,
   unloadOllamaModel,
-  searchOnline,
+  openAndFetchUrlsContent,
+  searchWebsites,
   generateObjectFromSchema,
   getDocumentContentOfTab,
+  getHtmlContentOfTab,
   getPageContentType,
   getPagePDFContent,
   fetchAsDataUrl,
@@ -625,6 +1044,27 @@ export const backgroundFunctions = {
   getSystemMemoryInfo,
   testOllamaConnection,
   captureVisibleTab,
+  // Translation cache functions
+  cacheGetEntry,
+  cacheSetEntry,
+  cacheDeleteEntry,
+  cacheGetStats,
+  cacheClear,
+  cacheUpdateConfig,
+  cacheGetConfig,
+  cacheGetDebugInfo,
+  // Chat history functions
+  getChatHistory,
+  saveChatHistory,
+  getContextAttachments,
+  saveContextAttachments,
+  getChatList,
+  deleteChat,
+  toggleChatStar,
+  updateChatTitle,
+  autoGenerateChatTitle: autoGenerateChatTitleIfNeeded,
+  getPinnedChats,
+  clearAllChatHistory,
   showSidepanel,
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,

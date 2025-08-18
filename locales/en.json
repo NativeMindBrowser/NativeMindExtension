@@ -76,6 +76,15 @@
     "provider_model": {
       "title": "Configure Ollama"
     },
+    "cache": {
+      "title": "Translation Cache",
+      "enable": "Enable Cache",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "max_size": "Max Size",
+      "retention_days": "Retention Period",
+      "days": "days"
+    },
     "advanced": {
       "title": "Advanced"
     },
@@ -191,7 +200,7 @@
         "pdf_page_count_exceeded": "PDF must be less than {max} pages",
         "pdf_oversize": "PDF file size must be less than {size}",
         "too_many_pdfs": "Maximum {max} PDF file allowed",
-        "pdf_text_extract_error": "Text extraction failed - this PDF may be scanned or image-based. We strongly recommend switching to Gemma3 for better results.",
+        "pdf_text_extract_error": "Text extraction failed - this PDF may be scanned or image-based.",
         "only_load_partial_pages": "Only the first {max} pages are loaded due to file size"
       }
     },
@@ -205,7 +214,47 @@
       "search_more": {
         "title": "Search for more content like this"
       }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Searching: \"{query}\"...",
+        "search_completed": "Search completed: \"{query}\"",
+        "search_failed": "Search failed: {query}"
+      },
+      "fetch_page": {
+        "reading": "Reading: {title}",
+        "read_failed": "Reading failed: {error}",
+        "error_no_content": "no content found",
+        "reading_success": "Completed reading: {title}"
+      },
+      "view_tab": {
+        "tab_not_found": "tab not found"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF not found"
+      },
+      "view_image": {
+        "analyzing": "Analyzing: {title}",
+        "image_not_found": "image not found",
+        "analyze_failed": "Analysis failed: {error}",
+        "analyze_success": "Completed analysis: {title}"
+      }
     }
+  },
+  "chat_history": {
+    "delete": "Delete",
+    "delete_confirm": "Are you sure you want to delete this conversation? This action cannot be undone.",
+    "rename": "Rename",
+    "unpin": "Unpin",
+    "pin": "Pin",
+    "title": "Chat History",
+    "pinned_section": "Pinned Chats",
+    "recent_section": "Recent Chats",
+    "empty_state": "No conversations yet",
+    "untitled_chat": "Untitled Chat",
+    "new_chat": "New Chat",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "onboarding": {
     "banner": {
@@ -217,7 +266,7 @@
       "install_desc": "Install Ollama to set up your local AI.",
       "ollama_desc": "Unlock full local AI power with Ollama.",
       "features": {
-        "1": "Run advanced models like DeepSeek, Qwen, Llama",
+        "1": "Run advanced models like gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Customize and switch models with full control",
         "3": "Your data stays private, on your device"
       },
@@ -229,7 +278,11 @@
       "download_model_to_begin": "Download a model to begin.",
       "select_model_to_start": "Select and download a model to get started",
       "download_and_install": "Download & Install",
-      "choose_model": "Choose Model"
+      "choose_model": "Choose Model",
+      "no_sure_which_one": "🤔 Not sure which one to choose?",
+      "learn_about_models": "Learn about models",
+      "looking_for_more_options": "🔍 Looking for more options?",
+      "browse_more_models": "Browse more models"
     },
     "webllm_tutorial": {
       "title": "Not ready to install? Try it instantly.",
@@ -263,9 +316,10 @@
     "unknown_error": "An unexpected error occurred: {message}",
     "model_request_error": "Oops! Something went wrong. Please check your Ollama connection in settings and try again.",
     "model_not_found": "Oops! Something went wrong. Please check your Ollama connection in settings and try again.",
-    "model_request_timeout": "'Request timeout, please check your Ollama connection or consider starting a new session as long contexts may affect response times.'",
+    "model_request_timeout": "Request timeout, please check your Ollama connection or consider starting a new session as long contexts may affect response times.",
     "timeout_error": "Operation timed out: {message}",
-    "webllm_not_supported": "WebLLM not supported on your device."
+    "webllm_not_supported": "WebLLM not supported on your device.",
+    "max_characters_error": "Maximum {count} characters allowed"
   },
   "common": {
     "cancel": "Cancel",
@@ -310,6 +364,9 @@
     "settings": "Settings",
     "pin_sidebar": "Pin",
     "unpin_sidebar": "Unpin",
-    "close": "Close"
+    "close": "Close",
+    "chat_history": "History",
+    "new_chat": "New Chat",
+    "back": "Back"
   }
 }

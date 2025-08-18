@@ -79,14 +79,14 @@ const onClickTitle = () => {
       <div class="w-60 shrink-0 grow-0">
         <Sidebar :debug="enabledDebug" />
       </div>
-      <div class="flex-1 flex justify-center bg-[#E9E9EC] overflow-auto h-full min-w-80 px-4">
+      <div class="flex-1 flex justify-center bg-[#F5F6FB] overflow-auto h-full min-w-80 px-4">
         <div class="max-w-[640px] min-w-0 grow-1 shrink-1">
           <RouterView v-slot="{ Component }">
             <Suspense>
               <component :is="Component" />
             </Suspense>
           </RouterView>
-          <div class="font-light text-[10px] text-gray-500 flex flex-col gap-1 py-4">
+          <div class="font-light text-xs text-gray-500 flex flex-col gap-1 py-4">
             <i18n-t
               keypath="settings.feedback.contact_msg"
               tag="div"

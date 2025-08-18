@@ -60,8 +60,8 @@
 <script setup lang="ts">
 import MarkdownViewer from '@/components/MarkdownViewer.vue'
 import Text from '@/components/ui/Text.vue'
+import { ActionMessageV1 } from '@/types/chat'
 import { getIconSvg } from '@/utils/markdown/content'
-import { ActionMessageV1 } from '@/utils/tab-store/history'
 
 import { Chat } from '../../../utils/chat'
 

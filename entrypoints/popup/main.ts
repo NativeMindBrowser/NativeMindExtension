@@ -1,5 +1,3 @@
-import '@/utils/rpc'
-
 import { createApp } from 'vue'
 
 import { createI18nInstance } from '@/utils/i18n'

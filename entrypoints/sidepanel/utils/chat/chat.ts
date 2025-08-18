@@ -2,34 +2,34 @@ import { CoreMessage } from 'ai'
 import EventEmitter from 'events'
 import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 
-import { ContextAttachmentStorage, PDFAttachment } from '@/types/chat'
-import { PDFContentForModel } from '@/types/pdf'
+import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
+import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
 import { debounce } from '@/utils/debounce'
-import { parseDocument } from '@/utils/document-parser'
-import { AbortError, AppError, fromError, GenerateObjectSchemaError } from '@/utils/error'
+import { AbortError, AppError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
+import { PromptBasedToolName } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
-import { chatWithPageContent, generateSearchKeywords, nextStep, Page, summarizeWithPageContent } from '@/utils/prompts'
+import { chatWithEnvironment, EnvironmentDetailsBuilder } from '@/utils/prompts'
 import { UserPrompt } from '@/utils/prompts/helpers'
-import { SearchingMessage } from '@/utils/search'
-import { ScopeStorage } from '@/utils/storage'
-import { type HistoryItemV1 } from '@/utils/tab-store'
-import { ActionMessageV1, ActionTypeV1, ActionV1, AssistantMessageV1, ChatHistoryV1, ChatList, pickByRoles, TaskMessageV1, UserMessageV1 } from '@/utils/tab-store/history'
+import { s2bRpc } from '@/utils/rpc'
+import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
+import { pickByRoles } from '@/utils/tab-store/history'
 import { getUserConfig } from '@/utils/user-config'
 
-import { generateObjectInBackground, initCurrentModel, isCurrentModelReady, streamTextInBackground } from '../llm'
-import { makeMarkdownIcon, makeParagraph } from '../markdown/content'
-import { SearchScraper } from '../search'
-import { getCurrentTabInfo, getDocumentContentOfTabs } from '../tabs'
+import { Agent } from '../agent'
+import { initCurrentModel, isCurrentModelReady } from '../llm'
+import { makeMarkdownIcon } from '../markdown/content'
+import { getDocumentContentOfTabs } from '../tabs'
+import { executeFetchPage, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
 
 const log = logger.child('chat')
 
 export type MessageIdScope = 'quickActions' | 'welcomeMessage'
 
 export class ReactiveHistoryManager extends EventEmitter {
-  constructor(public chatHistory: Ref<ChatHistoryV1>, public systemMessage?: string) {
+  constructor(public chatHistory: Ref<ChatHistoryV1>) {
     super()
     this.cleanUp()
   }
@@ -66,13 +66,9 @@ export class ReactiveHistoryManager extends EventEmitter {
     return this.history.value.every((item) => item.isDefault)
   }
 
-  setSystemMessage(message: string) {
-    this.systemMessage = message
-  }
-
   // this method will not change the underlying history, it will just return a new array of messages
   getLLMMessages(extra: { system?: string, user?: UserPrompt, lastUser?: UserPrompt } = {}) {
-    const systemMessage = extra.system || this.systemMessage
+    const systemMessage = extra.system
     const userMessage = extra.user
     const lastUserMessage = extra.lastUser
     const fullHistory = pickByRoles(this.history.value.filter((m) => m.done), ['assistant', 'user', 'system']).map((item) => ({
@@ -126,6 +122,22 @@ export class ReactiveHistoryManager extends EventEmitter {
     return msg
   }
 
+  countMessagesRight(options: {
+    untilId: string
+    includesMessageTypes?: HistoryItemV1['role'][]
+  }) {
+    const { untilId, includesMessageTypes = ['user', 'assistant'] } = options
+    let count = 0
+    for (let i = this.history.value.length - 1; i >= 0; i--) {
+      const item = this.history.value[i]
+      if (includesMessageTypes.includes(item.role)) {
+        count++
+      }
+      if (item.id === untilId) break
+    }
+    return count
+  }
+
   appendUserMessage(content: string = '') {
     this.history.value.push({
       id: this.generateId(),
@@ -152,6 +164,19 @@ export class ReactiveHistoryManager extends EventEmitter {
     return newMsg as AssistantMessageV1
   }
 
+  appendAgentMessage(content: string = '') {
+    this.history.value.push({
+      id: this.generateId(),
+      role: 'agent',
+      content,
+      done: false,
+      timestamp: Date.now(),
+    })
+    const newMsg = this.history.value[this.history.value.length - 1]
+    this.emit('messageAdded', newMsg)
+    return newMsg as AgentMessageV1
+  }
+
   appendTaskMessage(content: string = '', parentMessage?: TaskMessageV1) {
     const msg = {
       id: this.generateId(),
@@ -171,6 +196,31 @@ export class ReactiveHistoryManager extends EventEmitter {
       newMsg = this.history.value[this.history.value.length - 1] as TaskMessageV1
     }
     return newMsg as TaskMessageV1
+  }
+
+  appendAgentTaskGroupMessage() {
+    const msg: AgentTaskGroupMessageV1 = {
+      id: this.generateId(),
+      role: 'agent-task-group',
+      done: true,
+      timestamp: Date.now(),
+      tasks: [],
+    }
+    this.history.value.push(msg)
+    return this.history.value[this.history.value.length - 1] as AgentTaskGroupMessageV1
+  }
+
+  appendAgentTaskMessage(groupMessage: AgentTaskGroupMessageV1, { summary, details }: { summary: AgentTaskMessageV1['summary'], details?: AgentTaskMessageV1['details'] }) {
+    const msg: AgentTaskMessageV1 = {
+      id: this.generateId(),
+      role: 'agent-task',
+      done: false,
+      timestamp: Date.now(),
+      summary,
+      details,
+    }
+    groupMessage.tasks.push(msg)
+    return groupMessage.tasks[groupMessage.tasks.length - 1]
   }
 
   appendActionMessage(actions: ActionMessageV1['actions'], title?: string) {
@@ -220,6 +270,7 @@ export class ReactiveHistoryManager extends EventEmitter {
   clear() {
     const oldHistoryLength = this.history.value.length
     this.history.value.length = 0
+    this.chatHistory.value.contextUpdateInfo = undefined
     if (oldHistoryLength > 0) {
       this.emit('messageCleared')
     }
@@ -243,43 +294,97 @@ export class Chat {
   private static instance: Promise<Chat> | null = null
   private readonly status = ref<ChatStatus>('idle')
   private abortControllers: AbortController[] = []
-  private searchScraper = new SearchScraper()
-  private static chatStorage = new ScopeStorage<{ timestamp: number, title: string }>('chat')
+  private currentAgent: Agent<PromptBasedToolName> | null = null
 
   static getInstance() {
     if (!this.instance) {
       this.instance = (async () => {
+        const i18n = await useGlobalI18n()
         const userConfig = await getUserConfig()
         const chatHistoryId = userConfig.chat.history.currentChatId.toRef()
-        const chatHistory = ref<ChatHistoryV1>(await this.chatStorage.getItem<ChatHistoryV1>(`${chatHistoryId.value}`, 'chat') ?? { history: [], id: chatHistoryId.value, title: 'New Chat' })
-        const contextAttachments = ref<ContextAttachmentStorage>(await this.chatStorage.getItem<ContextAttachmentStorage>(`${chatHistoryId.value}`, 'context-attachments') ?? { attachments: [], id: chatHistoryId.value })
+
+        // Process chat history
+        log.debug('[Chat] getInstance', chatHistoryId.value)
+        const defaultTitle = i18n.t('chat_history.new_chat')
+        const chatHistory = ref<ChatHistoryV1>(await s2bRpc.getChatHistory(chatHistoryId.value) ?? { history: [], id: chatHistoryId.value, title: defaultTitle, lastInteractedAt: Date.now() })
+        const contextAttachments = ref<ContextAttachmentStorage>(await s2bRpc.getContextAttachments(chatHistoryId.value) ?? { attachments: [], id: chatHistoryId.value, lastInteractedAt: Date.now() })
         const chatList = ref<ChatList>([])
         const updateChatList = async () => {
-          const chatMeta = await this.chatStorage.getAllMetadata()
-          chatList.value = chatMeta
-            ? Object.entries(chatMeta)
-                .map(([id, meta]) => ({ id, title: meta.metadata.title, timestamp: meta.metadata.timestamp }))
-                .toSorted((a, b) => b.timestamp - a.timestamp)
-            : []
+          chatList.value = await s2bRpc.getChatList()
         }
+        // Auto-save chat history and context attachments with debounce
         const debounceSaveHistory = debounce(async () => {
+          // If chat history is not interacted with, do not save
           if (!chatHistory.value.lastInteractedAt) return
-          await this.chatStorage.setItem(`${chatHistory.value.id}`, { chat: toRaw(chatHistory.value) }, { timestamp: Date.now(), title: chatHistory.value.title })
+          // if user message is empty, do not save
+          const userMessages = chatHistory.value.history.filter((msg) => msg.role === 'user')
+          if (userMessages.length === 0) return
+
+          log.debug('s2bRpc.autoGenerateChatTitle')
+          // Auto-generate title if needed (when first message is added)
+          const titleResult = await s2bRpc.autoGenerateChatTitle(toRaw(chatHistory.value), chatHistoryId.value) as { success: boolean, updatedTitle?: string, titleChanged?: boolean, titleShouldBeApplied?: boolean, error?: string }
+          log.debug('s2bRpc.autoGenerateChatTitle Done', titleResult)
+
+          // Update the local chat history title if it was changed and should be applied to current chat
+          if (titleResult.success && titleResult.updatedTitle && titleResult.updatedTitle !== chatHistory.value.title && titleResult.titleShouldBeApplied) {
+            chatHistory.value.title = titleResult.updatedTitle
+          }
+
+          log.debug('Debounce save history', chatHistory.value, userMessages)
+          await s2bRpc.saveChatHistory(toRaw(chatHistory.value))
+
+          // Update chat list to reflect title changes
+          updateChatList()
         }, 1000)
         const debounceSaveContextAttachment = debounce(async () => {
+          // FIXME: if user message is empty, chat history won't be saved, but context attachments will be saved
+          log.debug('Debounce save context attachments', contextAttachments.value)
           if (!contextAttachments.value.lastInteractedAt) return
-          await this.chatStorage.setItem(`${contextAttachments.value.id}`, { 'context-attachments': toRaw(contextAttachments.value) }, { timestamp: Date.now(), title: '' })
+          await s2bRpc.saveContextAttachments(toRaw(contextAttachments.value))
         }, 1000)
-        watch(chatHistoryId, async (newId) => {
+
+        // Watch for changes in chat history ID to load new chat
+        watch(chatHistoryId, async (newId, oldId) => {
+          if (newId === oldId) return
+
+          log.debug('[Chat] Switching to chat:', newId)
           instance.stop()
-          Object.assign(chatHistory.value, await this.chatStorage.getItem<ChatHistoryV1>(`${newId}`, 'chat') ?? { history: [], id: newId })
-          Object.assign(contextAttachments.value, await this.chatStorage.getItem<ContextAttachmentStorage>(`${newId}`, 'context-attachments') ?? { attachments: [], id: newId })
+
+          // Load the new chat data
+          const newChatHistory: ChatHistoryV1 = await s2bRpc.getChatHistory(newId) ?? {
+            history: [],
+            id: newId,
+            title: defaultTitle,
+            lastInteractedAt: Date.now(),
+            contextUpdateInfo: undefined,
+          }
+          const newContextAttachments: ContextAttachmentStorage = await s2bRpc.getContextAttachments(newId) ?? {
+            attachments: [],
+            id: newId,
+            lastInteractedAt: Date.now(),
+          }
+
+          // Update the reactive objects
+          Object.assign(chatHistory.value, newChatHistory)
+          Object.assign(contextAttachments.value, newContextAttachments)
+
+          // Clean up any loading messages
           instance.historyManager.cleanupLoadingMessages()
+
+          // Update the chat list to reflect any changes
+          updateChatList()
         })
         watch(chatHistory, async () => debounceSaveHistory(), { deep: true })
         watch(contextAttachments, async () => debounceSaveContextAttachment(), { deep: true })
         updateChatList()
-        this.chatStorage.onMetaChange(async () => await updateChatList())
+
+        // Register RPC event listener for updateChatList
+        // FIXME: not work
+        registerSidepanelRpcEvent('updateChatList', async () => {
+          await updateChatList()
+        })
+
+        // Create the Chat instance
         const instance = new this(new ReactiveHistoryManager(chatHistory), contextAttachments, chatList)
         return instance
       })()
@@ -317,7 +422,7 @@ export class Chat {
     const contextTabs = this.contextAttachments.value.filter((attachment) => attachment.type === 'tab').map((attachment) => attachment.value)
     const currentTab = this.contextAttachmentStorage.value.currentTab?.type === 'tab' ? this.contextAttachmentStorage.value.currentTab.value : undefined
     const filteredContextTabs = contextTabs.filter((tab) => tab.id !== currentTab?.id)
-    return [currentTab, ...filteredContextTabs].filter(nonNullable)
+    return [currentTab ? { ...currentTab, isCurrent: true } : undefined, ...filteredContextTabs.map((tab) => ({ ...tab, isCurrent: false }))].filter(nonNullable)
   }
 
   get contextImages() {
@@ -357,32 +462,16 @@ export class Chat {
     }
   }
 
-  async resetContextTabs() {
-    const currentTabInfo = await getCurrentTabInfo()
-    this.contextAttachments.value = this.contextAttachments.value.filter((attachment) => attachment.type !== 'tab')
-    this.contextAttachments.value.unshift({ type: 'tab', value: { ...currentTabInfo, id: generateRandomId() } })
-  }
-
-  async checkNextStep(contextMsgs: { role: 'user' | 'assistant', content: string }[]) {
-    log.debug('checkNextStep', contextMsgs)
+  async getContentOfTabs() {
     const relevantTabIds = this.contextTabs.map((tab) => tab.tabId)
-    const relevantPDF = this.contextPDFs?.[0] ? await this.extractPDFContent(this.contextPDFs[0]) : undefined
-    if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
-    const pages = await getDocumentContentOfTabs(relevantTabIds)
-    const abortController = this.createAbortController()
-    const prompt = await nextStep(contextMsgs, pages.filter(nonNullable), relevantPDF)
-    const next = await generateObjectInBackground({
-      schema: 'nextStep',
-      prompt: prompt.user.extractText(),
-      system: prompt.system,
-      abortSignal: abortController.signal,
-    }).then((r) => r.object).catch((e) => {
-      log.error('Error in nextStep', e)
-      if (fromError(e) instanceof GenerateObjectSchemaError) return { action: 'chat' as const }
-      throw e
+    const currentTab = this.contextTabs.find((tab) => tab.isCurrent)
+    const pages = (await getDocumentContentOfTabs(relevantTabIds)).filter(nonNullable).map((tabContent) => {
+      return {
+        ...tabContent,
+        isActive: currentTab?.tabId === tabContent.tabId,
+      }
     })
-    log.debug('nextStep', next)
-    return next
+    return pages
   }
 
   private createAbortController() {
@@ -419,200 +508,198 @@ export class Chat {
     }
   }
 
-  private async searchOnline(queryList: string[], { onStartQuery, resultLimit }: { onStartQuery?: (query: string) => void, resultLimit?: number } = {}) {
-    const { t } = await useGlobalI18n()
-    const abortController = new AbortController()
-    this.abortControllers.push(abortController)
-    const searcher = this.searchScraper.search(queryList, { abortSignal: abortController.signal, resultLimit, engine: 'google' })
-    let linksResult: undefined | (SearchingMessage & { type: 'links' })['links'] = undefined
-    const msgs = {} as Record<string, TaskMessageV1>
-    const makeShortTitleLink = (title: string, url: string) => {
-      return `[${title}](${url})`
-    }
-    let parentTaskMsg: TaskMessageV1 | undefined
-    for await (const progress of searcher) {
-      if (progress.type === 'query-start') {
-        onStartQuery?.(progress.query)
-        parentTaskMsg = this.historyManager.appendTaskMessage(t('chat.messages.search_locally'))
-        parentTaskMsg.icon = 'searchColored'
-      }
-      else if (progress.type === 'query-finished') {
-        if (parentTaskMsg) {
-          parentTaskMsg.content = `Finished searching`
-          parentTaskMsg.done = true
-        }
-      }
-      else if (progress.type === 'page-start') {
-        const msg = this.historyManager.appendTaskMessage(makeParagraph(`${t('chat.messages.reading')}: "${makeShortTitleLink(progress.title, progress.url)}"`, { rows: 1 }), parentTaskMsg)
-        msg.icon = 'tickColored'
-        if (msgs[progress.url]) {
-          msgs[progress.url].done = true
-        }
-        msgs[progress.url] = msg
-      }
-      else if (progress.type === 'page-finished') {
-        if (msgs[progress.url]) {
-          msgs[progress.url].content = makeParagraph(`${t('chat.messages.reading')}: "${makeShortTitleLink(progress.title, progress.url)}"`, { rows: 1 })
-          msgs[progress.url].done = true
-        }
-      }
-      else if (progress.type === 'page-error') {
-        if (msgs[progress.url]) {
-          const idx = parentTaskMsg?.subTasks?.findIndex((subTask) => subTask.id === msgs[progress.url].id)
-          if (idx !== undefined && idx > -1) {
-            parentTaskMsg?.subTasks?.splice(idx, 1)
-          }
-        }
-      }
-      else if (progress.type === 'links') {
-        linksResult = progress.links
-      }
-      else if (progress.type === 'need-interaction') {
-        this.historyManager.appendAssistantMessage(`Need interaction: [${progress.currentUrl}](${progress.currentUrl})`)
-      }
-    }
-    Object.values(msgs).forEach((msg) => {
-      msg.done = true
-    })
-    parentTaskMsg && (parentTaskMsg.done = true)
-    log.debug('[Search Engine] result', linksResult)
-    return linksResult
-  }
-
-  private async questionToKeywords(contextMsgs: { role: 'user' | 'assistant', content: string }[]) {
-    const abortController = this.createAbortController()
-    const relevantTabIds = this.contextTabs.map((tab) => tab.tabId)
-    const pages = await getDocumentContentOfTabs(relevantTabIds)
-    const prompt = await generateSearchKeywords(contextMsgs, pages.filter(nonNullable))
-    const r = await generateObjectInBackground({
-      schema: 'searchKeywords',
-      system: prompt.system,
-      prompt: prompt.user.extractText(),
-      abortSignal: abortController.signal,
-    })
-    return r.object.queryKeywords
-  }
-
-  async summarizeCurrentPage(hint: string) {
-    const userPrompt = hint
-    const display = hint
-
-    using _s = this.statusScope('pending')
-    const article = await parseDocument(document)
-    const prompt = await summarizeWithPageContent({ ...article, url: location.href }, userPrompt)
-    this.historyManager.appendUserMessage(display)
-    await this.prepareModel()
-    return await this.sendMessage(prompt.user, prompt.system, { autoDeleteEmptyResponseMsg: false })
-  }
-
-  private async extractPDFContent(pdfData: PDFAttachment['value']): Promise<PDFContentForModel> {
-    return {
-      type: 'text',
-      textContent: pdfData.textContent,
-      pageCount: pdfData.pageCount,
-      fileName: pdfData.name,
-    }
-  }
-
   async ask(question: string) {
     using _s = this.statusScope('pending')
-    const userConfig = await getUserConfig()
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
 
-    question && this.historyManager.appendUserMessage(question)
+    // Update lastInteractedAt when user sends a message
+    this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
+
+    const userMsg = this.historyManager.appendUserMessage()
+    const environmentDetails = await this.generateEnvironmentDetails(userMsg.id)
+    const prompt = await chatWithEnvironment(question, environmentDetails)
+    // the display content on UI and the content that should be sent to the LLM are different
+    userMsg.displayContent = question
+    userMsg.content = prompt.user.extractText()
+    const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
     await this.prepareModel()
-    const nextStepContext = pickByRoles(this.historyManager.history.value, ['user', 'assistant']).slice(-4)
-    let loading: AssistantMessageV1 | undefined = this.historyManager.appendAssistantMessage()
-    const enableOnlineSearch = userConfig.chat.onlineSearch.enable.get()
-    let onlineResults: undefined | Page[]
-    let next: Awaited<ReturnType<typeof this.checkNextStep>> = { action: 'chat' }
-    let searchKeywords: string[] = []
-    if (enableOnlineSearch === 'force') {
-      searchKeywords = await this.questionToKeywords(nextStepContext)
-    }
-    else if (enableOnlineSearch === 'auto') {
-      next = await this.checkNextStep(nextStepContext).catch(async (e) => {
-        await this.errorHandler(e, loading)
-        throw e
-      })
-      if (next.action === 'search_online') {
-        searchKeywords = next.queryKeywords
-      }
-    }
-    if (searchKeywords?.length) {
-      log.debug('[Search Engine] keywords', searchKeywords)
-      onlineResults = await this.searchOnline(searchKeywords, { onStartQuery: () => loading && this.historyManager.deleteMessage(loading), resultLimit: userConfig.chat.onlineSearch.pageReadCount.get() })
-      loading = undefined
-    }
-    const relevantTabIds = this.contextTabs.map((tab) => tab.tabId)
-    const relevantImages = this.contextImages
-    const relevantPDF = this.contextPDFs?.[0] ? await this.extractPDFContent(this.contextPDFs[0]) : undefined
     if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
-    const pages = await getDocumentContentOfTabs(relevantTabIds)
-    const prompt = await chatWithPageContent(question, pages.filter(nonNullable), onlineResults, relevantImages, relevantPDF)
-    await this.sendMessage(prompt.user, prompt.system, { assistantMsg: loading })
+    await this.runWithAgent(baseMessages)
   }
 
-  private async sendMessage(user: UserPrompt, system?: string, options: { autoDeleteEmptyResponseMsg?: boolean, assistantMsg?: AssistantMessageV1 } = {}) {
-    const abortController = new AbortController()
-    this.abortControllers.push(abortController)
-    const autoDeleteEmptyMsg = options.autoDeleteEmptyResponseMsg ?? true
+  private async runWithAgent(baseMessages: CoreMessage[]) {
+    const userConfig = await getUserConfig()
+    const maxIterations = userConfig.chat.agent.maxIterations.get()
 
-    this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
-    const messages = this.historyManager.getLLMMessages({ system, lastUser: user })
-    const response = streamTextInBackground({
-      abortSignal: abortController.signal,
-      messages,
+    const agent = new Agent({
+      historyManager: this.historyManager,
+      attachmentStorage: this.contextAttachmentStorage.value,
+      chatId: this.contextAttachmentStorage.value.id,
+      maxIterations,
+      tools: {
+        search_online: { execute: executeSearchOnline },
+        fetch_page: { execute: executeFetchPage },
+        view_tab: { execute: executeViewTab },
+        view_pdf: { execute: executeViewPdf },
+        view_image: { execute: executeViewImage },
+      },
     })
-    const msg = options.assistantMsg ?? this.historyManager.appendAssistantMessage()
-    let reasoningStart: number | undefined
-    using _s1 = this.statusScope('streaming')
-    try {
-      for await (const chunk of response) {
-        if (abortController.signal.aborted) {
-          msg.done = true
-          this.status.value = 'idle'
-          return
-        }
-        if (chunk.type === 'text-delta') {
-          msg.content += chunk.textDelta
-        }
-        else if (chunk.type === 'reasoning') {
-          reasoningStart = reasoningStart || Date.now()
-          msg.reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
-          msg.reasoning = (msg.reasoning || '') + chunk.textDelta
-        }
-        else if (chunk.type === 'error') {
-          throw chunk.error
+    this.currentAgent = agent
+    await agent.runWithPrompt(baseMessages)
+  }
+
+  private async generateEnvironmentDetails(currentUserMessageId: string) {
+    const fullEnvironmentDetailsFrequency = (await getUserConfig()).chat.environmentDetails.fullUpdateFrequency.get()
+    const environmentDetailsBuilder = new EnvironmentDetailsBuilder(this.contextAttachmentStorage.value)
+    const contextUpdateInfo = this.historyManager.chatHistory.value.contextUpdateInfo
+    if (contextUpdateInfo) {
+      const lastFullUpdateMessageId = contextUpdateInfo.lastFullUpdateMessageId
+      if (lastFullUpdateMessageId) {
+        const count = this.historyManager.countMessagesRight({ untilId: lastFullUpdateMessageId, includesMessageTypes: ['user', 'assistant'] })
+        if (count <= fullEnvironmentDetailsFrequency) {
+          const envDefaults = environmentDetailsBuilder.generateUpdates(contextUpdateInfo.lastAttachmentIds)
+          contextUpdateInfo.lastAttachmentIds = [...new Set([...contextUpdateInfo.lastAttachmentIds, ...environmentDetailsBuilder.getAllAttachmentIds()])]
+          return envDefaults
         }
       }
-      if ((!msg.content && !msg.reasoning) && autoDeleteEmptyMsg) {
-        const index = this.historyManager.history.value.indexOf(msg)
-        if (index > -1) {
-          this.historyManager.history.value.splice(index, 1)
-          return false
-        }
+      contextUpdateInfo.lastFullUpdateMessageId = currentUserMessageId
+      contextUpdateInfo.lastAttachmentIds = environmentDetailsBuilder.getAllAttachmentIds()
+      return environmentDetailsBuilder.generateFull()
+    }
+    else {
+      // generate full environment details if no context update info is available
+      this.historyManager.chatHistory.value.contextUpdateInfo = {
+        lastFullUpdateMessageId: currentUserMessageId,
+        lastAttachmentIds: environmentDetailsBuilder.getAllAttachmentIds(),
       }
-      return msg
+      return environmentDetailsBuilder.generateFull()
     }
-    catch (e) {
-      logger.error('Error in chat stream', e)
-      msg.isError = true
-      msg.content = e instanceof AppError ? await e.toLocaleMessage() : 'Unknown error occurred'
-    }
-    finally {
-      msg.done = true
-      this.status.value = 'idle'
-    }
-    return false
   }
 
   stop() {
+    this.currentAgent?.stop()
     this.abortControllers.forEach((abortController) => {
       abortController.abort()
     })
     this.abortControllers.length = 0
+  }
+
+  /**
+   * Delete a chat and refresh the chat list
+   */
+  async deleteChat(chatId: string) {
+    try {
+      const result = await s2bRpc.deleteChat(chatId)
+      if (result.success) {
+        // Refresh the chat list
+        this.chatList.value = await s2bRpc.getChatList()
+      }
+      return result
+    }
+    catch (error) {
+      log.error('Failed to delete chat:', error)
+      return { success: false, error: String(error) }
+    }
+  }
+
+  /**
+   * Create a new chat and switch to it
+   */
+  async createNewChat(): Promise<string> {
+    try {
+      const newChatId = generateRandomId()
+      const userConfig = await getUserConfig()
+
+      // Update the current chat ID in user config
+      userConfig.chat.history.currentChatId.set(newChatId)
+
+      log.info('Created new chat:', newChatId)
+      return newChatId
+    }
+    catch (error) {
+      log.error('Failed to create new chat:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Switch to an existing chat
+   */
+  async switchToChat(chatId: string): Promise<void> {
+    try {
+      const userConfig = await getUserConfig()
+
+      // Update the current chat ID in user config
+      userConfig.chat.history.currentChatId.set(chatId)
+
+      log.info('Switched to chat:', chatId)
+    }
+    catch (error) {
+      log.error('Failed to switch chat:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Toggle pinned status of a chat
+   */
+  async toggleChatStar(chatId: string): Promise<{ success: boolean, isPinned?: boolean }> {
+    try {
+      const result = await s2bRpc.toggleChatStar(chatId)
+
+      if (result.success) {
+        // Refresh the chat list to reflect the change
+        this.chatList.value = await s2bRpc.getChatList()
+      }
+
+      return result
+    }
+    catch (error) {
+      log.error('Failed to toggle chat star:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Update chat title
+   */
+  async updateChatTitle(chatId: string, newTitle: string): Promise<void> {
+    try {
+      const result = await s2bRpc.updateChatTitle(chatId, newTitle)
+
+      if (result.success) {
+        // Refresh the chat list to reflect the change
+        this.chatList.value = await s2bRpc.getChatList()
+
+        // If this is the current chat, update the history manager's chat title
+        const userConfig = await getUserConfig()
+        const currentChatId = userConfig.chat.history.currentChatId.get()
+        if (currentChatId === chatId) {
+          this.historyManager.chatHistory.value.title = newTitle
+        }
+      }
+      else {
+        throw new Error(result.error || 'Failed to update chat title')
+      }
+    }
+    catch (error) {
+      log.error('Failed to update chat title:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Get pinned chats
+   */
+  async getPinnedChats(): Promise<ChatList> {
+    try {
+      return await s2bRpc.getPinnedChats()
+    }
+    catch (error) {
+      log.error('Failed to get pinned chats:', error)
+      return []
+    }
   }
 }
 

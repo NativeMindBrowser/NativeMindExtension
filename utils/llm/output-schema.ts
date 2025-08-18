@@ -16,6 +16,9 @@ const schemas = {
   searchKeywords: z.object({
     queryKeywords: z.array(z.string()),
   }),
+  chatTitle: z.object({
+    title: z.string(),
+  }),
 }
 
 export type Schemas = typeof schemas

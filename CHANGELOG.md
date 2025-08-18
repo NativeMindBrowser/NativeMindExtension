@@ -1,6 +1,279 @@
 # Changelog
 
 
+## v1.7.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.18...v1.7.0)
+
+## v1.7.0-beta.18
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.17...v1.7.0-beta.18)
+
+### 🩹 Fixes
+
+- **chat:** Improve button styling for better text handling in chat actions ([1a70944](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1a70944))
+- **chat:** Revert broken changes for dismiss menu ([af7aa5d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/af7aa5d))
+- **input:** Add full width styling to input component ([a5dbdd9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a5dbdd9))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.7.0-beta.17
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.16...v1.7.0-beta.17)
+
+### 🩹 Fixes
+
+- **chat:** Update chat section labels and improve UI interactions ([b9c8bf3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b9c8bf3))
+- **chat:** Prevent saving empty user messages and improve auto-save logic ([bc1a388](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bc1a388))
+- **chat:** Update chat-empty icon dimensions and remove unused menu overlay ([98554c1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/98554c1))
+- **chat:** Improve chat history drawer interactions and update button click handling ([3b83b12](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3b83b12))
+- **chat:** Implement retry logic for chat service RPC calls ([15e5257](https://github.com/NativeMindBrowser/NativeMindExtension/commit/15e5257))
+- **chat:** Enhance auto-generate chat title logic to include current chat ID validation ([fb43618](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fb43618))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.7.0-beta.16
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.15...v1.7.0-beta.16)
+
+### 🩹 Fixes
+
+- **context-menu:** Fix listener registration ([f36cad8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f36cad8))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.7.0-beta.15
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.14...v1.7.0-beta.15)
+
+### 🩹 Fixes
+
+- **quick-actions:** Fix quick action timeout error ([fc44d31](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fc44d31))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.7.0-beta.14
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.13...v1.7.0-beta.14)
+
+### 🚀 Enhancements
+
+- **chat:** Enhance chat history drawer functionality and UI improvements ([2d5c133](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2d5c133))
+
+### 🩹 Fixes
+
+- **chat:** Prevent text wrapping in chat item action button ([097daa1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/097daa1))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.7.0-beta.13
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.12...v1.7.0-beta.13)
+
+### 🩹 Fixes
+
+- **chat:** Chat title generation with gpt-oss ([3708750](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3708750))
+- **context-menu:** Hide context menu on unsupported pages ([7314d51](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7314d51))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.7.0-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.11...v1.7.0-beta.12)
+
+### 🚀 Enhancements
+
+- **chat:** Add debug functionality to clear all chat history and context attachments, enhance chatlist data refresh ([3e2290a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e2290a))
+- **services:** Add reset method to singleton instance for re-initialization of background services ([f4101a4](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f4101a4))
+- **input:** Add maxlength validation and error message for character limit ([0f5ae6d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f5ae6d))
+
+### 🩹 Fixes
+
+- **assistant:** Remove unnecessary condition for message expansion ([fbbc13d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fbbc13d))
+- **chat:** Improve menu interaction by adding overlay and closing functionality ([a942bd8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a942bd8))
+- **chat:** Prevent creating a new chat if already in a new chat state ([8c721d3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8c721d3))
+- **agent:** Add createFakeAnyTools method to prevent error on unexpected tools ([81c005a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/81c005a))
+
+### 💅 Refactors
+
+- **dependencies:** Remove unused unplugin-vue-components and related configurations ([66774e1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/66774e1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.7.0-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.10...v1.7.0-beta.11)
+
+### 🩹 Fixes
+
+- **cache:** Skip caching when translated text matches original text ([55305fb](https://github.com/NativeMindBrowser/NativeMindExtension/commit/55305fb))
+- **translator:** Handle abort signal in translation retries and improve error logging for tab content retrieval ([0f9929a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f9929a))
+
+### 💅 Refactors
+
+- **chat:** WIP update agent msg UI with some decorative line ([cf4deb2](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cf4deb2))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.7.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.9...v1.7.0-beta.10)
+
+### 🩹 Fixes
+
+- **AutoExpandTextArea:** Enhance textarea styling and dynamic height adjustment ([16ec49a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/16ec49a))
+- **translator:** Translate with gpt-oss models without format output ([2b152d0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2b152d0))
+
+### 🏡 Chore
+
+- **settings:** Adjust feedback message text size for better readability ([500f1fe](https://github.com/NativeMindBrowser/NativeMindExtension/commit/500f1fe))
+- **chat:** Adjust scroll shadow size and offset for improved visibility ([3ee785b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3ee785b))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.7.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.8...v1.7.0-beta.9)
+
+### 🚀 Enhancements
+
+- **chat:** Update ChatHistory bg color and enhance layout scroll, hide title when list is empty ([20b039d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/20b039d))
+- **chat:** Enhance chat message reasoning layout ([cffe2df](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cffe2df))
+
+### 🩹 Fixes
+
+- **Main.vue:** Adjust height of chat header to 48px for better layout ([010ee3f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/010ee3f))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.7.0-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.7...v1.7.0-beta.8)
+
+### 🚀 Enhancements
+
+- **cache:** Introduce new translation cache system --no-check ([e2951ec](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e2951ec))
+- Implement comprehensive chat history feature with persistent storage and UI components ([09f0d7c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/09f0d7c))
+- Implement auto-generation of chat titles based on conversation context and user messages ([8000bea](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8000bea))
+- **chat:** Add maxlength attribute to edit input for chat titles limit to 40 ([b08fb60](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b08fb60))
+- **confirm:** Add btnStyles option for customizable button styles in confirm modal ([9dd0a05](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9dd0a05))
+- **chat:** Implement comprehensive chat history with shared database architecture ([aa237ed](https://github.com/NativeMindBrowser/NativeMindExtension/commit/aa237ed))
+- **locales:** Add translation cache settings for multiple languages ([80e4ef7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/80e4ef7))
+- **chat:** Add contextUpdateInfo to ChatHistoryRecord and update service handling ([c708602](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c708602))
+- **config:** Implement migration for system prompt configuration ([05ec8bc](https://github.com/NativeMindBrowser/NativeMindExtension/commit/05ec8bc))
+- **attachment:** Enhance tab attachment updates and streamline removal logic ([02b2e2d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/02b2e2d))
+- **ModelSelector:** Prevent click event propagation on external link ([7dc9c96](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7dc9c96))
+- **onboarding:** Add gpt-oss model info ([cbf203b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cbf203b))
+- **Assistant:** Conditionally render message content; update error handling in agent logic ([81dfb86](https://github.com/NativeMindBrowser/NativeMindExtension/commit/81dfb86))
+- **onboarding:** Update localization strings across multiple languages ([4021181](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4021181))
+- **chat:** WIP implement shouldGenerateChatTitle for auto-generation of chat titles ([1c2200b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1c2200b))
+- **style:** Update background color; update agent message style ([d940c0c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d940c0c))
+- **agent:** Add new task icons and update tool call messages ([7b17bd5](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7b17bd5))
+- **chat:** Refactor shouldGenerateChatTitle to async and enhance title generation logic ([4282a3a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4282a3a))
+- **release:** Add commitArgs to git configuration for non-verify commits ([864d052](https://github.com/NativeMindBrowser/NativeMindExtension/commit/864d052))
+
+### 🩹 Fixes
+
+- **cache:** Update to accommodate the latest changes in settings and sidebar ([b1b178d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b1b178d))
+- This replacement may produce '&' characters that are double-unescaped ([f15ca13](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f15ca13))
+- **manifest:** Remove unused 'system.display' permission ([c86a776](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c86a776))
+- **onboarding:** Sidepanel model downloader ([ca46667](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ca46667))
+- **settings:** Filter running models by expiration instead of VRAM size ([9173c98](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9173c98))
+- **selector:** Enhance ghost button rendering ([5304e1f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5304e1f))
+- **chat:** WIP ensure agent context attachments align with background chat history service storage ([d718644](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d718644))
+- **chat:** Fix missing types ([554aa04](https://github.com/NativeMindBrowser/NativeMindExtension/commit/554aa04))
+- **lint:** Remove unused cache functions from settings2bRpc, tmp ignore test type error ([ef32ae8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ef32ae8))
+- **agent:** Remove unused chatId from AgentStorage constructor ([1fba1cd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1fba1cd))
+- **test:** Try to fix type errors in cache related tests ([5b22347](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5b22347))
+- **EnvironmentDetailsBuilder:** Enhance online PDF handling ([db1a113](https://github.com/NativeMindBrowser/NativeMindExtension/commit/db1a113))
+- **agent:** Enhance attachment retrieval to include current tab in image and PDF lists ([c3cc981](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c3cc981))
+- **AttachmentSelector:** Remove duplicated tab attachments ([4b25a1a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4b25a1a))
+- **chat:** Using local context attachments instead of fetch from db in environment details generation ([2227996](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2227996))
+- **chat:** Reset contextUpdateInfo when create new chat, enhance types ([20bff2c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/20bff2c))
+
+### 💅 Refactors
+
+- **cache:** Remove analytics feature from translation cache system & update file-structure in document ([e1f93e8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e1f93e8))
+- **database:** Implement singleton pattern for background cache service and database management ([c7a70b8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c7a70b8))
+- **chat:** Enhanced pinned chats sorting and rename starred chats to pinned chats ([b76e9d7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b76e9d7))
+
+### 🏡 Chore
+
+- **debug:** Enhance translation cache debug settings ui ([bb2bbf6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bb2bbf6))
+- **i18n:** Update Russian extension name ([4745c59](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4745c59))
+- **release:** V1.6.2 ([6ec95b0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6ec95b0))
+- **release:** V1.6.3 ([1bd4972](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1bd4972))
+- **release:** V1.6.4 ([703081b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/703081b))
+- **release:** V1.6.5 ([051c7d4](https://github.com/NativeMindBrowser/NativeMindExtension/commit/051c7d4))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.7.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.6...v1.7.0-beta.7)
+
+### 🚀 Enhancements
+
+- **Settings:** Display version information on settings sidebar ([16ebfc6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/16ebfc6))
+- **locales:** Update PDF text extraction error messages and add tool call translations ([e839009](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e839009))
+- **web-components:** Add NMIcon component and register web components ([4458088](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4458088))
+- **chat:** Add AgentTaskGroup component and related types for task management ([1ded1e0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1ded1e0))
+- **document-parser:** Implement document parsing with Readability and Turndown, add tests ([ffd2c51](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ffd2c51))
+- **background:** Inject content script into existing tabs on extension installation/update/reactivate and improve logging ([cdcb238](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cdcb238))
+- **prompt:** Add finalization priority rule to chat system prompt ([18f70fb](https://github.com/NativeMindBrowser/NativeMindExtension/commit/18f70fb))
+- **agent:** Improve agent tool calls and error handling ([417424e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/417424e))
+
+### 🩹 Fixes
+
+- **logger:** Clean up global logger assignment and improve type safety ([0aaa177](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0aaa177))
+- **attachment-selector:** Improve PDF text extraction and validation logic ([a0187b9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a0187b9))
+
+### 💅 Refactors
+
+- **runtime:** Streamline entrypoint type definitions and enhance return type inference ([504193d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/504193d))
+
+### 🏡 Chore
+
+- **tsconfig:** Enable experimental decorators and class fields ([8bcae38](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8bcae38))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.7.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.5...v1.7.0-beta.6)
+
+### 🚀 Enhancements
+
+- **agent:** Add methods to persist and check current tab in AgentStorage ([510c90a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/510c90a))
 ## v1.6.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.4...v1.6.5)
@@ -49,6 +322,73 @@
 
 - Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
 
+## v1.7.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.4...v1.7.0-beta.5)
+
+### 🚀 Enhancements
+
+- **agent:** Improve environment info handling ([314fd98](https://github.com/NativeMindBrowser/NativeMindExtension/commit/314fd98))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.7.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.0-beta.3...v1.7.0-beta.4)
+
+### 🚀 Enhancements
+
+- **agent:** Enhance agent tool execution and environment details handling ([9ec4df0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9ec4df0))
+
+### 🩹 Fixes
+
+- **test:** Fix chat prompt unit test ([532870a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/532870a))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.7.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.1...v1.7.0-beta.3)
+
+### 🚀 Enhancements
+
+- **agent:** Add support for agent in beta ([ae46e66](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ae46e66))
+- **agent:** Refactor agent tool execution and add abortable promise handling ([ff345ab](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ff345ab))
+- **agent:** Add support for gpt-oss tool call format ([3e6528d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e6528d))
+
+### 🩹 Fixes
+
+- **chat:** Correct variable name for tab ID in chat prompt environment section ([e7f35c6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e7f35c6))
+
+### 🏡 Chore
+
+- **package:** Update version to 1.7.0-beta.0 ([1947b6b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1947b6b))
+- **release:** V1.7.0-beta.1 ([be9b8ba](https://github.com/NativeMindBrowser/NativeMindExtension/commit/be9b8ba))
+- **debug:** Add default first token timeout configuration ([1efcdbf](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1efcdbf))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.7.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.9...v1.7.0-beta.1)
+
+### 🚀 Enhancements
+
+- **agent:** Add support for agent in beta ([ae46e66](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ae46e66))
+
+### 🩹 Fixes
+
+- **translator:** Update context menu after page navigation ([ef2d683](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ef2d683))
+
+### 🏡 Chore
+
+- **package:** Update version to 1.7.0-beta.0 ([1947b6b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1947b6b))
 ## v1.6.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0...v1.6.1)

@@ -113,7 +113,7 @@
         class="shrink grow min-w-0"
         itemContainerClass="flex gap-2 w-max items-center"
         :redirect="{ vertical: 'horizontal', horizontal: 'horizontal' }"
-        :arrivalShadow="{ left: { color: '#E9E9EC', size: 60 }, right: { color: '#E9E9EC', size: 60 } }"
+        :arrivalShadow="{ left: { color: '#F5F6FB', size: 60 }, right: { color: '#F5F6FB', size: 60 } }"
       >
         <div
           v-for="(attachment, index) in attachmentsToShow"
@@ -215,11 +215,11 @@ import { hashFile } from '@/utils/hash'
 import { useI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { convertImageFileToJpegBase64 } from '@/utils/image'
-import { extractPdfText, getPdfPageCount } from '@/utils/pdf'
+import { checkReadableTextContent, extractPdfText } from '@/utils/pdf'
+import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { s2bRpc } from '@/utils/rpc'
 import { ByteSize } from '@/utils/sizes'
 import { tabToTabInfo } from '@/utils/tab'
-import { getUserConfig } from '@/utils/user-config'
 
 import ExternalImage from '../../../components/ExternalImage.vue'
 import { getValidTabs } from '../utils/tabs'
@@ -250,6 +250,7 @@ const emit = defineEmits<{
   (e: 'update:attachments', images: ContextAttachment[]): void
 }>()
 
+const ollamaStatusStore = useOllamaStatusStore()
 const attachmentStorage = useVModel(props, 'attachmentStorage', emit)
 const attachments = toRef(attachmentStorage.value, 'attachments')
 const attachmentsWithCurrentTab = computed(() => {
@@ -309,7 +310,7 @@ const SUPPORTED_ATTACHMENT_TYPES: AttachmentItem[] = [
     type: 'image',
     matchMimeType: (mimeType) => /image\/*/.test(mimeType),
     validateFile: async ({ attachments }, file: File) => {
-      if (!await checkCurrentModelSupportVision()) {
+      if (!await ollamaStatusStore.checkCurrentModelSupportVision()) {
         showErrorMessage(t('chat.input.attachment_selector.unsupported_model'))
         return false
       }
@@ -356,11 +357,19 @@ const SUPPORTED_ATTACHMENT_TYPES: AttachmentItem[] = [
         return false
       }
       let pageCount: number
+      let textContent = ''
       if (file instanceof PdfTextFile) {
         pageCount = file.pageCount
+        textContent = (await file.textContent()).join('')
       }
       else {
-        pageCount = await getPdfPageCount(file)
+        const textInfo = await extractPdfText(file)
+        pageCount = textInfo.pdfProxy.numPages
+        textContent = textInfo.mergedText
+      }
+      if (!await checkReadableTextContent(textContent)) {
+        showErrorMessage(t('chat.input.attachment_selector.pdf_text_extract_error'))
+        return false
       }
       if (pageCount > MAX_PDF_PAGE_COUNT) {
         // show error but allow this file
@@ -462,10 +471,6 @@ defineExpose({
   },
 })
 
-const userConfig = await getUserConfig()
-const currentModel = userConfig.llm.model.toRef()
-const endpointType = userConfig.llm.endpointType.toRef()
-
 onChange(async (files) => {
   if (files && files.length) {
     attachmentStorage.value.lastInteractedAt = Date.now()
@@ -474,19 +479,6 @@ onChange(async (files) => {
   }
   reset()
 })
-
-const modelsSupportVision = new Map()
-const checkCurrentModelSupportVision = async () => {
-  if (endpointType.value !== 'ollama') return false
-  if (!currentModel.value) return false
-  if (modelsSupportVision.has(currentModel.value)) {
-    return modelsSupportVision.get(currentModel.value)
-  }
-  const modelDetails = await s2bRpc.showOllamaModelDetails(currentModel.value)
-  const supported = !!modelDetails.capabilities?.includes('vision')
-  modelsSupportVision.set(currentModel.value, supported)
-  return supported
-}
 
 const unselectedTabs = computed(() => {
   return allTabs.value.filter((tab) => !selectedTabs.value.some((selectedTab) => selectedTab === tab.tabId))
@@ -500,7 +492,13 @@ const updateAllTabs = async () => {
   allTabs.value = await getValidTabs()
   attachments.value = attachments.value.filter((attachment) => {
     if (attachment.type === 'tab') {
-      return allTabs.value.some((tab) => tab.tabId === attachment.value.tabId)
+      const existTab = allTabs.value.find((tab) => tab.tabId === attachment.value.tabId)
+      if (existTab) {
+        attachment.value.title = existTab.title
+        attachment.value.faviconUrl = existTab.faviconUrl
+        attachment.value.url = existTab.url
+      }
+      return !!existTab
     }
     return true // Keep other types of attachments
   })
@@ -602,9 +600,13 @@ const removeAttachment = (attachment: ContextAttachment) => {
   if (attachment.value.id === attachmentStorage.value.currentTab?.value.id) {
     attachmentStorage.value.currentTab = undefined
   }
-  else {
-    attachments.value = attachments.value.filter((a) => a !== attachment)
+  if (attachment.type === 'tab') {
+    const existTabIdx = attachments.value.findIndex((a) => a.type === 'tab' && a.value.tabId === attachment.value.tabId)
+    if (existTabIdx !== -1) {
+      attachments.value.splice(existTabIdx, 1)
+    }
   }
+  attachments.value = attachments.value.filter((a) => a.value.id !== attachment.value.id)
 }
 
 const updateCurrentTabAttachment = async () => {

@@ -113,6 +113,7 @@ export async function* initWebLLMEngine(model: WebLLMSupportedModel) {
 
 export async function isCurrentModelReady() {
   const userConfig = await getUserConfig()
+  if (userConfig.llm.endpointType.get() === 'ollama') return true
   const modelId = userConfig.llm.model.get()
   if (!modelId) return false
   return s2bRpc.checkModelReady(modelId)

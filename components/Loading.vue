@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="!done"
-    class="spinner"
+    class="spinner shrink-0 grow-0"
     :style="{ width: size + 'px', height: size + 'px', borderRadius: size / 2 + 'px', '--bar-color': strokeColor, '--total-bars': totalBars }"
   >
     <div
@@ -11,7 +11,10 @@
       :style="{ '--bar-number': i }"
     />
   </div>
-  <div v-else>
+  <div
+    v-else
+    class="shrink-0 grow-0"
+  >
     <IconLoadingDone
       class="text-[#60C959]"
       :style="{ width: size + 'px', height: size + 'px' }"

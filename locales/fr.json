@@ -22,7 +22,7 @@
         "unsupported_image_type": "Format d'image non pris en charge. Veuillez télécharger des fichiers JPEG ou PNG.",
         "unsupported_model": "Le téléchargement d'image nécessite un modèle capable de vision. Veuillez passer à Gemma3 ou un modèle de vision similaire.",
         "pdf_oversize": "La taille du fichier PDF doit être inférieure à {size}",
-        "pdf_text_extract_error": "L'extraction de texte a échoué - ce PDF peut être numérisé ou basé sur des images. Nous recommandons fortement de passer à Gemma3 pour de meilleurs résultats.",
+        "pdf_text_extract_error": "L'extraction de texte a échoué - ce PDF peut être numérisé ou basé sur des images.",
         "too_many_pdfs": "Maximum {max} fichier PDF autorisé",
         "pdf_page_count_exceeded": "Le PDF doit contenir moins de {max} pages",
         "only_load_partial_pages": "Seules les {max} premières pages sont chargées en raison de la taille du fichier"
@@ -38,7 +38,47 @@
       "summarize_page_content": {
         "title": "Résumer la page"
       }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Recherche : \"{query}\"...",
+        "search_completed": "Recherche terminée : \"{query}\"",
+        "search_failed": "Échec de la recherche : {query}"
+      },
+      "fetch_page": {
+        "reading_success": "Lecture terminée : {title}",
+        "read_failed": "Échec de la lecture : {error}",
+        "error_no_content": "aucun contenu trouvé",
+        "reading": "Lecture : {title}"
+      },
+      "view_image": {
+        "analyzing": "Analyse : {title}",
+        "analyze_failed": "Échec de l'analyse : {error}",
+        "analyze_success": "Analyse terminée : {title}",
+        "image_not_found": "image introuvable"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF introuvable"
+      },
+      "view_tab": {
+        "tab_not_found": "onglet introuvable"
+      }
     }
+  },
+  "chat_history": {
+    "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette conversation ? Cette action ne peut pas être annulée.",
+    "delete": "Supprimer",
+    "rename": "Rebaptiser",
+    "unpin": "Désépingler",
+    "pin": "Épingler",
+    "title": "Historique des Conversations",
+    "pinned_section": "Chats Épinglés",
+    "recent_section": "Chats Récents",
+    "empty_state": "Aucune conversation pour le moment",
+    "untitled_chat": "Conversation Sans Titre",
+    "new_chat": "Nouvelle Conversation",
+    "save": "Enregistrer",
+    "cancel": "Annuler"
   },
   "onboarding": {
     "banner": {
@@ -48,7 +88,7 @@
     "guide": {
       "already_installed": "Ollama est déjà installé et en cours d'exécution ?",
       "features": {
-        "1": "Exécutez des modèles avancés comme DeepSeek, Qwen, Llama",
+        "1": "Exécutez des modèles avancés comme gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Personnalisez et changez de modèles avec un contrôle total",
         "3": "Vos données restent privées, sur votre appareil"
       },
@@ -62,7 +102,11 @@
       "download_model_to_begin": "Téléchargez un modèle pour commencer.",
       "select_model_to_start": "Sélectionnez et téléchargez un modèle pour commencer",
       "download_and_install": "Télécharger & Installer",
-      "choose_model": "Choisir un modèle"
+      "choose_model": "Choisir un modèle",
+      "no_sure_which_one": "🤔 Pas sûr lequel choisir ?",
+      "learn_about_models": "En savoir plus sur les modèles",
+      "looking_for_more_options": "🔍 Vous cherchez plus d'options ?",
+      "browse_more_models": "Parcourir plus de modèles"
     },
     "webllm_tutorial": {
       "desc": "Utilisez un modèle léger (Qwen 0.6b) directement dans votre navigateur - sans configuration, sans attente.",
@@ -77,14 +121,23 @@
     "ollama_is_running": "Ollama est en cours d'exécution"
   },
   "settings": {
+    "cache": {
+      "title": "Cache de Traduction",
+      "enable": "Activer le Cache",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "max_size": "Taille Maximale",
+      "retention_days": "Période de Rétention",
+      "days": "jours"
+    },
     "advanced": {
       "title": "Avancé"
     },
     "choose_model": "Choisir un modèle",
     "download": "Télécharger",
     "feedback": {
-      "contact_msg": "📧 Des questions ou des commentaires ? \nRejoignez notre {discord} ou envoyez-nous un e-mail à {email}.",
-      "join_waitlist": "💼 Vous souhaitez l'utiliser au travail ? \n{join_waitlist_link} pour les mises à jour professionnelles.",
+      "contact_msg": "📧 Des questions ou des commentaires ? Rejoignez notre {discord} ou envoyez-nous un e-mail à {email}.",
+      "join_waitlist": "💼 Vous souhaitez l'utiliser au travail ? {join_waitlist_link} pour les mises à jour professionnelles.",
       "join_waitlist_link": "Rejoignez la liste d'attente",
       "discord": "Discord"
     },
@@ -265,7 +318,8 @@
     "timeout_error": "Opération expirée : {message}",
     "unknown_error": "Une erreur inattendue s'est produite : {message}",
     "model_request_timeout": "Délai de requête expiré. Veuillez vérifier votre connexion Ollama ou envisager de démarrer une nouvelle session, car les contextes longs peuvent affecter les temps de réponse.",
-    "webllm_not_supported": "WebLLM n'est pas pris en charge sur votre appareil."
+    "webllm_not_supported": "WebLLM n'est pas pris en charge sur votre appareil.",
+    "max_characters_error": "Maximum {count} caractères autorisés"
   },
   "common": {
     "cancel": "Annuler",
@@ -310,6 +364,9 @@
     "settings": "Paramètres",
     "pin_sidebar": "Épingler",
     "unpin_sidebar": "Désépingler",
-    "close": "Fermer"
+    "close": "Fermer",
+    "chat_history": "Histoire",
+    "new_chat": "Nouveau chat",
+    "back": "Retour"
   }
 }

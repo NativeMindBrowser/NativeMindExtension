@@ -22,7 +22,7 @@
         "unsupported_image_type": "Format gambar tidak didukung. Silakan unggah file JPEG atau PNG.",
         "unsupported_model": "Unggah gambar memerlukan model yang mampu memproses visual. Silakan beralih ke Gemma3 atau model visual serupa.",
         "pdf_oversize": "Ukuran file PDF harus kurang dari {size}",
-        "pdf_text_extract_error": "Ekstraksi teks gagal - PDF ini mungkin hasil scan atau berbasis gambar. Kami sangat merekomendasikan untuk beralih ke Gemma3 untuk hasil yang lebih baik.",
+        "pdf_text_extract_error": "Ekstraksi teks gagal - PDF ini mungkin hasil scan atau berbasis gambar.",
         "too_many_pdfs": "Maksimal {max} file PDF diizinkan",
         "pdf_page_count_exceeded": "PDF harus kurang dari {max} halaman",
         "only_load_partial_pages": "Hanya {max} halaman pertama yang dimuat karena ukuran file"
@@ -38,7 +38,47 @@
       "summarize_page_content": {
         "title": "Ringkas halaman"
       }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "Mencari: \"{query}\"...",
+        "search_completed": "Pencarian selesai: \"{query}\"",
+        "search_failed": "Pencarian gagal: {query}"
+      },
+      "fetch_page": {
+        "reading_success": "Selesai membaca: {title}",
+        "read_failed": "Gagal membaca: {error}",
+        "error_no_content": "tidak ada konten yang ditemukan",
+        "reading": "Bacaan: {title}"
+      },
+      "view_image": {
+        "analyzing": "Menganalisis: {title}",
+        "analyze_failed": "Analisis gagal: {error}",
+        "analyze_success": "Analisis selesai: {title}",
+        "image_not_found": "gambar tidak ditemukan"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF tidak ditemukan"
+      },
+      "view_tab": {
+        "tab_not_found": "tab tidak ditemukan"
+      }
     }
+  },
+  "chat_history": {
+    "delete_confirm": "Apakah Anda yakin ingin menghapus percakapan ini? Tindakan ini tidak dapat dibatalkan.",
+    "delete": "Menghapus",
+    "rename": "Ganti nama",
+    "unpin": "Lepas Pin",
+    "pin": "Pin",
+    "title": "Riwayat Obrolan",
+    "pinned_section": "Chat Dipasang",
+    "recent_section": "Chat Terbaru",
+    "empty_state": "Belum ada percakapan",
+    "untitled_chat": "Obrolan Tanpa Judul",
+    "new_chat": "Obrolan Baru",
+    "save": "Simpan",
+    "cancel": "Batal"
   },
   "onboarding": {
     "banner": {
@@ -48,7 +88,7 @@
     "guide": {
       "already_installed": "Sudah menginstal dan menjalankan Ollama?",
       "features": {
-        "1": "Jalankan model canggih seperti DeepSeek, Qwen, Llama",
+        "1": "Jalankan model canggih seperti gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Sesuaikan dan beralih antar model dengan kontrol penuh",
         "3": "Data Anda tetap pribadi, tersimpan di perangkat Anda"
       },
@@ -62,7 +102,11 @@
       "download_model_to_begin": "Unduh model untuk memulai.",
       "select_model_to_start": "Pilih dan unduh model untuk memulai",
       "download_and_install": "Unduh & Instal",
-      "choose_model": "Pilih Model"
+      "choose_model": "Pilih Model",
+      "no_sure_which_one": "🤔 Tidak yakin yang mana yang dipilih?",
+      "learn_about_models": "Pelajari tentang model",
+      "looking_for_more_options": "🔍 Mencari lebih banyak opsi?",
+      "browse_more_models": "Jelajahi lebih banyak model"
     },
     "webllm_tutorial": {
       "desc": "Gunakan model ringan (Qwen 0.6b) langsung di browser Anda — tanpa pengaturan, tanpa menunggu.",
@@ -77,6 +121,15 @@
     "ollama_is_running": "Ollama sedang berjalan"
   },
   "settings": {
+    "cache": {
+      "title": "Cache Terjemahan",
+      "enable": "Aktifkan Cache",
+      "enabled": "Diaktifkan",
+      "disabled": "Dinonaktifkan",
+      "max_size": "Ukuran Maksimal",
+      "retention_days": "Periode Penyimpanan",
+      "days": "hari"
+    },
     "advanced": {
       "title": "Canggih"
     },
@@ -239,7 +292,7 @@
       "interface_language_desc": "Pilih bahasa tampilan untuk antarmuka NativeMind"
     },
     "header": {
-      "starts_on_github": "Stars on GitHub",
+      "starts_on_github": "Bintang di GitHub",
       "goto_website": "Kunjungi Situs Web"
     }
   },
@@ -265,7 +318,8 @@
     "model_request_timeout": "Waktu permintaan habis. Silakan periksa koneksi Ollama Anda atau pertimbangkan untuk memulai sesi baru karena konteks yang panjang dapat memengaruhi waktu respons.",
     "timeout_error": "Operasi waktu habis: {message}",
     "unknown_error": "Terjadi kesalahan yang tidak terduga: {message}",
-    "webllm_not_supported": "WebLLM tidak didukung pada perangkat Anda."
+    "webllm_not_supported": "WebLLM tidak didukung pada perangkat Anda.",
+    "max_characters_error": "Maksimal {count} karakter diizinkan"
   },
   "common": {
     "cancel": "Batal",
@@ -310,6 +364,9 @@
     "settings": "Pengaturan",
     "pin_sidebar": "Sematkan",
     "unpin_sidebar": "Lepas sematan",
-    "close": "Tutup"
+    "close": "Tutup",
+    "chat_history": "Sejarah",
+    "new_chat": "Obrolan baru",
+    "back": "Kembali"
   }
 }

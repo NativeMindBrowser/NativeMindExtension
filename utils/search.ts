@@ -1,5 +1,3 @@
-import { browser } from 'wxt/browser'
-
 import logger from '@/utils/logger'
 
 import { Tab } from './tab'
@@ -32,13 +30,14 @@ async function _searchByGoogle(query: string, options?: SearchByGoogleOptions) {
         .map((block) => {
           const link = block.querySelector('a[jsname]') as HTMLAnchorElement | null
           const h = link?.querySelector('h3,h2,h1') as HTMLHeadingElement | null
+          const favicon = link?.querySelector('img') as HTMLImageElement | null
           const title = h?.textContent
           const url = link?.href
           const descriptionDiv = block.querySelector('div[data-snf]') as HTMLDivElement | null
           const description = descriptionDiv?.textContent
-          return { url, title, description }
+          return { url, title, description, favicon: favicon?.src }
         })
-        .filter((m) => m.url) as { url: string, title?: string, description?: string }[]
+        .filter((m) => m.url) as { url: string, title?: string, description?: string, favicon?: string }[]
       return result
     },
   })
@@ -72,13 +71,12 @@ async function checkHtmlResponse(link: string) {
   return false
 }
 
-async function scrapePages(links: ({ url: string, title?: string, description?: string })[], options: ScrapePagesOptions) {
-  const { onProgress, resultLimit = 5, abortSignal } = options
+async function scrapePages(links: string[], options: ScrapePagesOptions) {
+  const { abortSignal } = options
   await using tab = new Tab()
-  const limit = Math.min(links.length, resultLimit)
-  log.debug('search progress: scrapePages', links.length, limit)
+  log.debug('search progress: scrapePages', links.length)
   const linksWithContent = []
-  while (linksWithContent.length < limit && links.length > 0) {
+  while (links.length > 0) {
     if (!await tab.exists().catch(() => false)) break
     const idx = linksWithContent.length
     const link = links.shift()!
@@ -87,53 +85,36 @@ async function scrapePages(links: ({ url: string, title?: string, description?: 
       break
     }
     try {
-      log.debug('search progress: start', idx, limit, link.url)
+      log.debug('search progress: start', idx, link)
       if (!(await tab.exists())) {
         log.debug('tab is closed, skipping search progress')
         break
       }
-      onProgress?.({
-        type: 'page-start',
-        title: link.title ?? '',
-        url: link.url,
-      })
-      const isHtmlPage = await checkHtmlResponse(link.url)
+      const isHtmlPage = await checkHtmlResponse(link)
       if (!isHtmlPage) {
-        log.debug('search progress: not an HTML page, skipping', link.url)
-        onProgress?.({
-          type: 'page-error',
-          title: link.title ?? '',
-          url: link.url,
-          error: 'Not an HTML page',
-        })
-        continue
+        log.debug('search progress: not an HTML page, skipping', link)
       }
-      await tab.openUrl(link.url, { active: false })
+      await tab.openUrl(link, { active: false })
       const tabInfo = await tab.getInfo()
       const content = await tab.executeScript({
         func: () => {
-          return document.body.innerText
+          return {
+            html: document.documentElement.outerHTML,
+            title: document.title,
+            url: location.href,
+          }
         },
       })
-      log.debug('search progress: end', idx, limit, tabInfo.url, tabInfo.title, link.url, content)
-      const textContent = content[0].result ?? ''
+      log.debug('search progress: end', idx, tabInfo.url, tabInfo.title, link, content)
+      const html = content[0].result?.html ?? ''
+      const title = content[0].result?.title ?? ''
       linksWithContent.push({
-        ...link,
-        textContent,
-      })
-      onProgress?.({
-        type: 'page-finished',
-        title: link.title ?? '',
-        url: link.url,
+        title,
+        url: link,
+        html,
       })
     }
     catch (error) {
-      onProgress?.({
-        type: 'page-error',
-        title: link.title ?? '',
-        url: link.url,
-        error: String(error),
-      })
       logger.error('search progress: Failed to load tab', error)
       continue
     }
@@ -191,40 +172,15 @@ export type SearchingMessage =
     url: string
   }
 
-export function searchOnline(queryList: string[], { resultLimit, engine }: { resultLimit?: number, engine: 'google' } = { engine: 'google' }) {
-  const portName = `searchByGoogle-${Math.random().toString(36).substring(2, 15)}`
-  const abortController = new AbortController()
-  const query = queryList.join(', ')
-  browser.runtime.onConnect.addListener(async function listener(port) {
-    port.onDisconnect.addListener(() => {
-      log.debug('[searchByGoogle] port disconnected')
-      abortController.abort()
-    })
-    browser.runtime.onConnect.removeListener(listener)
-    if (port.name === portName) {
-      port.postMessage({ type: 'query-start', query })
-      let links
-      if (engine === 'google') {
-        links = await _searchByGoogle(query, {
-          abortSignal: abortController.signal,
-        })
-      }
-      else {
-        throw new Error(`Unsupported search engine: ${engine}`)
-      }
-      const linksWithContent = await scrapePages(links, {
-        onProgress: (prg: SearchingMessage) => {
-          port.postMessage(prg)
-        },
-        resultLimit,
-        abortSignal: abortController.signal,
-      })
-      port.postMessage({ type: 'query-finished', query })
-      port.postMessage({ type: 'links', links: linksWithContent })
-      port.disconnect()
-    }
-  })
-  return { portName }
+export async function searchWebsites(query: string, options?: SearchByGoogleOptions) {
+  const { abortSignal, ...restOptions } = options || {}
+  const links = await _searchByGoogle(query, restOptions)
+  return links
+}
+
+export async function openAndFetchUrlsContent(links: string[]) {
+  const linksWithContent = await scrapePages(links, {})
+  return linksWithContent
 }
 
 function isValidationPage(url: string) {

@@ -1,7 +1,7 @@
 {
   "chat": {
     "messages": {
-      "thought_for_seconds": "{second}초 동안 생각 중 | \n{second}초 동안 생각 중",
+      "thought_for_seconds": "{second}초 동안 생각 중 | {second}초 동안 생각 중",
       "thinking": "생각하는 중...",
       "reading": "읽는 중",
       "search_locally": "브라우저에서 검색 중..."
@@ -22,7 +22,7 @@
         "unsupported_image_type": "지원되지 않는 이미지 형식입니다. JPEG 또는 PNG 파일을 업로드해 주세요.",
         "unsupported_model": "이미지 업로드에는 비전 기능이 있는 모델이 필요합니다. Gemma3 또는 유사한 비전 모델로 전환해 주세요.",
         "pdf_oversize": "PDF 파일 크기는 {size}보다 작아야 합니다",
-        "pdf_text_extract_error": "텍스트 추출 실패 - 이 PDF는 스캔되었거나 이미지 기반일 수 있습니다. 더 나은 결과를 위해 Gemma3로 전환하는 것을 강력히 권장합니다.",
+        "pdf_text_extract_error": "PDF에서 텍스트 추출에 실패했습니다 - 이 PDF는 스캔되었거나 이미지 기반일 수 있습니다.",
         "too_many_pdfs": "최대 {max}개의 PDF 파일이 허용됩니다",
         "pdf_page_count_exceeded": "PDF는 {max}페이지 미만이어야 합니다",
         "only_load_partial_pages": "파일 크기로 인해 처음 {max}페이지만 로드됩니다"
@@ -38,7 +38,47 @@
       "summarize_page_content": {
         "title": "페이지 요약"
       }
+    },
+    "tool_calls": {
+      "search_online": {
+        "searching": "검색 중: \"{query}\"...",
+        "search_completed": "검색 완료: \"{query}\"",
+        "search_failed": "검색 실패: {query}"
+      },
+      "fetch_page": {
+        "reading_success": "읽기 완료: {title}",
+        "read_failed": "읽기 실패: {error}",
+        "error_no_content": "콘텐츠를 찾을 수 없습니다",
+        "reading": "읽기: {title}"
+      },
+      "view_image": {
+        "analyzing": "분석 중: {title}",
+        "analyze_failed": "분석 실패: {error}",
+        "analyze_success": "분석 완료: {title}",
+        "image_not_found": "이미지를 찾을 수 없습니다"
+      },
+      "view_pdf": {
+        "pdf_not_found": "PDF를 찾을 수 없습니다"
+      },
+      "view_tab": {
+        "tab_not_found": "탭을 찾을 수 없음"
+      }
     }
+  },
+  "chat_history": {
+    "delete_confirm": "이 대화를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "delete": "삭제",
+    "rename": "이름 바꾸기",
+    "unpin": "고정 해제",
+    "pin": "고정",
+    "title": "채팅 기록",
+    "pinned_section": "고정된 채팅",
+    "recent_section": "최근 채팅",
+    "empty_state": "아직 대화가 없습니다",
+    "untitled_chat": "제목 없는 채팅",
+    "new_chat": "새 채팅",
+    "save": "저장",
+    "cancel": "취소"
   },
   "onboarding": {
     "banner": {
@@ -48,7 +88,7 @@
     "guide": {
       "already_installed": "이미 Ollama를 설치하고 실행 중인가요?",
       "features": {
-        "1": "DeepSeek, Qwen, Llama와 같은 고급 모델을 실행할 수 있습니다",
+        "1": "고급 모델들인 gpt-oss, DeepSeek, Qwen, Llama를 실행하세요",
         "2": "모델을 완전히 제어하여 사용자 지정하고 전환할 수 있습니다",
         "3": "사용자의 데이터는 기기에서 안전하게 유지됩니다"
       },
@@ -62,7 +102,11 @@
       "download_model_to_begin": "시작하려면 모델을 다운로드하세요.",
       "select_model_to_start": "시작하려면 모델을 선택하고 다운로드하세요",
       "download_and_install": "다운로드 & 설치",
-      "choose_model": "모델 선택"
+      "choose_model": "모델 선택",
+      "no_sure_which_one": "🤔 어떤 것을 선택해야 할지 확실하지 않나요?",
+      "learn_about_models": "모델에 대해 알아보기",
+      "looking_for_more_options": "🔍 더 많은 옵션을 찾고 계신가요?",
+      "browse_more_models": "더 많은 모델 둘러보기"
     },
     "webllm_tutorial": {
       "desc": "브라우저에서 바로 경량 모델(Qwen 0.6B)을 사용해 보세요. 설정 없이 바로 시작할 수 있습니다.",
@@ -77,14 +121,23 @@
     "ollama_is_running": "Ollama가 실행 중입니다"
   },
   "settings": {
+    "cache": {
+      "title": "번역 캐시",
+      "enable": "캐시 활성화",
+      "enabled": "활성화됨",
+      "disabled": "비활성화됨",
+      "max_size": "최대 크기",
+      "retention_days": "보존 기간",
+      "days": "일"
+    },
     "advanced": {
       "title": "고급 설정"
     },
     "choose_model": "모델 선택",
     "download": "다운로드",
     "feedback": {
-      "contact_msg": "📧 질문이나 피드백이 있으신가요? \n{discord}에 가입하거나 {email}로 이메일을 보내주세요.",
-      "join_waitlist": "💼 직장에서 사용하고 싶으신가요? \n기업용 업데이트를 위해 {join_waitlist_link}하세요.",
+      "contact_msg": "📧 질문이나 피드백이 있으신가요? {discord}에 가입하거나 {email}로 이메일을 보내주세요.",
+      "join_waitlist": "💼 직장에서 사용하고 싶으신가요? 기업용 업데이트를 위해 {join_waitlist_link}하세요.",
       "join_waitlist_link": "대기자 명단 가입하기",
       "discord": "Discord"
     },
@@ -219,7 +272,7 @@
       "description": "채팅 기능 및 빠른 작업 구성",
       "basic_config": {
         "title": "기본 구성",
-        "chat_model": "I'd be happy to help you translate from English to Korean! However, I don't see any English text provided for translation. Could you please share the English text you'd like me to translate into Korean?",
+        "chat_model": "채팅 모델",
         "chat_model_description": "채팅 대화를 위한 AI 모델을 선택하세요",
         "chat_system_prompt": "채팅 시스템 프롬프트",
         "chat_system_prompt_description": "채팅 대화 중 AI의 행동과 역할을 정의하세요"
@@ -239,7 +292,7 @@
       "interface_language_desc": "NativeMind 인터페이스의 표시 언어를 선택하세요"
     },
     "header": {
-      "starts_on_github": "Stars on GitHub",
+      "starts_on_github": "GitHub에서 별점 주기",
       "goto_website": "웹사이트로 이동"
     }
   },
@@ -265,7 +318,8 @@
     "model_request_timeout": "요청 시간이 초과되었습니다. Ollama 연결을 확인하거나, 긴 컨텍스트가 응답 시간에 영향을 미칠 수 있으므로 새 세션 시작을 고려해 주세요.",
     "timeout_error": "작업 시간 초과: {message}",
     "unknown_error": "예기치 않은 오류가 발생했습니다: {message}",
-    "webllm_not_supported": "WebLLM이 귀하의 기기에서 지원되지 않습니다."
+    "webllm_not_supported": "WebLLM이 귀하의 기기에서 지원되지 않습니다.",
+    "max_characters_error": "최대 {count}자까지 입력 가능합니다"
   },
   "common": {
     "cancel": "취소",
@@ -310,6 +364,9 @@
     "settings": "설정",
     "pin_sidebar": "고정",
     "unpin_sidebar": "고정 해제",
-    "close": "닫기"
+    "close": "닫기",
+    "chat_history": "역사",
+    "new_chat": "새로운 채팅",
+    "back": "뒤로"
   }
 }

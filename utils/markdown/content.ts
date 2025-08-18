@@ -1,44 +1,6 @@
-import IconDownload from '@/assets/icons/md-download.svg?raw'
-import IconEdit from '@/assets/icons/md-edit.svg?raw'
-import IconFileSuccess from '@/assets/icons/md-file-success.svg?raw'
-import IconFind from '@/assets/icons/md-find.svg?raw'
-import IconHighlightBoxed from '@/assets/icons/md-highlight-boxed.svg?raw'
-import IconLink from '@/assets/icons/md-link.svg?raw'
-import IconQuickModified from '@/assets/icons/md-quick-action-modified.svg?raw'
-import IconSearch from '@/assets/icons/md-search.svg?raw'
-import IconSearchBoxed from '@/assets/icons/md-search-boxed.svg?raw'
-import IconSearchColored from '@/assets/icons/md-search-colored.svg?raw'
-import IconStar from '@/assets/icons/md-star.svg?raw'
-import IconSummarizeBoxed from '@/assets/icons/md-summarize-boxed.svg?raw'
-import IconTick from '@/assets/icons/md-tick.svg?raw'
-import IconTickColored from '@/assets/icons/md-tick-colored.svg?raw'
-import IconTranslationBoxed from '@/assets/icons/md-translation-boxed.svg?raw'
-import IconWarning from '@/assets/icons/md-warning.svg?raw'
-import IconWarningColored from '@/assets/icons/md-warning-colored.svg?raw'
-import IconWritingBoxed from '@/assets/icons/md-writing-boxed.svg?raw'
+import { IntrinsicElementAttributes } from 'vue'
 
-const iconMap = {
-  tick: IconTick,
-  tickColored: IconTickColored,
-  search: IconSearch,
-  searchColored: IconSearchColored,
-  link: IconLink,
-  download: IconDownload,
-  warning: IconWarning,
-  warningColored: IconWarningColored,
-  find: IconFind,
-  fileSuccess: IconFileSuccess,
-  star: IconStar,
-  summarizeBoxed: IconSummarizeBoxed,
-  translationBoxed: IconTranslationBoxed,
-  writingBoxed: IconWritingBoxed,
-  highlightBoxed: IconHighlightBoxed,
-  edit: IconEdit,
-  quickActionModifiedBoxed: IconQuickModified,
-  searchBoxed: IconSearchBoxed,
-}
-
-export type IconName = keyof typeof iconMap
+import { iconMap, IconName } from '../icon'
 
 const escapeMappings = {
   '[': '%5B',
@@ -106,6 +68,18 @@ export function makeMarkdownLinkWithIcon(text: string, url: string) {
 
 export function makeHtmlTag(tag: string, content: string, attrs: Record<string, string> = {}) {
   return `::::html-tag[${encodeURIComponent(content)}]{tag="${tag}" ${Object.entries(attrs).map(([key, value]) => `${key}="${value}"`).join(' ')}}`
+}
+
+export function makeRawHtml(html: string) {
+  return html
+}
+
+export function makeRawHtmlTag<T extends keyof IntrinsicElementAttributes>(tag: T, content: string, attrs: IntrinsicElementAttributes[T] = {}) {
+  return `<${tag} ${Object.entries(attrs).filter(([_, v]) => v !== undefined).map(([key, value]) => `${key}="${value}"`).join(' ')}>${content}</${tag}>`
+}
+
+export function makeIcon<Name extends IconName>(iconName: Name, options: { color?: string } = {}) {
+  return `<nm-icon name="${iconName}" color="${options.color || 'black'}"></nm-icon>`
 }
 
 export function makeMarkdownLinkReferences(

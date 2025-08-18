@@ -23,18 +23,15 @@ export class Config<Value, DefaultValue extends Value | undefined> {
   isSession = false
   transformer?: (value: Value | DefaultValue) => Value | DefaultValue
   validator?: (value: Value | DefaultValue) => { isValid: boolean, displayMessage?: string }
+  migrations: {
+    fromKey: string
+    migrate: (value: Value | DefaultValue | undefined) => Value | DefaultValue | undefined
+  }[] = []
+
   constructor(private key: string) {}
 
   get areaKey() {
-    if (this.isSession) {
-      return `session:${this.key}` as const
-    }
     return `local:${this.key}` as const
-  }
-
-  session() {
-    this.isSession = true
-    return this
   }
 
   default<D extends DefaultValue>(defaultValue: D) {
@@ -42,14 +39,18 @@ export class Config<Value, DefaultValue extends Value | undefined> {
     return this as unknown as Config<D, D>
   }
 
-  transform(transformer: (value: Value | DefaultValue) => Value | DefaultValue) {
-    this.transformer = transformer
+  migrateFrom(fromKey: string, migration: (value: Value | DefaultValue | undefined) => Value | DefaultValue | undefined) {
+    this.migrations.push({ fromKey, migrate: migration })
     return this
   }
 
   validate(validator: (value: Value | DefaultValue) => { isValid: boolean, displayMessage?: string }) {
     this.validator = validator
     return this
+  }
+
+  private removeItem() {
+    return storage.removeItem(this.areaKey)
   }
 
   private getItem() {
@@ -60,10 +61,25 @@ export class Config<Value, DefaultValue extends Value | undefined> {
     return setItem(this.areaKey, value)
   }
 
+  private async execMigration() {
+    let lastValue: Value | DefaultValue | undefined
+    for (const migration of this.migrations) {
+      const key = `local:${migration.fromKey}` as const
+      const value = (await storage.getItem<Value | DefaultValue | undefined>(key)) ?? undefined
+      const newValue = migration.migrate(value)
+      await storage.removeItem(key)
+      if (newValue) lastValue = newValue
+    }
+    return lastValue
+  }
+
   async build() {
     const defaultValue = this.defaultValue
     const clonedDefaultValue = structuredClone(defaultValue)
-    const v = (await this.getItem()) ?? clonedDefaultValue
+    const localValue = (await this.getItem()) ?? undefined
+    const migratedValue = await this.execMigration() ?? localValue
+    if (migratedValue) await this.setItem(migratedValue)
+    const v = migratedValue ?? clonedDefaultValue
     const refValue = ref(v)
     let ignoreSetLocalStorage = false
     watch(refValue, async (newValue) => {
@@ -104,6 +120,8 @@ export class Config<Value, DefaultValue extends Value | undefined> {
     const key = this.key
     const areaKey = this.areaKey
 
+    const removeItem = () => this.removeItem()
+
     return {
       get key() { return key },
       get areaKey() { return areaKey },
@@ -112,6 +130,7 @@ export class Config<Value, DefaultValue extends Value | undefined> {
       },
       resetDefault() {
         r.value = structuredClone(defaultValue) as DefaultValue
+        removeItem()
       },
       toRef: () => r,
       get: () => r.value,

@@ -1,9 +1,12 @@
 <template>
-  <div>
+  <div
+    v-if="message.content || message.reasoning || !message.done"
+    class="w-full flex"
+  >
     <div
-      class="text-sm rounded-md relative max-w-full inline-flex items-center min-w-0 gap-2"
-      :style="{ backgroundColor: message.style?.backgroundColor || 'white' }"
-      :class="[message.content || message.reasoning ? 'p-3 pt-2' : 'pt-2 pb-3']"
+      class="text-sm rounded-md relative max-w-full inline-flex items-center min-w-0 gap-2 w-full"
+      :style="{ backgroundColor: message.style?.backgroundColor }"
+      :class="[message.content || message.reasoning ? 'p-0' : 'pt-2 pb-3']"
     >
       <div
         v-if="message.isError"
@@ -14,90 +17,125 @@
       <div class="max-w-full flex-1 flex flex-col gap-1">
         <div
           v-if="message.reasoning && message.reasoningTime"
-          class="text-gray-400 text-sm flex items-center justify-between"
+          class="text-text-primary text-sm flex items-center justify-between overflow-hidden"
         >
-          <div
-            v-if="message.content || message.done"
-            class="flex items-center gap-1"
-          >
-            <IconReasoningFinished class="w-4" />
-            <Text color="placeholder">
-              {{ t('chat.messages.thought_for_seconds', Math.ceil(message.reasoningTime / 1000), { named: { second: Math.ceil(message.reasoningTime / 1000) } }) }}
-            </Text>
-          </div>
-          <div
-            v-else
-            class="flex items-center justify-between gap-2"
-          >
-            <Loading :size="16" />
-            <Text color="placeholder">
-              {{ t('chat.messages.thinking') }}
-            </Text>
+          <div class="flex flex-grow">
+            <motion.div
+              v-if="message.content || message.done"
+              :initial="{ width: 0 }"
+              :animate="{ width: '100%' }"
+              :transition="{
+                duration: 0.5,
+                ease: 'linear'
+              }"
+              class="flex items-center gap-1.5 overflow-hidden whitespace-nowrap"
+            >
+              <div class="shrink-0 grow-0 size-5 p-0.5">
+                <IconTickCircle class="w-4 text-success shrink-0" />
+              </div>
+              <Text color="primary">
+                {{ t('chat.messages.thought_for_seconds', Math.ceil(message.reasoningTime / 1000), { named: { second: Math.ceil(message.reasoningTime / 1000) } }) }}
+              </Text>
+            </motion.div>
+            <motion.div
+              v-else
+              :initial="{ width: 0, opacity: 1 }"
+              :animate="{
+                width: '100%',
+                opacity: [1, 0.3, 1]
+              }"
+              :transition="{
+                width: { duration: 0.5, ease: 'linear' },
+                opacity: {
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: 'easeOut'
+                }
+              }"
+              class="flex items-center justify-start gap-1.5 overflow-hidden whitespace-nowrap"
+            >
+              <div class="shrink-0 grow-0 size-5 p-0.5">
+                <Loading :size="16" />
+              </div>
+              <Text color="primary">
+                {{ t('chat.messages.thinking') }}
+              </Text>
+            </motion.div>
           </div>
           <div
             class="ml-2 transform transition-transform cursor-pointer"
             :class="{ 'rotate-180': expanded }"
             @click="expanded = !expanded"
           >
-            <svg
-              width="15"
-              height="16"
-              viewBox="0 0 15 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M13.0556 5.77734L7.50001 11.3329L1.94446 5.77734"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <IconArrowDown class="w-4 text-text-tertiary" />
           </div>
         </div>
         <div
-          v-if="message.reasoning && (!message.content || expanded)"
-          class="wrap-anywhere border-l-2 pl-3 border-[#AEB5BD]"
-          :class="expanded ? '' : 'line-clamp-3'"
+          v-if="showReasoning"
+          class="wrap-anywhere pl-6 border-[#AEB5BD]"
+          :class="showClampedReasoning && 'line-clamp-3'"
         >
           <MarkdownViewer
             :text="message.reasoning"
-            class="text-sm text-text-secondary"
+            class="text-sm text-text-quaternary"
           />
         </div>
         <div v-if="message.content">
-          <MarkdownViewer :text="message.content" />
+          <MarkdownViewer
+            :text="message.content"
+            class="text-text-primary"
+          />
         </div>
       </div>
-      <div
+      <motion.div
         v-if="!message.done && !message.content && !message.reasoning"
-        class="absolute bottom-0 -right-4"
+        class="absolute -top-1 left-0"
+        :initial="{ opacity: 1 }"
+        :animate="{ opacity: [1, 0.3, 1] }"
+        :transition="{
+          opacity: {
+            duration: 1.5,
+            repeat: Infinity,
+            ease: 'easeOut'
+          }
+        }"
       >
         <Loading
-          :size="14"
-          class="text-gray-400"
+          :size="16"
+          class="text-text-secondary"
         />
-      </div>
+      </motion.div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { motion } from 'motion-v'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import IconReasoningFinished from '@/assets/icons/reasoning-finished.svg?component'
+import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
+import IconTickCircle from '@/assets/icons/tick-circle.svg?component'
 import IconWarning from '@/assets/icons/warning-circle.svg?component'
 import Loading from '@/components/Loading.vue'
 import Text from '@/components/ui/Text.vue'
-import { AssistantMessageV1 } from '@/utils/tab-store/history'
+import { AgentMessageV1, AssistantMessageV1 } from '@/types/chat'
 
 import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'
-defineProps<{
-  message: AssistantMessageV1
+const props = defineProps<{
+  message: AssistantMessageV1 | AgentMessageV1
 }>()
+
+const message = computed(() => {
+  return {
+    ...props.message,
+    content: props.message.content.trim(),
+    reasoning: props.message.reasoning?.trim(),
+  }
+})
 
 const { t } = useI18n()
 const expanded = ref(false)
+const showReasoning = computed(() => message.value.reasoning && ((!message.value.content && !message.value.done) || expanded.value))
+const showClampedReasoning = computed(() => showReasoning.value && !expanded.value)
 </script>

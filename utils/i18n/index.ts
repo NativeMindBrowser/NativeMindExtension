@@ -112,3 +112,21 @@ export async function useGlobalI18n() {
 }
 
 export type ComposerTranslation = OriginComposerTranslation<MessageSchema, SupportedLocaleCode>
+
+export async function getAllLocaleValues(key: string) {
+  const i18n = await createI18nInstance()
+  const result: string[] = []
+
+  for (const locale of i18n.global.availableLocales) {
+    const messages = i18n.global.getLocaleMessage(locale) // Get the complete message object for this locale
+    // Support nested keys, e.g., "home.title"
+    // FIXME
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const value = key.split('.').reduce((obj, k) => obj?.[k], messages as any)
+    if (value !== undefined) {
+      result.push(value)
+    }
+  }
+
+  return result
+}

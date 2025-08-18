@@ -1,5 +1,9 @@
 import { Browser, browser } from 'wxt/browser'
 
+import { AssistantMessageV1, ChatHistoryV1, UserMessageV1 } from '@/types/chat'
+
+import { getAllLocaleValues } from '../i18n'
+
 export function preparePortConnection(portName: string) {
   return new Promise<Browser.runtime.Port>((resolve, reject) => {
     const onConnected = async (port: Browser.runtime.Port) => {
@@ -62,4 +66,36 @@ export function makeMessage<D>(data: D, source: MessageSource, targets: MessageS
     targets,
     connectionId,
   }
+}
+
+export async function shouldGenerateChatTitle(chatHistory: ChatHistoryV1): Promise<boolean> {
+  /**
+   * Conditions
+   * 1. Chat title is under i18n t('chat_history.new_chat')
+   * 2. user messages length is greater than 0
+   * 3. Assistant messages should have at least one message with role 'assistant'
+   * 4. assistant messages should contain
+   */
+
+  // Get completed messages only
+  const completedMessages = chatHistory.history.filter((item) => item.done)
+  const userMessages = completedMessages.filter((item) => item.role === 'user')
+  const assistantMessages = completedMessages.filter((item) => item.role === 'assistant')
+
+  // Check if title is likely a default "New Chat" title in various languages
+  const defaultTitles = await getAllLocaleValues('chat_history.new_chat')
+  const isDefaultTitle = defaultTitles.some((title) => chatHistory.title === title)
+
+  // Should generate title when:
+  // 1. Chat title is still the default "New Chat" title
+  // 2. We have exactly one user message and at least one assistant message with role 'assistant'
+  // 3. Both the first user and assistant messages have content
+  if (isDefaultTitle && userMessages.length >= 1 && assistantMessages.length >= 1) {
+    const firstUser = userMessages[0] as UserMessageV1
+    const firstAssistant = assistantMessages[0] as AssistantMessageV1
+
+    return !!(firstUser.content && firstAssistant.content)
+  }
+
+  return false
 }
