@@ -134,15 +134,18 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
 
   let content
   try {
-    const docContent = await makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal)
+    const docContent = await timeout(makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal), 5000)
+    if (!docContent.textContent) {
+      throw new Error('No text content found')
+    }
     content = docContent
   }
   catch (err) {
-    log.error('Failed to get tab content', { err, attachmentId, tabId: tab.value.id })
+    log.error('Failed to get tab content, try fallback parser', { err, attachmentId, tabId: tab.value.id })
     try {
       const htmlContent = await makeAbortable(s2bRpc.getHtmlContentOfTab(tab.value.tabId), abortSignal)
       if (htmlContent) {
-        const textContent = parseHTMLWithTurndown(htmlContent?.html)
+        const textContent = await parseHTMLWithTurndown(htmlContent?.html)
         content = {
           title: tab.value.title,
           url: tab.value.url,

@@ -96,11 +96,6 @@ export default defineBackground(() => {
     }
   }
 
-  // use enable extension in chrome extension settings
-  browser.management.onEnabled.addListener((info) => {
-    if (info.id === browser.runtime.id) initContentScript()
-  })
-
   browser.runtime.onInstalled.addListener(async (ev) => {
     initContentScript(false)
     logger.debug(`Extension Installed, reason: ${ev.reason}`)
