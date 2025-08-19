@@ -68,6 +68,7 @@ PRIORITY ORDER - Always check available resources FIRST:
 3. If user asks about current tab/page: Use view_tab FIRST
 4. ONLY if no relevant resources available: Use search_online
 5. Use fetch_page for: specific URLs mentioned by user, or to get detailed content from search results
+6. Use page_click for: simulating clicks on elements (e.g., <a id="1">) within workflows that involve the view_tab or fetch_page tools
 
 For evaluation/discussion questions:
 - FIRST check if available PDFs/images contain relevant content
@@ -80,6 +81,7 @@ Tool distinctions:
 - search_online: For get latest information and discussions
 - view_pdf: For PDF content if user asks about available PDFs
 - view_image: For image analysis if user asks about available images
+- page_click: For simulating clicks on elements (e.g., <a id="1">) within workflows that involve the view_tab or fetch_page tools
 
 Required tool usage:
 - PDF questions (summarize, analyze, discuss): view_pdf FIRST, then search_online if needed
@@ -381,6 +383,8 @@ export async function _getUserConfig() {
     },
     documentParser: {
       parserType: await new Config('documentParser.parserType').default('auto' as 'readability' | 'turndown' | 'auto').build(),
+      highlightInteractiveElements: await new Config('documentParser.highlightInteractiveElements').default(false).build(),
+      contentFilterThreshold: await new Config('documentParser.contentFilterThreshold').default(0.28).build(),
     },
     chat: {
       agent: {

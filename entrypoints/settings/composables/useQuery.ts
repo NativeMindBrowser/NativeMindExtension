@@ -2,8 +2,8 @@ import { Ref, ref } from 'vue'
 import { LocationQuery, useRoute, useRouter } from 'vue-router'
 
 import { SettingsScrollTarget } from '@/types/scroll-targets'
-import { sleep } from '@/utils/async'
 import { lazyInitialize } from '@/utils/memo'
+import { sleep } from '@/utils/sleep'
 
 function getFirst<T>(value: T | T[]) {
   return Array.isArray(value) ? value[0] : value

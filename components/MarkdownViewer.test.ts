@@ -3,7 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { fakeBrowser } from 'wxt/testing'
 
 import { resetFakeEntrypoint } from '@/tests/utils/fake-browser'
-import { sleep } from '@/utils/async'
+import { sleep } from '@/utils/sleep'
 
 async function waitForSelector<T extends VueWrapper, K extends (keyof HTMLElementTagNameMap)>(wrapper: T, selector: K, timeout?: number): Promise<VueWrapper<HTMLElementTagNameMap[K]>>
 async function waitForSelector<T extends VueWrapper, K extends (keyof SVGElementTagNameMap)>(wrapper: T, selector: K, timeout?: number): Promise<VueWrapper<SVGElementTagNameMap[K]>>

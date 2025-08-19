@@ -23,12 +23,17 @@ export const fetchPageTool = new PromptBasedTool('fetch_page', 'Get detailed con
   url: z.string().url().describe(''),
 })
 
+export const pageClickTool = new PromptBasedTool('page_click', 'Click an element on the page by its id to find more information about it', {
+  id: z.string().describe('The id of the element to click'),
+})
+
 export const promptBasedTools = [
   viewTabTool,
   viewPdfTool,
   viewImageTool,
   searchOnlineTool,
   fetchPageTool,
+  pageClickTool,
 ]
 
 export type PromptBasedToolType = typeof promptBasedTools[number]

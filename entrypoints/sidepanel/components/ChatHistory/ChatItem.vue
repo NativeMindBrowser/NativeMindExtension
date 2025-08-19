@@ -33,6 +33,7 @@
             ref="editInput"
             v-model="editTitle"
             :maxlength="MAX_TITLE_LENGTH"
+            wrapperClass="w-full"
             class="w-full rounded-md px-2 py-1.5 text-[13px]"
             @blur="handleSave"
             @keydown.enter="handleSave"

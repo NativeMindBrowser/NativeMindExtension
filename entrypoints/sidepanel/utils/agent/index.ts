@@ -1,5 +1,6 @@
 import { CoreAssistantMessage, CoreMessage, CoreUserMessage } from 'ai'
 import { isEqual } from 'es-toolkit'
+import EventEmitter from 'events'
 import { Ref, ref } from 'vue'
 
 import { AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, ContextAttachmentStorage } from '@/types/chat'
@@ -31,6 +32,11 @@ export type AgentToolExecuteResult = AgentToolExecuteResultToolResult
 type Distribute<T extends PromptBasedToolName> = T extends unknown ? PromptBasedToolNameAndParams<T> : never
 type PromptBasedToolNameAndParamsDistributed = Distribute<PromptBasedToolName>
 
+type AgentToolCallExecuteHooks = {
+  onAgentFinished: []
+  onCurrentLoopFinished: []
+}
+
 export type AgentToolCallExecute<T extends PromptBasedToolName> = {
   (options: {
     params: InferredParams<GetPromptBasedTool<T>['parameters']>
@@ -40,6 +46,7 @@ export type AgentToolCallExecute<T extends PromptBasedToolName> = {
     taskMessageModifier: TaskMessageModifier
     taskScopeToolCalls: PromptBasedToolNameAndParamsDistributed[]
     abortSignal: AbortSignal
+    hooks: EventEmitter<AgentToolCallExecuteHooks>
   }): PromiseOr<Omit<AgentToolExecuteResult, 'toolName'>[]>
 }
 
@@ -236,12 +243,14 @@ export class Agent<T extends PromptBasedToolName> {
     const loopMessages: (CoreAssistantMessage | CoreUserMessage)[] = []
     const loopImages: ImageDataWithId[] = []
     const taskScopeToolCalls: PromptBasedToolNameAndParamsDistributed[] = []
+    const eventBus = new EventEmitter<AgentToolCallExecuteHooks>()
 
     using _status = this.statusScope('running')
     let iteration = 0
     while (iteration < this.maxIterations) {
       if (abortController.signal.aborted) {
         this.log.debug('Agent aborted')
+        eventBus.emit('onAgentFinished')
         return
       }
       iteration++
@@ -296,7 +305,7 @@ export class Agent<T extends PromptBasedToolName> {
           if (agentMessage.content || agentMessage.reasoning) {
             taskMessageModifier = this.makeTaskMessageProxy()
           }
-          const toolResults = await this.executeToolCalls(currentLoopToolCalls, taskScopeToolCalls, loopImages, taskMessageModifier)
+          const toolResults = await this.executeToolCalls(currentLoopToolCalls, taskScopeToolCalls, loopImages, taskMessageModifier, eventBus)
           this.log.debug('Tool calls executed', currentLoopToolCalls, toolResults)
           if (toolResults.length === 0) {
             const errorResult = TagBuilder.fromStructured('error', { message: `Tool not found, available tools are: ${Object.keys(this.tools).join(', ')}` })
@@ -315,11 +324,13 @@ export class Agent<T extends PromptBasedToolName> {
         this.log.error('Error in chat stream', e, error)
         hasError = true
       }
+      eventBus.emit('onCurrentLoopFinished')
       const normalizedText = this.normalizeText(text)
       this.log.debug('Agent iteration end', iteration, { currentLoopToolCalls, text, normalizedText, hasError })
       if ((currentLoopToolCalls.length === 0 && normalizedText && !hasError) || shouldForceAnswer) {
         this.log.debug('No tool call, ending iteration')
         agentMessageManager.convertToAssistantMessage()
+        eventBus.emit('onAgentFinished')
         break
       }
       agentMessageManager.deleteAgentMessageIfEmpty()
@@ -385,7 +396,13 @@ export class Agent<T extends PromptBasedToolName> {
     })
   }
 
-  async executeToolCalls(toolCalls: PromptBasedToolNameAndParams<T>[], taskScopeToolCalls: PromptBasedToolNameAndParamsDistributed[], loopImages: ImageDataWithId[] = [], taskMessageModifier: TaskMessageModifier) {
+  async executeToolCalls(
+    toolCalls: PromptBasedToolNameAndParams<T>[],
+    taskScopeToolCalls: PromptBasedToolNameAndParamsDistributed[],
+    loopImages: ImageDataWithId[] = [],
+    taskMessageModifier: TaskMessageModifier,
+    eventBus: EventEmitter<AgentToolCallExecuteHooks>,
+  ) {
     toolCalls = this.deduplicateToolCalls(toolCalls)
     const currentLoopToolResults: AgentToolExecuteResult[] = []
     for (const chunk of toolCalls) {
@@ -405,6 +422,7 @@ export class Agent<T extends PromptBasedToolName> {
             loopImages,
             abortSignal: abortController.signal,
             taskMessageModifier,
+            hooks: eventBus,
           })
           for (const result of executedResults) {
             if (result.type === 'tool-result') {

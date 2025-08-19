@@ -22,7 +22,7 @@ import { Agent } from '../agent'
 import { initCurrentModel, isCurrentModelReady } from '../llm'
 import { makeMarkdownIcon } from '../markdown/content'
 import { getDocumentContentOfTabs } from '../tabs'
-import { executeFetchPage, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
+import { executeClickPage, executeFetchPage, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
 
 const log = logger.child('chat')
 
@@ -543,6 +543,7 @@ export class Chat {
         view_tab: { execute: executeViewTab },
         view_pdf: { execute: executeViewPdf },
         view_image: { execute: executeViewImage },
+        page_click: { execute: executeClickPage },
       },
     })
     this.currentAgent = agent

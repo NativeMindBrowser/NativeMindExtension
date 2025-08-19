@@ -6,8 +6,8 @@ import logger from '@/utils/logger'
 
 import { ExtractToolWithParams, PromptBasedToolType } from './tools'
 
-export interface PromptBasedToolParams {
-  [key: string]: z.ZodString | z.ZodNumber | z.ZodDefault<z.ZodNumber | z.ZodString> | z.ZodOptional<z.ZodString | z.ZodNumber>
+export interface PromptBasedToolParams<T extends [string, ...string[]] = [string, ...string[]]> {
+  [key: string]: z.ZodString | z.ZodNumber | z.ZodEnum<T> | z.ZodDefault<z.ZodNumber | z.ZodString | z.ZodBoolean> | z.ZodOptional<z.ZodString | z.ZodNumber | z.ZodBoolean>
 }
 
 export type InferredParams<T extends PromptBasedToolParams> = {

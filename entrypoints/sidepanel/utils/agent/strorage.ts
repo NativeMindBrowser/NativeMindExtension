@@ -4,6 +4,8 @@ import { ContextAttachment, ContextAttachmentStorage, TabAttachment } from '@/ty
 
 export class AgentStorage {
   private attachmentStorage: ContextAttachmentStorage
+  private items: Record<string, unknown> = {}
+
   constructor(private rawAttachmentStorage: ContextAttachmentStorage) {
     // clone the original storage to avoid changing after agent start
     this.attachmentStorage = cloneDeep(rawAttachmentStorage)
@@ -54,5 +56,21 @@ export class AgentStorage {
   isCurrentTab(tabId: number) {
     const currentTab = this.attachmentStorage.currentTab
     return currentTab?.type === 'tab' && currentTab.value.tabId === tabId
+  }
+
+  // scoped item will be clear after agent task finishes
+  getScopedItem<T>(key: string): T | undefined {
+    return this.items[key] as T | undefined
+  }
+
+  setScopedItem<T>(key: string, item: T): void {
+    this.items[key] = item
+  }
+
+  getOrSetScopedItem<T>(key: string, defaultValue: () => T): T {
+    if (!this.items[key]) {
+      this.items[key] = defaultValue()
+    }
+    return this.items[key] as T
   }
 }

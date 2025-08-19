@@ -1,16 +1,16 @@
 import { browser } from 'wxt/browser'
 
-import { makeAbortable } from '@/utils/abort-controller'
-import { parseHTMLWithTurndown } from '@/utils/document-parser'
+import { SerializedElementInfo } from '@/types/tab'
 import { useGlobalI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
 import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
-import { s2bRpc } from '@/utils/rpc'
 import { timeout } from '@/utils/timeout'
+import { getUserConfig } from '@/utils/user-config'
 
 import { AgentToolCallExecute } from '../../agent'
 import { SearchScraper } from '../../search'
+import { BrowserSession } from './browser-use/utils'
 
 export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async ({ params, abortSignal, taskMessageModifier }) => {
   const { t } = await useGlobalI18n()
@@ -66,17 +66,18 @@ export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async 
   }]
 }
 
-export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ params, taskMessageModifier, abortSignal }) => {
+export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
+  const userConfig = await getUserConfig()
+  const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
+  const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
   const { url } = params
-  const log = logger.child('tool:executeFetchPage')
   const { t } = await useGlobalI18n()
   const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: params.url }) })
   taskMsg.icon = 'taskFetchPage'
-  const searchScraper = new SearchScraper()
-  const [content] = await makeAbortable(timeout(searchScraper.fetchUrlsContent([url]), 15000), abortSignal).catch((err) => {
-    log.error('Fetch page failed', err)
-    return []
-  })
+  const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
+  await browserSession.navigateTo(url, { newTab: true, active: false, abortSignal })
+  hooks.addListener('onAgentFinished', () => browserSession.dispose())
+  const content = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
   if (!content) {
     taskMsg.icon = 'warningColored'
     taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })
@@ -96,20 +97,24 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
       results: {
         url,
         status: 'completed',
-        page_content: `URL: ${content.url}\n\n ${await parseHTMLWithTurndown(content.html)}`,
+        page_content: `URL: ${content.url}\n\n ${content.content}`,
       },
     }]
   }
 }
 
-export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params, taskMessageModifier, agentStorage, abortSignal }) => {
+export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params, taskMessageModifier, agentStorage, abortSignal, hooks }) => {
+  const userConfig = await getUserConfig()
+  const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
+  const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
   const log = logger.child('view_tab_execute')
   const { tab_id: attachmentId } = params
   const { t } = await useGlobalI18n()
   const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: attachmentId }) })
   taskMsg.icon = 'taskReadFile'
-  const tab = agentStorage.getById('tab', attachmentId)
-  const allTabAttachmentIds = [...new Set(agentStorage.getAllTabs().map((tab) => tab.value.id))]
+  const allTabs = agentStorage.getAllTabs()
+  const tab = allTabs.find((t) => attachmentId.includes(t.value.id)) // furry get method because llm may return id wrapped by something strange like <id>xxxx</id>
+  const allTabAttachmentIds = [...new Set(allTabs.map((tab) => tab.value.id))]
   const hasTab = !!tab && await browser.tabs.get(tab.value.tabId).then(() => true).catch((error) => {
     log.error('Failed to get tab info', { error, attachmentId, tabId: tab.value.id, allTabAttachmentIds })
     return false
@@ -132,33 +137,12 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
     agentStorage.persistCurrentTab()
   }
 
-  let content
-  try {
-    const docContent = await timeout(makeAbortable(s2bRpc.getDocumentContentOfTab(tab.value.tabId), abortSignal), 5000)
-    if (!docContent.textContent) {
-      throw new Error('No text content found')
-    }
-    content = docContent
-  }
-  catch (err) {
-    log.error('Failed to get tab content, try fallback parser', { err, attachmentId, tabId: tab.value.id })
-    try {
-      const htmlContent = await makeAbortable(s2bRpc.getHtmlContentOfTab(tab.value.tabId), abortSignal)
-      if (htmlContent) {
-        const textContent = await parseHTMLWithTurndown(htmlContent?.html)
-        content = {
-          title: tab.value.title,
-          url: tab.value.url,
-          textContent,
-        }
-      }
-    }
-    catch (err) {
-      log.error('Failed to get HTML content of tab', { err, attachmentId, tabId: tab.value.id })
-    }
-  }
+  const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
+  hooks.addListener('onAgentFinished', () => browserSession.dispose())
+  await browserSession.attachExistingTab(tab.value.tabId)
+  const result = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
 
-  if (!content?.textContent) {
+  if (!result?.content) {
     taskMsg.icon = 'warningColored'
     return [{
       type: 'tool-result',
@@ -174,7 +158,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
     results: {
       tab_id: attachmentId,
       status: 'completed',
-      tab_content: `Title: ${content.title}\nURL: ${content.url}\n\n${content.textContent}`,
+      tab_content: `Title: ${result.title}\nURL: ${result.url}\n\n${result.content}`,
     },
   }]
 }
@@ -270,4 +254,122 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
       message: `Image ${imageId} loaded as image #${imageIdx}`,
     },
   }]
+}
+
+export const executeClickPage: AgentToolCallExecute<'page_click'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
+  const userConfig = await getUserConfig()
+  const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
+  const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
+  const { id } = params
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: `Clicking element: ${id}` })
+  taskMsg.icon = 'taskReadFile'
+  const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
+  hooks.addListener('onAgentFinished', () => browserSession.dispose())
+  if (!browserSession.activeTab) {
+    taskMsg.icon = 'warningColored'
+    taskMsg.summary = 'No active tab found'
+    return [{
+      type: 'tool-result',
+      results: {
+        element_id: id,
+        error_message: 'No active tab found, you need to use view_tab or fetch_page first',
+        status: 'failed',
+      },
+    }]
+  }
+  const element = await browserSession.getElementByInternalId(id)
+  if (!element) {
+    taskMsg.icon = 'warningColored'
+    taskMsg.summary = `Element not found: id(${id})`
+    return [{
+      type: 'tool-result',
+      results: {
+        element_id: id,
+        error_message: `Element with ID "${id}" not found`,
+        status: 'failed',
+      },
+    }]
+  }
+
+  taskMsg.summary = `Clicking element: ${element.innerText?.slice(0, 10)}...(id:${id})`
+  const checkIsNavigationLink = (element: SerializedElementInfo): element is SerializedElementInfo & { attributes: { href: string } } => {
+    const tagName = element.tagName.toLowerCase()
+    if (tagName === 'a' && element.attributes.href) {
+      const link = new URL(element.attributes.href, element.ownerDocument.url)
+      const siteUrl = new URL(element.ownerDocument.url)
+      if (link.origin === siteUrl.origin && link.pathname === siteUrl.pathname && link.search === siteUrl.search) {
+        return false
+      }
+      return true
+    }
+    return false
+  }
+  if (checkIsNavigationLink(element)) {
+    // fake click to avoid navigation by click
+    taskMsg.summary = `Navigating to: ${element.attributes.href?.slice(0, 15)}...(id:${id})`
+    try {
+      const url = new URL(element.attributes.href, element.ownerDocument.url)
+      await browserSession.navigateTo(url.href, { abortSignal, newTab: true })
+    }
+    catch (err) {
+      taskMsg.icon = 'warningColored'
+      taskMsg.summary = `Navigation failed: ${err}`
+      return [{
+        type: 'tool-result',
+        results: {
+          element_id: id,
+          error_message: `Failed to click element: ${err}`,
+          status: 'failed',
+        },
+      }]
+    }
+  }
+  else {
+    try {
+      await browserSession.clickElementByInternalId(id)
+    }
+    catch (err) {
+      taskMsg.icon = 'warningColored'
+      taskMsg.summary = `Click failed: ${err}`
+      return [{
+        type: 'tool-result',
+        results: {
+          element_id: id,
+          error_message: `Failed to click element: ${err}`,
+          status: 'failed',
+        },
+      }]
+    }
+  }
+  const currentTabTitle = (await browserSession.activeTab?.tab.getInfo())?.title
+  taskMsg.summary = `Reading page: ${currentTabTitle}`
+  const result = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
+  if (!result) {
+    taskMsg.icon = 'warningColored'
+    taskMsg.summary = `Failed to read page: ${currentTabTitle}`
+    return [{
+      type: 'tool-result',
+      results: {
+        element_id: id,
+        error_message: `Failed to read page: ${currentTabTitle}`,
+        status: 'failed',
+      },
+    }]
+  }
+
+  taskMsg.summary = `Element clicked: ${element.innerText?.slice(0, 10)}...(id:${id})`
+  return [
+    {
+      type: 'tool-result',
+      results: {
+        element_id: id,
+        status: 'completed',
+        current_tab_info: {
+          title: result.title,
+          url: result.url,
+          content: result.content,
+        },
+      },
+    },
+  ]
 }

@@ -16,10 +16,10 @@ import { useTemplateRef, watch } from 'vue'
 import { browser } from 'wxt/browser'
 
 import { useZIndex } from '@/composables/useZIndex'
-import { sleep } from '@/utils/async'
 import { ContextMenuId } from '@/utils/context-menu'
 import { FileGetter } from '@/utils/file'
 import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
+import { sleep } from '@/utils/sleep'
 import { extractFileNameFromUrl } from '@/utils/url'
 import { getUserConfig } from '@/utils/user-config'
 
