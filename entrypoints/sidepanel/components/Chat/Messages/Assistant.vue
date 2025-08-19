@@ -70,16 +70,20 @@
             <IconArrowDown class="w-4 text-text-tertiary" />
           </div>
         </div>
-        <div
+        <ScrollContainer
           v-if="showReasoning"
-          class="wrap-anywhere pl-6 border-[#AEB5BD]"
-          :class="showClampedReasoning && 'line-clamp-3'"
+          :class="classNames('wrap-anywhere pl-6 border-[#AEB5BD] overflow-auto', showClampedReasoning ? 'h-[3.3em] leading-[1.5em]':'')"
+          :arrivalShadow="{
+            top: { color: '#F5F6FB', size: 12, offset: 8 },
+            bottom: { color: '#F5F6FB', size: 12, offset: 8 }
+          }"
+          :autoSnap="{bottom: (showClampedReasoning && !message.done) ? true : false}"
         >
           <MarkdownViewer
             :text="message.reasoning"
             class="text-sm text-text-quaternary"
           />
-        </div>
+        </ScrollContainer>
         <div v-if="message.content">
           <MarkdownViewer
             :text="message.content"
@@ -89,7 +93,7 @@
       </div>
       <motion.div
         v-if="!message.done && !message.content && !message.reasoning"
-        class="absolute -top-1 left-0"
+        class="absolute top-0 left-0 flex items-center justify-start gap-1.5 overflow-hidden whitespace-nowrap"
         :initial="{ opacity: 1 }"
         :animate="{ opacity: [1, 0.3, 1] }"
         :transition="{
@@ -100,10 +104,12 @@
           }
         }"
       >
-        <Loading
-          :size="16"
-          class="text-text-secondary"
-        />
+        <div class="shrink-0 grow-0 size-5 p-0.5">
+          <Loading :size="16" />
+        </div>
+        <Text color="primary">
+          {{ t('chat.messages.thinking') }}
+        </Text>
       </motion.div>
     </div>
   </div>
@@ -118,8 +124,10 @@ import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
 import IconTickCircle from '@/assets/icons/tick-circle.svg?component'
 import IconWarning from '@/assets/icons/warning-circle.svg?component'
 import Loading from '@/components/Loading.vue'
+import ScrollContainer from '@/components/ScrollContainer.vue'
 import Text from '@/components/ui/Text.vue'
 import { AgentMessageV1, AssistantMessageV1 } from '@/types/chat'
+import { classNames } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'
 const props = defineProps<{
