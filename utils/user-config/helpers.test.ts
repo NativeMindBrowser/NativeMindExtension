@@ -131,4 +131,15 @@ describe('user config', () => {
 
     expect(newConfig2.get()).toBe('defaultValue')
   })
+
+  it('reset default', async () => {
+    resetFakeBrowser()
+
+    // first config version
+    const config = await new Config('testKey').default('defaultValue' as string | undefined).build()
+    config.set('test-1')
+    expect(await storage.getItem(config.areaKey)).toBe('test-1')
+    config.resetDefault()
+    expect(await storage.getItem(config.areaKey)).toBe(null)
+  })
 })
