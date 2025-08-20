@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v1.7.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.0...v1.7.2)
+
+### 🩹 Fixes
+
+- **settings:** Quick actions error after reset default ([4975780](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4975780))
+- **input:** Add type prop to input component ([d51fbe0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d51fbe0))
+
+### 🏡 Chore
+
+- **package:** Revert version to 1.7.1 from 1.8.0-beta.0 ([aba152d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/aba152d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.1...v1.8.0-beta.0)
