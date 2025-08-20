@@ -113,7 +113,7 @@ export class Config<Value, DefaultValue extends Value | undefined> {
       newValue = newValue ?? undefined
       if (newValue !== oldValue) {
         ignoreSetLocalStorage = true
-        refValue.value = newValue
+        refValue.value = (newValue === undefined || newValue === null) ? structuredClone(defaultValue) : newValue
         ignoreSetLocalStorage = false
       }
     })
