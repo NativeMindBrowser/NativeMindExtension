@@ -37,6 +37,15 @@
               :defaultValue="defaultChatSystemPrompt"
             />
           </Section>
+          <Section
+            :title="t('settings.chat.basic_config.thinking_visibility')"
+            :description="t('settings.chat.basic_config.thinking_visibility_description')"
+          >
+            <RadioGroup
+              v-model="thinkingVisibility"
+              :options="thinkingVisibilityRadioOptions"
+            />
+          </Section>
         </div>
       </Block>
       <ScrollTarget
@@ -79,6 +88,7 @@
 import { watch } from 'vue'
 
 import ModelSelector from '@/components/ModelSelector.vue'
+import RadioGroup from '@/components/RadioGroup.vue'
 import ScrollTarget from '@/components/ScrollTarget.vue'
 import Textarea from '@/components/Textarea.vue'
 import Button from '@/components/ui/Button.vue'
@@ -106,6 +116,25 @@ const chatSystemPrompt = userConfig.chat.systemPrompt.toRef()
 const defaultChatSystemPrompt = chatSystemPrompt.defaultValue
 const quickActions = userConfig.chat.quickActions.actions.toRef()
 const defaultQuickActions = userConfig.chat.quickActions.actions.getDefault()
+const thinkingVisibility = userConfig.chat.thinkingVisibility.toRef()
+
+const thinkingVisibilityRadioOptions = [
+  {
+    value: 'hide' as const,
+    label: t('settings.chat.basic_config.thinking_visibility_hide'),
+    tips: t('settings.chat.basic_config.thinking_visibility_hide_description'),
+  },
+  {
+    value: 'preview' as const,
+    label: t('settings.chat.basic_config.thinking_visibility_preview'),
+    tips: t('settings.chat.basic_config.thinking_visibility_preview_description'),
+  },
+  {
+    value: 'full' as const,
+    label: t('settings.chat.basic_config.thinking_visibility_full'),
+    tips: t('settings.chat.basic_config.thinking_visibility_full_description'),
+  },
+]
 const resetDefaultQuickActions = () => {
   confirm({
     message: t('settings.chat.quick_actions.reset_to_default_confirm'),

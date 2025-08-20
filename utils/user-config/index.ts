@@ -399,6 +399,7 @@ export async function _getUserConfig() {
       quickActions: {
         actions: await new Config('chat.quickActions.actions_4').default(DEFAULT_QUICK_ACTIONS).build(),
       },
+      thinkingVisibility: await new Config('chat.thinkingVisibility').default('preview' as 'hide' | 'preview' | 'full').build(),
     },
     translation: {
       model: await new Config<string, undefined>('translation.model').build(),

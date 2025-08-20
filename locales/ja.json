@@ -275,7 +275,15 @@
         "chat_model": "チャットモデル",
         "chat_model_description": "チャット会話用のAIモデルを選択してください",
         "chat_system_prompt": "チャットシステムプロンプト",
-        "chat_system_prompt_description": "チャット会話中のAIの行動と役割を定義する"
+        "chat_system_prompt_description": "チャット会話中のAIの行動と役割を定義する",
+        "thinking_visibility": "思考プロセス表示",
+        "thinking_visibility_description": "LLM推論時の思考プロセスの表示方法を選択",
+        "thinking_visibility_hide": "思考を隠す",
+        "thinking_visibility_hide_description": "ローディングと最終回答のみ表示",
+        "thinking_visibility_preview": "思考をプレビュー",
+        "thinking_visibility_preview_description": "最後の2行を表示、展開可能",
+        "thinking_visibility_full": "完全な思考を表示",
+        "thinking_visibility_full_description": "デフォルトですべて表示、折りたたみ可能"
       },
       "quick_actions": {
         "title": "クイックアクション",

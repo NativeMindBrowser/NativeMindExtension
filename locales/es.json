@@ -300,7 +300,15 @@
         "chat_model": "Modelo de chat",
         "chat_model_description": "Selecciona el modelo de IA para conversaciones de chat",
         "chat_system_prompt": "Sistema de Indicaciones de Chat",
-        "chat_system_prompt_description": "Define el comportamiento y el rol de la IA durante las conversaciones de chat"
+        "chat_system_prompt_description": "Define el comportamiento y el rol de la IA durante las conversaciones de chat",
+        "thinking_visibility": "Visibilidad del Proceso de Pensamiento",
+        "thinking_visibility_description": "Elige cómo se muestra el proceso de pensamiento durante el razonamiento LLM",
+        "thinking_visibility_hide": "Ocultar Pensamiento",
+        "thinking_visibility_hide_description": "Solo mostrar carga y respuesta final",
+        "thinking_visibility_preview": "Vista Previa del Pensamiento",
+        "thinking_visibility_preview_description": "Mostrar las últimas 2 líneas, expandible",
+        "thinking_visibility_full": "Mostrar Pensamiento Completo",
+        "thinking_visibility_full_description": "Mostrar todo por defecto, colapsable"
       },
       "quick_actions": {
         "title": "Acciones Rápidas",
