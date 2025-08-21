@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v1.8.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.2...v1.8.0-beta.1)
+
+### 🩹 Fixes
+
+- **agent:** Handle ModelRequestError and UnknownError in agent loop ([d81a37a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d81a37a))
+- **quick-actions:** Trigger quick action only in the side panel of the current window ([fd6e323](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fd6e323))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.0...v1.7.2)
