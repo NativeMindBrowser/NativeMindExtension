@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events'
 import { Browser } from 'wxt/browser'
 
+import { TabInfo } from '@/types/tab'
+
 import type { ContextMenuId } from '../context-menu'
 import { logger } from '../logger'
 import { getSidepanelStatus } from '../sidepanel-status'
@@ -8,7 +10,7 @@ import { getSidepanelStatus } from '../sidepanel-status'
 const eventEmitter = new EventEmitter()
 
 export type Events = {
-  contextMenuClicked(options: Browser.contextMenus.OnClickData & { menuItemId: ContextMenuId }): void
+  contextMenuClicked(options: Browser.contextMenus.OnClickData & { menuItemId: ContextMenuId, tabInfo: TabInfo }): void
   updateModelList(): void
   updateChatList(): void
 }

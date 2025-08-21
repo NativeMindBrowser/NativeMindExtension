@@ -8,6 +8,7 @@ import { EXTENSION_SHORT_NAME, INVALID_URLS } from '@/utils/constants'
 import { CONTEXT_MENU_ITEM_TRANSLATE_PAGE, ContextMenuId, ContextMenuManager } from '@/utils/context-menu'
 import logger from '@/utils/logger'
 import { b2sRpc, bgBroadcastRpc } from '@/utils/rpc'
+import { tabToTabInfo } from '@/utils/tab'
 import { registerTabStoreCleanupListener } from '@/utils/tab-store'
 import { timeout } from '@/utils/timeout'
 import { translationCache } from '@/utils/translation-cache'
@@ -127,13 +128,10 @@ export default defineBackground(() => {
           await browser.sidebarAction.open()
           await waitForSidepanelLoaded().catch((err) => logger.error(err))
         }
-        await b2sRpc.emit('contextMenuClicked', { ...info, menuItemId: info.menuItemId as ContextMenuId })
+        await b2sRpc.emit('contextMenuClicked', { ...info, menuItemId: info.menuItemId as ContextMenuId, tabInfo: tabToTabInfo(tab) })
       }
       else {
-        bgBroadcastRpc.emit('contextMenuClicked', {
-          _toTab: tab?.id,
-          ...info,
-        })
+        bgBroadcastRpc.emit('contextMenuClicked', { _toTab: tab?.id, ...info })
       }
     }
   })

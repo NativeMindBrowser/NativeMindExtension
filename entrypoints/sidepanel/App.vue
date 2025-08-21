@@ -13,6 +13,7 @@
 <script setup lang="tsx">
 import mime from 'mime'
 import { useTemplateRef, watch } from 'vue'
+import { browser } from 'wxt/browser'
 
 import { useZIndex } from '@/composables/useZIndex'
 import { sleep } from '@/utils/async'
@@ -35,6 +36,8 @@ const userConfig = await getUserConfig()
 
 registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
   const menuItemId = e.menuItemId as ContextMenuId
+  const windowId = e.tabInfo.windowId
+  if (windowId !== (await browser.windows.getCurrent()).id) return
   if (menuItemId === 'native-mind-settings') {
     showSettings()
   }
