@@ -7,7 +7,7 @@ import { AssistantMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData, ImageDataWithId } from '@/types/image'
 import { TagBuilderJSON } from '@/types/prompt'
-import { AbortError, AiSDKError, AppError, ErrorCode, fromError, ModelNotFoundError, ParseFunctionCallError } from '@/utils/error'
+import { AbortError, AiSDKError, AppError, ErrorCode, fromError, ModelNotFoundError, ModelRequestError, ParseFunctionCallError, UnknownError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
@@ -403,6 +403,20 @@ export class Agent<T extends PromptBasedToolName> {
       errorMsg.isError = true
       errorMsg.content = t('errors.model_not_found')
       // unresolvable error, break the loop
+      return false
+    }
+    else if (error instanceof ModelRequestError) {
+      const { t } = await useGlobalI18n()
+      const errorMsg = agentMessageManager.convertToAssistantMessage()
+      errorMsg.isError = true
+      errorMsg.content = t('errors.model_request_error')
+      return false
+    }
+    else if (error instanceof UnknownError) {
+      const { t } = await useGlobalI18n()
+      const errorMsg = agentMessageManager.convertToAssistantMessage()
+      errorMsg.isError = true
+      errorMsg.content = t('errors.unknown_error', { error: error.message })
       return false
     }
     return true // continue loop
