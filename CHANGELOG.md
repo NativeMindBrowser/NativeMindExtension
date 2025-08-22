@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.8.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.1...v1.8.0-beta.2)
+
+### 🚀 Enhancements
+
+- **browser-use:** Support browser-use in very early stage ([c58250f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c58250f))
+
+### 💅 Refactors
+
+- **agent:** Refactor AgentStorage ([a772e75](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a772e75))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.2...v1.8.0-beta.1)
