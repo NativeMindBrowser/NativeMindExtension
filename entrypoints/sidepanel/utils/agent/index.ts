@@ -1,8 +1,8 @@
 import { CoreAssistantMessage, CoreMessage, CoreUserMessage } from 'ai'
-import { cloneDeep, isEqual } from 'es-toolkit'
+import { isEqual } from 'es-toolkit'
 import { Ref, ref } from 'vue'
 
-import { AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, ContextAttachment, ContextAttachmentStorage, TabAttachment } from '@/types/chat'
+import { AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, ContextAttachmentStorage } from '@/types/chat'
 import { AssistantMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData, ImageDataWithId } from '@/types/image'
@@ -17,6 +17,7 @@ import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
 
 import { ReactiveHistoryManager } from '../chat'
 import { streamTextInBackground } from '../llm'
+import { AgentStorage } from './strorage'
 
 export type AgentToolExecuteResultToolResult = {
   type: 'tool-result'
@@ -58,61 +59,6 @@ export type AgentTaskGroupMessageManager = {
   addTask: (msg: Pick<AgentTaskMessageV1, 'summary' | 'details'>) => AgentTaskMessageV1
 }
 
-export class AgentStorage {
-  private attachmentStorage: ContextAttachmentStorage
-  constructor(private rawAttachmentStorage: ContextAttachmentStorage) {
-    // clone the original storage to avoid changing after agent start
-    this.attachmentStorage = cloneDeep(rawAttachmentStorage)
-  }
-
-  getById<T extends ContextAttachment['type']>(type: T, id: string): ContextAttachment & { type: T } | undefined {
-    if (this.attachmentStorage.currentTab?.value.id === id && this.attachmentStorage.currentTab.type === type) {
-      return this.attachmentStorage.currentTab as ContextAttachment & { type: T } | undefined
-    }
-    return this.attachmentStorage.attachments.find((attachment) => attachment.value.id === id && attachment.type === type) as ContextAttachment & { type: T } | undefined
-  }
-
-  getAllTabs(): TabAttachment[] {
-    const tabAttachments: TabAttachment[] = []
-    if (this.attachmentStorage.currentTab?.type === 'tab') {
-      tabAttachments.push(this.attachmentStorage.currentTab as TabAttachment)
-    }
-    tabAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'tab') as TabAttachment[])
-    return tabAttachments
-  }
-
-  getAllImages() {
-    const imageAttachments = []
-    if (this.attachmentStorage.currentTab?.type === 'image') {
-      imageAttachments.push(this.attachmentStorage.currentTab)
-    }
-    imageAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'image'))
-    return imageAttachments
-  }
-
-  getAllPDFs() {
-    const pdfAttachments = []
-    if (this.attachmentStorage.currentTab?.type === 'pdf') {
-      pdfAttachments.push(this.attachmentStorage.currentTab)
-    }
-    pdfAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'pdf'))
-    return pdfAttachments
-  }
-
-  persistCurrentTab() {
-    const currentTab = this.attachmentStorage.currentTab
-    if (currentTab?.type !== 'tab') return
-    const currentTabId = currentTab.value.tabId
-    if (this.rawAttachmentStorage.attachments.some((attachment) => attachment.type === 'tab' && attachment.value.tabId === currentTabId)) return
-    this.rawAttachmentStorage.attachments.push(currentTab)
-  }
-
-  isCurrentTab(tabId: number) {
-    const currentTab = this.attachmentStorage.currentTab
-    return currentTab?.type === 'tab' && currentTab.value.tabId === tabId
-  }
-}
-
 interface AgentOptions<T extends PromptBasedToolName> {
   historyManager: ReactiveHistoryManager
   attachmentStorage: ContextAttachmentStorage
@@ -136,6 +82,12 @@ export class Agent<T extends PromptBasedToolName> {
     this.tools = options.tools
     this.agentStorage = new AgentStorage(options.attachmentStorage)
     this.maxIterations = options.maxIterations || 6
+  }
+
+  createAbortController() {
+    const abortController = new AbortController()
+    this.abortControllers.push(abortController)
+    return abortController
   }
 
   statusScope(status: Exclude<AgentStatus, 'idle'>) {
@@ -275,8 +227,7 @@ export class Agent<T extends PromptBasedToolName> {
 
   async runWithPrompt(baseMessages: CoreMessage[]) {
     this.stop()
-    const abortController = new AbortController()
-    this.abortControllers.push(abortController)
+    const abortController = this.createAbortController()
     let reasoningStart: number | undefined
     this.log.debug('baseMessages', baseMessages)
     // clone the message to avoid ui changes in agent's running process
@@ -333,9 +284,7 @@ export class Agent<T extends PromptBasedToolName> {
           }
           else if (chunk.type === 'tool-call') {
             this.log.debug('Tool call received', chunk)
-            const tagText = TagBuilder.fromStructured('tool_calls', {
-              [chunk.toolName]: chunk.args,
-            }).build()
+            const tagText = TagBuilder.fromStructured('tool_calls', { [chunk.toolName]: chunk.args }).build()
             currentLoopAssistantRawMessage.content += tagText
             const toolCall = { toolName: chunk.toolName as T, params: chunk.args as PromptBasedToolNameAndParams<T>['params'] } as PromptBasedToolNameAndParams<T>
             currentLoopToolCalls.push(toolCall)
@@ -350,9 +299,7 @@ export class Agent<T extends PromptBasedToolName> {
           const toolResults = await this.executeToolCalls(currentLoopToolCalls, taskScopeToolCalls, loopImages, taskMessageModifier)
           this.log.debug('Tool calls executed', currentLoopToolCalls, toolResults)
           if (toolResults.length === 0) {
-            const errorResult = TagBuilder.fromStructured('error', {
-              message: `Tool not found, available tools are: ${Object.keys(this.tools).join(', ')}`,
-            })
+            const errorResult = TagBuilder.fromStructured('error', { message: `Tool not found, available tools are: ${Object.keys(this.tools).join(', ')}` })
             loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
           }
           else {
@@ -419,7 +366,7 @@ export class Agent<T extends PromptBasedToolName> {
       errorMsg.content = t('errors.unknown_error', { error: error.message })
       return false
     }
-    return true // continue loop
+    return true // continue loop if not fatal error
   }
 
   deduplicateToolCalls(toolCalls: PromptBasedToolNameAndParams<T>[]) {
