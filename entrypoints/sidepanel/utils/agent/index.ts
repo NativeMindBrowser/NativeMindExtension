@@ -3,31 +3,37 @@ import { isEqual } from 'es-toolkit'
 import EventEmitter from 'events'
 import { Ref, ref } from 'vue'
 
-import { AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, ContextAttachmentStorage } from '@/types/chat'
+import { AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1 } from '@/types/chat'
 import { AssistantMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData, ImageDataWithId } from '@/types/image'
 import { TagBuilderJSON } from '@/types/prompt'
+import { AGENT_LOOP_COUNT_REFILL_USER_PROMPT } from '@/utils/constants'
 import { AbortError, AiSDKError, AppError, ErrorCode, fromError, ModelNotFoundError, ModelRequestError, ParseFunctionCallError, UnknownError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
 import { GetPromptBasedTool, PromptBasedToolName, PromptBasedToolNameAndParams } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
-import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
+import { renderPrompt, TagBuilder, UserPrompt } from '@/utils/prompts/helpers'
 
 import { ReactiveHistoryManager } from '../chat'
 import { streamTextInBackground } from '../llm'
 import { AgentStorage } from './strorage'
 
+type AgentToolCallHandOffResult = {
+  type: 'hand-off'
+  overrideSystemPrompt?: string
+  userPrompt: string
+}
+
 export type AgentToolExecuteResultToolResult = {
   type: 'tool-result'
-  toolName: string
   results: TagBuilderJSON
 }
 
 // Tool results for next agent loop
-export type AgentToolExecuteResult = AgentToolExecuteResultToolResult
+export type AgentToolExecuteResult = AgentToolExecuteResultToolResult | AgentToolCallHandOffResult
 
 type Distribute<T extends PromptBasedToolName> = T extends unknown ? PromptBasedToolNameAndParams<T> : never
 type PromptBasedToolNameAndParamsDistributed = Distribute<PromptBasedToolName>
@@ -47,7 +53,7 @@ export type AgentToolCallExecute<T extends PromptBasedToolName> = {
     taskScopeToolCalls: PromptBasedToolNameAndParamsDistributed[]
     abortSignal: AbortSignal
     hooks: EventEmitter<AgentToolCallExecuteHooks>
-  }): PromiseOr<Omit<AgentToolExecuteResult, 'toolName'>[]>
+  }): PromiseOr<AgentToolExecuteResult[]>
 }
 
 export type AgentToolCall<T extends PromptBasedToolName> = {
@@ -68,8 +74,7 @@ export type AgentTaskGroupMessageManager = {
 
 interface AgentOptions<T extends PromptBasedToolName> {
   historyManager: ReactiveHistoryManager
-  attachmentStorage: ContextAttachmentStorage
-  chatId: string
+  agentStorage: AgentStorage
   tools: AgentToolCall<T>
   maxIterations?: number
 }
@@ -87,7 +92,7 @@ export class Agent<T extends PromptBasedToolName> {
   constructor(public options: AgentOptions<T>) {
     this.historyManager = options.historyManager
     this.tools = options.tools
-    this.agentStorage = new AgentStorage(options.attachmentStorage)
+    this.agentStorage = options.agentStorage
     this.maxIterations = options.maxIterations || 6
   }
 
@@ -125,7 +130,17 @@ export class Agent<T extends PromptBasedToolName> {
     return messages
   }
 
-  injectContentToLastMessage(messages: CoreMessage[], content?: string, newLine = true) {
+  overrideSystemPrompt(messages: CoreMessage[], systemPrompt?: string) {
+    const clonedMessages = structuredClone(messages)
+    if (!systemPrompt) return clonedMessages
+    const systemMessage = clonedMessages.find((msg) => msg.role === 'system')
+    if (systemMessage) {
+      systemMessage.content = systemPrompt
+    }
+    return clonedMessages
+  }
+
+  injectContentToLastUserMessage(messages: CoreMessage[], content?: string, newLine = true) {
     if (!content) return messages
     content = newLine ? `\n${content}` : content
     const lastMessage = messages[messages.length - 1]
@@ -215,7 +230,7 @@ export class Agent<T extends PromptBasedToolName> {
     }
   }
 
-  private toolResultsToPrompt(toolResults: (AgentToolExecuteResult & { type: 'tool-result' })[]): string {
+  private toolResultsToPrompt(toolResults: (AgentToolExecuteResultToolResult & { toolName: T })[]): string {
     const prompts = []
     for (const toolResult of toolResults) {
       const toolName = toolResult.toolName
@@ -232,11 +247,20 @@ export class Agent<T extends PromptBasedToolName> {
     return TagBuilder.fromStructured('tool_results', prompts).build()
   }
 
+  private extractTheLastUserMessageText(baseMessages: CoreMessage[]): string | undefined {
+    const lastUserMessage = baseMessages[baseMessages.length - 1]
+    if (lastUserMessage?.role === 'user') {
+      return new UserPrompt(lastUserMessage.content).extractText()
+    }
+  }
+
   async runWithPrompt(baseMessages: CoreMessage[]) {
     this.stop()
     const abortController = this.createAbortController()
     let reasoningStart: number | undefined
     this.log.debug('baseMessages', baseMessages)
+    const originalUserMessageText = this.extractTheLastUserMessageText(baseMessages)
+    if (!originalUserMessageText) this.log.warn('Missing original user message')
     // clone the message to avoid ui changes in agent's running process
 
     // this messages only used for the agent iteration but not user-facing
@@ -255,7 +279,8 @@ export class Agent<T extends PromptBasedToolName> {
       }
       iteration++
       const shouldForceAnswer = iteration === this.maxIterations
-      this.log.debug('Agent iteration', iteration)
+      const shouldRefillOriginalUserPrompt = iteration >= AGENT_LOOP_COUNT_REFILL_USER_PROMPT
+      this.log.debug('Agent iteration', iteration, { shouldForceAnswer, shouldRefillOriginalUserPrompt })
 
       const thisLoopMessages: CoreMessage[] = [...baseMessages, ...loopMessages]
       if (shouldForceAnswer) {
@@ -267,7 +292,7 @@ export class Agent<T extends PromptBasedToolName> {
       const response = streamTextInBackground({
         abortSignal: abortController.signal,
         // do not modify the original messages to avoid duplicated images in history
-        messages: this.injectImagesLastMessage(thisLoopMessages, loopImages),
+        messages: this.injectContentToLastUserMessage(this.injectImagesLastMessage(thisLoopMessages, loopImages), shouldRefillOriginalUserPrompt ? originalUserMessageText : undefined),
       })
       let hasError = false
       let text = ''
@@ -311,8 +336,21 @@ export class Agent<T extends PromptBasedToolName> {
             const errorResult = TagBuilder.fromStructured('error', { message: `Tool not found, available tools are: ${Object.keys(this.tools).join(', ')}` })
             loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
           }
+          else if (toolResults.some((result) => result.type === 'hand-off')) {
+            const handoffResult = toolResults.find((result) => result.type === 'hand-off')
+            if (handoffResult) {
+              // This feature is in beta, not used yet
+              this.log.debug('Hand-off detected', handoffResult)
+              const subAgent = new Agent({ tools: this.tools, agentStorage: this.agentStorage, historyManager: this.historyManager, maxIterations: this.maxIterations })
+              abortController.signal.addEventListener('abort', () => subAgent.stop())
+              loopMessages.push({ role: 'user', content: handoffResult.userPrompt })
+              const lastMsg = await subAgent.runWithPrompt(this.overrideSystemPrompt([...baseMessages, ...loopMessages], handoffResult.overrideSystemPrompt))
+              this.log.debug('Sub-agent finished', lastMsg)
+              if (lastMsg?.content) loopMessages.push(lastMsg)
+            }
+          }
           else {
-            loopMessages.push({ role: 'user', content: this.toolResultsToPrompt(toolResults) })
+            loopMessages.push({ role: 'user', content: this.toolResultsToPrompt(toolResults.filter((t) => t.type === 'tool-result')) })
           }
         }
       }
@@ -329,9 +367,9 @@ export class Agent<T extends PromptBasedToolName> {
       this.log.debug('Agent iteration end', iteration, { currentLoopToolCalls, text, normalizedText, hasError })
       if ((currentLoopToolCalls.length === 0 && normalizedText && !hasError) || shouldForceAnswer) {
         this.log.debug('No tool call, ending iteration')
-        agentMessageManager.convertToAssistantMessage()
+        const lastMsg = agentMessageManager.convertToAssistantMessage()
         eventBus.emit('onAgentFinished')
-        break
+        return lastMsg
       }
       agentMessageManager.deleteAgentMessageIfEmpty()
     }
@@ -404,7 +442,7 @@ export class Agent<T extends PromptBasedToolName> {
     eventBus: EventEmitter<AgentToolCallExecuteHooks>,
   ) {
     toolCalls = this.deduplicateToolCalls(toolCalls)
-    const currentLoopToolResults: AgentToolExecuteResult[] = []
+    const currentLoopToolResults: (AgentToolExecuteResult & { toolName: T })[] = []
     for (const chunk of toolCalls) {
       const toolName = chunk.toolName as T
       const tool = this.tools[toolName]
@@ -425,12 +463,7 @@ export class Agent<T extends PromptBasedToolName> {
             hooks: eventBus,
           })
           for (const result of executedResults) {
-            if (result.type === 'tool-result') {
-              currentLoopToolResults.push({ ...result, toolName })
-            }
-            else {
-              throw new Error(`Unexpected tool result type: ${result.type}`)
-            }
+            currentLoopToolResults.push({ ...result, toolName })
           }
           this.log.debug('Tool call executed', toolName, executedResults)
         }

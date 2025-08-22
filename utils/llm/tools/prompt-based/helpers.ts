@@ -281,3 +281,16 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
     return this.convertToXMLParams(this.parameters)
   }
 }
+
+export class PromptBasedHandOffTool<Name extends string, SubTools extends PromptBasedTool<string, PromptBasedToolParams>[]> extends PromptBasedTool<string, PromptBasedToolParams> {
+  public subTools: SubTools
+  public overrideSystemPrompt?: string
+  constructor(public toolName: Name, public instruction: string, private options: { subTools: SubTools, overrideSystemPrompt?: (tools: SubTools) => string }) {
+    super(toolName, instruction, {})
+    this.subTools = options.subTools
+  }
+
+  get systemPrompt() {
+    return this.overrideSystemPrompt ?? this.options.overrideSystemPrompt?.(this.subTools)
+  }
+}

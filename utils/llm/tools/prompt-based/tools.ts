@@ -23,8 +23,12 @@ export const fetchPageTool = new PromptBasedTool('fetch_page', 'Get detailed con
   url: z.string().url().describe(''),
 })
 
-export const pageClickTool = new PromptBasedTool('page_click', 'Click an element on the page by its id to find more information about it', {
-  id: z.string().describe('The id of the element to click'),
+export const navigateToTool = new PromptBasedTool('navigate_to', 'Navigate to a specific interactive element (link) using its ID from previous page views', {
+  element_id: z.string().describe('The id of the element to navigate to'),
+})
+
+export const browserUseHandOffs = new PromptBasedTool('browser_use', 'Use the browser to navigate, interact with web pages, and retrieve information', {
+  query: z.string().describe('The action to perform in the browser'),
 })
 
 export const promptBasedTools = [
@@ -33,7 +37,17 @@ export const promptBasedTools = [
   viewImageTool,
   searchOnlineTool,
   fetchPageTool,
-  pageClickTool,
+  navigateToTool,
+  browserUseHandOffs,
+]
+
+export const chatDefaultPromptBasedTools = [
+  viewTabTool,
+  viewPdfTool,
+  viewImageTool,
+  searchOnlineTool,
+  fetchPageTool,
+  navigateToTool,
 ]
 
 export type PromptBasedToolType = typeof promptBasedTools[number]

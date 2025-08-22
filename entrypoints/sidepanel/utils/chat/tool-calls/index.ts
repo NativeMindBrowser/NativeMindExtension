@@ -2,9 +2,12 @@ import { browser } from 'wxt/browser'
 
 import { SerializedElementInfo } from '@/types/tab'
 import { useGlobalI18n } from '@/utils/i18n'
+import { fetchPageTool, navigateToTool, searchOnlineTool, viewTabTool } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
 import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { browserUseSystemPrompt } from '@/utils/prompts/agent'
+import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
 import { timeout } from '@/utils/timeout'
 import { getUserConfig } from '@/utils/user-config'
 
@@ -256,12 +259,12 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
   }]
 }
 
-export const executeClickPage: AgentToolCallExecute<'page_click'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
+export const executeNavigateTo: AgentToolCallExecute<'navigate_to'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
   const userConfig = await getUserConfig()
   const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
-  const { id } = params
-  const taskMsg = taskMessageModifier.addTaskMessage({ summary: `Clicking element: ${id}` })
+  const { element_id: elementId } = params
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: `Click ${elementId} and jump` })
   taskMsg.icon = 'taskReadFile'
   const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
   hooks.addListener('onAgentFinished', () => browserSession.dispose())
@@ -271,27 +274,27 @@ export const executeClickPage: AgentToolCallExecute<'page_click'> = async ({ par
     return [{
       type: 'tool-result',
       results: {
-        element_id: id,
+        element_id: elementId,
         error_message: 'No active tab found, you need to use view_tab or fetch_page first',
         status: 'failed',
       },
     }]
   }
-  const element = await browserSession.getElementByInternalId(id)
+  const element = await browserSession.getElementByInternalId(elementId)
   if (!element) {
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = `Element not found: id(${id})`
+    taskMsg.summary = `Unable to click and jump to element: Element not found with id(${elementId})`
     return [{
       type: 'tool-result',
       results: {
-        element_id: id,
-        error_message: `Element with ID "${id}" not found`,
+        element_id: elementId,
+        error_message: `Element with ID "${elementId}" not found`,
         status: 'failed',
       },
     }]
   }
 
-  taskMsg.summary = `Clicking element: ${element.innerText?.slice(0, 10)}...(id:${id})`
+  taskMsg.summary = `Click ${element.innerText || element.attributes.href || elementId} and jump`
   const checkIsNavigationLink = (element: SerializedElementInfo): element is SerializedElementInfo & { attributes: { href: string } } => {
     const tagName = element.tagName.toLowerCase()
     if (tagName === 'a' && element.attributes.href) {
@@ -306,18 +309,17 @@ export const executeClickPage: AgentToolCallExecute<'page_click'> = async ({ par
   }
   if (checkIsNavigationLink(element)) {
     // fake click to avoid navigation by click
-    taskMsg.summary = `Navigating to: ${element.attributes.href?.slice(0, 15)}...(id:${id})`
     try {
       const url = new URL(element.attributes.href, element.ownerDocument.url)
       await browserSession.navigateTo(url.href, { abortSignal, newTab: true })
     }
     catch (err) {
       taskMsg.icon = 'warningColored'
-      taskMsg.summary = `Navigation failed: ${err}`
+      taskMsg.summary = `Unable to click and jump: ${err}`
       return [{
         type: 'tool-result',
         results: {
-          element_id: id,
+          element_id: elementId,
           error_message: `Failed to click element: ${err}`,
           status: 'failed',
         },
@@ -326,15 +328,15 @@ export const executeClickPage: AgentToolCallExecute<'page_click'> = async ({ par
   }
   else {
     try {
-      await browserSession.clickElementByInternalId(id)
+      await browserSession.clickElementByInternalId(elementId)
     }
     catch (err) {
       taskMsg.icon = 'warningColored'
-      taskMsg.summary = `Click failed: ${err}`
+      taskMsg.summary = `Unable to click and jump: ${err}`
       return [{
         type: 'tool-result',
         results: {
-          element_id: id,
+          element_id: elementId,
           error_message: `Failed to click element: ${err}`,
           status: 'failed',
         },
@@ -350,19 +352,17 @@ export const executeClickPage: AgentToolCallExecute<'page_click'> = async ({ par
     return [{
       type: 'tool-result',
       results: {
-        element_id: id,
+        element_id: elementId,
         error_message: `Failed to read page: ${currentTabTitle}`,
         status: 'failed',
       },
     }]
   }
-
-  taskMsg.summary = `Element clicked: ${element.innerText?.slice(0, 10)}...(id:${id})`
   return [
     {
       type: 'tool-result',
       results: {
-        element_id: id,
+        element_id: elementId,
         status: 'completed',
         current_tab_info: {
           title: result.title,
@@ -372,4 +372,16 @@ export const executeClickPage: AgentToolCallExecute<'page_click'> = async ({ par
       },
     },
   ]
+}
+
+export const executeBrowserUse: AgentToolCallExecute<'browser_use'> = async ({ params, taskMessageModifier }) => {
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: `Executing browser action: ${params.query}` })
+  taskMsg.done = true
+  return [{
+    type: 'hand-off',
+    overrideSystemPrompt: (await browserUseSystemPrompt([searchOnlineTool, viewTabTool, navigateToTool, fetchPageTool])).system,
+    userPrompt: renderPrompt`${TagBuilder.fromStructured('tool-result', {
+      action: `Start browsing the web with tools`,
+    })}`,
+  }]
 }

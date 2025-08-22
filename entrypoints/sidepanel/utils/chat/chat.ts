@@ -5,6 +5,7 @@ import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
 import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
+import { ADVANCED_MODELS_FOR_AGENT } from '@/utils/constants'
 import { debounce } from '@/utils/debounce'
 import { AbortError, AppError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
@@ -19,10 +20,11 @@ import { pickByRoles } from '@/utils/tab-store/history'
 import { getUserConfig } from '@/utils/user-config'
 
 import { Agent } from '../agent'
+import { AgentStorage } from '../agent/strorage'
 import { initCurrentModel, isCurrentModelReady } from '../llm'
 import { makeMarkdownIcon } from '../markdown/content'
 import { getDocumentContentOfTabs } from '../tabs'
-import { executeClickPage, executeFetchPage, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
+import { executeBrowserUse, executeFetchPage, executeNavigateTo, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
 
 const log = logger.child('chat')
 
@@ -530,12 +532,12 @@ export class Chat {
 
   private async runWithAgent(baseMessages: CoreMessage[]) {
     const userConfig = await getUserConfig()
-    const maxIterations = userConfig.chat.agent.maxIterations.get()
+    const isAdvancedModel = ADVANCED_MODELS_FOR_AGENT.some((model) => model.test(userConfig.llm.model.get() ?? ''))
+    const maxIterations = isAdvancedModel ? userConfig.chat.agent.maxIterationsForAdvancedModels.get() : userConfig.chat.agent.maxIterations.get()
 
     const agent = new Agent({
       historyManager: this.historyManager,
-      attachmentStorage: this.contextAttachmentStorage.value,
-      chatId: this.contextAttachmentStorage.value.id,
+      agentStorage: new AgentStorage(this.contextAttachmentStorage.value),
       maxIterations,
       tools: {
         search_online: { execute: executeSearchOnline },
@@ -543,7 +545,8 @@ export class Chat {
         view_tab: { execute: executeViewTab },
         view_pdf: { execute: executeViewPdf },
         view_image: { execute: executeViewImage },
-        page_click: { execute: executeClickPage },
+        navigate_to: { execute: executeNavigateTo },
+        browser_use: { execute: executeBrowserUse }, // this tool is not yet used
       },
     })
     this.currentAgent = agent

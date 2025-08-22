@@ -17,7 +17,9 @@ export const MIN_CONTEXT_WINDOW_SIZE = 512
 export const FEEDBACK_EMAIL = 'hi@nativemind.app'
 export const PROMPT_MAX_PAGE_CONTENT_LENGTH = 1000
 export const MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT = [/gpt-oss/]
+export const ADVANCED_MODELS_FOR_AGENT = [/gpt-oss/, /qwen3/]
 export const CONTENT_UI_SHADOW_ROOT_NAME = 'nativemind-container'
+export const AGENT_LOOP_COUNT_REFILL_USER_PROMPT = 6 // refill the original user question if agent loop count exceeds this value to avoid context loss
 
 export const INVALID_URLS = [
   /^https:\/\/chromewebstore\.google\.com/,
