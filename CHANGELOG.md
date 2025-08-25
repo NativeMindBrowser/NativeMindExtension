@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v1.8.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.5...v1.8.0-beta.6)
+
+### 🚀 Enhancements
+
+- **translator:** Implement RestorableElementModifier ([2e9f063](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2e9f063))
+- **browser-use:** Enhance element interaction with improved highlighting and error handling ([fea4b02](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fea4b02))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.4...v1.8.0-beta.5)
