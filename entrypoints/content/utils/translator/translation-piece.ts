@@ -15,6 +15,7 @@ import {
   isHTMLElementNode,
   isTextNode,
   type NodeAttrMap,
+  resetClearedLineClampForTranslationPiece,
   updateTranslationElementStyle,
   updateTranslationTextStyle,
 } from './utils/dom-utils'
@@ -96,7 +97,7 @@ export default class TranslationPiece {
     if (!parent) return null
 
     // Clear line clamp so that the loading item can be shown.
-    clearLineClampForTranslationPiece(parent)
+    this.prepareParentStyle()
 
     // === Only show loading item under the main content area.
     if (checkIfElementUnderMainContent(parent)) {
@@ -157,7 +158,16 @@ export default class TranslationPiece {
     this.isTranslationSourceHidden = true
   }
 
+  prepareParentStyle() {
+    this.parentElement && clearLineClampForTranslationPiece(this.parentElement)
+  }
+
+  resetParentStyle() {
+    this.parentElement && resetClearedLineClampForTranslationPiece(this.parentElement)
+  }
+
   async show(text: string) {
+    this.prepareParentStyle()
     this.translateTextEle = document.createElement('span')
     this.translateTextEle.className = translationTargetClass
     this.removeOldElementIfExist('translation')
@@ -215,6 +225,8 @@ export default class TranslationPiece {
       this.translateTextEle?.remove?.()
       this.translateTextEle = undefined
     }
+
+    this.resetParentStyle()
 
     if (!this.keepSourceEle) {
       this.showTranslationSource()
@@ -286,6 +298,8 @@ export default class TranslationPiece {
   }
 
   setLoading() {
+    this.prepareParentStyle()
+
     if (!this.loadingEle) return
 
     this.removeOldElementIfExist('loading')

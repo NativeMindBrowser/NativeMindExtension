@@ -3,7 +3,7 @@ import DOMPurify from 'dompurify'
 import { escape } from '@/utils/html'
 
 import { TranslationDisplayStyle, TranslationDisplayValue } from '../types'
-import { translationTargetClass, translatorLoadingItemClass } from './constant'
+import { dataClearLineClampDataSymbol, translationTargetClass, translatorLoadingItemClass } from './constant'
 import {
   commonBlockTags,
   dataHiddenElementAttr,
@@ -131,7 +131,23 @@ function findNearstTwitterElementFrom(element: HTMLElement | null, dataId: strin
 }
 
 function clearLineClamp(element: HTMLElement) {
+  const cleared = element.getAttribute(dataClearLineClampDataSymbol)
+  if (cleared !== null) return
+  const existValue = element.style.getPropertyValue('-webkit-line-clamp')
+  const existPriority = element.style.getPropertyPriority('-webkit-line-clamp')
+  element.setAttribute(dataClearLineClampDataSymbol, `${existValue}${existPriority ? ` !${existPriority}` : ''}`)
   element.style.setProperty('-webkit-line-clamp', 'unset', 'important')
+}
+
+export function resetClearedLineClampForTranslationPiece(element: HTMLElement) {
+  const value = element.getAttribute(dataClearLineClampDataSymbol) ?? ''
+  if (value) {
+    element.style.setProperty('-webkit-line-clamp', value)
+  }
+  else {
+    element.style.removeProperty('-webkit-line-clamp')
+  }
+  element.removeAttribute(dataClearLineClampDataSymbol)
 }
 
 export function clearLineClampForTranslationPiece(parent: HTMLElement) {
@@ -195,6 +211,12 @@ export function clearLineClampForTranslationPiece(parent: HTMLElement) {
 
   if (/reddit\.com/.test(hostname)) {
     if (parent.matches('h3.line-clamp-2')) {
+      clearLineClamp(parent)
+    }
+  }
+
+  if (/nativemind.app/.test(hostname)) {
+    if (parent.matches('[class*="line-clamp"]')) {
       clearLineClamp(parent)
     }
   }
