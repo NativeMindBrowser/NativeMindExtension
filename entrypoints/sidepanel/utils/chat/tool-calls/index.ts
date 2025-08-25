@@ -258,16 +258,18 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
 
 export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
   const userConfig = await getUserConfig()
+  const { t } = await useGlobalI18n()
   const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
   const { element_id: elementId } = params
-  const taskMsg = taskMessageModifier.addTaskMessage({ summary: `Click ${elementId} and jump` })
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.page_click.click', { content: elementId }) })
   taskMsg.icon = 'taskReadFile'
   const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
   hooks.addListener('onAgentFinished', () => browserSession.dispose())
   if (!browserSession.activeTab) {
+    logger.warn('No active tab in browser session when clicking element', { elementId })
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = 'No active tab found'
+    taskMsg.summary = t('chat.tool_calls.page_click.error_no_active_tab')
     return [{
       type: 'tool-result',
       results: {
@@ -279,8 +281,9 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
   }
   const element = await browserSession.getElementByInternalId(elementId)
   if (!element) {
+    logger.warn(`Element with ID "${elementId}" not found`)
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = `Unable to click and jump to element: Element not found with id(${elementId})`
+    taskMsg.summary = t('chat.tool_calls.page_click.error_can_not_click', { destination: `element(${elementId})` })
     return [{
       type: 'tool-result',
       results: {
@@ -291,7 +294,8 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
     }]
   }
 
-  taskMsg.summary = `Click ${element.innerText || element.attributes.href || elementId} and jump`
+  taskMsg.summary = t('chat.tool_calls.page_click.click', { content: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
+
   const checkIsNavigationLink = (element: SerializedElementInfo): element is SerializedElementInfo & { attributes: { href: string } } => {
     const tagName = element.tagName.toLowerCase()
     if (tagName === 'a' && element.attributes.href) {
@@ -311,8 +315,9 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
       await browserSession.navigateTo(url.href, { abortSignal, newTab: true })
     }
     catch (err) {
+      logger.warn(`Failed to navigate to ${element.attributes.href}: ${err}`)
       taskMsg.icon = 'warningColored'
-      taskMsg.summary = `Unable to click and jump: ${err}`
+      taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
       return [{
         type: 'tool-result',
         results: {
@@ -328,8 +333,9 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
       await browserSession.clickElementByInternalId(elementId)
     }
     catch (err) {
+      logger.warn(`Failed to click element: ${err}`)
       taskMsg.icon = 'warningColored'
-      taskMsg.summary = `Unable to click and jump: ${err}`
+      taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
       return [{
         type: 'tool-result',
         results: {
@@ -340,17 +346,18 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
       }]
     }
   }
-  const currentTabTitle = (await browserSession.activeTab?.tab.getInfo())?.title
-  taskMsg.summary = `Reading page: ${currentTabTitle}`
+  const currentTab = await browserSession.activeTab?.tab.getInfo()
+  taskMsg.summary = t('chat.tool_calls.page_click.redirected', { destination: currentTab?.title || currentTab?.url || '' })
   const result = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
   if (!result) {
+    logger.warn(`Failed to build accessible markdown for element`, { element })
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = `Failed to read page: ${currentTabTitle}`
+    taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
     return [{
       type: 'tool-result',
       results: {
         element_id: elementId,
-        error_message: `Failed to read page: ${currentTabTitle}`,
+        error_message: `Failed to read page: ${currentTab?.title} ${currentTab?.url}`,
         status: 'failed',
       },
     }]

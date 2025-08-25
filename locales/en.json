@@ -238,6 +238,13 @@
         "image_not_found": "image not found",
         "analyze_failed": "Analysis failed: {error}",
         "analyze_success": "Completed analysis: {title}"
+      },
+      "page_click": {
+        "click": "Click {content}",
+        "error_no_active_tab": "No active tab found",
+        "error_can_not_click": "Unable to click and jump to {destination}",
+        "redirected": "Redirected to {destination}",
+        "error_unable_to_jump": "Unable to click and jump to {destination}"
       }
     }
   },

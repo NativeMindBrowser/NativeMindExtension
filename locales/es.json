@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "pestaña no encontrada"
+      },
+      "page_click": {
+        "click": "Haz clic en {content}",
+        "error_can_not_click": "No se puede hacer clic y saltar a {destination}",
+        "error_no_active_tab": "No se encontró ninguna pestaña activa",
+        "error_unable_to_jump": "No se puede hacer clic y saltar a {destination}",
+        "redirected": "Redirigido a {destination}"
       }
     }
   },

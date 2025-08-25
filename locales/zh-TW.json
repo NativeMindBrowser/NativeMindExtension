@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "找不到分頁"
+      },
+      "page_click": {
+        "click": "點擊 {content}",
+        "error_can_not_click": "無法點擊並跳轉至 {destination}",
+        "error_no_active_tab": "找不到使用中的分頁",
+        "error_unable_to_jump": "無法點擊並跳轉至 {destination}",
+        "redirected": "重新導向至 {destination}"
       }
     }
   },

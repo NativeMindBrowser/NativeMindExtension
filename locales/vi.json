@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "tab không tìm thấy"
+      },
+      "page_click": {
+        "click": "Nhấp {content}",
+        "error_can_not_click": "Không thể nhấp và chuyển đến {destination}",
+        "error_no_active_tab": "Không tìm thấy tab đang hoạt động",
+        "error_unable_to_jump": "Không thể nhấp và chuyển đến {destination}",
+        "redirected": "Đã chuyển hướng đến {destination}"
       }
     }
   },

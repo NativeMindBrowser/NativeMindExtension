@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "вкладка не найдена"
+      },
+      "page_click": {
+        "click": "Нажмите {content}",
+        "error_can_not_click": "Невозможно нажать и перейти к {destination}",
+        "error_no_active_tab": "Активная вкладка не найдена",
+        "error_unable_to_jump": "Невозможно нажать и перейти к {destination}",
+        "redirected": "Перенаправлено на {destination}"
       }
     }
   },

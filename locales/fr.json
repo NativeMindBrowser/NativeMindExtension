@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "onglet introuvable"
+      },
+      "page_click": {
+        "click": "Cliquez sur {content}",
+        "error_can_not_click": "Impossible de cliquer et d'accéder à {destination}",
+        "error_no_active_tab": "Aucun onglet actif trouvé",
+        "error_unable_to_jump": "Impossible de cliquer et d'accéder à {destination}",
+        "redirected": "Redirigé vers {destination}"
       }
     }
   },

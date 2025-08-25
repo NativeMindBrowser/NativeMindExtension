@@ -60,9 +60,15 @@ export function waitForTabLoaded(tabId: number, options: { timeout?: number, mat
   })
 }
 
-export function waitForNavigation(timeout = 2000) {
+export async function waitForNavigation(timeout = 3000) {
+  const maybeNavigation = await new Promise<boolean>((resolve) => {
+    browser.webNavigation.onBeforeNavigate.addListener(() => resolve(true))
+    sleep(1500).then(() => resolve(false))
+  })
   return new Promise<void>((resolve) => {
-    browser.webNavigation.onCompleted.addListener(() => resolve)
+    if (maybeNavigation) {
+      browser.webNavigation.onCompleted.addListener(() => resolve())
+    }
     sleep(timeout).then(() => resolve())
   })
 }
@@ -157,14 +163,16 @@ export class Tab {
   }
 
   async getElementByInternalId(internalId: string) {
-    return await this.executeUtils('getElementByInternalId', internalId)
+    return await this.executeUtils('getElementByInternalId', internalId, { scrollIntoView: true, highlight: true, highlightTimeout: 5000 })
   }
 
   async clickElementByInternalId(internalId: string) {
     await this.executeUtils('clickElementByInternalId', internalId)
-    await sleep(1000)
-    await waitForNavigation(3000)
-    await waitForTabLoaded(await this.tabId, { timeout: 3000 })
+    await sleep(1000) // Wait for the click action to complete
+    await waitForNavigation()
+    await waitForTabLoaded(await this.tabId, { timeout: 3000 }).catch((error) => {
+      logger.warn('Tab may not be fully loaded after click:', { error })
+    })
     await this.executeUtils('waitUntilDocumentMaybeLoaded')
   }
 

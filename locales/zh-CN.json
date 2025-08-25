@@ -238,6 +238,13 @@
       },
       "view_tab": {
         "tab_not_found": "未找到标签页"
+      },
+      "page_click": {
+        "click": "点击 {content}",
+        "error_can_not_click": "无法点击并跳转到{destination}",
+        "error_no_active_tab": "未找到活动标签页",
+        "error_unable_to_jump": "无法点击并跳转到{destination}",
+        "redirected": "已跳转 {destination}"
       }
     }
   },

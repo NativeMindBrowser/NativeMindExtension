@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "タブが見つかりません"
+      },
+      "page_click": {
+        "click": "{content}をクリック",
+        "error_can_not_click": "{destination}をクリックしてジャンプできません",
+        "error_no_active_tab": "アクティブなタブが見つかりません",
+        "error_unable_to_jump": "{destination}をクリックしてジャンプできません",
+        "redirected": "{destination}にリダイレクトされました"
       }
     }
   },

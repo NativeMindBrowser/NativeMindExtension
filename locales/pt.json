@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "aba não encontrada"
+      },
+      "page_click": {
+        "click": "Clique {content}",
+        "error_can_not_click": "Não foi possível clicar e ir para {destination}",
+        "error_no_active_tab": "Nenhuma aba ativa encontrada",
+        "error_unable_to_jump": "Não foi possível clicar e ir para {destination}",
+        "redirected": "Redirecionado para {destination}"
       }
     }
   },

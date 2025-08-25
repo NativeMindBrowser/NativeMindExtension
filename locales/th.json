@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "ไม่พบแท็บ"
+      },
+      "page_click": {
+        "click": "คลิก {content}",
+        "error_can_not_click": "ไม่สามารถคลิกและข้ามไปยัง {destination} ได้",
+        "error_no_active_tab": "ไม่พบแท็บที่ใช้งานอยู่",
+        "error_unable_to_jump": "ไม่สามารถคลิกและข้ามไปยัง {destination} ได้",
+        "redirected": "เปลี่ยนเส้นทางไปยัง {destination}"
       }
     }
   },

@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "tab tidak ditemukan"
+      },
+      "page_click": {
+        "click": "Klik {content}",
+        "error_can_not_click": "Tidak dapat mengklik dan melompat ke {destination}",
+        "error_no_active_tab": "Tidak ditemukan tab aktif",
+        "error_unable_to_jump": "Tidak dapat mengklik dan melompat ke {destination}",
+        "redirected": "Dialihkan ke {destination}"
       }
     }
   },

@@ -62,6 +62,13 @@
       },
       "view_tab": {
         "tab_not_found": "Registerkarte nicht gefunden"
+      },
+      "page_click": {
+        "click": "Klicken Sie auf {content}",
+        "error_can_not_click": "Klicken und Springen zu {destination} nicht möglich",
+        "error_no_active_tab": "Kein aktiver Tab gefunden",
+        "error_unable_to_jump": "Klicken und Springen zu {destination} nicht möglich",
+        "redirected": "Weitergeleitet zu {destination}"
       }
     }
   },

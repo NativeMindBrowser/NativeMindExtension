@@ -9,7 +9,7 @@ import { sleep } from '@/utils/sleep'
 import { serializeElement } from '@/utils/tab'
 
 import { checkNodeType, getElementAttributes } from './helpers'
-import { highlightElement } from './highlight'
+import { highlightElement, removeHighlights } from './highlight'
 import { PruningContentFilter } from './pruning-content-filter'
 
 const logger = Logger.child('document-parser')
@@ -297,9 +297,29 @@ export function getAccessibleDomTree(options: GetAccessibleDomTreeOptions = {}) 
   }
 }
 
-export function getElementByInternalId(internalId: string): SerializedElementInfo | null {
+interface GetElementOptions {
+  scrollIntoView?: boolean
+  highlight?: boolean
+  highlightTimeout?: number
+}
+
+export function getElementByInternalId(internalId: string, options?: GetElementOptions): SerializedElementInfo | null {
   const el = document.querySelector(`[${INTERNAL_ID_DATA_KEY}="${internalId}"]`)
   if (!el) return null
+
+  if (options?.scrollIntoView) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
+  if (options?.highlight) {
+    highlightElement(el)
+  }
+
+  if (options?.highlightTimeout) {
+    setTimeout(() => {
+      removeHighlights([el])
+    }, options.highlightTimeout)
+  }
 
   return {
     tagName: el.tagName.toLowerCase(),

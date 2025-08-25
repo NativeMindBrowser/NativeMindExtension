@@ -12,9 +12,10 @@ export function highlightElement(node: Node, options: { title?: string } = {}) {
     styleEl.setAttribute(HIGHLIGHT_STYLE_ELEMENT, 'true')
     styleEl.textContent = `
         [${HIGHLIGHT_STYLE_DATA_KEY}] {
-          outline: 2px solid blue !important;
+          outline: 2px solid #24B960 !important;
+          outline-offset: 2px;
         }
-        [${HIGHLIGHT_STYLE_DATA_KEY}]::before {
+        [${HIGHLIGHT_STYLE_DATA_KEY}][${HIGHLIGHT_TITLE_DATA_KEY}]:not([${HIGHLIGHT_TITLE_DATA_KEY}=""])::before {
           content: attr(${HIGHLIGHT_TITLE_DATA_KEY});
           position: relative;
           top: 0;
@@ -34,7 +35,7 @@ export function highlightElement(node: Node, options: { title?: string } = {}) {
   }
   if (checkNodeType(HTMLElement, node)) {
     node.setAttribute(HIGHLIGHT_STYLE_DATA_KEY, 'true')
-    node.setAttribute(HIGHLIGHT_TITLE_DATA_KEY, title ?? '')
+    title && node.setAttribute(HIGHLIGHT_TITLE_DATA_KEY, title)
   }
 }
 
