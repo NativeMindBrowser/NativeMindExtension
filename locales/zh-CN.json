@@ -154,7 +154,15 @@
         "chat_model": "聊天模型",
         "chat_model_description": "选择用于聊天对话的AI模型",
         "chat_system_prompt": "聊天系统提示",
-        "chat_system_prompt_description": "定义AI在聊天对话中的行为和角色"
+        "chat_system_prompt_description": "定义AI在聊天对话中的行为和角色",
+        "thinking_visibility": "思考过程展示",
+        "thinking_visibility_description": "选择LLM推理时思考过程的展示方式",
+        "thinking_visibility_hide": "隐藏思考",
+        "thinking_visibility_hide_description": "仅显示加载动画和最终回答",
+        "thinking_visibility_preview": "预览思考",
+        "thinking_visibility_preview_description": "显示最后2行，可展开",
+        "thinking_visibility_full": "完整展示思考",
+        "thinking_visibility_full_description": "默认完全展开，可收起"
       },
       "quick_actions": {
         "title": "快速操作",

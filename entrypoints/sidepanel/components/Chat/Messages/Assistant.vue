@@ -16,7 +16,7 @@
       </div>
       <div class="max-w-full flex-1 flex flex-col gap-1">
         <div
-          v-if="message.reasoning && message.reasoningTime"
+          v-if="shouldShowThinkingSection && message.reasoningTime"
           class="text-text-primary text-sm flex items-center justify-between overflow-hidden"
         >
           <div class="flex flex-grow">
@@ -63,24 +63,34 @@
             </motion.div>
           </div>
           <div
+            v-if="shouldShowExpandButton"
             class="ml-2 transform transition-transform cursor-pointer"
-            :class="{ 'rotate-180': expanded }"
+            :class="{
+              'rotate-180': isContentExpanded
+            }"
             @click="expanded = !expanded"
           >
             <IconArrowDown class="w-4 text-text-tertiary" />
           </div>
         </div>
-        <div
+        <ScrollContainer
           v-if="showReasoning"
-          class="wrap-anywhere pl-6 border-[#AEB5BD]"
-          :class="showClampedReasoning && 'line-clamp-3'"
+          :class="classNames('wrap-anywhere pl-6 border-[#AEB5BD] overflow-auto', showClampedReasoning ? 'h-[3.3em] leading-[1.5em]':'')"
+          :arrivalShadow="{
+            top: { color: '#F5F6FB', size: 12, offset: 8 },
+            bottom: { color: '#F5F6FB', size: 12, offset: 8 }
+          }"
+          :autoSnap="{bottom: (showClampedReasoning && !message.done) ? true : false}"
         >
           <MarkdownViewer
             :text="message.reasoning"
             class="text-sm text-text-quaternary"
           />
-        </div>
-        <div v-if="message.content">
+        </ScrollContainer>
+        <div
+          v-if="message.content"
+          class="mt-2"
+        >
           <MarkdownViewer
             :text="message.content"
             class="text-text-primary"
@@ -89,7 +99,7 @@
       </div>
       <motion.div
         v-if="!message.done && !message.content && !message.reasoning"
-        class="absolute -top-1 left-0"
+        class="absolute top-0 left-0 flex items-center justify-start gap-1.5 overflow-hidden whitespace-nowrap"
         :initial="{ opacity: 1 }"
         :animate="{ opacity: [1, 0.3, 1] }"
         :transition="{
@@ -100,10 +110,12 @@
           }
         }"
       >
-        <Loading
-          :size="16"
-          class="text-text-secondary"
-        />
+        <div class="shrink-0 grow-0 size-5 p-0.5">
+          <Loading :size="16" />
+        </div>
+        <Text color="primary">
+          {{ t('chat.messages.thinking') }}
+        </Text>
       </motion.div>
     </div>
   </div>
@@ -118,8 +130,11 @@ import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
 import IconTickCircle from '@/assets/icons/tick-circle.svg?component'
 import IconWarning from '@/assets/icons/warning-circle.svg?component'
 import Loading from '@/components/Loading.vue'
+import ScrollContainer from '@/components/ScrollContainer.vue'
 import Text from '@/components/ui/Text.vue'
 import { AgentMessageV1, AssistantMessageV1 } from '@/types/chat'
+import { getUserConfig } from '@/utils/user-config'
+import { classNames } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'
 const props = defineProps<{
@@ -135,7 +150,73 @@ const message = computed(() => {
 })
 
 const { t } = useI18n()
+const userConfig = await getUserConfig()
+const thinkingVisibility = userConfig.chat.thinkingVisibility.toRef()
 const expanded = ref(false)
-const showReasoning = computed(() => message.value.reasoning && ((!message.value.content && !message.value.done) || expanded.value))
-const showClampedReasoning = computed(() => showReasoning.value && !expanded.value)
+
+// Helper computed properties for cleaner logic
+const isThinking = computed(() => !message.value.content && !message.value.done)
+const isThinkingDone = computed(() => message.value.content || message.value.done)
+
+// Thinking visibility logic
+const shouldShowThinkingSection = computed(() => {
+  // 如果不是reasoning模型，整体不显示
+  if (!message.value.reasoning) return false
+  return true
+})
+
+const shouldShowExpandButton = computed(() => {
+  if (!message.value.reasoning) return false
+  // hide mode不显示展开按钮
+  if (thinkingVisibility.value === 'hide') return false
+  return true
+})
+
+const isContentExpanded = computed(() => {
+  if (thinkingVisibility.value === 'preview') {
+    // Preview mode: 默认收起，点击展开
+    return expanded.value
+  }
+  else if (thinkingVisibility.value === 'full') {
+    // Full mode: 默认展开，可以手动折叠
+    return !expanded.value
+  }
+  return false
+})
+
+const shouldShowReasoningContent = computed(() => {
+  if (!message.value.reasoning) return false
+
+  if (thinkingVisibility.value === 'hide') {
+    // hide mode: 不显示thinking内容
+    return false
+  }
+  else if (thinkingVisibility.value === 'preview') {
+    // thinking中和thinking结束都显示内容，默认显示两行，可点击展开查看全部
+    return true
+  }
+  else if (thinkingVisibility.value === 'full') {
+    if (isThinking.value || isThinkingDone.value) {
+      // thinking中和thinking结束都显示全部内容，但可以手动折叠
+      return isContentExpanded.value
+    }
+  }
+
+  return false
+})
+
+const shouldClampReasoning = computed(() => {
+  if (!shouldShowReasoningContent.value) return false
+
+  if (thinkingVisibility.value === 'preview') {
+    // thinking中和thinking结束都默认显示两行，展开时显示全部
+    return !isContentExpanded.value
+  }
+
+  return false
+})
+
+// Legacy computed properties for backwards compatibility
+const showReasoning = shouldShowReasoningContent
+const showClampedReasoning = shouldClampReasoning
 </script>

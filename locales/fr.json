@@ -275,7 +275,15 @@
         "chat_model": "Modèle de chat",
         "chat_model_description": "Sélectionnez le modèle d'IA pour les conversations de chat",
         "chat_system_prompt": "Invite du système de chat",
-        "chat_system_prompt_description": "Définir le comportement et le rôle de l'IA pendant les conversations de chat"
+        "chat_system_prompt_description": "Définir le comportement et le rôle de l'IA pendant les conversations de chat",
+        "thinking_visibility": "Visibilité du processus de réflexion",
+        "thinking_visibility_description": "Choisissez comment le processus de réflexion s'affiche pendant le raisonnement LLM",
+        "thinking_visibility_hide": "Masquer la réflexion",
+        "thinking_visibility_hide_description": "Afficher seulement le chargement et la réponse finale",
+        "thinking_visibility_preview": "Aperçu de la réflexion",
+        "thinking_visibility_preview_description": "Afficher les 2 dernières lignes, extensible",
+        "thinking_visibility_full": "Afficher la réflexion complète",
+        "thinking_visibility_full_description": "Tout afficher par défaut, repliable"
       },
       "quick_actions": {
         "title": "Actions rapides",
