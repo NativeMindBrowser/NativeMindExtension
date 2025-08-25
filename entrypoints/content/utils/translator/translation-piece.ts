@@ -15,7 +15,7 @@ import {
   isHTMLElementNode,
   isTextNode,
   type NodeAttrMap,
-  resetClearedLineClampForTranslationPiece,
+  RestorableElementModifier,
   updateTranslationElementStyle,
   updateTranslationTextStyle,
 } from './utils/dom-utils'
@@ -53,7 +53,10 @@ export default class TranslationPiece {
   fromCache = false
   translationTextStyled = false
 
-  constructor(childNodeList: ChildNode[], nodeAttrMap: NodeAttrMap, originalTextContent: string, richTextContent: string) {
+  elementModifier: RestorableElementModifier
+
+  constructor(childNodeList: ChildNode[], nodeAttrMap: NodeAttrMap, originalTextContent: string, richTextContent: string, elementModifier: RestorableElementModifier) {
+    this.elementModifier = elementModifier
     this.childNodeList = childNodeList
     this.lastChildNode = childNodeList[childNodeList.length - 1]
     if (!this.lastChildNode.parentElement) throw new Error('lastChildNode has no parentElement')
@@ -159,11 +162,7 @@ export default class TranslationPiece {
   }
 
   prepareParentStyle() {
-    this.parentElement && clearLineClampForTranslationPiece(this.parentElement)
-  }
-
-  resetParentStyle() {
-    this.parentElement && resetClearedLineClampForTranslationPiece(this.parentElement)
+    this.parentElement && clearLineClampForTranslationPiece(this.parentElement, this.elementModifier)
   }
 
   async show(text: string) {
@@ -176,7 +175,7 @@ export default class TranslationPiece {
     const { translationMethod, translationFormat, typingEffectEnabled } = await getTranslatorEnv()
     this.keepSourceEle = translationMethod === 'bilingualComparison'
 
-    const display = updateTranslationElementStyle(this.translateTextEle, this.lastChildNode, this.keepSourceEle)
+    const display = updateTranslationElementStyle(this.translateTextEle, this.lastChildNode, this.keepSourceEle, this.elementModifier)
 
     if (this.keepSourceEle && display !== 'inline' && this.parentElement && checkIfElementUnderMainContent(this.parentElement)) {
       this.translationTextStyled = true
@@ -225,8 +224,6 @@ export default class TranslationPiece {
       this.translateTextEle?.remove?.()
       this.translateTextEle = undefined
     }
-
-    this.resetParentStyle()
 
     if (!this.keepSourceEle) {
       this.showTranslationSource()

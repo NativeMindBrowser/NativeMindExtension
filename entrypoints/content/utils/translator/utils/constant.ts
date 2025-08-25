@@ -38,7 +38,6 @@ export const commonBlockTags = ['p', 'li', ...headerlineTags]
 
 export const dataHiddenElementAttr = `data-${TRANSLATOR_ID}-hidden`
 export const dataIgnoreElementAttr = `data-${TRANSLATOR_ID}-ignore`
-export const dataClearLineClampDataSymbol = `data-${TRANSLATOR_ID}-clear-line-clamp`
 export const translationSourceClass = `${TRANSLATOR_ID}--translation-source`
 export const translationLineBreakClass = `${TRANSLATOR_ID}--translation-line-break`
 export const translationTypingCaretClass = `${TRANSLATOR_ID}--translation-typing-caret`

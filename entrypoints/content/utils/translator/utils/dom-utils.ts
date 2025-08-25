@@ -1,9 +1,10 @@
 import DOMPurify from 'dompurify'
+import { CSSProperties } from 'vue'
 
 import { escape } from '@/utils/html'
 
 import { TranslationDisplayStyle, TranslationDisplayValue } from '../types'
-import { dataClearLineClampDataSymbol, translationTargetClass, translatorLoadingItemClass } from './constant'
+import { translationTargetClass, translatorLoadingItemClass } from './constant'
 import {
   commonBlockTags,
   dataHiddenElementAttr,
@@ -130,43 +131,27 @@ function findNearstTwitterElementFrom(element: HTMLElement | null, dataId: strin
   return null
 }
 
-function clearLineClamp(element: HTMLElement) {
-  const cleared = element.getAttribute(dataClearLineClampDataSymbol)
-  if (cleared !== null) return
-  const existValue = element.style.getPropertyValue('-webkit-line-clamp')
-  const existPriority = element.style.getPropertyPriority('-webkit-line-clamp')
-  element.setAttribute(dataClearLineClampDataSymbol, `${existValue}${existPriority ? ` !${existPriority}` : ''}`)
-  element.style.setProperty('-webkit-line-clamp', 'unset', 'important')
+function clearLineClamp(element: HTMLElement, elementModifier: RestorableElementModifier) {
+  elementModifier.setRestorableStyle(element, { '-webkit-line-clamp': 'unset' })
 }
 
-export function resetClearedLineClampForTranslationPiece(element: HTMLElement) {
-  const value = element.getAttribute(dataClearLineClampDataSymbol) ?? ''
-  if (value) {
-    element.style.setProperty('-webkit-line-clamp', value)
-  }
-  else {
-    element.style.removeProperty('-webkit-line-clamp')
-  }
-  element.removeAttribute(dataClearLineClampDataSymbol)
-}
-
-export function clearLineClampForTranslationPiece(parent: HTMLElement) {
+export function clearLineClampForTranslationPiece(parent: HTMLElement, elementModifier: RestorableElementModifier) {
   const hostname = getPageHostName()
 
   if (/^google\.com$/.test(hostname)) {
     // Remove the line clamp of title and abstract block in google search result item.
     if (isHTMLElementNode(parent) && parent.style.webkitLineClamp) {
-      clearLineClamp(parent)
+      clearLineClamp(parent, elementModifier)
     }
     if (isHTMLElementNode(parent.parentElement) && parent.parentElement.style.webkitLineClamp) {
-      clearLineClamp(parent.parentElement)
+      clearLineClamp(parent.parentElement, elementModifier)
     }
   }
 
   if (/bing\.com/.test(hostname)) {
     // Remove the line clamp of the bing search result item.
     if (isHTMLElementNode(parent.parentElement) && parent.parentElement.matches('.b_caption[role="contentinfo"]') && getComputedStyle(parent).webkitLineClamp) {
-      clearLineClamp(parent)
+      clearLineClamp(parent, elementModifier)
     }
   }
 
@@ -176,53 +161,53 @@ export function clearLineClampForTranslationPiece(parent: HTMLElement) {
       if (isHTMLElementNode(parent.parentElement) && parent.parentElement.style.webkitLineClamp) {
         target = parent.parentElement
       }
-      clearLineClamp(target)
+      clearLineClamp(target, elementModifier)
     }
   }
 
   if (/search\.yahoo\.com/.test(hostname)) {
     if (parent.matches('.s-title') && isHTMLElementNode(parent.parentElement) && parent.parentElement.matches('.title')) {
-      clearLineClamp(parent.parentElement)
+      clearLineClamp(parent.parentElement, elementModifier)
     }
 
     if (parent.matches('.s-desc')) {
-      clearLineClamp(parent)
+      clearLineClamp(parent, elementModifier)
     }
   }
 
   if (/kagi\.com/.test(hostname)) {
     if (parent.matches('.__sri_title_link')) {
-      clearLineClamp(parent)
+      clearLineClamp(parent, elementModifier)
     }
   }
 
   if (/baidu\.com/.test(hostname)) {
     const title = parent.closest('._paragraph_1bhnz_2')
     if (isHTMLElementNode(title)) {
-      clearLineClamp(title)
+      clearLineClamp(title, elementModifier)
       title.style.whiteSpace = 'normal'
     }
 
     const abstract = parent.closest('.cu-line-clamp-3')
     if (isHTMLElementNode(abstract)) {
-      clearLineClamp(abstract)
+      clearLineClamp(abstract, elementModifier)
     }
   }
 
   if (/reddit\.com/.test(hostname)) {
     if (parent.matches('h3.line-clamp-2')) {
-      clearLineClamp(parent)
+      clearLineClamp(parent, elementModifier)
     }
   }
 
   if (/nativemind.app/.test(hostname)) {
     if (parent.matches('[class*="line-clamp"]')) {
-      clearLineClamp(parent)
+      clearLineClamp(parent, elementModifier)
     }
   }
 }
 
-function handleSiteTweaks(translateTextEle: HTMLElement, parent: HTMLElement): TranslationDisplayValue | void {
+function handleSiteTweaks(translateTextEle: HTMLElement, parent: HTMLElement, elementModifier: RestorableElementModifier): TranslationDisplayValue | void {
   const hostname = getPageHostName()
 
   if (REGEXP_TWITTER_SITE.test(hostname)) {
@@ -231,7 +216,7 @@ function handleSiteTweaks(translateTextEle: HTMLElement, parent: HTMLElement): T
 
     if (nearstTweetTextElement || nearstUserDescriptionElement) {
       if (nearstTweetTextElement) {
-        clearLineClamp(nearstTweetTextElement)
+        clearLineClamp(nearstTweetTextElement, elementModifier)
       }
       return 'pseudo-block'
     }
@@ -323,6 +308,19 @@ function handleSiteTweaks(translateTextEle: HTMLElement, parent: HTMLElement): T
 
     if (parent.closest('.sc-link')) {
       return 'inline'
+    }
+
+    const hotSearchEl = parent.closest('.hotsearch-item')
+    if (isHTMLElementNode(hotSearchEl)) {
+      elementModifier.setRestorableStyle(hotSearchEl, { height: 'auto' })
+      elementModifier.setRestorableStyle(parent, { height: 'auto' })
+      return 'pseudo-block'
+    }
+
+    const chatPanelEl = parent.closest('[class*="panel-list_"] [class*="panel_"]')
+    if (isHTMLElementNode(chatPanelEl)) {
+      elementModifier.setRestorableStyle(chatPanelEl, { height: 'auto' })
+      return 'block'
     }
   }
 
@@ -435,7 +433,7 @@ export function removeTranslationTextStyle(element: HTMLElement) {
   }
 }
 
-export function updateTranslationElementStyle(translateTextEle: HTMLElement, lastChildNode: ChildNode, keepSourceEle = true) {
+export function updateTranslationElementStyle(translateTextEle: HTMLElement, lastChildNode: ChildNode, keepSourceEle = true, elementModifier: RestorableElementModifier) {
   translateTextEle.style.setProperty('color', 'unset', 'important')
   translateTextEle.style.setProperty('word-break', 'initial', 'important')
   translateTextEle.style.setProperty('letter-spacing', 'unset', 'important')
@@ -464,7 +462,7 @@ export function updateTranslationElementStyle(translateTextEle: HTMLElement, las
     display = 'block'
   }
 
-  display = (parent && handleSiteTweaks(translateTextEle, parent)) || display
+  display = (parent && handleSiteTweaks(translateTextEle, parent, elementModifier)) || display
 
   if (display === 'block') {
     translateTextEle.style.display = 'block'
@@ -775,4 +773,151 @@ export function createStylesheetTag(text: string, styleId: string, insertAfter: 
   style.innerHTML = text
 
   insertAfter.appendChild(style)
+}
+
+interface OriginalStyleValue {
+  value: string | null
+  priority: string
+}
+
+export class RestorableElementModifier {
+  private originalStyles = new Map<HTMLElement, Map<string, OriginalStyleValue>>()
+
+  constructor() {}
+
+  /**
+   * Set CSS styles on an element with the ability to restore them later
+   * @param el - The HTML element to modify
+   * @param styles - CSS properties to set
+   * @param priority - CSS priority ('important' by default)
+   */
+  setRestorableStyle(
+    el: HTMLElement,
+    styles: CSSProperties,
+    priority: 'important' | '' = 'important',
+  ): void {
+    // Initialize element's style map if not exists
+    if (!this.originalStyles.has(el)) {
+      this.originalStyles.set(el, new Map())
+    }
+
+    const elementStyles = this.originalStyles.get(el)!
+
+    for (const [key, value] of Object.entries(styles)) {
+      if (value != null && value !== '') {
+        // Store original value only if not already stored
+        if (!elementStyles.has(key)) {
+          const originalValue = el.style.getPropertyValue(key)
+          const originalPriority = el.style.getPropertyPriority(key)
+
+          elementStyles.set(key, {
+            value: originalValue || null,
+            priority: originalPriority,
+          })
+        }
+
+        // Set new style
+        el.style.setProperty(key, String(value), priority)
+      }
+    }
+  }
+
+  /**
+   * Restore specific styles for an element
+   * @param el - The HTML element to restore
+   * @param styleKeys - Specific style keys to restore (optional, restores all if not provided)
+   */
+  restoreElementStyles(el: HTMLElement, styleKeys?: string[]): void {
+    const elementStyles = this.originalStyles.get(el)
+    if (!elementStyles) return
+
+    const keysToRestore = styleKeys || Array.from(elementStyles.keys())
+
+    for (const key of keysToRestore) {
+      const originalStyle = elementStyles.get(key)
+      if (originalStyle) {
+        el.style.setProperty(key, originalStyle.value, originalStyle.priority)
+
+        // Remove from tracking if specific keys were requested
+        if (styleKeys) {
+          elementStyles.delete(key)
+        }
+      }
+    }
+
+    // Clean up empty element entries
+    if (elementStyles.size === 0) {
+      this.originalStyles.delete(el)
+    }
+  }
+
+  /**
+   * Restore all styles for all tracked elements
+   */
+  restoreAllStylesToOriginal(): void {
+    for (const [el] of this.originalStyles.entries()) {
+      this.restoreElementStyles(el)
+    }
+    this.clear()
+  }
+
+  /**
+   * Check if an element has tracked styles
+   * @param el - The HTML element to check
+   * @returns Whether the element has tracked styles
+   */
+  hasTrackedStyles(el: HTMLElement): boolean {
+    return this.originalStyles.has(el)
+  }
+
+  /**
+   * Get the number of tracked elements
+   * @returns Number of elements with tracked styles
+   */
+  getTrackedElementsCount(): number {
+    return this.originalStyles.size
+  }
+
+  /**
+   * Clean up all tracked styles without restoring them
+   * Useful for memory management when elements are removed from DOM
+   */
+  clear(): void {
+    this.originalStyles.clear()
+  }
+
+  /**
+   * Remove tracking for specific element without restoring styles
+   * @param el - The HTML element to stop tracking
+   */
+  untrackElement(el: HTMLElement): void {
+    this.originalStyles.delete(el)
+  }
+
+  /**
+   * Clean up tracking for elements that are no longer in the DOM
+   * This helps prevent memory leaks
+   */
+  cleanupRemovedElements(): void {
+    for (const [el] of this.originalStyles.entries()) {
+      if (!document.contains(el)) {
+        this.originalStyles.delete(el)
+      }
+    }
+  }
+
+  /**
+   * Batch set styles for multiple elements
+   * More efficient than calling setRestorableStyle multiple times
+   * @param elements - Array of elements and their styles
+   * @param priority - CSS priority for all styles
+   */
+  batchSetStyles(
+    elements: Array<{ element: HTMLElement, styles: CSSProperties }>,
+    priority: 'important' | '' = 'important',
+  ): void {
+    for (const { element, styles } of elements) {
+      this.setRestorableStyle(element, styles, priority)
+    }
+  }
 }

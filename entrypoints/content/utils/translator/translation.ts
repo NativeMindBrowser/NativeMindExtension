@@ -16,6 +16,7 @@ import {
   isTextNode,
   REGEXP_TWITTER_SITE,
   repairWeridElement,
+  RestorableElementModifier,
   shouldDetectNewLineSymbol,
   shouldIgnoreElement,
   shouldTranslateElement,
@@ -38,6 +39,8 @@ export class Translation {
 
   // Observe the intersection of the translation pieces and the viewport.
   intersectionObserver: IntersectionObserver
+
+  elementModifier = new RestorableElementModifier()
 
   get element() {
     if (!this._element) throw new Error('[Translator]: The element is not initialized. Please call init() first.')
@@ -313,6 +316,8 @@ export class Translation {
       p.hide()
     }
 
+    this.elementModifier.restoreAllStylesToOriginal()
+
     this.intersectionObserver.disconnect()
     window.removeEventListener('scroll', this.task.handleScroll)
   }
@@ -359,7 +364,7 @@ export class Translation {
       const { originalTextContent, textContent, nodeAttrMap } = getTextAndNodeAttrMap(currentPieceNodeList)
 
       if (shouldTranslateText(originalTextContent)) {
-        pieces.push(new TranslationPiece(currentPieceNodeList, nodeAttrMap, originalTextContent, textContent))
+        pieces.push(new TranslationPiece(currentPieceNodeList, nodeAttrMap, originalTextContent, textContent, this.elementModifier))
 
         currentPieceNodeList = []
         return true
