@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.3...v1.8.0-beta.4)
+
+### 🚀 Enhancements
+
+- **browser-use:** Update utility references and enhance tool execution logic ([fd9a8b5](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fd9a8b5))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.3
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.2...v1.8.0-beta.3)
