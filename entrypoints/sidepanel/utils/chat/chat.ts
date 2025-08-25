@@ -24,7 +24,7 @@ import { AgentStorage } from '../agent/strorage'
 import { initCurrentModel, isCurrentModelReady } from '../llm'
 import { makeMarkdownIcon } from '../markdown/content'
 import { getDocumentContentOfTabs } from '../tabs'
-import { executeBrowserUse, executeFetchPage, executeNavigateTo, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
+import { executeFetchPage, executePageClick, executeSearchOnline, executeViewImage, executeViewPdf, executeViewTab } from './tool-calls'
 
 const log = logger.child('chat')
 
@@ -545,8 +545,7 @@ export class Chat {
         view_tab: { execute: executeViewTab },
         view_pdf: { execute: executeViewPdf },
         view_image: { execute: executeViewImage },
-        navigate_to: { execute: executeNavigateTo },
-        browser_use: { execute: executeBrowserUse }, // this tool is not yet used
+        click: { execute: executePageClick },
       },
     })
     this.currentAgent = agent

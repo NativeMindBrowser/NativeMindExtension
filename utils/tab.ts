@@ -113,19 +113,37 @@ export class Tab {
     }
   }
 
+  private async waitUntilTabInjectable(timeout = 5000) {
+    const tabId = await this.tabId
+    const test = () => browser.scripting.executeScript({
+      target: { tabId },
+      func: () => true,
+    }).then((v) => !!v[0]?.result, () => false)
+
+    const start = Date.now()
+    while (Date.now() - start < timeout) {
+      const result = await test()
+      if (result) return true
+      await sleep(1000)
+    }
+    return false
+  }
+
   private async injectUtils() {
     const tabId = await this.tabId
     await injectUtils(tabId, 'MAIN')
   }
 
   // utils are defined in inject-utils.ts
-  private async executeUtils<T extends keyof typeof window.NM_INJECT_UTILS>(name: T, ...args: Parameters<typeof window.NM_INJECT_UTILS[T]>) {
-    type Args = Parameters<typeof window.NM_INJECT_UTILS[T]>
+  private async executeUtils<T extends keyof typeof window.__NATIVEMIND_UTILS__>(name: T, ...args: Parameters<typeof window.__NATIVEMIND_UTILS__[T]>) {
+    logger.debug('Executing util', name, ...args)
+    type Args = Parameters<typeof window.__NATIVEMIND_UTILS__[T]>
+    await this.waitUntilTabInjectable()
     await this.injectUtils()
     const r = await this.executeScript({
       world: 'MAIN',
       func: (name: T, ...args: Args) => {
-        const util = window.NM_INJECT_UTILS[name] as (...args: Args) => ReturnType<typeof window.NM_INJECT_UTILS[T]>
+        const util = window.__NATIVEMIND_UTILS__[name] as (...args: Args) => ReturnType<typeof window.__NATIVEMIND_UTILS__[T]>
         if (!util) throw new Error(`Utility ${name} not found`)
         return util(...args)
       },
@@ -134,7 +152,7 @@ export class Tab {
     return r[0].result
   }
 
-  async getAccessibleMarkdown(...args: Parameters<typeof window.NM_INJECT_UTILS['getAccessibleMarkdown']>) {
+  async getAccessibleMarkdown(...args: Parameters<typeof window.__NATIVEMIND_UTILS__['getAccessibleMarkdown']>) {
     return await this.executeUtils('getAccessibleMarkdown', ...args)
   }
 
@@ -150,7 +168,7 @@ export class Tab {
     await this.executeUtils('waitUntilDocumentMaybeLoaded')
   }
 
-  async queryElements(...args: Parameters<typeof window.NM_INJECT_UTILS['queryElements']>) {
+  async queryElements(...args: Parameters<typeof window.__NATIVEMIND_UTILS__['queryElements']>) {
     return await this.executeUtils('queryElements', ...args)
   }
 

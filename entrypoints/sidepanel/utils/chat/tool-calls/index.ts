@@ -2,12 +2,9 @@ import { browser } from 'wxt/browser'
 
 import { SerializedElementInfo } from '@/types/tab'
 import { useGlobalI18n } from '@/utils/i18n'
-import { fetchPageTool, navigateToTool, searchOnlineTool, viewTabTool } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
 import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
-import { browserUseSystemPrompt } from '@/utils/prompts/agent'
-import { renderPrompt, TagBuilder } from '@/utils/prompts/helpers'
 import { timeout } from '@/utils/timeout'
 import { getUserConfig } from '@/utils/user-config'
 
@@ -81,7 +78,7 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
   await browserSession.navigateTo(url, { newTab: true, active: false, abortSignal })
   hooks.addListener('onAgentFinished', () => browserSession.dispose())
   const content = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
-  if (!content) {
+  if (!content?.content) {
     taskMsg.icon = 'warningColored'
     taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })
     return [{
@@ -152,7 +149,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
       results: {
         tab_id: attachmentId,
         status: 'failed',
-        error_message: `Can not get content of tab "${attachmentId}", you may need to refresh the page`,
+        error_message: `Can not get content of tab "${attachmentId}", you may need to refresh the page and try again.`,
       },
     }]
   }
@@ -259,7 +256,7 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
   }]
 }
 
-export const executeNavigateTo: AgentToolCallExecute<'navigate_to'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
+export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
   const userConfig = await getUserConfig()
   const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
@@ -372,16 +369,4 @@ export const executeNavigateTo: AgentToolCallExecute<'navigate_to'> = async ({ p
       },
     },
   ]
-}
-
-export const executeBrowserUse: AgentToolCallExecute<'browser_use'> = async ({ params, taskMessageModifier }) => {
-  const taskMsg = taskMessageModifier.addTaskMessage({ summary: `Executing browser action: ${params.query}` })
-  taskMsg.done = true
-  return [{
-    type: 'hand-off',
-    overrideSystemPrompt: (await browserUseSystemPrompt([searchOnlineTool, viewTabTool, navigateToTool, fetchPageTool])).system,
-    userPrompt: renderPrompt`${TagBuilder.fromStructured('tool-result', {
-      action: `Start browsing the web with tools`,
-    })}`,
-  }]
 }

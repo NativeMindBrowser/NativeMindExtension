@@ -239,8 +239,8 @@ Purpose: Search for current and latest information
 Format:
 <tool_calls>
 <search_online>
-<query></query>
-<max_results></max_results>
+<query>2-6 specific keywords</query>
+<max_results>5</max_results>
 </search_online>
 </tool_calls>`)
 

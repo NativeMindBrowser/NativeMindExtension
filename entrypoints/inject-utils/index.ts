@@ -24,11 +24,11 @@ const NM_INJECT_UTILS = {
 
 export default defineUnlistedScript(() => {
   // this script must be idempotent because it may be injected multiple times
-  window.NM_INJECT_UTILS ??= NM_INJECT_UTILS
+  window.__NATIVEMIND_UTILS__ ??= NM_INJECT_UTILS
 })
 
 declare global {
   interface Window {
-    NM_INJECT_UTILS: typeof NM_INJECT_UTILS
+    __NATIVEMIND_UTILS__: typeof NM_INJECT_UTILS
   }
 }

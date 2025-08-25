@@ -163,7 +163,10 @@ export class Agent<T extends PromptBasedToolName> {
   }
 
   // tool use message proxy to modify the assistant message content
-  makeTaskMessageProxy(): TaskMessageModifier {
+  makeTaskMessageGroupProxy(abortSignal?: AbortSignal): TaskMessageModifier {
+    abortSignal?.addEventListener('abort', () => {
+      groupMsg?.tasks.forEach((task) => task.done = true)
+    })
     let groupMsg: AgentTaskGroupMessageV1 | undefined
     const ensureMessage = () => {
       if (!groupMsg) {
@@ -286,7 +289,7 @@ export class Agent<T extends PromptBasedToolName> {
       if (shouldForceAnswer) {
         thisLoopMessages.push({ role: 'user', content: `Answer Language: Strictly follow the LANGUAGE POLICY above.\nBased on all the information collected above, please provide a comprehensive final answer.\nDo not use any tools.` })
       }
-      let taskMessageModifier = this.makeTaskMessageProxy()
+      let taskMessageModifier = this.makeTaskMessageGroupProxy(abortController.signal)
       const agentMessageManager = this.makeTempAgentMessageManager()
       const agentMessage = agentMessageManager.getOrAddAgentMessage()
       const response = streamTextInBackground({
@@ -328,8 +331,10 @@ export class Agent<T extends PromptBasedToolName> {
         agentMessage.done = true
         if (currentLoopToolCalls.length > 0) {
           if (agentMessage.content || agentMessage.reasoning) {
-            taskMessageModifier = this.makeTaskMessageProxy()
+            // create a new group if there are some plain messages
+            taskMessageModifier = this.makeTaskMessageGroupProxy(abortController.signal)
           }
+          this.log.debug('Executing tool calls', currentLoopToolCalls)
           const toolResults = await this.executeToolCalls(currentLoopToolCalls, taskScopeToolCalls, loopImages, taskMessageModifier, eventBus)
           this.log.debug('Tool calls executed', currentLoopToolCalls, toolResults)
           if (toolResults.length === 0) {
