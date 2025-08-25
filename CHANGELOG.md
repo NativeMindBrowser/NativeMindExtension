@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.4...v1.8.0-beta.5)
+
+### 🩹 Fixes
+
+- **translation:** Enhance line clamp handling for translation pieces ([e7bdf40](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e7bdf40))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.3...v1.8.0-beta.4)
