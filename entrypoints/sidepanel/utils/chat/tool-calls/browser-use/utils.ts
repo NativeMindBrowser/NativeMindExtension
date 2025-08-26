@@ -79,10 +79,10 @@ export class BrowserSession {
     if (!tab) throw new Error('No related tab found')
     const { tab: nextTab, isNewTab } = await tab.tab.clickElementByInternalId(internalId)
     if (isNewTab) {
-      await nextTab.waitUntilDocumentMaybeLoaded()
       this.tabs.forEach((tabInfo) => tabInfo.active = false)
       this.tabs.push({ tab: nextTab, active: true, existing: !closeNewTabInDispose, shortId: this.nextTabShortId })
     }
+    return { isNewTab, tab: nextTab, oldTab: tab.tab }
   }
 
   async buildAccessibleMarkdown(options: { highlightInteractiveElements?: boolean, contentFilterThreshold?: number, abortSignal?: AbortSignal } = {}) {

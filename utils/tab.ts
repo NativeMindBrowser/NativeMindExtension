@@ -2,11 +2,12 @@ import { HTMLAttributes } from 'vue'
 import { Browser, browser } from 'wxt/browser'
 
 import { SerializedElementInfo, TabInfo } from '@/types/tab'
-import logger from '@/utils/logger'
+import Logger from '@/utils/logger'
 
 import { injectUtils } from './execute-script'
 import { sleep } from './sleep'
 
+const logger = Logger.child('tab-utils')
 type ElementSelector = { xpath: string } | { cssSelector: string }
 
 export function waitForTabLoaded(tabId: number, options: { timeout?: number, matchUrl?: (url: string) => boolean, errorIfTimeout?: boolean } = {}) {
@@ -92,6 +93,7 @@ export function serializeElement(el: Element): SerializedElementInfo {
 
 export class Tab {
   disposed = false
+  cachedAccessibleResult?: Awaited<ReturnType<typeof window.__NATIVEMIND_UTILS__['getAccessibleMarkdown']>>
   tabId: Promise<number>
 
   static fromTab(tabId: number) {
@@ -164,7 +166,9 @@ export class Tab {
   }
 
   async getAccessibleMarkdown(...args: Parameters<typeof window.__NATIVEMIND_UTILS__['getAccessibleMarkdown']>) {
-    return await this.executeUtils('getAccessibleMarkdown', ...args)
+    const result = await this.executeUtils('getAccessibleMarkdown', ...args)
+    this.cachedAccessibleResult = result
+    return result
   }
 
   async getElementByInternalId(internalId: string) {
@@ -172,16 +176,16 @@ export class Tab {
   }
 
   async clickElementByInternalId(internalId: string) {
+    const navigationInfoPromise = waitForNavigation()
     await this.executeUtils('clickElementByInternalId', internalId)
-    await sleep(1000) // Wait for the click action to complete
-    const navigationInfo = await waitForNavigation()
+    const navigationInfo = await navigationInfoPromise
+    logger.debug('Navigation by clickElementByInternalId', { navigationInfo, currentTabId: await this.tabId })
     if (navigationInfo && navigationInfo.tabId !== await this.tabId) {
       const newTab = Tab.fromTab(navigationInfo.tabId)
+      await newTab.waitUntilDocumentMaybeLoaded()
       return { tab: newTab, isNewTab: true }
     }
-    await waitForTabLoaded(await this.tabId, { timeout: 3000 }).catch((error) => {
-      logger.warn('Tab may not be fully loaded after click:', { error })
-    })
+    await this.waitUntilDocumentMaybeLoaded()
     return { tab: this, isNewTab: false }
   }
 

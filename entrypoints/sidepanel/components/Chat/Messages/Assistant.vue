@@ -75,7 +75,8 @@
         </div>
         <ScrollContainer
           v-if="showReasoning"
-          :class="classNames('wrap-anywhere pl-6 border-[#AEB5BD] overflow-auto', showClampedReasoning ? 'h-[3.3em] leading-[1.5em]':'')"
+          containerClass="overscroll-auto"
+          :class="['wrap-anywhere pl-6 border-[#AEB5BD] overflow-auto', showClampedReasoning ? 'h-[3.3em] leading-[1.5em]' : '']"
           :arrivalShadow="{
             top: { color: '#F5F6FB', size: 12, offset: 8 },
             bottom: { color: '#F5F6FB', size: 12, offset: 8 }
@@ -134,7 +135,6 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Text from '@/components/ui/Text.vue'
 import { AgentMessageV1, AssistantMessageV1 } from '@/types/chat'
 import { getUserConfig } from '@/utils/user-config'
-import { classNames } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'
 const props = defineProps<{

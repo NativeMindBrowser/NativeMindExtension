@@ -4,7 +4,7 @@
       <div class="flex flex-col">
         <div class="flex gap-2 py-[2px] items-center">
           <ModelLogo
-            class="w-9 h-9 rounded-full"
+            class="w-9 h-9 rounded-full shrink-0"
             :modelId="model"
           />
           <div class="flex flex-col gap-1">
@@ -19,7 +19,7 @@
       </div>
       <Button
         variant="secondary"
-        class="px-[10px] py-[6px]"
+        class="px-[10px] py-[6px] whitespace-nowrap"
         @click="$emit('unload', model)"
       >
         {{ t('settings.ollama.unload') }}

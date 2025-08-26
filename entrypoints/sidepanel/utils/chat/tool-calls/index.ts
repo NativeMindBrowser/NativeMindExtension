@@ -1,16 +1,20 @@
 import { browser } from 'wxt/browser'
 
 import { SerializedElementInfo } from '@/types/tab'
+import { markdownSectionDiff } from '@/utils/diff'
 import { useGlobalI18n } from '@/utils/i18n'
-import logger from '@/utils/logger'
+import Logger from '@/utils/logger'
 import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { timeout } from '@/utils/timeout'
+import { isUrlEqual } from '@/utils/url'
 import { getUserConfig } from '@/utils/user-config'
 
 import { AgentToolCallExecute } from '../../agent'
 import { SearchScraper } from '../../search'
 import { BrowserSession } from './browser-use/utils'
+
+const logger = Logger.child('tool-calls-execute')
 
 export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async ({ params, abortSignal, taskMessageModifier }) => {
   const { t } = await useGlobalI18n()
@@ -107,7 +111,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   const userConfig = await getUserConfig()
   const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
-  const log = logger.child('view_tab_execute')
+  const log = logger.child('tool:executeViewTab')
   const { tab_id: attachmentId } = params
   const { t } = await useGlobalI18n()
   const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: attachmentId }) })
@@ -259,6 +263,7 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
 export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
   const userConfig = await getUserConfig()
   const { t } = await useGlobalI18n()
+  const log = logger.child('tool:executePageClick')
   const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
   const { element_id: elementId } = params
@@ -266,35 +271,45 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
   taskMsg.icon = 'taskReadFile'
   const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
   hooks.addListener('onAgentFinished', () => browserSession.dispose())
+  const normalizeInnerText = (text?: string) => {
+    if (!text) return undefined
+    const normalized = text.replace(/\s+/gs, ' ').trim().replace(/\n/gs, ' ').replaceAll('`', '')
+    if (normalized.length > 30) {
+      return normalized.slice(0, 30) + '...'
+    }
+    return normalized
+  }
   if (!browserSession.activeTab) {
-    logger.warn('No active tab in browser session when clicking element', { elementId })
+    log.warn('No active tab in browser session when clicking element', { elementId })
     taskMsg.icon = 'warningColored'
     taskMsg.summary = t('chat.tool_calls.page_click.error_click_before_view_tab')
     return [{
       type: 'tool-result',
       results: {
         element_id: elementId,
-        error_message: 'No active tab found, you need to use view_tab or fetch_page first',
+        error_message: 'No page has been viewed yet. Please use view_tab or fetch_page first to load a page with interactive elements.',
         status: 'failed',
       },
     }]
   }
+  const oldTab = browserSession.activeTab.tab
+  const oldTabInfo = await oldTab.getInfo()
   const element = await browserSession.getElementByInternalId(elementId)
   if (!element) {
-    logger.warn(`Element with ID "${elementId}" not found`)
+    log.warn(`Element with ID "${elementId}" not found`)
     taskMsg.icon = 'warningColored'
     taskMsg.summary = t('chat.tool_calls.page_click.error_click_incorrect_link', { destination: `element(${elementId})` })
     return [{
       type: 'tool-result',
       results: {
         element_id: elementId,
-        error_message: `Element with ID "${elementId}" not found`,
+        error_message: `Element ID '${elementId}' not found. Please use a valid element ID`,
         status: 'failed',
       },
     }]
   }
 
-  taskMsg.summary = t('chat.tool_calls.page_click.click', { content: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
+  taskMsg.summary = t('chat.tool_calls.page_click.click', { content: normalizeInnerText(element.innerText?.trim()) || element.attributes.href || `element(${elementId})` })
 
   const checkIsNavigationLink = (element: SerializedElementInfo): element is SerializedElementInfo & { attributes: { href: string } } => {
     if (!userConfig.browserUse.simulateClickOnLink.get()) return false
@@ -316,9 +331,9 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
       await browserSession.navigateTo(url.href, { abortSignal, newTab: true })
     }
     catch (err) {
-      logger.warn(`Failed to navigate to ${element.attributes.href}: ${err}`)
+      log.warn(`Failed to navigate to ${element.attributes.href}: ${err}`)
       taskMsg.icon = 'warningColored'
-      taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
+      taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: normalizeInnerText(element.innerText?.trim()) || element.attributes.href || `element(${elementId})` })
       return [{
         type: 'tool-result',
         results: {
@@ -334,9 +349,9 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
       await browserSession.clickElementByInternalId(elementId, userConfig.browserUse.closeTabOpenedByAgent.get())
     }
     catch (err) {
-      logger.warn(`Failed to click element: ${err}`)
+      log.warn(`Failed to click element: ${err}`)
       taskMsg.icon = 'warningColored'
-      taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
+      taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: normalizeInnerText(element.innerText?.trim()) || element.attributes.href || `element(${elementId})` })
       return [{
         type: 'tool-result',
         results: {
@@ -347,22 +362,46 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
       }]
     }
   }
-  const currentTab = await browserSession.activeTab?.tab.getInfo()
-  taskMsg.summary = t('chat.tool_calls.page_click.redirected', { destination: currentTab?.title || currentTab?.url || '' })
+  const currentTabInfo = await browserSession.activeTab?.tab.getInfo()
+  log.debug('Clicked element', { elementId, element, oldTabInfo, currentTabInfo })
+  if (currentTabInfo.url && oldTabInfo.url && isUrlEqual(new URL(currentTabInfo.url), new URL(oldTabInfo.url), { parts: ['origin', 'pathname', 'search'] })) {
+    const lastTabResult = oldTab.cachedAccessibleResult ?? await oldTab?.getAccessibleMarkdown().catch((err) => {
+      log.warn(`Failed to get accessible markdown for old tab`, { oldTab, error: err })
+      return undefined
+    })
+    const result = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
+    if (lastTabResult && result) {
+      const diffs = markdownSectionDiff(lastTabResult.content, result.content)
+      log.debug(`Found diffs between old and new tab content: ${diffs}`, { lastTabResult, result })
+      const shouldUseDiff = diffs.trim() && diffs.length < (result.content.length / 2) // not to use diff result if there are too many changes
+      if (shouldUseDiff) {
+        taskMsg.summary = t('chat.tool_calls.page_click.redirected', { destination: normalizeInnerText(currentTabInfo?.title) || currentTabInfo?.url || '' })
+        return [{
+          type: 'tool-result',
+          results: {
+            element_id: elementId,
+            status: 'page_changed',
+            message: `Found diffs after clicking element and navigating: ${diffs}`,
+          },
+        }]
+      }
+    }
+  }
   const result = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
   if (!result) {
-    logger.warn(`Failed to build accessible markdown for element`, { element })
+    log.warn(`Failed to build accessible markdown for element`, { element })
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
+    taskMsg.summary = t('chat.tool_calls.page_click.error_unable_to_jump', { destination: normalizeInnerText(element.innerText?.trim()) || element.attributes.href || `element(${elementId})` })
     return [{
       type: 'tool-result',
       results: {
         element_id: elementId,
-        error_message: `Failed to read page: ${currentTab?.title} ${currentTab?.url}`,
+        error_message: `Failed to read page: ${currentTabInfo?.title} ${currentTabInfo?.url}`,
         status: 'failed',
       },
     }]
   }
+  taskMsg.summary = t('chat.tool_calls.page_click.redirected', { destination: normalizeInnerText(currentTabInfo?.title) || currentTabInfo?.url || '' })
   return [
     {
       type: 'tool-result',
