@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.8.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.8...v1.8.0-beta.9)
+
+### 🩹 Fixes
+
+- **sidepanel:** Add overscroll-none class to body for improved scrolling behavior ([3e8af30](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e8af30))
+
+### 🏡 Chore
+
+- **document-parser:** Update default content filter config ([b1dc42d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b1dc42d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.8
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.7...v1.8.0-beta.8)
