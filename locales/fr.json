@@ -68,7 +68,9 @@
         "error_can_not_click": "Impossible de cliquer et d'accéder à {destination}",
         "error_no_active_tab": "Aucun onglet actif trouvé",
         "error_unable_to_jump": "Impossible de cliquer et d'accéder à {destination}",
-        "redirected": "Redirigé vers {destination}"
+        "redirected": "Redirigé vers {destination}",
+        "error_click_before_view_tab": "Essayez de cliquer sur un lien de page avant de consulter des pages",
+        "error_click_incorrect_link": "Essayez de cliquer sur le lien de page incorrect"
       }
     }
   },

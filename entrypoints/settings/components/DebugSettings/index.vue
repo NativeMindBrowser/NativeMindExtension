@@ -341,7 +341,10 @@
         <Block title="Browser use">
           <div class="flex flex-col gap-3 justify-start items-stretch">
             <div class="flex gap-3 text-xs items-center">
-              Debug mode <span class="font-light">(will highlight interactive elements)</span>
+              <div class="flex flex-col min-w-[250px]">
+                <span>Debug mode</span>
+                <span class="font-light text-[8px]">(will highlight interactive elements)</span>
+              </div>
               <Switch
                 v-model="highlightInteractiveElements"
                 slotClass="rounded-lg border-gray-200 border bg-white"
@@ -352,7 +355,38 @@
               />
             </div>
             <div class="flex gap-3 text-xs items-center">
-              Content filter threshold <span class="font-light">(lower value may allow more content, value belows -1 will allow all content)</span>
+              <div class="flex flex-col min-w-[250px]">
+                <span>Simulate click on link</span>
+                <span class="font-light text-[8px]">(open new tab with url in the link instead of clicking it)</span>
+              </div>
+              <Switch
+                v-model="simulateClickOnLink"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-5 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[{label: 'True',key: true},{label: 'False',key: false}]"
+              />
+            </div>
+            <div class="flex gap-3 text-xs items-center">
+              <div class="flex flex-col min-w-[250px]">
+                <span>Close tab opened by agent</span>
+                <span class="font-light text-[8px]">(automatically closes the tab opened by the agent after the task is completed)</span>
+              </div>
+              <Switch
+                v-model="closeTabOpenedByAgent"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-5 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[{label: 'True',key: true},{label: 'False',key: false}]"
+              />
+            </div>
+            <div class="flex gap-3 text-xs items-center">
+              <div class="flex flex-col min-w-[250px]">
+                <span>Content filter threshold</span>
+                <span class="font-light text-[8px]">(lower value may allow more content, value belows -1 will allow all content)</span>
+              </div>
               <Input
                 v-model.number="contentFilterThreshold"
                 type="number"
@@ -645,6 +679,8 @@ const browserUseOpenUrl = ref('https://example.com')
 const browserUseParsedResults = ref<Awaited<ReturnType<BrowserSession['buildAccessibleMarkdown']>>[]>([])
 const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.toRef()
 const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.toRef()
+const closeTabOpenedByAgent = userConfig.browserUse.closeTabOpenedByAgent.toRef()
+const simulateClickOnLink = userConfig.browserUse.simulateClickOnLink.toRef()
 
 const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string, parser: string }[]>()
 const modelProviderOptions = [

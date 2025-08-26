@@ -65,9 +65,9 @@ export async function waitForNavigation(timeout = 3000) {
     browser.webNavigation.onBeforeNavigate.addListener(() => resolve(true))
     sleep(1500).then(() => resolve(false))
   })
-  return new Promise<void>((resolve) => {
+  return new Promise<Browser.webNavigation.WebNavigationFramedCallbackDetails | void>((resolve) => {
     if (maybeNavigation) {
-      browser.webNavigation.onCompleted.addListener(() => resolve())
+      browser.webNavigation.onCompleted.addListener((ev) => resolve(ev))
     }
     sleep(timeout).then(() => resolve())
   })
@@ -158,6 +158,11 @@ export class Tab {
     return r[0].result
   }
 
+  async waitUntilDocumentMaybeLoaded() {
+    await waitForTabLoaded(await this.tabId, { timeout: 3000, errorIfTimeout: false })
+    return await this.executeUtils('waitUntilDocumentMaybeLoaded')
+  }
+
   async getAccessibleMarkdown(...args: Parameters<typeof window.__NATIVEMIND_UTILS__['getAccessibleMarkdown']>) {
     return await this.executeUtils('getAccessibleMarkdown', ...args)
   }
@@ -169,11 +174,15 @@ export class Tab {
   async clickElementByInternalId(internalId: string) {
     await this.executeUtils('clickElementByInternalId', internalId)
     await sleep(1000) // Wait for the click action to complete
-    await waitForNavigation()
+    const navigationInfo = await waitForNavigation()
+    if (navigationInfo && navigationInfo.tabId !== await this.tabId) {
+      const newTab = Tab.fromTab(navigationInfo.tabId)
+      return { tab: newTab, isNewTab: true }
+    }
     await waitForTabLoaded(await this.tabId, { timeout: 3000 }).catch((error) => {
       logger.warn('Tab may not be fully loaded after click:', { error })
     })
-    await this.executeUtils('waitUntilDocumentMaybeLoaded')
+    return { tab: this, isNewTab: false }
   }
 
   async queryElements(...args: Parameters<typeof window.__NATIVEMIND_UTILS__['queryElements']>) {

@@ -68,7 +68,9 @@
         "error_can_not_click": "Klicken und Springen zu {destination} nicht möglich",
         "error_no_active_tab": "Kein aktiver Tab gefunden",
         "error_unable_to_jump": "Klicken und Springen zu {destination} nicht möglich",
-        "redirected": "Weitergeleitet zu {destination}"
+        "redirected": "Weitergeleitet zu {destination}",
+        "error_click_before_view_tab": "Versuchen Sie, auf einen Seitenlink zu klicken, bevor Sie Seiten anzeigen",
+        "error_click_incorrect_link": "Versuchen Sie, auf den fehlerhaften Seitenlink zu klicken"
       }
     }
   },

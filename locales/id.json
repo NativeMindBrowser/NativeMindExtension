@@ -68,7 +68,9 @@
         "error_can_not_click": "Tidak dapat mengklik dan melompat ke {destination}",
         "error_no_active_tab": "Tidak ditemukan tab aktif",
         "error_unable_to_jump": "Tidak dapat mengklik dan melompat ke {destination}",
-        "redirected": "Dialihkan ke {destination}"
+        "redirected": "Dialihkan ke {destination}",
+        "error_click_before_view_tab": "Coba klik tautan halaman sebelum melihat halaman apa pun",
+        "error_click_incorrect_link": "Coba klik pada tautan halaman yang salah"
       }
     }
   },

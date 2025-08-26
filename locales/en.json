@@ -244,7 +244,9 @@
         "error_no_active_tab": "No active tab found",
         "error_can_not_click": "Unable to click and jump to {destination}",
         "redirected": "Redirected to {destination}",
-        "error_unable_to_jump": "Unable to click and jump to {destination}"
+        "error_unable_to_jump": "Unable to click and jump to {destination}",
+        "error_click_before_view_tab": "Try clicking a page link before viewing any pages",
+        "error_click_incorrect_link": "Try clicking on the incorrect page link"
       }
     }
   },

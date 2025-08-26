@@ -70,10 +70,19 @@ export class BrowserSession {
     return await tab.tab.getElementByInternalId(internalId)
   }
 
-  async clickElementByInternalId(internalId: string) {
+  /**
+   * @param internalId id of the element to click
+   * @param closeNewTabInDispose whether to close the new tab opened by this action when browser session disposed
+   */
+  async clickElementByInternalId(internalId: string, closeNewTabInDispose: boolean) {
     const tab = this.getTabByInternalId(internalId) || this.activeTab
     if (!tab) throw new Error('No related tab found')
-    return await tab.tab.clickElementByInternalId(internalId)
+    const { tab: nextTab, isNewTab } = await tab.tab.clickElementByInternalId(internalId)
+    if (isNewTab) {
+      await nextTab.waitUntilDocumentMaybeLoaded()
+      this.tabs.forEach((tabInfo) => tabInfo.active = false)
+      this.tabs.push({ tab: nextTab, active: true, existing: !closeNewTabInDispose, shortId: this.nextTabShortId })
+    }
   }
 
   async buildAccessibleMarkdown(options: { highlightInteractiveElements?: boolean, contentFilterThreshold?: number, abortSignal?: AbortSignal } = {}) {

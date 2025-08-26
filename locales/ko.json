@@ -68,7 +68,9 @@
         "error_can_not_click": "{destination}을(를) 클릭하여 이동할 수 없습니다",
         "error_no_active_tab": "활성 탭을 찾을 수 없습니다",
         "redirected": "{destination}로 리디렉션됨",
-        "error_unable_to_jump": "{destination}을(를) 클릭하여 이동할 수 없습니다"
+        "error_unable_to_jump": "{destination}을(를) 클릭하여 이동할 수 없습니다",
+        "error_click_before_view_tab": "페이지를 보기 전에 페이지 링크를 클릭해 보세요",
+        "error_click_incorrect_link": "잘못된 페이지 링크를 클릭해 보세요"
       }
     }
   },

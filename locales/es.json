@@ -68,7 +68,9 @@
         "error_can_not_click": "No se puede hacer clic y saltar a {destination}",
         "error_no_active_tab": "No se encontró ninguna pestaña activa",
         "error_unable_to_jump": "No se puede hacer clic y saltar a {destination}",
-        "redirected": "Redirigido a {destination}"
+        "redirected": "Redirigido a {destination}",
+        "error_click_before_view_tab": "Intenta hacer clic en un enlace de página antes de ver cualquier página",
+        "error_click_incorrect_link": "Intenta hacer clic en el enlace de página incorrecto"
       }
     }
   },

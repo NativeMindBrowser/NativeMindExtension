@@ -269,7 +269,7 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
   if (!browserSession.activeTab) {
     logger.warn('No active tab in browser session when clicking element', { elementId })
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = t('chat.tool_calls.page_click.error_no_active_tab')
+    taskMsg.summary = t('chat.tool_calls.page_click.error_click_before_view_tab')
     return [{
       type: 'tool-result',
       results: {
@@ -283,7 +283,7 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
   if (!element) {
     logger.warn(`Element with ID "${elementId}" not found`)
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = t('chat.tool_calls.page_click.error_can_not_click', { destination: `element(${elementId})` })
+    taskMsg.summary = t('chat.tool_calls.page_click.error_click_incorrect_link', { destination: `element(${elementId})` })
     return [{
       type: 'tool-result',
       results: {
@@ -297,6 +297,7 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
   taskMsg.summary = t('chat.tool_calls.page_click.click', { content: element.innerText?.trim() || element.attributes.href || `element(${elementId})` })
 
   const checkIsNavigationLink = (element: SerializedElementInfo): element is SerializedElementInfo & { attributes: { href: string } } => {
+    if (!userConfig.browserUse.simulateClickOnLink.get()) return false
     const tagName = element.tagName.toLowerCase()
     if (tagName === 'a' && element.attributes.href) {
       const link = new URL(element.attributes.href, element.ownerDocument.url)
@@ -330,7 +331,7 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
   }
   else {
     try {
-      await browserSession.clickElementByInternalId(elementId)
+      await browserSession.clickElementByInternalId(elementId, userConfig.browserUse.closeTabOpenedByAgent.get())
     }
     catch (err) {
       logger.warn(`Failed to click element: ${err}`)

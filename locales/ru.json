@@ -68,7 +68,9 @@
         "error_can_not_click": "Невозможно нажать и перейти к {destination}",
         "error_no_active_tab": "Активная вкладка не найдена",
         "error_unable_to_jump": "Невозможно нажать и перейти к {destination}",
-        "redirected": "Перенаправлено на {destination}"
+        "redirected": "Перенаправлено на {destination}",
+        "error_click_before_view_tab": "Попробуйте нажать на ссылку страницы перед просмотром любых страниц",
+        "error_click_incorrect_link": "Попробуйте нажать на неправильную ссылку страницы"
       }
     }
   },

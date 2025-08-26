@@ -68,7 +68,9 @@
         "error_can_not_click": "無法點擊並跳轉至 {destination}",
         "error_no_active_tab": "找不到使用中的分頁",
         "error_unable_to_jump": "無法點擊並跳轉至 {destination}",
-        "redirected": "重新導向至 {destination}"
+        "redirected": "重新導向至 {destination}",
+        "error_click_before_view_tab": "在查看任何頁面之前，請先嘗試點擊頁面連結",
+        "error_click_incorrect_link": "請嘗試點擊錯誤的頁面連結"
       }
     }
   },

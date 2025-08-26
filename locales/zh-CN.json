@@ -241,10 +241,12 @@
       },
       "page_click": {
         "click": "点击 {content}",
-        "error_can_not_click": "无法点击并跳转到{destination}",
+        "error_can_not_click": "无法点击并跳转到 {destination}",
         "error_no_active_tab": "未找到活动标签页",
-        "error_unable_to_jump": "无法点击并跳转到{destination}",
-        "redirected": "已跳转 {destination}"
+        "error_unable_to_jump": "无法点击并跳转到 {destination}",
+        "redirected": "已跳转 {destination}",
+        "error_click_before_view_tab": "尝试在尚未查看任何页面时点击页面链接",
+        "error_click_incorrect_link": "尝试点击错误的页面链接"
       }
     }
   },

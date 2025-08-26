@@ -68,7 +68,9 @@
         "error_can_not_click": "ไม่สามารถคลิกและข้ามไปยัง {destination} ได้",
         "error_no_active_tab": "ไม่พบแท็บที่ใช้งานอยู่",
         "error_unable_to_jump": "ไม่สามารถคลิกและข้ามไปยัง {destination} ได้",
-        "redirected": "เปลี่ยนเส้นทางไปยัง {destination}"
+        "redirected": "เปลี่ยนเส้นทางไปยัง {destination}",
+        "error_click_before_view_tab": "ลองคลิกลิงก์หน้าเว็บก่อนดูหน้าใดๆ",
+        "error_click_incorrect_link": "ลองคลิกที่ลิงก์หน้าที่ไม่ถูกต้อง"
       }
     }
   },

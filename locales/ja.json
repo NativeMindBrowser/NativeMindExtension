@@ -68,7 +68,9 @@
         "error_can_not_click": "{destination}をクリックしてジャンプできません",
         "error_no_active_tab": "アクティブなタブが見つかりません",
         "error_unable_to_jump": "{destination}をクリックしてジャンプできません",
-        "redirected": "{destination}にリダイレクトされました"
+        "redirected": "{destination}にリダイレクトされました",
+        "error_click_before_view_tab": "ページを表示する前に、ページリンクをクリックしてみてください",
+        "error_click_incorrect_link": "間違ったページリンクをクリックしてみてください"
       }
     }
   },

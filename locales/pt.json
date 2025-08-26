@@ -68,7 +68,9 @@
         "error_can_not_click": "Não foi possível clicar e ir para {destination}",
         "error_no_active_tab": "Nenhuma aba ativa encontrada",
         "error_unable_to_jump": "Não foi possível clicar e ir para {destination}",
-        "redirected": "Redirecionado para {destination}"
+        "redirected": "Redirecionado para {destination}",
+        "error_click_before_view_tab": "Tente clicar em um link de página antes de visualizar qualquer página",
+        "error_click_incorrect_link": "Tente clicar no link da página incorreta"
       }
     }
   },

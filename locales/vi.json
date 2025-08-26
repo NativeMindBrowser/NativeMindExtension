@@ -68,7 +68,9 @@
         "error_can_not_click": "Không thể nhấp và chuyển đến {destination}",
         "error_no_active_tab": "Không tìm thấy tab đang hoạt động",
         "error_unable_to_jump": "Không thể nhấp và chuyển đến {destination}",
-        "redirected": "Đã chuyển hướng đến {destination}"
+        "redirected": "Đã chuyển hướng đến {destination}",
+        "error_click_before_view_tab": "Hãy thử nhấp vào một liên kết trang trước khi xem bất kỳ trang nào",
+        "error_click_incorrect_link": "Hãy thử nhấp vào liên kết trang không chính xác"
       }
     }
   },
