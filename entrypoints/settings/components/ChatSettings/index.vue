@@ -34,7 +34,7 @@
           >
             <Textarea
               v-model="chatSystemPrompt"
-              :defaultValue="defaultChatSystemPrompt"
+              :resetDefault="resetDefaultChatSystemPrompt"
             />
           </Section>
         </div>
@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="tsx">
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 
 import ModelSelector from '@/components/ModelSelector.vue'
 import ScrollTarget from '@/components/ScrollTarget.vue'
@@ -102,8 +102,14 @@ const logger = useLogger()
 const confirm = useConfirm()
 const settingsQuery = useSettingsInitialQuery()
 const userConfig = await getUserConfig()
-const chatSystemPrompt = userConfig.chat.systemPrompt.toRef()
-const defaultChatSystemPrompt = chatSystemPrompt.defaultValue
+const chatSystemPromptConfig = userConfig.chat.systemPrompt
+const chatSystemPrompt = chatSystemPromptConfig.toRef()
+const resetDefaultChatSystemPrompt = computed(() => {
+  if (chatSystemPrompt.value !== chatSystemPromptConfig.getDefault()) {
+    return () => chatSystemPromptConfig.resetDefault()
+  }
+  return undefined
+})
 const quickActions = userConfig.chat.quickActions.actions.toRef()
 const defaultQuickActions = userConfig.chat.quickActions.actions.getDefault()
 const resetDefaultQuickActions = () => {

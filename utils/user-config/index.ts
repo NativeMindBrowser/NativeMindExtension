@@ -403,6 +403,10 @@ export async function _getUserConfig() {
       highlightInteractiveElements: await new Config('documentParser.highlightInteractiveElements').default(false).build(),
       contentFilterThreshold: await new Config('documentParser.contentFilterThreshold').default(0.28).build(),
     },
+    browserUse: {
+      simulateClickOnLink: await new Config('browserUse.simulateClickOnLink').default(false).build(),
+      closeTabOpenedByAgent: await new Config('browserUse.closeTabOpenedByAgent').default(false).build(),
+    },
     chat: {
       agent: {
         maxIterations: await new Config('chat.agent.maxIterations').default(5).build(),
@@ -411,7 +415,7 @@ export async function _getUserConfig() {
       environmentDetails: {
         fullUpdateFrequency: await new Config('chat.environmentDetails.fullUpdateFrequency').default(10).build(), // update full environment details every 5 messages
       },
-      systemPrompt: await new Config('chat.systemPrompt_1').migrateFrom('chat.systemPrompt', (v) => v === DEFAULT_CHAT_SYSTEM_PROMPT ? undefined : v).default(DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
+      systemPrompt: await new Config('chat.systemPrompt_2').migrateFrom('chat.systemPrompt', (v) => v === DEFAULT_CHAT_SYSTEM_PROMPT ? undefined : v).default(DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
       history: {
         currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
       },
