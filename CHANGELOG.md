@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.8.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.9...v1.8.0-beta.10)
+
+### 🚀 Enhancements
+
+- **agent:** Add new agent task component and integrate icons for new task styles ([cfae4cf](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cfae4cf))
+
+### 🩹 Fixes
+
+- **ui:** Incorrect send button position & agent msg unexpected margin ([aa08b1d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/aa08b1d))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.8.0-beta.9
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.8...v1.8.0-beta.9)
