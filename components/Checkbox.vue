@@ -19,20 +19,14 @@
 </template>
 
 <script setup lang="ts">
-import { useVModel } from '@vueuse/core'
-
 import IconTick from '@/assets/icons/checkbox-tick.svg?component'
 import { classNames, type ComponentClassAttr } from '@/utils/vue/utils'
 
 const props = defineProps<{
-  modelValue: boolean
   class?: ComponentClassAttr
   disabled?: boolean
   label?: string
 }>()
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-}>()
 
-const checked = useVModel(props, 'modelValue', emit)
+const checked = defineModel<boolean>({ default: false })
 </script>

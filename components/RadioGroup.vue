@@ -41,8 +41,6 @@
 </template>
 
 <script setup lang="ts">
-import { useVModel } from '@vueuse/core'
-
 import { classNames, type ComponentClassAttr } from '@/utils/vue/utils'
 
 export interface RadioOption {
@@ -53,17 +51,12 @@ export interface RadioOption {
 }
 
 const props = defineProps<{
-  modelValue: string | number
   options: RadioOption[]
   class?: ComponentClassAttr
   disabled?: boolean
 }>()
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | number): void
-}>()
-
-const selectedValue = useVModel(props, 'modelValue', emit)
+const selectedValue = defineModel<string | number>()
 
 const selectOption = (value: string | number) => {
   if (!props.disabled) {
