@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Tindakan cepat"
     },
+    "thinking_mode": {
+      "label": "Berpikir"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Tanyakan apa saja...",
@@ -229,6 +232,7 @@
         "vram": "{size} VRAM",
         "params": "{size} parameter",
         "quant": "{level} kuant",
+        "thinking": "Berpikir",
         "no_active_models": "Ollama terhubung, tetapi tidak ada model yang aktif",
         "not_connected_to_ollama": "Tidak terhubung ke Ollama"
       }
@@ -284,7 +288,15 @@
         "chat_model": "Model chat",
         "chat_model_description": "Pilih model AI untuk percakapan chat",
         "chat_system_prompt": "Sistem Prompt Obrolan",
-        "chat_system_prompt_description": "Tentukan perilaku dan peran AI selama percakapan chat"
+        "chat_system_prompt_description": "Tentukan perilaku dan peran AI selama percakapan chat",
+        "thinking_visibility": "Visibilitas Proses Berpikir",
+        "thinking_visibility_description": "Pilih cara proses berpikir ditampilkan selama penalaran LLM",
+        "thinking_visibility_hide": "Sembunyikan Pemikiran",
+        "thinking_visibility_hide_description": "Hanya tampilkan loading dan jawaban akhir",
+        "thinking_visibility_preview": "Pratinjau Pemikiran",
+        "thinking_visibility_preview_description": "Tampilkan 2 baris terakhir, dapat diperluas",
+        "thinking_visibility_full": "Tampilkan Pemikiran Lengkap",
+        "thinking_visibility_full_description": "Tampilkan semua secara default, dapat diciutkan"
       },
       "quick_actions": {
         "title": "Tindakan Cepat",

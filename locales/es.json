@@ -28,6 +28,9 @@
     "quick_actions": {
       "title": "Acciones Rápidas"
     },
+    "thinking_mode": {
+      "label": "Pensando"
+    },
     "prompt": {
       "highlight_key_insights": {
         "title": "Resalta las ideas clave"
@@ -186,6 +189,7 @@
         "vram": "{size} VRAM",
         "params": "{size} parámetros",
         "quant": "{level} cuantitativo",
+        "thinking": "Pensando",
         "no_active_models": "Ollama conectado, pero no hay modelos activos",
         "not_connected_to_ollama": "No conectado a Ollama"
       }
@@ -309,7 +313,15 @@
         "chat_model": "Modelo de chat",
         "chat_model_description": "Selecciona el modelo de IA para conversaciones de chat",
         "chat_system_prompt": "Sistema de Indicaciones de Chat",
-        "chat_system_prompt_description": "Define el comportamiento y el rol de la IA durante las conversaciones de chat"
+        "chat_system_prompt_description": "Define el comportamiento y el rol de la IA durante las conversaciones de chat",
+        "thinking_visibility": "Visibilidad del Proceso de Pensamiento",
+        "thinking_visibility_description": "Elige cómo se muestra el proceso de pensamiento durante el razonamiento LLM",
+        "thinking_visibility_hide": "Ocultar Pensamiento",
+        "thinking_visibility_hide_description": "Solo mostrar carga y respuesta final",
+        "thinking_visibility_preview": "Vista Previa del Pensamiento",
+        "thinking_visibility_preview_description": "Mostrar las últimas 2 líneas, expandible",
+        "thinking_visibility_full": "Mostrar Pensamiento Completo",
+        "thinking_visibility_full_description": "Mostrar todo por defecto, colapsable"
       },
       "quick_actions": {
         "title": "Acciones Rápidas",

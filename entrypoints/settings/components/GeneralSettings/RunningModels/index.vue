@@ -15,6 +15,7 @@
         :parameterSize="model.parameterSize"
         :quantLevel="model.quantizationLevel"
         :expiresAt="model.expiresAt"
+        :supportsThinking="model.supportsThinking"
         @unload="onUnloadModel(model.model)"
       />
     </div>

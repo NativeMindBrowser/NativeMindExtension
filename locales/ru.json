@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Быстрые действия"
     },
+    "thinking_mode": {
+      "label": "Мышление"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Спросите что-нибудь...",
@@ -229,6 +232,7 @@
         "vram": "{size} видеопамяти",
         "params": "{size} параметров",
         "quant": "{level} квант",
+        "thinking": "Мышление",
         "no_active_models": "Ollama подключен, но нет активных моделей",
         "not_connected_to_ollama": "Не подключено к Ollama"
       }
@@ -284,7 +288,15 @@
         "chat_model": "Модель чата",
         "chat_model_description": "Выберите модель ИИ для чат-разговоров",
         "chat_system_prompt": "Системная подсказка чата",
-        "chat_system_prompt_description": "Определите поведение и роль ИИ во время чат-разговоров"
+        "chat_system_prompt_description": "Определите поведение и роль ИИ во время чат-разговоров",
+        "thinking_visibility": "Видимость процесса мышления",
+        "thinking_visibility_description": "Выберите, как отображается процесс мышления во время рассуждений LLM",
+        "thinking_visibility_hide": "Скрыть мышление",
+        "thinking_visibility_hide_description": "Показывать только загрузку и окончательный ответ",
+        "thinking_visibility_preview": "Предварительный просмотр мышления",
+        "thinking_visibility_preview_description": "Показать последние 2 строки, расширяемые",
+        "thinking_visibility_full": "Показать полное мышление",
+        "thinking_visibility_full_description": "Показать все по умолчанию, сворачиваемое"
       },
       "quick_actions": {
         "title": "Быстрые действия",

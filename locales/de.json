@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Schnelle Aktionen"
     },
+    "thinking_mode": {
+      "label": "Denken"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Fragen Sie alles ...",
@@ -229,6 +232,7 @@
         "vram": "{size} VRAM",
         "params": "{size} Parameter",
         "quant": "{level} Quant",
+        "thinking": "Denken",
         "no_active_models": "Ollama verbunden, aber keine aktiven Modelle",
         "not_connected_to_ollama": "Nicht mit Ollama verbunden"
       }
@@ -284,7 +288,15 @@
         "chat_model": "Chat-Modell",
         "chat_model_description": "Wählen Sie das KI-Modell für Chat-Unterhaltungen",
         "chat_system_prompt": "Chat-System-Eingabeaufforderung",
-        "chat_system_prompt_description": "Definiere KI-Verhalten und -Rolle während Chat-Gesprächen"
+        "chat_system_prompt_description": "Definiere KI-Verhalten und -Rolle während Chat-Gesprächen",
+        "thinking_visibility": "Denkprozess-Sichtbarkeit",
+        "thinking_visibility_description": "Wählen Sie, wie der Denkprozess während des LLM-Denkens angezeigt wird",
+        "thinking_visibility_hide": "Denkprozess verbergen",
+        "thinking_visibility_hide_description": "Nur Ladevorgang und endgültige Antwort anzeigen",
+        "thinking_visibility_preview": "Denkprozess-Vorschau",
+        "thinking_visibility_preview_description": "Zeige die letzten 2 Zeilen, erweiterbar",
+        "thinking_visibility_full": "Vollständigen Denkprozess anzeigen",
+        "thinking_visibility_full_description": "Standardmäßig alles anzeigen, zusammenklappbar"
       },
       "quick_actions": {
         "title": "Schnellaktionen",

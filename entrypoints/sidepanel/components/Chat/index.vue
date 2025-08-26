@@ -87,32 +87,36 @@
         </ScrollContainer>
         <!-- Toolbar -->
         <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
-          <ModelSelector
-            containerClass="h-7"
-            class="max-w-44"
-            dropdownAlign="left"
-            triggerStyle="ghost"
-          />
-          <div
-            ref="sendButtonContainerRef"
-          >
-            <Button
-              v-if="chat.isAnswering()"
-              variant="secondary"
-              class="px-[6px] grow-0 shrink-0"
-              @click="onStop"
-            >
-              {{ "Stop" }}
-            </Button>
-            <button
-              v-else
-              :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-[#24B960]/80 bg-[#24B960] cursor-pointer' : 'cursor-not-allowed')"
-              :disabled="!allowAsk"
-              @click="onSubmit"
-            >
-              <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-[#9EA3A8]')" />
-            </button>
+          <div class="flex items-center gap-2">
+            <ModelSelector
+              containerClass="h-7"
+              class="max-w-44"
+              dropdownAlign="left"
+              triggerStyle="ghost"
+            />
+            <div class="h-4 w-px bg-[#E5E7EB]" />
+            <ThinkingModeSwitch />
           </div>
+        </div>
+        <div
+          ref="sendButtonContainerRef"
+        >
+          <Button
+            v-if="chat.isAnswering()"
+            variant="secondary"
+            class="px-[6px] grow-0 shrink-0"
+            @click="onStop"
+          >
+            {{ "Stop" }}
+          </Button>
+          <button
+            v-else
+            :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-[#24B960]/80 bg-[#24B960] cursor-pointer' : 'cursor-not-allowed')"
+            :disabled="!allowAsk"
+            @click="onSubmit"
+          >
+            <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-[#9EA3A8]')" />
+          </button>
         </div>
       </div>
     </div>
@@ -146,6 +150,7 @@ import MessageAction from './Messages/Action.vue'
 import MessageTaskGroup from './Messages/AgentTaskGroup.vue'
 import MessageAssistant from './Messages/Assistant.vue'
 import MessageTask from './Messages/Task.vue'
+import ThinkingModeSwitch from './ThinkingModeSwitch.vue'
 
 const inputContainerRef = ref<HTMLDivElement>()
 const sendButtonContainerRef = ref<HTMLDivElement>()

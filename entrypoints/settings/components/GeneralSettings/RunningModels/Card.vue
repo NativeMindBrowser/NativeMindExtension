@@ -52,6 +52,7 @@ import IconExpires from '@/assets/icons/settings-model-expires.svg?component'
 import IconParams from '@/assets/icons/settings-model-parameter-size.svg?component'
 import IconQuant from '@/assets/icons/settings-model-quantization-level.svg?component'
 import IconVRam from '@/assets/icons/settings-model-vram.svg?component'
+import IconThinking from '@/assets/icons/thinking-capability.svg?component'
 import ModelLogo from '@/components/ModelLogo.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import Tag from '@/components/Tag.vue'
@@ -67,6 +68,7 @@ const props = defineProps<{
   parameterSize?: string
   quantLevel?: string
   expiresAt?: number
+  supportsThinking?: boolean
 }>()
 
 defineEmits<{
@@ -88,6 +90,7 @@ const tags = computed(() => {
     props.sizeVRam ? { key: 'vram', icon: IconVRam, text: t('settings.general.running_models.vram', { size: ByteSize.fromBytes(props.sizeVRam).format(2) }) } : undefined,
     props.parameterSize ? { key: 'params', icon: IconParams, text: t('settings.general.running_models.params', { size: props.parameterSize }) } : undefined,
     props.quantLevel ? { key: 'quant', icon: IconQuant, text: t('settings.general.running_models.quant', { level: props.quantLevel }) } : undefined,
+    props.supportsThinking ? { key: 'thinking', icon: IconThinking, text: t('settings.general.running_models.thinking') } : undefined,
     expireDuration.value ? { key: 'expires', icon: IconExpires, text: expireDuration.value } : undefined,
   ].filter(nonNullable)
 })

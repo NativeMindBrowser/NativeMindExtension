@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Ações rápidas"
     },
+    "thinking_mode": {
+      "label": "Pensando"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Pergunte qualquer coisa...",
@@ -229,6 +232,7 @@
         "vram": "{size} VRAM",
         "params": "{size} parâmetros",
         "quant": "{level} quant",
+        "thinking": "Pensando",
         "no_active_models": "Ollama conectado, mas nenhum modelo ativo",
         "not_connected_to_ollama": "Não conectado ao Ollama"
       }
@@ -284,7 +288,15 @@
         "chat_model": "Modelo de chat",
         "chat_model_description": "Selecione o modelo de IA para conversas de chat",
         "chat_system_prompt": "Sistema de Prompt de Chat",
-        "chat_system_prompt_description": "Definir comportamento e papel da IA durante conversas de chat"
+        "chat_system_prompt_description": "Definir comportamento e papel da IA durante conversas de chat",
+        "thinking_visibility": "Visibilidade do Processo de Pensamento",
+        "thinking_visibility_description": "Escolha como o processo de pensamento é exibido durante o raciocínio LLM",
+        "thinking_visibility_hide": "Ocultar Pensamento",
+        "thinking_visibility_hide_description": "Mostrar apenas carregamento e resposta final",
+        "thinking_visibility_preview": "Visualizar Pensamento",
+        "thinking_visibility_preview_description": "Mostrar as últimas 2 linhas, expansível",
+        "thinking_visibility_full": "Mostrar Pensamento Completo",
+        "thinking_visibility_full_description": "Mostrar tudo por padrão, recolhível"
       },
       "quick_actions": {
         "title": "Ações Rápidas",

@@ -101,7 +101,7 @@ export async function pullModel(modelId: string) {
   return pulling
 }
 
-export type ModelCapability = 'vision' | 'audio' | 'text' | 'code' | 'chat' | 'embedding'
+export type ModelCapability = 'vision' | 'audio' | 'text' | 'code' | 'chat' | 'embedding' | 'thinking'
 export async function showModelDetails(modelId: string) {
   const ollama = await getOllamaClient()
   const info = await ollama.show({ model: modelId })

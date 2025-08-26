@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Thao tác nhanh"
     },
+    "thinking_mode": {
+      "label": "Suy nghĩ"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Hỏi bất cứ điều gì...",
@@ -229,6 +232,7 @@
         "vram": "{size} VRAM",
         "params": "{size} tham số",
         "quant": "{level} định lượng",
+        "thinking": "Suy nghĩ",
         "no_active_models": "Ollama đã kết nối, nhưng không có mô hình nào đang hoạt động",
         "not_connected_to_ollama": "Không kết nối với Ollama"
       }
@@ -284,7 +288,15 @@
         "chat_model": "Mô hình chat",
         "chat_model_description": "Chọn mô hình AI cho các cuộc trò chuyện",
         "chat_system_prompt": "Hệ thống Nhắc nhở Trò chuyện",
-        "chat_system_prompt_description": "Xác định hành vi và vai trò của AI trong các cuộc trò chuyện"
+        "chat_system_prompt_description": "Xác định hành vi và vai trò của AI trong các cuộc trò chuyện",
+        "thinking_visibility": "Hiển thị Quá trình Suy nghĩ",
+        "thinking_visibility_description": "Chọn cách hiển thị quá trình suy nghĩ trong quá trình lý luận LLM",
+        "thinking_visibility_hide": "Ẩn Suy nghĩ",
+        "thinking_visibility_hide_description": "Chỉ hiển thị loading và câu trả lời cuối cùng",
+        "thinking_visibility_preview": "Xem trước Suy nghĩ",
+        "thinking_visibility_preview_description": "Hiển thị 2 dòng cuối, có thể mở rộng",
+        "thinking_visibility_full": "Hiển thị Suy nghĩ Đầy đủ",
+        "thinking_visibility_full_description": "Hiển thị tất cả theo mặc định, có thể thu gọn"
       },
       "quick_actions": {
         "title": "Hành động nhanh",
