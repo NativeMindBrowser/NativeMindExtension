@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.0-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.7...v1.8.0-beta.8)
+
+### 🚀 Enhancements
+
+- **browser-use:** Add markdown section diff utility with comprehensive tests ([dae12c6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/dae12c6))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.7
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.6...v1.8.0-beta.7)
