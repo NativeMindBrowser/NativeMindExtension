@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="tsx">
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 
 import ModelSelector from '@/components/ModelSelector.vue'
 import RadioGroup from '@/components/RadioGroup.vue'
@@ -118,7 +118,7 @@ const quickActions = userConfig.chat.quickActions.actions.toRef()
 const defaultQuickActions = userConfig.chat.quickActions.actions.getDefault()
 const thinkingVisibility = userConfig.chat.thinkingVisibility.toRef()
 
-const thinkingVisibilityRadioOptions = [
+const thinkingVisibilityRadioOptions = computed(() => [
   {
     value: 'hide' as const,
     label: t('settings.chat.basic_config.thinking_visibility_hide'),
@@ -134,7 +134,7 @@ const thinkingVisibilityRadioOptions = [
     label: t('settings.chat.basic_config.thinking_visibility_full'),
     tips: t('settings.chat.basic_config.thinking_visibility_full_description'),
   },
-]
+])
 const resetDefaultQuickActions = () => {
   confirm({
     message: t('settings.chat.quick_actions.reset_to_default_confirm'),
