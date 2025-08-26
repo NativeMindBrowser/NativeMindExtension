@@ -1,6 +1,28 @@
 # Changelog
 
 
+## v1.8.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.6...v1.8.0-beta.7)
+
+### 🚀 Enhancements
+
+- **chat:** Enhance reasoning display with ScrollContainer autosnap to bottom and improve loading state ([0538aea](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0538aea))
+- **thinking:** Add thinking visibility configuration and integrate RadioGroup component in settings ([407f87e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/407f87e))
+- Add thinking capability support and UI integration ([6e9e0b5](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6e9e0b5))
+- **chat:** Update thinking visibility options to be computed for better reactivity ([b1e5316](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b1e5316))
+- **textarea:** Add reset functionality and update props for default value handling ([6aabc4f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6aabc4f))
+- **browser-use:** Add new settings for simulating link clicks and closing tabs, enhance error messages ([1e4f58b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1e4f58b))
+
+### 💅 Refactors
+
+- Simplify Checkbox and RadioGroup components by removing modelValue prop and using defineModel ([1fb1c21](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1fb1c21))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.8.0-beta.6
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.5...v1.8.0-beta.6)
