@@ -49,10 +49,11 @@
         "search_failed": "검색 실패: {query}"
       },
       "fetch_page": {
-        "reading_success": "읽기 완료: {title}",
+        "reading": "읽기: {title}",
         "read_failed": "읽기 실패: {error}",
         "error_no_content": "콘텐츠를 찾을 수 없습니다",
-        "reading": "읽기: {title}"
+        "reading_success": "읽기 완료",
+        "fetch_success": "가져온 곳"
       },
       "view_image": {
         "analyzing": "분석 중: {title}",

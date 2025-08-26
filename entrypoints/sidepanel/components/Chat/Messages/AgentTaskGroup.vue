@@ -3,7 +3,7 @@
     <div
       v-for="(task, idx) of message.tasks"
       :key="task.id"
-      class="w-full flex gap-[6px] relative"
+      class="w-full flex gap-[6px] relative items-center"
     >
       <motion.div
         v-if="!task.done"
@@ -22,7 +22,7 @@
       </motion.div>
       <div
         v-else-if="task.icon"
-        class="shrink-0 grow-0 self-start size-5 p-0.5"
+        :class="classNames('shrink-0 grow-0 size-5 p-0.5', task.details?.expanded ? 'self-start' : 'self-center')"
       >
         <div v-html="getIconSvg(task.icon)" />
         <!-- vertical line -->
@@ -37,7 +37,7 @@
       >
         <IconTickCircle class="w-4 text-success" />
       </div>
-      <div class="grow min-w-0">
+      <div :class="classNames('grow min-w-0 flex', task.details?.expanded ? 'flex-col' : 'flex-row')">
         <div class="flex grow gap-1 w-full justify-between items-center text-text-secondary">
           <MarkdownViewer
             :text="task.summary"

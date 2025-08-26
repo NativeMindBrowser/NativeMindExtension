@@ -49,10 +49,11 @@
         "search_failed": "Suche fehlgeschlagen: {query}"
       },
       "fetch_page": {
-        "reading_success": "Lektüre abgeschlossen: {title}",
+        "reading": "Lektüre: {title}",
         "read_failed": "Lesen fehlgeschlagen: {error}",
         "error_no_content": "kein Inhalt gefunden",
-        "reading": "Lektüre: {title}"
+        "reading_success": "Lektüre abgeschlossen",
+        "fetch_success": "Abgerufen von"
       },
       "view_image": {
         "analyzing": "Analysiere: {title}",

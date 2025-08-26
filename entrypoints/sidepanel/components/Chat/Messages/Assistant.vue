@@ -90,7 +90,6 @@
         </ScrollContainer>
         <div
           v-if="message.content"
-          class="mt-2"
         >
           <MarkdownViewer
             :text="message.content"

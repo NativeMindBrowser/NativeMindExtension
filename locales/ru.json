@@ -49,10 +49,11 @@
         "search_failed": "Поиск не удался: {query}"
       },
       "fetch_page": {
-        "reading_success": "Завершено чтение: {title}",
+        "reading": "Чтение: {title}",
         "read_failed": "Ошибка чтения: {error}",
         "error_no_content": "контент не найден",
-        "reading": "Чтение: {title}"
+        "reading_success": "Чтение завершено",
+        "fetch_success": "Получено из"
       },
       "view_image": {
         "analyzing": "Анализируется: {title}",

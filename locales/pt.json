@@ -49,10 +49,11 @@
         "search_failed": "Busca falhou: {query}"
       },
       "fetch_page": {
-        "reading_success": "Leitura concluída: {title}",
+        "reading": "Leitura: {title}",
         "read_failed": "Falha na leitura: {error}",
         "error_no_content": "nenhum conteúdo encontrado",
-        "reading": "Leitura: {title}"
+        "reading_success": "Leitura concluída",
+        "fetch_success": "Obtido de"
       },
       "view_image": {
         "analyzing": "Analisando: {title}",
