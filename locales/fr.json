@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Actions rapides"
     },
+    "thinking_mode": {
+      "label": "Réflexion"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Posez n'importe quelle question...",
@@ -220,6 +223,7 @@
         "vram": "{size} VRAM",
         "params": "{size} paramètres",
         "quant": "{level} quant",
+        "thinking": "Réflexion",
         "no_active_models": "Ollama connecté, mais aucun modèle actif",
         "not_connected_to_ollama": "Pas connecté à Ollama"
       }

@@ -28,6 +28,9 @@
     "quick_actions": {
       "title": "Acciones Rápidas"
     },
+    "thinking_mode": {
+      "label": "Pensando"
+    },
     "prompt": {
       "highlight_key_insights": {
         "title": "Resalta las ideas clave"
@@ -177,6 +180,7 @@
         "vram": "{size} VRAM",
         "params": "{size} parámetros",
         "quant": "{level} cuantitativo",
+        "thinking": "Pensando",
         "no_active_models": "Ollama conectado, pero no hay modelos activos",
         "not_connected_to_ollama": "No conectado a Ollama"
       }

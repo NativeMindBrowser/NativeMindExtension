@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Tindakan cepat"
     },
+    "thinking_mode": {
+      "label": "Berpikir"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Tanyakan apa saja...",
@@ -220,6 +223,7 @@
         "vram": "{size} VRAM",
         "params": "{size} parameter",
         "quant": "{level} kuant",
+        "thinking": "Berpikir",
         "no_active_models": "Ollama terhubung, tetapi tidak ada model yang aktif",
         "not_connected_to_ollama": "Tidak terhubung ke Ollama"
       }

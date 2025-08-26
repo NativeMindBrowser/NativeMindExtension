@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Быстрые действия"
     },
+    "thinking_mode": {
+      "label": "Мышление"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Спросите что-нибудь...",
@@ -220,6 +223,7 @@
         "vram": "{size} видеопамяти",
         "params": "{size} параметров",
         "quant": "{level} квант",
+        "thinking": "Мышление",
         "no_active_models": "Ollama подключен, но нет активных моделей",
         "not_connected_to_ollama": "Не подключено к Ollama"
       }

@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "빠른 액션"
     },
+    "thinking_mode": {
+      "label": "사고"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "무엇이든 물어보세요...",
@@ -220,6 +223,7 @@
         "vram": "{size} VRAM",
         "params": "{size} 매개변수",
         "quant": "{level} 퀀트",
+        "thinking": "사고",
         "no_active_models": "Ollama가 연결되었지만 활성화된 모델이 없습니다",
         "not_connected_to_ollama": "Ollama에 연결되지 않음"
       }

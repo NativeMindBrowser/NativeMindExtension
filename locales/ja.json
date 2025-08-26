@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "クイックアクション"
     },
+    "thinking_mode": {
+      "label": "思考"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "何でも質問してください...",
@@ -220,6 +223,7 @@
         "vram": "{size} VRAM",
         "params": "{size}パラメータ",
         "quant": "{level}クオント",
+        "thinking": "思考",
         "no_active_models": "Ollamaに接続されていますが、アクティブなモデルがありません",
         "not_connected_to_ollama": "Ollamaに接続されていません"
       }

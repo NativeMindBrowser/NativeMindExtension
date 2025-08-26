@@ -47,12 +47,11 @@ export async function getModel(options: {
   if (endpointType === 'ollama') {
     const customFetch = makeCustomFetch({
       bodyTransformer: (body) => {
-        // reasoning is enabled by default in Ollama
-        if (options.reasoning) return body
         if (typeof body !== 'string') return body
+        const parsedBody = JSON.parse(body)
         return JSON.stringify({
-          ...JSON.parse(body),
-          think: false, // disable reasoning
+          ...parsedBody,
+          think: options.reasoning,
         })
       },
     })

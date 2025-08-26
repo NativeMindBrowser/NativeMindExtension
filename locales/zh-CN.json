@@ -99,6 +99,7 @@
         "vram": "{size} 显存",
         "params": "{size} 参数",
         "quant": "{level} 量化",
+        "thinking": "推理",
         "no_active_models": "Ollama 已连接，但没有活跃的模型",
         "not_connected_to_ollama": "未连接到 Ollama"
       }
@@ -192,6 +193,9 @@
     },
     "quick_actions": {
       "title": "快捷操作"
+    },
+    "thinking_mode": {
+      "label": "思考"
     },
     "input": {
       "placeholder": {

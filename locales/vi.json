@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Thao tác nhanh"
     },
+    "thinking_mode": {
+      "label": "Suy nghĩ"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Hỏi bất cứ điều gì...",
@@ -220,6 +223,7 @@
         "vram": "{size} VRAM",
         "params": "{size} tham số",
         "quant": "{level} định lượng",
+        "thinking": "Suy nghĩ",
         "no_active_models": "Ollama đã kết nối, nhưng không có mô hình nào đang hoạt động",
         "not_connected_to_ollama": "Không kết nối với Ollama"
       }

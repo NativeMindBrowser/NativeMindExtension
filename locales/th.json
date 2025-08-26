@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "การกระทำที่รวดเร็ว"
     },
+    "thinking_mode": {
+      "label": "กำลังคิด"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "ถามอะไรก็ได้...",
@@ -220,6 +223,7 @@
         "vram": "{size} VRAM",
         "params": "{size} พารามิเตอร์",
         "quant": "{level} ควอนต์",
+        "thinking": "กำลังคิด",
         "no_active_models": "Ollama เชื่อมต่อแล้ว แต่ไม่มีโมเดลที่ใช้งานอยู่",
         "not_connected_to_ollama": "ไม่ได้เชื่อมต่อกับ Ollama"
       }

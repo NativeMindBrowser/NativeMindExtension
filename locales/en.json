@@ -99,6 +99,7 @@
         "vram": "{size} VRAM",
         "params": "{size} params",
         "quant": "{level} quant",
+        "thinking": "Thinking",
         "not_connected_to_ollama": "Not connected to Ollama",
         "no_active_models": "Ollama connected, but no active models"
       }
@@ -192,6 +193,9 @@
     },
     "quick_actions": {
       "title": "Quick Actions"
+    },
+    "thinking_mode": {
+      "label": "Thinking"
     },
     "input": {
       "placeholder": {
