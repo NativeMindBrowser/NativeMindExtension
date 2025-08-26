@@ -130,7 +130,7 @@ export async function getAccessibleMarkdown(options: GetAccessibleDomTreeOptions
     let filteredDocument = clonedDocument
     let removedElements: Element[] = []
     if (!noFilter) {
-      ({ document: filteredDocument, removedElements } = new PruningContentFilter(2, 'fixed', contentFilterThreshold ?? 0.28).filterContent(clonedDocument))
+      ({ document: filteredDocument, removedElements } = new PruningContentFilter(4, 'fixed', contentFilterThreshold ?? 0.28).filterContent(clonedDocument))
     }
     else {
       logger.debug('Skipping content filtering in last attempt')

@@ -401,7 +401,7 @@ export async function _getUserConfig() {
     documentParser: {
       parserType: await new Config('documentParser.parserType').default('auto' as 'readability' | 'turndown' | 'auto').build(),
       highlightInteractiveElements: await new Config('documentParser.highlightInteractiveElements').default(false).build(),
-      contentFilterThreshold: await new Config('documentParser.contentFilterThreshold').default(0.28).build(),
+      contentFilterThreshold: await new Config('documentParser.contentFilterThreshold').default(-1).build(),
     },
     browserUse: {
       simulateClickOnLink: await new Config('browserUse.simulateClickOnLink').default(false).build(),
