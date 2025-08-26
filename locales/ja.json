@@ -49,10 +49,11 @@
         "search_failed": "検索に失敗しました: {query}"
       },
       "fetch_page": {
-        "reading_success": "読了: {title}",
+        "reading": "読書: {title}",
         "read_failed": "読み込みに失敗しました: {error}",
         "error_no_content": "コンテンツが見つかりません",
-        "reading": "読書: {title}"
+        "reading_success": "読了",
+        "fetch_success": "取得元"
       },
       "view_image": {
         "analyzing": "分析中: {title}",

@@ -49,10 +49,11 @@
         "search_failed": "Tìm kiếm thất bại: {query}"
       },
       "fetch_page": {
-        "reading_success": "Đã hoàn thành đọc: {title}",
+        "reading": "Bài đọc: {title}",
         "read_failed": "Đọc thất bại: {error}",
         "error_no_content": "không tìm thấy nội dung",
-        "reading": "Bài đọc: {title}"
+        "reading_success": "Đã hoàn thành đọc",
+        "fetch_success": "Lấy từ"
       },
       "view_image": {
         "analyzing": "Đang phân tích: {title}",

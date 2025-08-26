@@ -49,10 +49,11 @@
         "search_failed": "การค้นหาล้มเหลว: {query}"
       },
       "fetch_page": {
-        "reading_success": "อ่านเสร็จแล้ว: {title}",
+        "reading": "การอ่าน: {title}",
         "read_failed": "การอ่านล้มเหลว: {error}",
         "error_no_content": "ไม่พบเนื้อหา",
-        "reading": "การอ่าน: {title}"
+        "reading_success": "อ่านเสร็จแล้ว",
+        "fetch_success": "ดึงข้อมูลจาก"
       },
       "view_image": {
         "analyzing": "กำลังวิเคราะห์: {title}",

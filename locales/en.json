@@ -237,7 +237,8 @@
         "reading": "Reading: {title}",
         "read_failed": "Reading failed: {error}",
         "error_no_content": "no content found",
-        "reading_success": "Completed reading: {title}"
+        "reading_success": "Read complete",
+        "fetch_success": "Fetched from"
       },
       "view_tab": {
         "tab_not_found": "tab not found"

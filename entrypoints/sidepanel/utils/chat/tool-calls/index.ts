@@ -91,7 +91,7 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
     }]
   }
   else {
-    taskMsg.summary = t('chat.tool_calls.fetch_page.reading_success', { title: content.title || content.url })
+    taskMsg.summary = `<nm-agent-task type="page" data-content="${content.title || content.url}" data-url="${url}">${t('chat.tool_calls.fetch_page.fetch_success')}</nm-agent-task>`
     return [{
       type: 'tool-result',
       results: {
@@ -132,7 +132,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
       },
     }]
   }
-  taskMsg.summary = t('chat.tool_calls.fetch_page.reading', { title: tab.value.title })
+  taskMsg.summary = `<nm-agent-task type="tab" data-content="${tab.value.title}" data-url="${tab.value.url}">${t('chat.tool_calls.fetch_page.reading_success')}</nm-agent-task>`
   if (agentStorage.isCurrentTab(tab.value.tabId)) {
     agentStorage.persistCurrentTab()
   }
@@ -195,7 +195,7 @@ export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params,
       },
     }]
   }
-  taskMsg.summary = t('chat.tool_calls.fetch_page.reading_success', { title: pdf.value.name })
+  taskMsg.summary = `<nm-agent-task type="pdf" data-content="${pdf.value.name}">${t('chat.tool_calls.fetch_page.reading_success')}</nm-agent-task>`
   return [{
     type: 'tool-result',
     results: {

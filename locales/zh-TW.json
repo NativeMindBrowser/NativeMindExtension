@@ -49,10 +49,11 @@
         "search_failed": "搜尋失敗：{query}"
       },
       "fetch_page": {
-        "reading_success": "已完成閱讀：{title}",
+        "reading": "閱讀：{title}",
         "read_failed": "讀取失敗：{error}",
         "error_no_content": "找不到內容",
-        "reading": "閱讀：{title}"
+        "reading_success": "閱讀完成",
+        "fetch_success": "取得自"
       },
       "view_image": {
         "analyzing": "分析中：{title}",
