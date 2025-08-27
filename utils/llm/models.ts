@@ -7,6 +7,7 @@ import { makeCustomFetch } from '../fetch'
 import { middlewares } from './middlewares'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
+import { isToggleableThinkingModel } from './thinking-models'
 import { getWebLLMEngine, WebLLMSupportedModel } from './web-llm'
 
 export async function getModelUserConfig() {
@@ -39,6 +40,7 @@ export async function getModel(options: {
   numCtx: number
   enableNumCtx: boolean
   reasoning: boolean
+  autoThinking?: boolean
   onLoadingModel?: (prg: ModelLoadingProgressEvent) => void
 }) {
   const userConfig = await getUserConfig()
@@ -47,11 +49,17 @@ export async function getModel(options: {
   if (endpointType === 'ollama') {
     const customFetch = makeCustomFetch({
       bodyTransformer: (body) => {
+        // process thinking capability by ollama itself, using on translation feature
+        if (options.autoThinking) return body
         if (typeof body !== 'string') return body
+
+        // add additional check to avoid errors, eg gamma3 does not support think argument
+        const _isToggleableThinkingModel = isToggleableThinkingModel(options.model)
+
         const parsedBody = JSON.parse(body)
         return JSON.stringify({
           ...parsedBody,
-          think: options.reasoning,
+          think: _isToggleableThinkingModel ? options.reasoning : undefined,
         })
       },
     })

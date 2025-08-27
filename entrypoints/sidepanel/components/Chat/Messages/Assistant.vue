@@ -68,13 +68,14 @@
             :class="{
               'rotate-180': isContentExpanded
             }"
-            @click="expanded = !expanded"
+            @click="toggleExpanded"
           >
             <IconArrowDown class="w-4 text-text-tertiary" />
           </div>
         </div>
         <ScrollContainer
           v-if="showReasoning"
+          ref="scrollContainerRef"
           containerClass="overscroll-auto"
           :class="['wrap-anywhere pl-6 border-[#AEB5BD] overflow-auto', showClampedReasoning ? 'h-[3.3em] leading-[1.5em]' : '']"
           :arrivalShadow="{
@@ -124,7 +125,7 @@
 
 <script setup lang="ts">
 import { motion } from 'motion-v'
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
@@ -152,6 +153,7 @@ const { t } = useI18n()
 const userConfig = await getUserConfig()
 const thinkingVisibility = userConfig.chat.thinkingVisibility.toRef()
 const expanded = ref(false)
+const scrollContainerRef = ref()
 
 // Helper computed properties for cleaner logic
 const isThinking = computed(() => !message.value.content && !message.value.done)
@@ -218,4 +220,18 @@ const shouldClampReasoning = computed(() => {
 // Legacy computed properties for backwards compatibility
 const showReasoning = shouldShowReasoningContent
 const showClampedReasoning = shouldClampReasoning
+
+const toggleExpanded = () => {
+  const wasExpanded = expanded.value
+  expanded.value = !expanded.value
+
+  // If we're collapsing (was expanded, now not expanded) and message is not done
+  // and we're in preview mode, scroll to bottom
+  if (wasExpanded && thinkingVisibility.value === 'preview' && !message.value.done) {
+    // Use nextTick to ensure the DOM has updated
+    nextTick(() => {
+      scrollContainerRef.value?.snapToBottom?.(true)
+    })
+  }
+}
 </script>

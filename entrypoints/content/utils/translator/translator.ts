@@ -27,6 +27,7 @@ export async function* translateParagraphs(options: {
     prompt: prompt.user.extractText(),
     system: prompt.system,
     abortSignal,
+    autoThinking: true,
   })
 
   let translation: string[] = []
@@ -115,6 +116,7 @@ export async function* translateOneParagraph(paragraph: string, targetLanguage: 
     prompt: paragraph,
     system,
     abortSignal,
+    autoThinking: true,
   })
 
   let translated = ''

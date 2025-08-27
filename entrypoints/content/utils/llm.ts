@@ -17,6 +17,7 @@ const log = logger.child('llm')
 interface ExtraOptions {
   abortSignal?: AbortSignal
   timeout?: number
+  autoThinking?: boolean
 }
 
 export async function* streamTextInBackground(options: Parameters<typeof c2bRpc.streamText>[0] & ExtraOptions) {

@@ -87,15 +87,18 @@
         </ScrollContainer>
         <!-- Toolbar -->
         <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
-          <div class="flex items-center gap-2">
+          <div class="flex grow items-center gap-2">
             <ModelSelector
               containerClass="h-7"
-              class="max-w-44"
+              :class="classNames(isThinkingToggleable ? 'max-w-[30%]' : 'max-w-[50%]')"
               dropdownAlign="left"
               triggerStyle="ghost"
             />
-            <div class="h-4 w-px bg-[#E5E7EB]" />
-            <ThinkingModeSwitch />
+            <div
+              v-if="isThinkingToggleable"
+              class="h-4 w-px bg-[#E5E7EB]"
+            />
+            <ThinkingModeSwitch v-if="isThinkingToggleable" />
           </div>
           <div
             ref="sendButtonContainerRef"
@@ -135,7 +138,9 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
+import { isToggleableThinkingModel } from '@/utils/llm/thinking-models'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
+import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../components/MarkdownViewer.vue'
@@ -167,7 +172,9 @@ defineExpose({
 })
 
 const chat = await Chat.getInstance()
+const userConfig = await getUserConfig()
 const contextAttachmentStorage = chat.contextAttachmentStorage
+const currentModel = userConfig.llm.model.toRef()
 
 initChatSideEffects()
 
@@ -186,6 +193,11 @@ const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
 
 const allowAsk = computed(() => {
   return !chat.isAnswering() && userInput.value.trim().length > 0
+})
+
+const isThinkingToggleable = computed(() => {
+  if (!currentModel.value) return false
+  return isToggleableThinkingModel(currentModel.value)
 })
 
 const cleanUp = chat.historyManager.onMessageAdded(() => {

@@ -13,7 +13,7 @@
     <button
       :disabled="!isModelSupportsThinking || !isThinkingToggleable"
       :class="[
-        'relative inline-flex h-4 w-7 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+        'relative inline-flex h-4 w-7 items-center rounded-full transition-colors',
         {
           'bg-[#24B960]': isThinkingEnabled && isModelSupportsThinking,
           'bg-gray-300': !isThinkingEnabled || !isModelSupportsThinking,
