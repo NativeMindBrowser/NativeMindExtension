@@ -92,6 +92,7 @@
           v-if="message.content"
         >
           <MarkdownViewer
+            :fadeInAnimation="!message.done"
             :text="message.content"
             class="text-text-primary"
           />
@@ -130,12 +131,11 @@ import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
 import IconTickCircle from '@/assets/icons/tick-circle.svg?component'
 import IconWarning from '@/assets/icons/warning-circle.svg?component'
 import Loading from '@/components/Loading.vue'
+import MarkdownViewer from '@/components/MarkdownViewer.vue'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import Text from '@/components/ui/Text.vue'
 import { AgentMessageV1, AssistantMessageV1 } from '@/types/chat'
 import { getUserConfig } from '@/utils/user-config'
-
-import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'
 const props = defineProps<{
   message: AssistantMessageV1 | AgentMessageV1
 }>()

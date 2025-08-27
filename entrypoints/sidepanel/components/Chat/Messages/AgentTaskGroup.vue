@@ -40,6 +40,7 @@
       <div :class="classNames('grow min-w-0 flex', task.details?.expanded ? 'flex-col' : 'flex-row')">
         <div class="flex grow gap-1 w-full justify-between items-center text-text-secondary">
           <MarkdownViewer
+            :fadeInAnimation="!task.done"
             :text="task.summary"
             class="min-w-0"
           />
@@ -57,6 +58,7 @@
           class="bg-white text-[#596066] rounded-md py-2 px-3 mt-[6px]"
         >
           <MarkdownViewer
+            :fadeInAnimation="!task.done"
             :text="task.details?.content"
             class="min-w-0"
           />

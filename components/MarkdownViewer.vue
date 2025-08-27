@@ -1,7 +1,8 @@
 <template>
   <div
+    ref="containerRef"
     class="markdown-viewer wrap-anywhere"
-    v-html="html"
+    :class="{ 'fade-in': !!fadeInAnimation }"
   />
 </template>
 
@@ -11,18 +12,22 @@ import hljs from 'highlight.js'
 import { Marked, Renderer, Tokens } from 'marked'
 import { createDirectives, type DirectiveConfig } from 'marked-directive'
 import { markedHighlight } from 'marked-highlight'
-import { ref, watchEffect } from 'vue'
+import morphdom from 'morphdom'
+import { useTemplateRef, watch } from 'vue'
 
 import IconMDLink from '@/assets/icons/md-link.svg?raw'
+import { useTempElement } from '@/composables/useTempElement'
 import logger from '@/utils/logger'
 
 import { getIconSvg, IconName, unescapeDirectiveText } from '../entrypoints/sidepanel/utils/markdown/content'
 import { webComponents } from './web-components'
 
 const log = logger.child('MarkdownViewer')
+const containerRef = useTemplateRef('containerRef')
 
 const props = defineProps<{
   text?: string
+  fadeInAnimation?: boolean
 }>()
 
 const inlineDirective: DirectiveConfig = {
@@ -192,14 +197,19 @@ const renderMarkdown = async (md: string) => {
   return dompurify.sanitize(await marked.parse(md, { renderer }), { USE_PROFILES: { html: true, svg: true, svgFilters: true }, ADD_ATTR: ['target', 'title', 'name'], ADD_TAGS: [...webComponents.map((c) => c.name)] })
 }
 
-const html = ref('')
-watchEffect(async () => {
-  if (!props.text) {
-    html.value = ''
-    return
-  }
-  html.value = await renderMarkdown(props.text)
-})
+const htmlToDom = (html: string) => {
+  const mountPoint = document.createElement('div')
+  mountPoint.innerHTML = html
+  return mountPoint
+}
+
+const { element: mountPoint } = useTempElement('div', { parentElement: containerRef })
+
+watch(() => props.text, async () => {
+  const html = await renderMarkdown(props.text ?? '')
+  const htmlNode = htmlToDom(html)
+  morphdom(mountPoint, htmlNode)
+}, { immediate: true })
 </script>
 
 <style lang="scss">
@@ -208,8 +218,23 @@ watchEffect(async () => {
 </style>
 
 <style scoped lang="scss">
-.markdown-viewer {
-  :deep(.katex) {
+.fade-in.markdown-viewer > :deep(div) {
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  * {
+    animation: fade-in 0.5s ease-in-out;
+  }
+}
+
+.markdown-viewer > :deep(div) {
+  .katex {
     font: 1em / 1.2 KaTeX_Main, "Times New Roman", "Inter";
     max-width: 100%;
     overflow-x: auto;
@@ -227,13 +252,13 @@ watchEffect(async () => {
   }
 
   line-height: 1.25;
-  :deep(:not(pre)) {
+  :not(pre) {
     overflow-wrap: anywhere;
   }
-  :deep(:is(h1, h2, h3, h4, h5, h6)) {
+  :is(h1, h2, h3, h4, h5, h6) {
     font-weight: 600;
   }
-  :deep(pre) {
+  pre {
     color: var(--color-gray-300);
     background-color: black;
     margin-bottom: 8px;
@@ -242,23 +267,23 @@ watchEffect(async () => {
     border-radius: 4px;
     overflow-x: auto;
   }
-  :deep(ul) {
+  ul {
     padding-left: 12px;
     list-style: disc;
   }
-  :deep(a) {
+  a {
     text-decoration: underline;
   }
-  :deep(ol) {
+  ol {
     padding-left: 12px;
     list-style: disc;
   }
-  :deep(p) {
+  p {
     line-height: 1.5;
     margin-top: 8px;
     margin-bottom: 8px;
   }
-  :deep(li) {
+  li {
     line-height: 1.5;
     margin-top: 8px;
     margin-bottom: 8px;
@@ -269,14 +294,14 @@ watchEffect(async () => {
       margin-bottom: 0;
     }
   }
-  :deep(hr) {
+  hr {
     margin: 8px 0;
     border-color: #a7a7a7;
   }
-  :deep(strong) {
+  strong {
     font-weight: 600;
   }
-  > :deep(p) {
+  > p {
     &:first-child {
       margin-top: 0;
     }
@@ -284,25 +309,25 @@ watchEffect(async () => {
       margin-bottom: 0;
     }
   }
-  > :deep(li) {
+  > li {
     &:first-child,
     &:last-child {
       margin-top: 0;
       margin-bottom: 0;
     }
   }
-  > :deep(*:not(:first-child)) {
+  > *:not(:first-child) {
     margin-top: 8px;
   }
-  > :deep(*:not(:last-child)) {
+  > *:not(:last-child) {
     margin-bottom: 8px;
   }
 
-  :deep(p:empty) {
+  p:empty {
     margin: 0;
   }
 
-  :deep(*) {
+  * {
     &::-webkit-scrollbar {
       width: 5px;
       height: 5px;
@@ -322,7 +347,7 @@ watchEffect(async () => {
       /* or add it to the track */
     }
   }
-  :deep(table) {
+  table {
     td {
       padding: 4px;
       border: 1px solid var(--color-gray-300);

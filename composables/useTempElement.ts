@@ -1,6 +1,7 @@
-import { IntrinsicElementAttributes, onScopeDispose } from 'vue'
+import { IntrinsicElementAttributes, onScopeDispose, Ref, watch } from 'vue'
 
 interface Options {
+  parentElement?: Ref<HTMLElement | null>
   mountPoint?: HTMLElement
   attributes?: IntrinsicElementAttributes[keyof IntrinsicElementAttributes]
 }
@@ -22,6 +23,13 @@ export function useTempElement<T extends keyof HTMLElementTagNameMap>(tag: T, op
       element.parentNode.removeChild(element)
     }
   }
+
+  watch(() => options?.parentElement?.value, (parentElement, lastParentElement) => {
+    lastParentElement?.removeChild(element)
+    if (parentElement) {
+      parentElement.appendChild(element)
+    }
+  })
 
   onScopeDispose(cleanup)
 

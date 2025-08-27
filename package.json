@@ -98,6 +98,7 @@
     "mdast": "^3.0.0",
     "mdast-util-to-string": "^4.0.0",
     "mime": "^4.0.7",
+    "morphdom": "^2.7.7",
     "motion-v": "^1.7.0",
     "nanoid": "^5.1.5",
     "ollama": "^0.5.15",

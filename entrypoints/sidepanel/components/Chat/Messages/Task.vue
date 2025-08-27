@@ -27,6 +27,7 @@
           <div v-html="getIconSvg(message.icon)" />
         </div>
         <MarkdownViewer
+          :fadeInAnimation="!message.done"
           :text="message.content"
           class="min-w-0"
         />
@@ -48,12 +49,11 @@
 import { motion } from 'motion-v'
 
 import Loading from '@/components/Loading.vue'
+import MarkdownViewer from '@/components/MarkdownViewer.vue'
 import Text from '@/components/ui/Text.vue'
 import { TaskMessageV1 } from '@/types/chat'
 import { getIconSvg } from '@/utils/markdown/content'
 import { classNames, type ComponentClassAttr } from '@/utils/vue/utils'
-
-import MarkdownViewer from '../../../../../components/MarkdownViewer.vue'
 
 const props = withDefaults(defineProps<{
   message: TaskMessageV1
