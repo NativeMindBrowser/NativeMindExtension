@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "クイックアクション"
     },
+    "thinking_mode": {
+      "label": "思考"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "何でも質問してください...",
@@ -46,10 +49,11 @@
         "search_failed": "検索に失敗しました: {query}"
       },
       "fetch_page": {
-        "reading_success": "読了: {title}",
+        "reading": "読書: {title}",
         "read_failed": "読み込みに失敗しました: {error}",
         "error_no_content": "コンテンツが見つかりません",
-        "reading": "読書: {title}"
+        "reading_success": "読了",
+        "fetch_success": "取得元"
       },
       "view_image": {
         "analyzing": "分析中: {title}",
@@ -62,6 +66,15 @@
       },
       "view_tab": {
         "tab_not_found": "タブが見つかりません"
+      },
+      "page_click": {
+        "click": "{content}をクリック",
+        "error_can_not_click": "{destination}をクリックしてジャンプできません",
+        "error_no_active_tab": "アクティブなタブが見つかりません",
+        "error_unable_to_jump": "{destination}をクリックしてジャンプできません",
+        "redirected": "{destination}にリダイレクトされました",
+        "error_click_before_view_tab": "ページを表示する前に、ページリンクをクリックしてみてください",
+        "error_click_incorrect_link": "間違ったページリンクをクリックしてみてください"
       }
     }
   },
@@ -220,6 +233,7 @@
         "vram": "{size} VRAM",
         "params": "{size}パラメータ",
         "quant": "{level}クオント",
+        "thinking": "思考",
         "no_active_models": "Ollamaに接続されていますが、アクティブなモデルがありません",
         "not_connected_to_ollama": "Ollamaに接続されていません"
       }
@@ -275,7 +289,15 @@
         "chat_model": "チャットモデル",
         "chat_model_description": "チャット会話用のAIモデルを選択してください",
         "chat_system_prompt": "チャットシステムプロンプト",
-        "chat_system_prompt_description": "チャット会話中のAIの行動と役割を定義する"
+        "chat_system_prompt_description": "チャット会話中のAIの行動と役割を定義する",
+        "thinking_visibility": "思考プロセス表示",
+        "thinking_visibility_description": "LLM推論時の思考プロセスの表示方法を選択",
+        "thinking_visibility_hide": "思考を隠す",
+        "thinking_visibility_hide_description": "ローディングと最終回答のみ表示",
+        "thinking_visibility_preview": "思考をプレビュー",
+        "thinking_visibility_preview_description": "最後の2行を表示、展開可能",
+        "thinking_visibility_full": "完全な思考を表示",
+        "thinking_visibility_full_description": "デフォルトですべて表示、折りたたみ可能"
       },
       "quick_actions": {
         "title": "クイックアクション",

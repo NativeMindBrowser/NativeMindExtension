@@ -71,6 +71,7 @@
                       <Input
                         v-model="baseUrl"
                         class="rounded-md py-2 px-4 grow"
+                        wrapperClass="w-full"
                       />
                     </div>
                     <Text
@@ -116,6 +117,7 @@
                       type="number"
                       :disabled="!enableNumCtx"
                       class="rounded-md py-2 px-4 grow"
+                      wrapperClass="w-full"
                     />
                   </div>
                   <div>

@@ -275,14 +275,23 @@
           </div>
         </Block>
         <Block title="Agent">
-          <div class="mt-1">
+          <div class="mt-1 flex flex-col gap-2">
             <div class="flex gap-3 justify-start items-center">
               <div>Max iterations</div>
               <Input
                 v-model.number="maxAgentIterations"
                 type="number"
                 min="0"
-                class="border-b border-gray-200"
+                class="border-b border-gray-200 h-5 w-20"
+              />
+            </div>
+            <div class="flex gap-3 justify-start items-center">
+              <div>Max iterations for <span class="font-light">{{ ADVANCED_MODELS_FOR_AGENT.join(',') }}</span></div>
+              <Input
+                v-model.number="maxAgentIterationsForAdvancedModels"
+                type="number"
+                min="0"
+                class="border-b border-gray-200 h-5 w-20"
               />
             </div>
             <div class="flex gap-3 justify-start items-center">
@@ -292,7 +301,7 @@
                     v-model.number="updateEnvironmentDetailsFrequency"
                     type="number"
                     min="0"
-                    class="border-b border-gray-200 w-12"
+                    class="border-b border-gray-200 w-12 h-5"
                   /> messages (including user and assistant messages)
                 </div>
               </Block>
@@ -327,6 +336,92 @@
                 </div>
               </template>
             </Switch>
+          </div>
+        </Block>
+        <Block title="Browser use">
+          <div class="flex flex-col gap-3 justify-start items-stretch">
+            <div class="flex gap-3 text-xs items-center">
+              <div class="flex flex-col min-w-[250px]">
+                <span>Debug mode</span>
+                <span class="font-light text-[8px]">(will highlight interactive elements)</span>
+              </div>
+              <Switch
+                v-model="highlightInteractiveElements"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-5 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[{label: 'True',key: true},{label: 'False',key: false}]"
+              />
+            </div>
+            <div class="flex gap-3 text-xs items-center">
+              <div class="flex flex-col min-w-[250px]">
+                <span>Simulate click on link</span>
+                <span class="font-light text-[8px]">(open new tab with url in the link instead of clicking it)</span>
+              </div>
+              <Switch
+                v-model="simulateClickOnLink"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-5 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[{label: 'True',key: true},{label: 'False',key: false}]"
+              />
+            </div>
+            <div class="flex gap-3 text-xs items-center">
+              <div class="flex flex-col min-w-[250px]">
+                <span>Close tab opened by agent</span>
+                <span class="font-light text-[8px]">(automatically closes the tab opened by the agent after the task is completed)</span>
+              </div>
+              <Switch
+                v-model="closeTabOpenedByAgent"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-5 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[{label: 'True',key: true},{label: 'False',key: false}]"
+              />
+            </div>
+            <div class="flex gap-3 text-xs items-center">
+              <div class="flex flex-col min-w-[250px]">
+                <span>Content filter threshold</span>
+                <span class="font-light text-[8px]">(lower value may allow more content, value belows -1 will allow all content)</span>
+              </div>
+              <Input
+                v-model.number="contentFilterThreshold"
+                type="number"
+                class="border-b border-gray-200 w-20 h-6"
+              />
+            </div>
+            <div class="flex gap-3 items-center">
+              <Input
+                v-model="browserUseOpenUrl"
+                placeholder="Enter URL"
+                class="border-b border-gray-200 py-1 disabled:opacity-50 w-80"
+              />
+              <button
+                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-1 px-3 whitespace-nowrap"
+                @click="getAccessibleContent"
+              >
+                Get accessible content
+              </button>
+              <button
+                v-if="browserUseParsedResults.length > 0"
+                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-1 px-3 whitespace-nowrap"
+                @click="downloadBrowserUseParsedResults"
+              >
+                Download
+              </button>
+            </div>
+            <div
+              v-for="(item, idx) of browserUseParsedResults"
+              :key="idx"
+              class="mt-2 text-[8px] overflow-auto max-w-full max-h-96 font-light"
+            >
+              <pre class="border border-gray-200 p-2 whitespace-pre-wrap">
+                  {{ item?.content ?? 'N/A' }}
+                </pre>
+            </div>
           </div>
         </Block>
         <Block title="Page">
@@ -531,8 +626,9 @@ import Selector from '@/components/Selector.vue'
 import Switch from '@/components/Switch.vue'
 import Button from '@/components/ui/Button.vue'
 import UILanguageSelector from '@/components/UILanguageSelector.vue'
+import { BrowserSession } from '@/entrypoints/sidepanel/utils/chat/tool-calls/browser-use/utils'
 import { SettingsScrollTarget } from '@/types/scroll-targets'
-import { INVALID_URLS } from '@/utils/constants'
+import { ADVANCED_MODELS_FOR_AGENT, INVALID_URLS } from '@/utils/constants'
 import { formatSize } from '@/utils/formatter'
 import { SUPPORTED_MODELS, WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
@@ -568,6 +664,7 @@ const enableTranslationCache = userConfig.translation.cache.enabled.toRef()
 const cacheRetentionDays = userConfig.translation.cache.retentionDays.toRef()
 
 const maxAgentIterations = userConfig.chat.agent.maxIterations.toRef()
+const maxAgentIterationsForAdvancedModels = userConfig.chat.agent.maxIterationsForAdvancedModels.toRef()
 const updateEnvironmentDetailsFrequency = userConfig.chat.environmentDetails.fullUpdateFrequency.toRef()
 const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.toRef()
 
@@ -576,6 +673,14 @@ const translationSystemPromptError = ref('')
 const newModelId = ref('')
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }[]>([])
 const webllmCacheStatus = ref<{ modelId: WebLLMSupportedModel, hasCache: boolean }[]>([])
+
+// ---- browser use ------
+const browserUseOpenUrl = ref('https://example.com')
+const browserUseParsedResults = ref<Awaited<ReturnType<BrowserSession['buildAccessibleMarkdown']>>[]>([])
+const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.toRef()
+const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.toRef()
+const closeTabOpenedByAgent = userConfig.browserUse.closeTabOpenedByAgent.toRef()
+const simulateClickOnLink = userConfig.browserUse.simulateClickOnLink.toRef()
 
 const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string, parser: string }[]>()
 const modelProviderOptions = [
@@ -593,6 +698,50 @@ onMounted(async () => {
 
 const resetOnboarding = async () => {
   onboardingVersion.value = 0
+}
+
+const getAccessibleContent = async () => {
+  try {
+    const urls = browserUseOpenUrl.value.split(',').map((url) => url.trim()).filter((url) => url)
+    browserUseParsedResults.value = []
+    for (const url of urls) {
+      const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
+      const browserSession = new BrowserSession()
+      await browserSession.navigateTo(url, { active: true })
+      const r = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements: true, contentFilterThreshold })
+      if (r) browserUseParsedResults.value.push(r)
+      // browserSession.dispose()
+    }
+  }
+  catch (error) {
+    logger.error('Failed to get DOM tree', error)
+  }
+}
+
+const downloadBrowserUseParsedResults = async () => {
+  const cloned = browserUseParsedResults.value.map((item) => {
+    const interactiveElements = item?.interactiveElements.map((el) => {
+      return {
+        text: el.innerText?.replace(/\s+/gs, ' ').replace(/\n+/g, '\n').replace(/\s*\n\s*/gs, '\n'),
+        id: el.attributes['data-nativemind-parser-internal-id'],
+        type: el.tagName === 'a' ? 'link' : el.tagName,
+        href: el.attributes['href'],
+      }
+    })
+    return {
+      ...item,
+      interactiveElements,
+    }
+  })
+  const blob = new Blob([JSON.stringify(cloned, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'browser-use-parsed-results.json'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 const checkWebLLMCacheStatus = async () => {

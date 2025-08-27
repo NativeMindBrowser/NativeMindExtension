@@ -1,6 +1,7 @@
 import { TextStreamPart, ToolSet } from 'ai'
 
 import { toAsyncIter } from '@/utils/async'
+import logger from '@/utils/logger'
 import { m2cRpc } from '@/utils/rpc'
 import { prepareWindowMessageConnection } from '@/utils/rpc/utils'
 
@@ -121,5 +122,33 @@ export function exposeToNavigator(fns: Record<string, unknown>, options: ExposeO
         Object.defineProperty(navigatorAny, key, value)
       }
     },
+  }
+}
+
+export function injectEventListenerInterceptors(types = ['click']) {
+  [EventTarget, HTMLElement, Document].forEach((target) => {
+    const original = target.prototype.addEventListener
+    logger.debug('Injecting event listener interceptor', { target, original, types })
+    if (original) {
+      target.prototype.addEventListener = function <K extends keyof HTMLElementEventMap>(type: K, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+        if (this && types.includes(type)) {
+          if (!this._nmListeners) this._nmListeners = {}
+          if (!this._nmListeners[type]) this._nmListeners[type] = []
+          this._nmListeners[type].push(listener)
+        }
+        original.call(this, type, listener, options)
+      }
+
+      target.prototype._nmHasEvent = function (type) {
+        return !!this?._nmListeners?.[type]?.length
+      }
+    }
+  })
+}
+
+declare global {
+  interface EventTarget {
+    _nmListeners?: Record<string, Array<EventListenerOrEventListenerObject>>
+    _nmHasEvent?(type: string): boolean
   }
 }

@@ -1,10 +1,11 @@
 <template>
-  <div class="inline-block w-full">
+  <div :class="classNames('inline-block', wrapperClass)">
     <input
       v-model="inputModel"
       :disabled="disabled"
       :maxlength="maxlength"
       :type="type"
+      :placeholder="placeholder"
       :class="classNames(
         'relative focus:shadow-[0px_0px_0px_1px_#24B960] rounded-[6px] shadow-[0px_0px_0px_1px_rgba(0,0,0,0.08),0px_1px_2px_0px_rgba(0,0,0,0.12)] p-2 outline-none w-full',
         props.class,
@@ -51,10 +52,12 @@ const [inputModel, modifiers] = defineModel<string | number>({
 
 const props = defineProps<{
   class?: ComponentClassAttr
+  wrapperClass?: ComponentClassAttr
   error?: boolean | string
   disabled?: boolean
   maxlength?: number | string
   type?: InputTypeHTMLAttribute
+  placeholder?: string
 }>()
 
 const isOverLimit = computed(() => {

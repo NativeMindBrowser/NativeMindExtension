@@ -1,6 +1,174 @@
 # Changelog
 
 
+## v1.8.0-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.11...v1.8.0-beta.12)
+
+### 🚀 Enhancements
+
+- **MarkdownViewer:** Add node fade-in animation ([0f00546](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f00546))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.10...v1.8.0-beta.11)
+
+### 🏡 Chore
+
+- **agent:** Improve tool-call parsing ([8fc90dd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8fc90dd))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.9...v1.8.0-beta.10)
+
+### 🚀 Enhancements
+
+- **agent:** Add new agent task component and integrate icons for new task styles ([cfae4cf](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cfae4cf))
+
+### 🩹 Fixes
+
+- **ui:** Incorrect send button position & agent msg unexpected margin ([aa08b1d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/aa08b1d))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.8.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.8...v1.8.0-beta.9)
+
+### 🩹 Fixes
+
+- **sidepanel:** Add overscroll-none class to body for improved scrolling behavior ([3e8af30](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e8af30))
+
+### 🏡 Chore
+
+- **document-parser:** Update default content filter config ([b1dc42d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b1dc42d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.7...v1.8.0-beta.8)
+
+### 🚀 Enhancements
+
+- **browser-use:** Add markdown section diff utility with comprehensive tests ([dae12c6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/dae12c6))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.6...v1.8.0-beta.7)
+
+### 🚀 Enhancements
+
+- **chat:** Enhance reasoning display with ScrollContainer autosnap to bottom and improve loading state ([0538aea](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0538aea))
+- **thinking:** Add thinking visibility configuration and integrate RadioGroup component in settings ([407f87e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/407f87e))
+- Add thinking capability support and UI integration ([6e9e0b5](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6e9e0b5))
+- **chat:** Update thinking visibility options to be computed for better reactivity ([b1e5316](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b1e5316))
+- **textarea:** Add reset functionality and update props for default value handling ([6aabc4f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6aabc4f))
+- **browser-use:** Add new settings for simulating link clicks and closing tabs, enhance error messages ([1e4f58b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1e4f58b))
+
+### 💅 Refactors
+
+- Simplify Checkbox and RadioGroup components by removing modelValue prop and using defineModel ([1fb1c21](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1fb1c21))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.8.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.5...v1.8.0-beta.6)
+
+### 🚀 Enhancements
+
+- **translator:** Implement RestorableElementModifier ([2e9f063](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2e9f063))
+- **browser-use:** Enhance element interaction with improved highlighting and error handling ([fea4b02](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fea4b02))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.4...v1.8.0-beta.5)
+
+### 🩹 Fixes
+
+- **translation:** Enhance line clamp handling for translation pieces ([e7bdf40](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e7bdf40))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.3...v1.8.0-beta.4)
+
+### 🚀 Enhancements
+
+- **browser-use:** Update utility references and enhance tool execution logic ([fd9a8b5](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fd9a8b5))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.2...v1.8.0-beta.3)
+
+### 🚀 Enhancements
+
+- **browser-use:** Update prompt and tools ([c8cdf0a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c8cdf0a))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.1...v1.8.0-beta.2)
+
+### 🚀 Enhancements
+
+- **browser-use:** Support browser-use in very early stage ([c58250f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c58250f))
+
+### 💅 Refactors
+
+- **agent:** Refactor AgentStorage ([a772e75](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a772e75))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.8.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.7.2...v1.8.0-beta.1)
+
+### 🩹 Fixes
+
+- **agent:** Handle ModelRequestError and UnknownError in agent loop ([d81a37a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d81a37a))
+- **quick-actions:** Trigger quick action only in the side panel of the current window ([fd6e323](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fd6e323))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.7.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.0...v1.7.2)

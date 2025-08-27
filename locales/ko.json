@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "빠른 액션"
     },
+    "thinking_mode": {
+      "label": "사고"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "무엇이든 물어보세요...",
@@ -46,10 +49,11 @@
         "search_failed": "검색 실패: {query}"
       },
       "fetch_page": {
-        "reading_success": "읽기 완료: {title}",
+        "reading": "읽기: {title}",
         "read_failed": "읽기 실패: {error}",
         "error_no_content": "콘텐츠를 찾을 수 없습니다",
-        "reading": "읽기: {title}"
+        "reading_success": "읽기 완료",
+        "fetch_success": "가져온 곳"
       },
       "view_image": {
         "analyzing": "분석 중: {title}",
@@ -62,6 +66,15 @@
       },
       "view_tab": {
         "tab_not_found": "탭을 찾을 수 없음"
+      },
+      "page_click": {
+        "click": "{content}을(를) 클릭하세요",
+        "error_can_not_click": "{destination}을(를) 클릭하여 이동할 수 없습니다",
+        "error_no_active_tab": "활성 탭을 찾을 수 없습니다",
+        "redirected": "{destination}로 리디렉션됨",
+        "error_unable_to_jump": "{destination}을(를) 클릭하여 이동할 수 없습니다",
+        "error_click_before_view_tab": "페이지를 보기 전에 페이지 링크를 클릭해 보세요",
+        "error_click_incorrect_link": "잘못된 페이지 링크를 클릭해 보세요"
       }
     }
   },
@@ -220,6 +233,7 @@
         "vram": "{size} VRAM",
         "params": "{size} 매개변수",
         "quant": "{level} 퀀트",
+        "thinking": "사고",
         "no_active_models": "Ollama가 연결되었지만 활성화된 모델이 없습니다",
         "not_connected_to_ollama": "Ollama에 연결되지 않음"
       }
@@ -275,7 +289,15 @@
         "chat_model": "채팅 모델",
         "chat_model_description": "채팅 대화를 위한 AI 모델을 선택하세요",
         "chat_system_prompt": "채팅 시스템 프롬프트",
-        "chat_system_prompt_description": "채팅 대화 중 AI의 행동과 역할을 정의하세요"
+        "chat_system_prompt_description": "채팅 대화 중 AI의 행동과 역할을 정의하세요",
+        "thinking_visibility": "사고 과정 표시",
+        "thinking_visibility_description": "LLM 추론 중 사고 과정 표시 방법 선택",
+        "thinking_visibility_hide": "사고 과정 숨기기",
+        "thinking_visibility_hide_description": "로딩과 최종 답변만 표시",
+        "thinking_visibility_preview": "사고 과정 미리보기",
+        "thinking_visibility_preview_description": "마지막 2줄 표시, 확장 가능",
+        "thinking_visibility_full": "전체 사고 과정 표시",
+        "thinking_visibility_full_description": "기본적으로 모두 표시, 접을 수 있음"
       },
       "quick_actions": {
         "title": "빠른 작업",

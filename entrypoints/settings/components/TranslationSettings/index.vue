@@ -39,7 +39,7 @@
               <Textarea
                 v-model="translationSystemPrompt"
                 :error="!!translationSystemPromptError"
-                :defaultValue="defaultTranslationSystemPrompt"
+                :resetDefault="resetDefaultTranslationSystemPrompt"
               />
               <WarningMessage
                 v-if="translationSystemPromptError"
@@ -73,13 +73,21 @@ const { t } = useI18n()
 const userConfig = await getUserConfig()
 
 const targetLocale = userConfig.translation.targetLocale.toRef()
-const defaultTranslationSystemPrompt = userConfig.translation.systemPrompt.getDefault()
-const { value: translationSystemPrompt, errorMessage: translationSystemPromptError } = useValueGuard(userConfig.translation.systemPrompt.toRef(), (v) => {
+const translationSystemPromptConfig = userConfig.translation.systemPrompt
+
+const { value: translationSystemPrompt, errorMessage: translationSystemPromptError } = useValueGuard(translationSystemPromptConfig.toRef(), (v) => {
   return {
     isValid: /\{\{LANGUAGE\}\}/.test(v),
     errorMessage: t('settings.translation.basic_config.translation_system_prompt_error'),
   }
 })
+
+const resetDefaultTranslationSystemPrompt = () => {
+  if (translationSystemPrompt.value !== translationSystemPromptConfig.getDefault()) {
+    return () => translationSystemPromptConfig.resetDefault()
+  }
+  return undefined
+}
 
 const translationLanguageOptions = SUPPORTED_LANGUAGES.map((lang) => ({
   id: lang.code,

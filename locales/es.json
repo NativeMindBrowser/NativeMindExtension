@@ -28,6 +28,9 @@
     "quick_actions": {
       "title": "Acciones Rápidas"
     },
+    "thinking_mode": {
+      "label": "Pensando"
+    },
     "prompt": {
       "highlight_key_insights": {
         "title": "Resalta las ideas clave"
@@ -46,10 +49,11 @@
         "search_failed": "Búsqueda fallida: {query}"
       },
       "fetch_page": {
-        "reading_success": "Lectura completada: {title}",
+        "reading": "Lectura: {title}",
         "read_failed": "Error de lectura: {error}",
         "error_no_content": "no se encontró contenido",
-        "reading": "Lectura: {title}"
+        "reading_success": "Lectura completada",
+        "fetch_success": "Obtenido de"
       },
       "view_image": {
         "analyzing": "Analizando: {title}",
@@ -62,6 +66,15 @@
       },
       "view_tab": {
         "tab_not_found": "pestaña no encontrada"
+      },
+      "page_click": {
+        "click": "Haz clic en {content}",
+        "error_can_not_click": "No se puede hacer clic y saltar a {destination}",
+        "error_no_active_tab": "No se encontró ninguna pestaña activa",
+        "error_unable_to_jump": "No se puede hacer clic y saltar a {destination}",
+        "redirected": "Redirigido a {destination}",
+        "error_click_before_view_tab": "Intenta hacer clic en un enlace de página antes de ver cualquier página",
+        "error_click_incorrect_link": "Intenta hacer clic en el enlace de página incorrecto"
       }
     }
   },
@@ -177,6 +190,7 @@
         "vram": "{size} VRAM",
         "params": "{size} parámetros",
         "quant": "{level} cuantitativo",
+        "thinking": "Pensando",
         "no_active_models": "Ollama conectado, pero no hay modelos activos",
         "not_connected_to_ollama": "No conectado a Ollama"
       }
@@ -300,7 +314,15 @@
         "chat_model": "Modelo de chat",
         "chat_model_description": "Selecciona el modelo de IA para conversaciones de chat",
         "chat_system_prompt": "Sistema de Indicaciones de Chat",
-        "chat_system_prompt_description": "Define el comportamiento y el rol de la IA durante las conversaciones de chat"
+        "chat_system_prompt_description": "Define el comportamiento y el rol de la IA durante las conversaciones de chat",
+        "thinking_visibility": "Visibilidad del Proceso de Pensamiento",
+        "thinking_visibility_description": "Elige cómo se muestra el proceso de pensamiento durante el razonamiento LLM",
+        "thinking_visibility_hide": "Ocultar Pensamiento",
+        "thinking_visibility_hide_description": "Solo mostrar carga y respuesta final",
+        "thinking_visibility_preview": "Vista Previa del Pensamiento",
+        "thinking_visibility_preview_description": "Mostrar las últimas 2 líneas, expandible",
+        "thinking_visibility_full": "Mostrar Pensamiento Completo",
+        "thinking_visibility_full_description": "Mostrar todo por defecto, colapsable"
       },
       "quick_actions": {
         "title": "Acciones Rápidas",

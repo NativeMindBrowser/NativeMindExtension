@@ -8,4 +8,5 @@ export type OllamaModelInfo = {
   sizeVRam?: number
   parameterSize?: string
   quantizationLevel?: string
+  supportsThinking?: boolean
 }

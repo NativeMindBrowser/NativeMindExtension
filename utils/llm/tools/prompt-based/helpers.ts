@@ -6,8 +6,8 @@ import logger from '@/utils/logger'
 
 import { ExtractToolWithParams, PromptBasedToolType } from './tools'
 
-export interface PromptBasedToolParams {
-  [key: string]: z.ZodString | z.ZodNumber | z.ZodDefault<z.ZodNumber | z.ZodString> | z.ZodOptional<z.ZodString | z.ZodNumber>
+export interface PromptBasedToolParams<T extends [string, ...string[]] = [string, ...string[]]> {
+  [key: string]: z.ZodString | z.ZodNumber | z.ZodEnum<T> | z.ZodDefault<z.ZodNumber | z.ZodString | z.ZodBoolean> | z.ZodOptional<z.ZodString | z.ZodNumber | z.ZodBoolean>
 }
 
 export type InferredParams<T extends PromptBasedToolParams> = {
@@ -217,6 +217,7 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
       { start: `<${tool.toolName}>`, end: `</${tool.toolName}>` },
       { start: `\`\`\`${tool.toolName}`, end: '```' },
       { start: `<tool_calls>\n<${tool.toolName}>`, end: `</tool_calls>` },
+      { start: `<tool_calls><${tool.toolName}>`, end: `</tool_calls>` },
     ])).flat()
     const toolCallsWalkParser = new TagWalker(pairs)
     return (text: string) => {
@@ -279,5 +280,18 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
 
   get xmlParams(): string {
     return this.convertToXMLParams(this.parameters)
+  }
+}
+
+export class PromptBasedHandOffTool<Name extends string, SubTools extends PromptBasedTool<string, PromptBasedToolParams>[]> extends PromptBasedTool<string, PromptBasedToolParams> {
+  public subTools: SubTools
+  public overrideSystemPrompt?: string
+  constructor(public toolName: Name, public instruction: string, private options: { subTools: SubTools, overrideSystemPrompt?: (tools: SubTools) => string }) {
+    super(toolName, instruction, {})
+    this.subTools = options.subTools
+  }
+
+  get systemPrompt() {
+    return this.overrideSystemPrompt ?? this.options.overrideSystemPrompt?.(this.subTools)
   }
 }

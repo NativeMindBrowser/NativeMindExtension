@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Schnelle Aktionen"
     },
+    "thinking_mode": {
+      "label": "Denken"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Fragen Sie alles ...",
@@ -46,10 +49,11 @@
         "search_failed": "Suche fehlgeschlagen: {query}"
       },
       "fetch_page": {
-        "reading_success": "Lektüre abgeschlossen: {title}",
+        "reading": "Lektüre: {title}",
         "read_failed": "Lesen fehlgeschlagen: {error}",
         "error_no_content": "kein Inhalt gefunden",
-        "reading": "Lektüre: {title}"
+        "reading_success": "Lektüre abgeschlossen",
+        "fetch_success": "Abgerufen von"
       },
       "view_image": {
         "analyzing": "Analysiere: {title}",
@@ -62,6 +66,15 @@
       },
       "view_tab": {
         "tab_not_found": "Registerkarte nicht gefunden"
+      },
+      "page_click": {
+        "click": "Klicken Sie auf {content}",
+        "error_can_not_click": "Klicken und Springen zu {destination} nicht möglich",
+        "error_no_active_tab": "Kein aktiver Tab gefunden",
+        "error_unable_to_jump": "Klicken und Springen zu {destination} nicht möglich",
+        "redirected": "Weitergeleitet zu {destination}",
+        "error_click_before_view_tab": "Versuchen Sie, auf einen Seitenlink zu klicken, bevor Sie Seiten anzeigen",
+        "error_click_incorrect_link": "Versuchen Sie, auf den fehlerhaften Seitenlink zu klicken"
       }
     }
   },
@@ -220,6 +233,7 @@
         "vram": "{size} VRAM",
         "params": "{size} Parameter",
         "quant": "{level} Quant",
+        "thinking": "Denken",
         "no_active_models": "Ollama verbunden, aber keine aktiven Modelle",
         "not_connected_to_ollama": "Nicht mit Ollama verbunden"
       }
@@ -275,7 +289,15 @@
         "chat_model": "Chat-Modell",
         "chat_model_description": "Wählen Sie das KI-Modell für Chat-Unterhaltungen",
         "chat_system_prompt": "Chat-System-Eingabeaufforderung",
-        "chat_system_prompt_description": "Definiere KI-Verhalten und -Rolle während Chat-Gesprächen"
+        "chat_system_prompt_description": "Definiere KI-Verhalten und -Rolle während Chat-Gesprächen",
+        "thinking_visibility": "Denkprozess-Sichtbarkeit",
+        "thinking_visibility_description": "Wählen Sie, wie der Denkprozess während des LLM-Denkens angezeigt wird",
+        "thinking_visibility_hide": "Denkprozess verbergen",
+        "thinking_visibility_hide_description": "Nur Ladevorgang und endgültige Antwort anzeigen",
+        "thinking_visibility_preview": "Denkprozess-Vorschau",
+        "thinking_visibility_preview_description": "Zeige die letzten 2 Zeilen, erweiterbar",
+        "thinking_visibility_full": "Vollständigen Denkprozess anzeigen",
+        "thinking_visibility_full_description": "Standardmäßig alles anzeigen, zusammenklappbar"
       },
       "quick_actions": {
         "title": "Schnellaktionen",

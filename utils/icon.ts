@@ -16,6 +16,7 @@ import IconTranslationBoxed from '@/assets/icons/md-translation-boxed.svg?raw'
 import IconWarning from '@/assets/icons/md-warning.svg?raw'
 import IconWarningColored from '@/assets/icons/md-warning-colored.svg?raw'
 import IconWritingBoxed from '@/assets/icons/md-writing-boxed.svg?raw'
+import IconPdf from '@/assets/icons/pdf-icon.svg?raw'
 import IconTaskFetchPage from '@/assets/icons/task-fetch-page.svg?raw'
 import IconTaskReadFile from '@/assets/icons/task-read-file.svg?raw'
 import IconTaskSearch from '@/assets/icons/task-search.svg?raw'
@@ -44,6 +45,7 @@ export const iconMap = {
   taskSearch: IconTaskSearch,
   taskReadFile: IconTaskReadFile,
   taskFetchPage: IconTaskFetchPage,
+  pdf: IconPdf,
 }
 
 export type IconName = keyof typeof iconMap

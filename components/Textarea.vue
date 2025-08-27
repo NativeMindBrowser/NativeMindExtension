@@ -50,11 +50,11 @@ const props = withDefaults(defineProps<{
   modelValue: string | number
   class?: ComponentClassAttr
   outerClass?: ComponentClassAttr
-  defaultValue?: string | number
   minHeight?: number
   maxHeight?: number
   maxLength?: number
   error?: boolean
+  resetDefault?: () => void
 }>(), {
   minHeight: 80,
   maxHeight: 300,
@@ -62,7 +62,6 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
-  (e: 'reset'): void
 }>()
 
 const inputValue = useVModel(props, 'modelValue', emit, {
@@ -77,12 +76,11 @@ const isResizing = ref(false)
 
 // Show reset button only when value differs from default
 const showResetButton = computed(() => {
-  return props.defaultValue !== undefined && inputValue.value !== props.defaultValue
+  return !!props.resetDefault
 })
 
 const resetToDefault = () => {
-  inputValue.value = String(props.defaultValue)
-  emit('reset')
+  props.resetDefault?.()
 }
 
 const startResize = (e: MouseEvent) => {

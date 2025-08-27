@@ -1,5 +1,5 @@
-import { sleep } from '@/utils/async'
 import { b2sRpc } from '@/utils/rpc'
+import { sleep } from '@/utils/sleep'
 
 const checkSidepanelLoaded = async () => {
   try {

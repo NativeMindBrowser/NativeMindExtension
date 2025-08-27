@@ -25,8 +25,7 @@
     />
     <div
       ref="scrollContainerRef"
-      class="relative flex flex-col h-full overflow-auto overscroll-contain"
-      :class="[containerClass, {'scrollbar-hide': !showScrollbar}]"
+      :class="classNames('relative flex flex-col h-full overflow-auto overscroll-contain', containerClass, {'scrollbar-hide': !showScrollbar})"
       @wheel="onWheel"
     >
       <div

@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "Tindakan cepat"
     },
+    "thinking_mode": {
+      "label": "Berpikir"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "Tanyakan apa saja...",
@@ -46,10 +49,11 @@
         "search_failed": "Pencarian gagal: {query}"
       },
       "fetch_page": {
-        "reading_success": "Selesai membaca: {title}",
+        "reading": "Bacaan: {title}",
         "read_failed": "Gagal membaca: {error}",
         "error_no_content": "tidak ada konten yang ditemukan",
-        "reading": "Bacaan: {title}"
+        "reading_success": "Selesai membaca",
+        "fetch_success": "Diambil dari"
       },
       "view_image": {
         "analyzing": "Menganalisis: {title}",
@@ -62,6 +66,15 @@
       },
       "view_tab": {
         "tab_not_found": "tab tidak ditemukan"
+      },
+      "page_click": {
+        "click": "Klik {content}",
+        "error_can_not_click": "Tidak dapat mengklik dan melompat ke {destination}",
+        "error_no_active_tab": "Tidak ditemukan tab aktif",
+        "error_unable_to_jump": "Tidak dapat mengklik dan melompat ke {destination}",
+        "redirected": "Dialihkan ke {destination}",
+        "error_click_before_view_tab": "Coba klik tautan halaman sebelum melihat halaman apa pun",
+        "error_click_incorrect_link": "Coba klik pada tautan halaman yang salah"
       }
     }
   },
@@ -220,6 +233,7 @@
         "vram": "{size} VRAM",
         "params": "{size} parameter",
         "quant": "{level} kuant",
+        "thinking": "Berpikir",
         "no_active_models": "Ollama terhubung, tetapi tidak ada model yang aktif",
         "not_connected_to_ollama": "Tidak terhubung ke Ollama"
       }
@@ -275,7 +289,15 @@
         "chat_model": "Model chat",
         "chat_model_description": "Pilih model AI untuk percakapan chat",
         "chat_system_prompt": "Sistem Prompt Obrolan",
-        "chat_system_prompt_description": "Tentukan perilaku dan peran AI selama percakapan chat"
+        "chat_system_prompt_description": "Tentukan perilaku dan peran AI selama percakapan chat",
+        "thinking_visibility": "Visibilitas Proses Berpikir",
+        "thinking_visibility_description": "Pilih cara proses berpikir ditampilkan selama penalaran LLM",
+        "thinking_visibility_hide": "Sembunyikan Pemikiran",
+        "thinking_visibility_hide_description": "Hanya tampilkan loading dan jawaban akhir",
+        "thinking_visibility_preview": "Pratinjau Pemikiran",
+        "thinking_visibility_preview_description": "Tampilkan 2 baris terakhir, dapat diperluas",
+        "thinking_visibility_full": "Tampilkan Pemikiran Lengkap",
+        "thinking_visibility_full_description": "Tampilkan semua secara default, dapat diciutkan"
       },
       "quick_actions": {
         "title": "Tindakan Cepat",

@@ -78,7 +78,7 @@ export default defineConfig({
     description: IS_FIREFOX ? '__MSG_extDescFirefox__' : '__MSG_extDesc__',
     version: VERSION,
     default_locale: 'en',
-    permissions: ['declarativeNetRequest', 'tabs', 'storage', 'scripting', 'contextMenus', 'sidePanel', 'unlimitedStorage', ...extraPermissions],
+    permissions: ['declarativeNetRequest', 'tabs', 'storage', 'scripting', 'contextMenus', 'sidePanel', 'unlimitedStorage', 'webNavigation', ...extraPermissions],
     minimum_chrome_version: '124',
     declarative_net_request: IS_FIREFOX ? { rule_resources: [{ id: 'ruleset_1', enabled: true, path: 'rules.json' }] } : undefined,
     content_security_policy: {

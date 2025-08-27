@@ -11,7 +11,6 @@ import logger from '@/utils/logger'
 
 import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
 import { BackgroundChatHistoryServiceManager } from '../../entrypoints/background/services/chat-history-service'
-import { sleep } from '../async'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
 import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
@@ -24,6 +23,7 @@ import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
 import { parsePdfFileOfUrl } from '../pdf'
 import { openAndFetchUrlsContent, searchWebsites } from '../search'
 import { showSettingsForBackground } from '../settings'
+import { sleep } from '../sleep'
 import { TranslationEntry } from '../translation-cache'
 import { getUserConfig } from '../user-config'
 import { b2sRpc, bgBroadcastRpc } from '.'
@@ -32,7 +32,7 @@ import { preparePortConnection, shouldGenerateChatTitle } from './utils'
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
 type GenerateObjectOptions = Omit<Parameters<typeof originalGenerateObject>[0], 'tools'>
-type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean }
+type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean, autoThinking?: boolean }
 type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
 
@@ -76,6 +76,7 @@ const generateExtraModelOptions = (options: ExtraGenerateOptions) => {
   return {
     ...(options.modelId !== undefined ? { model: options.modelId } : {}),
     ...(options.reasoning !== undefined ? { reasoningEffort: options.reasoning } : {}),
+    ...(options.autoThinking !== undefined ? { autoThinking: options.autoThinking } : {}),
   }
 }
 
@@ -122,8 +123,8 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
         model: await getModel({
           ...(await getModelUserConfig()),
           onLoadingModel: makeLoadingModelListener(port),
-          ...generateExtraModelOptions(options) },
-        ),
+          ...generateExtraModelOptions(options),
+        }),
         messages: options.messages,
         prompt: options.prompt,
         system: options.system,

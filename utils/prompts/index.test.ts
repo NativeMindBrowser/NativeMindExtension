@@ -233,68 +233,14 @@ this is inner2 content
 </outer>`)
   })
 
-  it('should generate next step prompt', async () => {
-    const { nextStep } = await import('.')
-
-    const prompt = await nextStep([
-      { role: 'user', content: 'What is the weather today?' },
-      { role: 'assistant', content: 'The weather is sunny.' },
-    ], [
-      { title: 'Page 1', url: 'https://example.com/page1', textContent: 'This is page 1 content.' },
-      { title: 'Page 2', url: 'https://example.com/page2', textContent: 'This is page 2 content.' },
-    ])
-
-    expect(prompt.system).toEqual(`You are a helpful assistant. Based on the conversation below and the current web page content, suggest the next step to take. You can suggest one of the following options:
-
-1. search_online: ONLY if user requests the latest information or news that you don't already know. If you choose this option, you must also provide a list of search keywords.
-   - All keywords will be combined into a single search, so follow search best practices
-   - Each item should be a single keyword or very short phrase (1-3 words maximum)
-   - Provide 2-5 keywords maximum
-   - Keywords should be specific and relevant to the user's question
-   - Consider the current page content to find complementary information
-   - Do not include explanations, just the keywords
-
-2. chat: Continue the conversation with the user in ALL other cases, including:
-   - Analyzing, summarizing, or discussing content from PDFs, web pages, or images
-   - Answering questions based on available content
-   - Providing explanations or insights about existing materials
-   - Creative tasks, coding, problem-solving
-   - General conversation that doesn't require new external information
-
-Example response for search_online:
-{"action":"search_online","queryKeywords":["climate news","paris agreement","emissions data"]}
-
-Example response for chat:
-{"action":"chat"}
-`)
-
-    expect(prompt.user.extractText()).toEqual(`<tabs_context>
-Note: Each tab content shows only the first 1000 characters. Consider whether the visible content suggests the full page would contain sufficient information to answer the user's question.
-
-<tab id="1">
-Title: Page 1 | URL: https://example.com/page1
-This is page 1 content.
-</tab>
-<tab id="2">
-Title: Page 2 | URL: https://example.com/page2
-This is page 2 content.
-</tab>
-</tabs_context>
-
-<conversation>
-user: What is the weather today?
-assistant: The weather is sunny.
-</conversation>`)
-  })
-
   it('should generate correct prompt based tools', async () => {
     expect(renderPrompt`${new PromptBasedToolBuilder(searchOnlineTool)}`).toBe(`## search_online
 Purpose: Search for current and latest information
 Format:
 <tool_calls>
 <search_online>
-<query></query>
-<max_results></max_results>
+<query>2-6 specific keywords</query>
+<max_results>5</max_results>
 </search_online>
 </tool_calls>`)
 

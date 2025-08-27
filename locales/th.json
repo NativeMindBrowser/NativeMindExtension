@@ -9,6 +9,9 @@
     "quick_actions": {
       "title": "การกระทำที่รวดเร็ว"
     },
+    "thinking_mode": {
+      "label": "กำลังคิด"
+    },
     "input": {
       "placeholder": {
         "ask_anything": "ถามอะไรก็ได้...",
@@ -46,10 +49,11 @@
         "search_failed": "การค้นหาล้มเหลว: {query}"
       },
       "fetch_page": {
-        "reading_success": "อ่านเสร็จแล้ว: {title}",
+        "reading": "การอ่าน: {title}",
         "read_failed": "การอ่านล้มเหลว: {error}",
         "error_no_content": "ไม่พบเนื้อหา",
-        "reading": "การอ่าน: {title}"
+        "reading_success": "อ่านเสร็จแล้ว",
+        "fetch_success": "ดึงข้อมูลจาก"
       },
       "view_image": {
         "analyzing": "กำลังวิเคราะห์: {title}",
@@ -62,6 +66,15 @@
       },
       "view_tab": {
         "tab_not_found": "ไม่พบแท็บ"
+      },
+      "page_click": {
+        "click": "คลิก {content}",
+        "error_can_not_click": "ไม่สามารถคลิกและข้ามไปยัง {destination} ได้",
+        "error_no_active_tab": "ไม่พบแท็บที่ใช้งานอยู่",
+        "error_unable_to_jump": "ไม่สามารถคลิกและข้ามไปยัง {destination} ได้",
+        "redirected": "เปลี่ยนเส้นทางไปยัง {destination}",
+        "error_click_before_view_tab": "ลองคลิกลิงก์หน้าเว็บก่อนดูหน้าใดๆ",
+        "error_click_incorrect_link": "ลองคลิกที่ลิงก์หน้าที่ไม่ถูกต้อง"
       }
     }
   },
@@ -220,6 +233,7 @@
         "vram": "{size} VRAM",
         "params": "{size} พารามิเตอร์",
         "quant": "{level} ควอนต์",
+        "thinking": "กำลังคิด",
         "no_active_models": "Ollama เชื่อมต่อแล้ว แต่ไม่มีโมเดลที่ใช้งานอยู่",
         "not_connected_to_ollama": "ไม่ได้เชื่อมต่อกับ Ollama"
       }
@@ -275,7 +289,15 @@
         "chat_model": "โมเดลแชท",
         "chat_model_description": "เลือกโมเดล AI สำหรับการสนทนาแชท",
         "chat_system_prompt": "ระบบแชทพร้อมท์",
-        "chat_system_prompt_description": "กำหนดพฤติกรรมและบทบาทของ AI ในระหว่างการสนทนาแชท"
+        "chat_system_prompt_description": "กำหนดพฤติกรรมและบทบาทของ AI ในระหว่างการสนทนาแชท",
+        "thinking_visibility": "การแสดงกระบวนการคิด",
+        "thinking_visibility_description": "เลือกวิธีการแสดงกระบวนการคิดระหว่าง LLM กำลังใช้เหตุผล",
+        "thinking_visibility_hide": "ซ่อนการคิด",
+        "thinking_visibility_hide_description": "แสดงเฉพาะการโหลดและคำตอบสุดท้าย",
+        "thinking_visibility_preview": "ดูตัวอย่างการคิด",
+        "thinking_visibility_preview_description": "แสดง 2 บรรทัดสุดท้าย สามารถขยายได้",
+        "thinking_visibility_full": "แสดงการคิดแบบเต็ม",
+        "thinking_visibility_full_description": "แสดงทั้งหมดโดยค่าเริ่มต้น สามารถย่อได้"
       },
       "quick_actions": {
         "title": "การดำเนินการด่วน",

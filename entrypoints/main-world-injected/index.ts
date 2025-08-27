@@ -12,6 +12,7 @@ export default defineContentScript({
   registration: 'manifest',
   main() {
     logger.debug('main world script loaded')
+    // injectEventListenerInterceptors()
     injectNavigatorLLM()
     exposeToGlobal({
       __NATIVEMIND__: {

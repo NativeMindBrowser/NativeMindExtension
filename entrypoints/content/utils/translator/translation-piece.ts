@@ -15,6 +15,7 @@ import {
   isHTMLElementNode,
   isTextNode,
   type NodeAttrMap,
+  RestorableElementModifier,
   updateTranslationElementStyle,
   updateTranslationTextStyle,
 } from './utils/dom-utils'
@@ -52,7 +53,10 @@ export default class TranslationPiece {
   fromCache = false
   translationTextStyled = false
 
-  constructor(childNodeList: ChildNode[], nodeAttrMap: NodeAttrMap, originalTextContent: string, richTextContent: string) {
+  elementModifier: RestorableElementModifier
+
+  constructor(childNodeList: ChildNode[], nodeAttrMap: NodeAttrMap, originalTextContent: string, richTextContent: string, elementModifier: RestorableElementModifier) {
+    this.elementModifier = elementModifier
     this.childNodeList = childNodeList
     this.lastChildNode = childNodeList[childNodeList.length - 1]
     if (!this.lastChildNode.parentElement) throw new Error('lastChildNode has no parentElement')
@@ -96,7 +100,7 @@ export default class TranslationPiece {
     if (!parent) return null
 
     // Clear line clamp so that the loading item can be shown.
-    clearLineClampForTranslationPiece(parent)
+    this.prepareParentStyle()
 
     // === Only show loading item under the main content area.
     if (checkIfElementUnderMainContent(parent)) {
@@ -157,7 +161,12 @@ export default class TranslationPiece {
     this.isTranslationSourceHidden = true
   }
 
+  prepareParentStyle() {
+    this.parentElement && clearLineClampForTranslationPiece(this.parentElement, this.elementModifier)
+  }
+
   async show(text: string) {
+    this.prepareParentStyle()
     this.translateTextEle = document.createElement('span')
     this.translateTextEle.className = translationTargetClass
     this.removeOldElementIfExist('translation')
@@ -166,7 +175,7 @@ export default class TranslationPiece {
     const { translationMethod, translationFormat, typingEffectEnabled } = await getTranslatorEnv()
     this.keepSourceEle = translationMethod === 'bilingualComparison'
 
-    const display = updateTranslationElementStyle(this.translateTextEle, this.lastChildNode, this.keepSourceEle)
+    const display = updateTranslationElementStyle(this.translateTextEle, this.lastChildNode, this.keepSourceEle, this.elementModifier)
 
     if (this.keepSourceEle && display !== 'inline' && this.parentElement && checkIfElementUnderMainContent(this.parentElement)) {
       this.translationTextStyled = true
@@ -286,6 +295,8 @@ export default class TranslationPiece {
   }
 
   setLoading() {
+    this.prepareParentStyle()
+
     if (!this.loadingEle) return
 
     this.removeOldElementIfExist('loading')

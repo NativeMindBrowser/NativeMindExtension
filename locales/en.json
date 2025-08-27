@@ -99,6 +99,7 @@
         "vram": "{size} VRAM",
         "params": "{size} params",
         "quant": "{level} quant",
+        "thinking": "Thinking",
         "not_connected_to_ollama": "Not connected to Ollama",
         "no_active_models": "Ollama connected, but no active models"
       }
@@ -154,7 +155,15 @@
         "chat_model": "Chat Model",
         "chat_model_description": "Select the AI model for chat conversations",
         "chat_system_prompt": "Chat System Prompt",
-        "chat_system_prompt_description": "Define AI behavior and role during chat conversations"
+        "chat_system_prompt_description": "Define AI behavior and role during chat conversations",
+        "thinking_visibility": "Thinking Visibility",
+        "thinking_visibility_description": "Choose how thinking process is displayed during LLM reasoning",
+        "thinking_visibility_hide": "Hide Thinking",
+        "thinking_visibility_hide_description": "Only show loading and final answer",
+        "thinking_visibility_preview": "Preview Thinking",
+        "thinking_visibility_preview_description": "Show last 2 lines, expandable",
+        "thinking_visibility_full": "Show Full Thinking",
+        "thinking_visibility_full_description": "Show all by default, collapsible"
       },
       "quick_actions": {
         "title": "Quick Actions",
@@ -184,6 +193,9 @@
     },
     "quick_actions": {
       "title": "Quick Actions"
+    },
+    "thinking_mode": {
+      "label": "Thinking"
     },
     "input": {
       "placeholder": {
@@ -225,7 +237,8 @@
         "reading": "Reading: {title}",
         "read_failed": "Reading failed: {error}",
         "error_no_content": "no content found",
-        "reading_success": "Completed reading: {title}"
+        "reading_success": "Read complete",
+        "fetch_success": "Fetched from"
       },
       "view_tab": {
         "tab_not_found": "tab not found"
@@ -238,6 +251,15 @@
         "image_not_found": "image not found",
         "analyze_failed": "Analysis failed: {error}",
         "analyze_success": "Completed analysis: {title}"
+      },
+      "page_click": {
+        "click": "Click {content}",
+        "error_no_active_tab": "No active tab found",
+        "error_can_not_click": "Unable to click and jump to {destination}",
+        "redirected": "Redirected to {destination}",
+        "error_unable_to_jump": "Unable to click and jump to {destination}",
+        "error_click_before_view_tab": "Try clicking a page link before viewing any pages",
+        "error_click_incorrect_link": "Try clicking on the incorrect page link"
       }
     }
   },
