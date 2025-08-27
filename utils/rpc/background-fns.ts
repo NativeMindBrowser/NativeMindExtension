@@ -32,7 +32,7 @@ import { preparePortConnection, shouldGenerateChatTitle } from './utils'
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
 type GenerateObjectOptions = Omit<Parameters<typeof originalGenerateObject>[0], 'tools'>
-type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean }
+type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean, autoThinking?: boolean }
 type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
 
@@ -122,8 +122,9 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
         model: await getModel({
           ...(await getModelUserConfig()),
           onLoadingModel: makeLoadingModelListener(port),
-          ...generateExtraModelOptions(options) },
-        ),
+          ...generateExtraModelOptions(options),
+          autoThinking: options.autoThinking,
+        }),
         messages: options.messages,
         prompt: options.prompt,
         system: options.system,
@@ -226,7 +227,7 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
       abortController.abort()
     })
     try {
-      const model = await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) })
+      const model = await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options), autoThinking: options.autoThinking })
       if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(model.modelId))) {
         const schema = parseSchema(options)
         const s = zodSchema(schema)

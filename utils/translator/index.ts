@@ -18,7 +18,7 @@ export async function* translateParagraphs(paragraphs: string[], options: Transl
   const { targetLanguage, abortSignal } = options || {}
   const prompt = await translateTextList(paragraphs, targetLanguage)
   const response = streamObject({
-    model: await getModel({ ...(await getModelUserConfig()) }),
+    model: await getModel({ ...(await getModelUserConfig()), autoThinking: true }),
     output: 'object',
     schema: selectSchema('translateParagraphs'),
     prompt: prompt.user.extractText(),
