@@ -87,14 +87,17 @@
         </ScrollContainer>
         <!-- Toolbar -->
         <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
-          <div class="flex items-center gap-2">
+          <div class="flex grow items-center gap-2">
             <ModelSelector
               containerClass="h-7"
-              class="max-w-44"
+              :class="classNames(isThinkingToggleable ? 'max-w-[30%]' : 'max-w-[50%]')"
               dropdownAlign="left"
               triggerStyle="ghost"
             />
-            <div class="h-4 w-px bg-[#E5E7EB]" />
+            <div
+              v-if="isThinkingToggleable"
+              class="h-4 w-px bg-[#E5E7EB]"
+            />
             <ThinkingModeSwitch v-if="isThinkingToggleable" />
           </div>
           <div
