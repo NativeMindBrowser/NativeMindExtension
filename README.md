@@ -67,7 +67,7 @@ Star this project to get all the latest updates — you'll never miss a new rele
 - **Chat with Images**: Understand and interact with visual content, including screenshots and uploaded images
 
   <div align="center">
-    <img src="https://nativemind.app/images/blog/image-support/img-3.gif" alt="Chat with Images Feature" width="800">
+    <img src="docs/images/image-support.gif" alt="Chat with Images Feature" width="800">
   </div>
 
 - **Advanced Writing Tools**: Comprehensive writing assistance including rewriting, proofreading, tone adjustment, and creative rephrasing
