@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.0-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.10...v1.8.0-beta.11)
+
+### 🏡 Chore
+
+- **agent:** Improve tool-call parsing ([8fc90dd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8fc90dd))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.10
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.9...v1.8.0-beta.10)
