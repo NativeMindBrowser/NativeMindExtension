@@ -76,6 +76,7 @@ const generateExtraModelOptions = (options: ExtraGenerateOptions) => {
   return {
     ...(options.modelId !== undefined ? { model: options.modelId } : {}),
     ...(options.reasoning !== undefined ? { reasoningEffort: options.reasoning } : {}),
+    ...(options.autoThinking !== undefined ? { autoThinking: options.autoThinking } : {}),
   }
 }
 
@@ -123,7 +124,6 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
           ...(await getModelUserConfig()),
           onLoadingModel: makeLoadingModelListener(port),
           ...generateExtraModelOptions(options),
-          autoThinking: options.autoThinking,
         }),
         messages: options.messages,
         prompt: options.prompt,
@@ -227,7 +227,7 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
       abortController.abort()
     })
     try {
-      const model = await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options), autoThinking: options.autoThinking })
+      const model = await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) })
       if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(model.modelId))) {
         const schema = parseSchema(options)
         const s = zodSchema(schema)
