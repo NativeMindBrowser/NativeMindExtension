@@ -217,6 +217,7 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
       { start: `<${tool.toolName}>`, end: `</${tool.toolName}>` },
       { start: `\`\`\`${tool.toolName}`, end: '```' },
       { start: `<tool_calls>\n<${tool.toolName}>`, end: `</tool_calls>` },
+      { start: `<tool_calls><${tool.toolName}>`, end: `</tool_calls>` },
     ])).flat()
     const toolCallsWalkParser = new TagWalker(pairs)
     return (text: string) => {
