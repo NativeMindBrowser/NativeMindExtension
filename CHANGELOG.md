@@ -1,6 +1,35 @@
 # Changelog
 
 
+## v1.8.0-beta.13
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.12...v1.8.0-beta.13)
+
+### 🚀 Enhancements
+
+- **chat:** Conditionally render ThinkingModeSwitch based on model capability ([2e4947e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2e4947e))
+- **chat:** Adjust ModelSelector width and conditionally render ThinkingModeSwitch ([c01a644](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c01a644))
+- **chat:** Implement toggleExpanded function for message expansion and scrolling behavior ([b4787f9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b4787f9))
+- **llm:** Add autoThinking option to model configuration for translation functions ([c939251](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c939251))
+
+### 🩹 Fixes
+
+- **ui:** Remove ring style from ThinkingModeSwitch ([0ed8ca6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0ed8ca6))
+
+### 📖 Documentation
+
+- Update image reference to local path ([1d82ed6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1d82ed6))
+
+### 🏡 Chore
+
+- Include autoThinking option in generateExtraModelOptions for enhanced model configuration ([7c6063d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7c6063d))
+- **translator:** Remove unused translateParagraphs function ([720fbc6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/720fbc6))
+
+### ❤️ Contributors
+
+- NekoWings <NekoWings@outlook.com>
+- Xukecheng <kecheng@xmind.org>
+
 ## v1.8.0-beta.12
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.11...v1.8.0-beta.12)
