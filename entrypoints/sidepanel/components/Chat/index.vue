@@ -95,7 +95,7 @@
               triggerStyle="ghost"
             />
             <div class="h-4 w-px bg-[#E5E7EB]" />
-            <ThinkingModeSwitch />
+            <ThinkingModeSwitch v-if="isThinkingToggleable" />
           </div>
           <div
             ref="sendButtonContainerRef"
@@ -135,7 +135,9 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
+import { isToggleableThinkingModel } from '@/utils/llm/thinking-models'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
+import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../components/MarkdownViewer.vue'
@@ -167,7 +169,9 @@ defineExpose({
 })
 
 const chat = await Chat.getInstance()
+const userConfig = await getUserConfig()
 const contextAttachmentStorage = chat.contextAttachmentStorage
+const currentModel = userConfig.llm.model.toRef()
 
 initChatSideEffects()
 
@@ -186,6 +190,11 @@ const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
 
 const allowAsk = computed(() => {
   return !chat.isAnswering() && userInput.value.trim().length > 0
+})
+
+const isThinkingToggleable = computed(() => {
+  if (!currentModel.value) return false
+  return isToggleableThinkingModel(currentModel.value)
 })
 
 const cleanUp = chat.historyManager.onMessageAdded(() => {
