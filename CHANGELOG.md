@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.0-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.11...v1.8.0-beta.12)
+
+### 🚀 Enhancements
+
+- **MarkdownViewer:** Add node fade-in animation ([0f00546](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f00546))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.11
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.10...v1.8.0-beta.11)
