@@ -80,6 +80,7 @@ export class BackgroundChatHistoryService {
         title: record.title,
         lastInteractedAt: record.lastInteractedAt,
         contextUpdateInfo: record.contextUpdateInfo ? JSON.parse(record.contextUpdateInfo) : undefined,
+        reasoningEnabled: record.reasoningEnabled,
         history: JSON.parse(record.history) as HistoryItemV1[],
       }
     }
@@ -106,6 +107,7 @@ export class BackgroundChatHistoryService {
         lastInteractedAt: chatHistory.lastInteractedAt,
         history: JSON.stringify(chatHistory.history),
         contextUpdateInfo: chatHistory.contextUpdateInfo ? JSON.stringify(chatHistory.contextUpdateInfo) : undefined,
+        reasoningEnabled: chatHistory.reasoningEnabled,
         createdAt: now, // Will be overwritten if record exists
         updatedAt: now,
       }

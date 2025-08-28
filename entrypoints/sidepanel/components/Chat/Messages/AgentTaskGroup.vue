@@ -7,7 +7,7 @@
     >
       <motion.div
         v-if="!task.done"
-        class="shrink-0 grow-0 self-start size-5 p-0.5"
+        class="shrink-0 grow-0 self-center size-5 p-0.5"
         :initial="{ opacity: 1 }"
         :animate="{ opacity: [1, 0.3, 1] }"
         :transition="{

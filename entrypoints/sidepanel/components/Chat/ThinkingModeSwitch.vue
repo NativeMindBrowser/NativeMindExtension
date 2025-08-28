@@ -47,6 +47,8 @@ import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { only } from '@/utils/runtime'
 import { getUserConfig } from '@/utils/user-config'
 
+import { Chat } from '../../utils/chat'
+
 const { t } = useI18n()
 const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
 const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
@@ -64,9 +66,23 @@ const updateModelList = async () => {
 }
 
 const userConfig = await getUserConfig()
-const isThinkingEnabled = userConfig.llm.reasoning.toRef()
+const chat = await Chat.getInstance()
 const currentModel = userConfig.llm.model.toRef()
 const endpointType = userConfig.llm.endpointType.toRef()
+
+// Use chat-specific reasoning setting with fallback to global setting
+const isThinkingEnabled = computed({
+  get() {
+    // If chat has a specific setting, use it; otherwise use global setting
+    const chatSetting = chat.historyManager.chatHistory.value.reasoningEnabled
+    return chatSetting !== undefined ? chatSetting : userConfig.llm.reasoning.get()
+  },
+  set(value: boolean) {
+    // Update both chat-specific setting and global setting
+    chat.historyManager.chatHistory.value.reasoningEnabled = value
+    userConfig.llm.reasoning.set(value)
+  },
+})
 
 const modelList = computed(() => {
   if (endpointType.value === 'ollama') {
@@ -103,7 +119,8 @@ watch([currentModel, isModelSupportsThinking, isThinkingToggleable],
     if (modelList.value.length > 0 && !supportsThinking && isThinkingEnabled.value) {
       isThinkingEnabled.value = false
     }
-    else {
+    else if (chat.historyManager.chatHistory.value.reasoningEnabled === undefined) {
+      // Only auto-enable for chats without specific setting (new chats or legacy chats)
       isThinkingEnabled.value = true
     }
 
@@ -113,7 +130,8 @@ watch([currentModel, isModelSupportsThinking, isThinkingToggleable],
     }
 
     // If switching to a toggleable thinking model from a non-thinking model, auto-enable
-    if (oldModel && newModel !== oldModel && supportsThinking && toggleable && !isThinkingEnabled.value) {
+    // but only for chats without specific setting
+    if (oldModel && newModel !== oldModel && supportsThinking && toggleable && !isThinkingEnabled.value && chat.historyManager.chatHistory.value.reasoningEnabled === undefined) {
       isThinkingEnabled.value = true
     }
   },
