@@ -1,3 +1,5 @@
+import { cloneDocument } from './helpers'
+
 interface MetricConfig {
   textDensity: boolean
   linkDensity: boolean
@@ -57,6 +59,10 @@ export class PruningContentFilter {
   private excludedTags: string[]
   private includedTags: string[]
   private negativePatterns: RegExp
+
+  private static readonly dataKeys = {
+    IGNORE_ELEMENT: 'data-nm-parser-ignore',
+  }
 
   /**
    * Initializes the PruningContentFilter class, if not provided, falls back to page metadata.
@@ -127,7 +133,7 @@ export class PruningContentFilter {
 
     // Common excluded tags
     this.excludedTags = [
-      'script', 'style', 'nav', 'header', 'footer', 'aside', 'menu',
+      'script', 'style', 'header', 'footer', 'aside', 'menu',
       'noscript', 'meta', 'link', 'title', 'head',
       '.hidden', '.ignore', '.skip-link', '.sidenav', '.footer', '.blog-footer-bottom',
       '#side_nav', '#sidenav', '#blog-calendar', '#footer', '#page_end_html',
@@ -137,6 +143,32 @@ export class PruningContentFilter {
 
     // Negative patterns for class/id filtering
     this.negativePatterns = /\b(ad|advertisement|banner|sidebar|navigation|menu|footer|header|comment|popup|modal|overlay)\b/i
+  }
+
+  markIgnoredElement(doc: Document) {
+    const markedSelectors = new Set<string>()
+    const treeWalker = document.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT)
+    while (treeWalker.nextNode()) {
+      const node = treeWalker.currentNode as HTMLElement
+      if (this.shouldIgnoreElement(node)) {
+        node.setAttribute(PruningContentFilter.dataKeys.IGNORE_ELEMENT, 'true')
+        markedSelectors.add(`[${PruningContentFilter.dataKeys.IGNORE_ELEMENT}]`)
+      }
+    }
+
+    const cleanupMark = () => {
+      const elements = doc.body.querySelectorAll(`[${PruningContentFilter.dataKeys.IGNORE_ELEMENT}]`)
+      elements.forEach((el) => el.removeAttribute(PruningContentFilter.dataKeys.IGNORE_ELEMENT))
+    }
+    return { cleanupMark, markedSelectors }
+  }
+
+  shouldIgnoreElement(element: HTMLElement) {
+    const elStyle = getComputedStyle(element)
+    if (element.offsetHeight === 0 && element.offsetWidth === 0 && elStyle.position !== 'absolute') {
+      return true
+    }
+    return false
   }
 
   /**
@@ -150,16 +182,20 @@ export class PruningContentFilter {
    * @returns Array of filtered HTML content blocks.
    */
   filterContent(doc: Document) {
-    const body = doc.body
+    // mark on original document to keep the layout info
+    const { cleanupMark, markedSelectors } = this.markIgnoredElement(doc)
+    const clonedDoc = cloneDocument(doc)
+    cleanupMark()
+    const body = clonedDoc.body
 
     const elementRemover = this.createElementRemover()
-    this.removeUnwantedTags(body, elementRemover)
+    this.removeUnwantedTags(body, [...this.excludedTags, ...markedSelectors], elementRemover)
 
     // Prune tree starting from body
     this.pruneTree(body, elementRemover)
 
     return {
-      document: doc,
+      document: clonedDoc,
       removedElements: elementRemover.getRemoved(),
     }
   }
@@ -167,8 +203,8 @@ export class PruningContentFilter {
   /**
    * Removes unwanted tags from the element tree
    */
-  private removeUnwantedTags(element: Element, remover: ElementRemover): void {
-    const elements = element.querySelectorAll(this.excludedTags.join(', '))
+  private removeUnwantedTags(element: Element, selectors: string[], remover: ElementRemover): void {
+    const elements = element.querySelectorAll(selectors.join(', '))
     elements.forEach((el) => remover.remove(el))
   }
 

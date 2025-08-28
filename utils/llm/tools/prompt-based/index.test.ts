@@ -239,6 +239,23 @@ another text
     expect(text).toBe('start\n\n\nanother text\n')
   })
 
+  it('should parse the tool calls', async () => {
+    const response = `Test \n\n<tool_calls>\n<click>\n<element_id>85</element_id>\n</click>\n</tool_calls>`
+
+    const extractor = PromptBasedTool.createToolCallsStreamParser(promptBasedTools)
+
+    const calls = []
+    for (const char of response) {
+      const { toolCalls: currentCalls } = extractor(char)
+      for (const call of currentCalls) {
+        calls.push(call)
+      }
+    }
+
+    expect(calls.length).toBe(1)
+    expect(calls[0].params).toEqual({ element_id: '85' })
+  })
+
   it('should ignore the unrelated tags', async () => {
     const tagWalker = new TagWalker([{ start: '<view_tab>', end: '</view_tab>' }])
     const input = `<think>this is a test</think>`
