@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.8.0-beta.16
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.15...v1.8.0-beta.16)
+
+### 🚀 Enhancements
+
+- **document-parser:** Enhance element filtering logic ([65433ec](https://github.com/NativeMindBrowser/NativeMindExtension/commit/65433ec))
+
+### 🩹 Fixes
+
+- **translation-settings:** Update resetDefaultTranslationSystemPrompt to computed and improve useValueGuard integration ([214938c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/214938c))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.15
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.14...v1.8.0-beta.15)
