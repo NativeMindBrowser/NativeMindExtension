@@ -39,5 +39,5 @@ export async function waitUntilDocumentStable(debounceDelay = 1000, timeout = 10
 
 export async function waitUntilDocumentMaybeLoaded() {
   await waitUntilDocumentInteractive()
-  await waitUntilDocumentStable(1000, 8000)
+  await waitUntilDocumentStable(2000, 8000)
 }

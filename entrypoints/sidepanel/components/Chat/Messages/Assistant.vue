@@ -144,8 +144,8 @@ const props = defineProps<{
 const message = computed(() => {
   return {
     ...props.message,
-    content: props.message.content.trim(),
-    reasoning: props.message.reasoning?.trim(),
+    content: props.message.content.trim().replace(/(<br\s*\/?>)+$/g, '').trim(),
+    reasoning: props.message.reasoning?.trim().replace(/(<br\s*\/?>)+$/g, '').trim(),
   }
 })
 

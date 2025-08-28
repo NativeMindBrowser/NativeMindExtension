@@ -385,7 +385,7 @@
             <div class="flex gap-3 text-xs items-center">
               <div class="flex flex-col min-w-[250px]">
                 <span>Content filter threshold</span>
-                <span class="font-light text-[8px]">(lower value may allow more content, value belows -1 will allow all content)</span>
+                <span class="font-light text-[8px]">(lower value may allow more content, value belows -1 will allow most of the visible content)</span>
               </div>
               <Input
                 v-model.number="contentFilterThreshold"

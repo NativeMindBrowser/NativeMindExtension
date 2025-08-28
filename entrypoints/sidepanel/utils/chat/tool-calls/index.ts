@@ -77,7 +77,7 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
   const { url } = params
   const { t } = await useGlobalI18n()
-  const taskMsg = taskMessageModifier.addTaskMessage({ summary: makeTaskSummary('page', t('chat.tool_calls.fetch_page.reading'), url, url) })
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: makeTaskSummary('page', t('chat.tool_calls.common.reading'), url, url) })
   taskMsg.icon = 'taskFetchPage'
   const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
   await browserSession.navigateTo(url, { newTab: true, active: false, abortSignal })
