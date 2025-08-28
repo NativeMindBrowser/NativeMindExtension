@@ -180,6 +180,7 @@ export type ChatHistoryV1 = {
     lastFullUpdateMessageId?: string // last message id that was fully updated with context info
     lastAttachmentIds: string[]
   }
+  reasoningEnabled?: boolean // reasoning setting for this chat
   history: HistoryItemV1[]
 }
 

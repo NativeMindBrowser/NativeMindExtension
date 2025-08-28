@@ -308,7 +308,19 @@ export class Chat {
         // Process chat history
         log.debug('[Chat] getInstance', chatHistoryId.value)
         const defaultTitle = i18n.t('chat_history.new_chat')
-        const chatHistory = ref<ChatHistoryV1>(await s2bRpc.getChatHistory(chatHistoryId.value) ?? { history: [], id: chatHistoryId.value, title: defaultTitle, lastInteractedAt: Date.now() })
+        const existingChatHistory = await s2bRpc.getChatHistory(chatHistoryId.value)
+        const chatHistory = ref<ChatHistoryV1>(existingChatHistory ?? {
+          history: [],
+          id: chatHistoryId.value,
+          title: defaultTitle,
+          lastInteractedAt: Date.now(),
+          reasoningEnabled: true, // Default to true for new chats
+        })
+
+        // If this is a new chat (no existing history), set global reasoning to true
+        if (!existingChatHistory) {
+          userConfig.llm.reasoning.set(true)
+        }
         const contextAttachments = ref<ContextAttachmentStorage>(await s2bRpc.getContextAttachments(chatHistoryId.value) ?? { attachments: [], id: chatHistoryId.value, lastInteractedAt: Date.now() })
         const chatList = ref<ChatList>([])
         const updateChatList = async () => {
@@ -353,12 +365,19 @@ export class Chat {
           instance.stop()
 
           // Load the new chat data
-          const newChatHistory: ChatHistoryV1 = await s2bRpc.getChatHistory(newId) ?? {
+          const existingNewChatHistory = await s2bRpc.getChatHistory(newId)
+          const newChatHistory: ChatHistoryV1 = existingNewChatHistory ?? {
             history: [],
             id: newId,
             title: defaultTitle,
             lastInteractedAt: Date.now(),
             contextUpdateInfo: undefined,
+            reasoningEnabled: true, // Default to true for new chats
+          }
+
+          // If this is a new chat (no existing history), set global reasoning to true
+          if (!existingNewChatHistory) {
+            userConfig.llm.reasoning.set(true)
           }
           const newContextAttachments: ContextAttachmentStorage = await s2bRpc.getContextAttachments(newId) ?? {
             attachments: [],
@@ -369,6 +388,11 @@ export class Chat {
           // Update the reactive objects
           Object.assign(chatHistory.value, newChatHistory)
           Object.assign(contextAttachments.value, newContextAttachments)
+
+          // Restore the reasoning setting for this chat
+          if (newChatHistory.reasoningEnabled !== undefined) {
+            userConfig.llm.reasoning.set(newChatHistory.reasoningEnabled)
+          }
 
           // Clean up any loading messages
           instance.historyManager.cleanupLoadingMessages()

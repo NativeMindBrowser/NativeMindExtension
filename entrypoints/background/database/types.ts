@@ -1,6 +1,6 @@
 // Database configuration
 export const DB_NAME = 'NativeMindExtension'
-export const DB_VERSION = 1
+export const DB_VERSION = 2
 
 // Chat history types - directly mapping to the chat structures
 export interface ChatHistoryRecord {
@@ -9,6 +9,7 @@ export interface ChatHistoryRecord {
   lastInteractedAt?: number
   history: string // JSON serialized HistoryItemV1[]
   contextUpdateInfo?: string // JSON serialized contextUpdateInfo from ChatHistoryV1
+  reasoningEnabled?: boolean // reasoning setting for this chat
   createdAt: number
   updatedAt: number
 }

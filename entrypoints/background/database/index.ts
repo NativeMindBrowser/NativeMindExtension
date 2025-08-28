@@ -59,7 +59,8 @@ export class BackgroundDatabaseManager {
       }
 
       // Use a unique database name for the extension context
-      this.dbName = `${DB_NAME}-${DB_VERSION}-extension`
+      // TODO: Due to previous version, keep this name for now. transform it to ${DB_NAME}-extension in the future
+      this.dbName = `${DB_NAME}-1-extension`
 
       this.db = await openDB<BackgroundDBSchema>(this.dbName, DB_VERSION, {
         upgrade(db, oldVersion, newVersion, _transaction) {
