@@ -74,7 +74,7 @@ export function makeRawHtml(html: string) {
   return html
 }
 
-export function makeRawHtmlTag<T extends keyof IntrinsicElementAttributes>(tag: T, content: string, attrs: IntrinsicElementAttributes[T] = {}) {
+export function makeRawHtmlTag<T extends keyof IntrinsicElementAttributes>(tag: T | (string & {}), content: string, attrs: IntrinsicElementAttributes[T] & ({ [key: `data-${string}`]: string | undefined }) = {}) {
   return `<${tag} ${Object.entries(attrs).filter(([_, v]) => v !== undefined).map(([key, value]) => `${key}="${value}"`).join(' ')}>${content}</${tag}>`
 }
 

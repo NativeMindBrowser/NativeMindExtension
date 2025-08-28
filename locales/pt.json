@@ -43,17 +43,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "Lendo",
+        "read_failed": "Falha na leitura: {error}",
+        "reading_success": "Leitura concluída"
+      },
       "search_online": {
         "searching": "Pesquisando: \"{query}\"...",
         "search_completed": "Pesquisa concluída: \"{query}\"",
         "search_failed": "Busca falhou: {query}"
       },
       "fetch_page": {
-        "reading": "Leitura: {title}",
-        "read_failed": "Falha na leitura: {error}",
-        "error_no_content": "nenhum conteúdo encontrado",
-        "reading_success": "Leitura concluída",
-        "fetch_success": "Obtido de"
+        "error_no_content": "nenhum conteúdo encontrado"
       },
       "view_image": {
         "analyzing": "Analisando: {title}",

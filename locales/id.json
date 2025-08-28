@@ -43,17 +43,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "Sedang membaca",
+        "read_failed": "Gagal membaca: {error}",
+        "reading_success": "Pembacaan selesai"
+      },
       "search_online": {
         "searching": "Mencari: \"{query}\"...",
         "search_completed": "Pencarian selesai: \"{query}\"",
         "search_failed": "Pencarian gagal: {query}"
       },
       "fetch_page": {
-        "reading": "Bacaan: {title}",
-        "read_failed": "Gagal membaca: {error}",
-        "error_no_content": "tidak ada konten yang ditemukan",
-        "reading_success": "Selesai membaca",
-        "fetch_success": "Diambil dari"
+        "error_no_content": "tidak ada konten yang ditemukan"
       },
       "view_image": {
         "analyzing": "Menganalisis: {title}",

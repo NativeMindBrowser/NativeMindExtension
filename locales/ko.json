@@ -43,17 +43,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "읽는 중：",
+        "read_failed": "읽기 실패：{error}",
+        "reading_success": "읽기 완료："
+      },
       "search_online": {
         "searching": "검색 중: \"{query}\"...",
         "search_completed": "검색 완료: \"{query}\"",
         "search_failed": "검색 실패: {query}"
       },
       "fetch_page": {
-        "reading": "읽기: {title}",
-        "read_failed": "읽기 실패: {error}",
-        "error_no_content": "콘텐츠를 찾을 수 없습니다",
-        "reading_success": "읽기 완료",
-        "fetch_success": "가져온 곳"
+        "error_no_content": "콘텐츠를 찾을 수 없습니다"
       },
       "view_image": {
         "analyzing": "분석 중: {title}",

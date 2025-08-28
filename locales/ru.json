@@ -43,17 +43,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "Чтение",
+        "read_failed": "Ошибка чтения：{error}",
+        "reading_success": "Чтение завершено"
+      },
       "search_online": {
         "searching": "Поиск: \"{query}\"...",
         "search_completed": "Поиск завершен: \"{query}\"",
         "search_failed": "Поиск не удался: {query}"
       },
       "fetch_page": {
-        "reading": "Чтение: {title}",
-        "read_failed": "Ошибка чтения: {error}",
-        "error_no_content": "контент не найден",
-        "reading_success": "Чтение завершено",
-        "fetch_success": "Получено из"
+        "error_no_content": "контент не найден"
       },
       "view_image": {
         "analyzing": "Анализируется: {title}",

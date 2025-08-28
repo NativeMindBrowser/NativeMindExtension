@@ -43,17 +43,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "Lecture",
+        "read_failed": "Échec de la lecture : {error}",
+        "reading_success": "Lecture terminée"
+      },
       "search_online": {
         "searching": "Recherche : \"{query}\"...",
         "search_completed": "Recherche terminée : \"{query}\"",
         "search_failed": "Échec de la recherche : {query}"
       },
       "fetch_page": {
-        "reading": "Lecture : {title}",
-        "read_failed": "Échec de la lecture : {error}",
-        "error_no_content": "aucun contenu trouvé",
-        "reading_success": "Lecture terminée",
-        "fetch_success": "Récupéré depuis"
+        "error_no_content": "aucun contenu trouvé"
       },
       "view_image": {
         "analyzing": "Analyse : {title}",

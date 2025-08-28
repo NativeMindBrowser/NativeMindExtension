@@ -43,17 +43,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "讀取中",
+        "read_failed": "讀取失敗：{error}",
+        "reading_success": "讀取完成"
+      },
       "search_online": {
         "searching": "搜尋中：「{query}」...",
         "search_completed": "搜尋完成：「{query}」",
         "search_failed": "搜尋失敗：{query}"
       },
       "fetch_page": {
-        "reading": "閱讀：{title}",
-        "read_failed": "讀取失敗：{error}",
-        "error_no_content": "找不到內容",
-        "reading_success": "閱讀完成",
-        "fetch_success": "取得自"
+        "error_no_content": "找不到內容"
       },
       "view_image": {
         "analyzing": "分析中：{title}",

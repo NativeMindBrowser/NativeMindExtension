@@ -12,7 +12,8 @@ import { getUserConfig } from '@/utils/user-config'
 
 import { AgentToolCallExecute } from '../../agent'
 import { SearchScraper } from '../../search'
-import { BrowserSession } from './browser-use/utils'
+import { BrowserSession } from './utils/browser-use'
+import { makeTaskSummary } from './utils/markdown'
 
 const logger = Logger.child('tool-calls-execute')
 
@@ -76,7 +77,7 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
   const { url } = params
   const { t } = await useGlobalI18n()
-  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: params.url }) })
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: makeTaskSummary('page', t('chat.tool_calls.fetch_page.reading'), url, url) })
   taskMsg.icon = 'taskFetchPage'
   const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
   await browserSession.navigateTo(url, { newTab: true, active: false, abortSignal })
@@ -84,7 +85,7 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
   const content = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
   if (!content?.content) {
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })
+    taskMsg.summary = t('chat.tool_calls.common.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })
     return [{
       type: 'tool-result',
       results: {
@@ -95,7 +96,7 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
     }]
   }
   else {
-    taskMsg.summary = `<nm-agent-task type="page" data-content="${content.title || content.url}" data-url="${url}">${t('chat.tool_calls.fetch_page.fetch_success')}</nm-agent-task>`
+    taskMsg.summary = makeTaskSummary('page', t('chat.tool_calls.common.reading_success'), content.title, url)
     return [{
       type: 'tool-result',
       results: {
@@ -114,7 +115,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   const log = logger.child('tool:executeViewTab')
   const { tab_id: attachmentId } = params
   const { t } = await useGlobalI18n()
-  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: attachmentId }) })
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.common.reading', { title: attachmentId }) })
   taskMsg.icon = 'taskReadFile'
   const allTabs = agentStorage.getAllTabs()
   const tab = allTabs.find((t) => attachmentId.includes(t.value.id)) // furry get method because llm may return id wrapped by something strange like <id>xxxx</id>
@@ -125,7 +126,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   })
   if (!hasTab) {
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.view_tab.tab_not_found') })
+    taskMsg.summary = t('chat.tool_calls.common.read_failed', { error: t('chat.tool_calls.view_tab.tab_not_found') })
     return [{
       type: 'tool-result',
       results: {
@@ -136,7 +137,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
       },
     }]
   }
-  taskMsg.summary = `<nm-agent-task type="tab" data-content="${tab.value.title}" data-url="${tab.value.url}">${t('chat.tool_calls.fetch_page.reading_success')}</nm-agent-task>`
+  taskMsg.summary = makeTaskSummary('tab', t('chat.tool_calls.common.reading'), tab.value.title || tab.value.url)
   if (agentStorage.isCurrentTab(tab.value.tabId)) {
     agentStorage.persistCurrentTab()
   }
@@ -147,6 +148,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   const result = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
 
   if (!result?.content) {
+    taskMsg.summary = t('chat.tool_calls.common.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })
     taskMsg.icon = 'warningColored'
     return [{
       type: 'tool-result',
@@ -157,6 +159,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
       },
     }]
   }
+  taskMsg.summary = makeTaskSummary('tab', t('chat.tool_calls.common.reading_success'), tab.value.title || tab.value.url)
   return [{
     type: 'tool-result',
     results: {
@@ -170,12 +173,12 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
 export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params, taskMessageModifier, agentStorage }) => {
   const { pdf_id: pdfId } = params
   const { t } = await useGlobalI18n()
-  const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.fetch_page.reading', { title: pdfId }) })
+  const taskMsg = taskMessageModifier.addTaskMessage({ summary: makeTaskSummary('pdf', t('chat.tool_calls.common.reading'), pdfId) })
   taskMsg.icon = 'taskReadFile'
   const pdf = agentStorage.getById('pdf', pdfId)
   if (!pdf) {
     taskMsg.icon = 'warningColored'
-    taskMsg.summary = t('chat.tool_calls.fetch_page.read_failed', { error: t('chat.tool_calls.view_pdf.pdf_not_found') })
+    taskMsg.summary = t('chat.tool_calls.common.read_failed', { error: t('chat.tool_calls.view_pdf.pdf_not_found') })
     return [{
       type: 'tool-result',
       results: {
@@ -199,7 +202,7 @@ export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params,
       },
     }]
   }
-  taskMsg.summary = `<nm-agent-task type="pdf" data-content="${pdf.value.name}">${t('chat.tool_calls.fetch_page.reading_success')}</nm-agent-task>`
+  taskMsg.summary = makeTaskSummary('pdf', t('chat.tool_calls.common.reading_success'), pdf.value.name)
   return [{
     type: 'tool-result',
     results: {
