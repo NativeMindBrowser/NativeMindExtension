@@ -4,28 +4,14 @@ import { SerializedElementInfo } from '@/types/tab'
 import { nonNullable } from '@/utils/array'
 import { waitUntilDocumentMaybeLoaded } from '@/utils/document'
 import Logger from '@/utils/logger'
-import { lazyInitialize } from '@/utils/memo'
 import { sleep } from '@/utils/sleep'
 import { serializeElement } from '@/utils/tab'
 
-import { checkNodeType, getElementAttributes } from './helpers'
+import { checkNodeType, cloneDocument, getElementAttributes } from './helpers'
 import { highlightElement, removeHighlights } from './highlight'
 import { PruningContentFilter } from './pruning-content-filter'
 
 const logger = Logger.child('document-parser')
-
-const htmlTrustedPolicy = lazyInitialize<{ createHTML: (str: string) => string } | undefined>(() => {
-  // @ts-expect-error - no type support for trusted types yet
-  if (window.trustedTypes) {
-    try {
-      // @ts-expect-error - no type support for trusted types yet
-      return window.trustedTypes.createPolicy('NativeMindSafeHTML', { createHTML: (str: string) => str })
-    }
-    catch (err) {
-      logger.error('Failed to create trusted types policy, falling back to unsafe HTML', { error: err })
-    }
-  }
-})
 
 const INTERNAL_ID_DATA_KEY = 'data-nativemind-parser-internal-id'
 const IGNORE_TAGS: (keyof HTMLElementTagNameMap)[] = ['head', 'nav', 'style', 'link', 'meta', 'script', 'noscript', 'canvas', 'iframe', 'object', 'embed', 'footer', 'dialog']
@@ -105,18 +91,6 @@ export function markInternalIdForInteractiveElements(elements: Element[], intern
   return { cleanup, elements: items }
 }
 
-function cloneDocument(doc: Document) {
-  const policy = htmlTrustedPolicy()
-  if (policy) {
-    const safeHTML = policy.createHTML(doc.documentElement.outerHTML)
-    const cloned = new DOMParser().parseFromString(safeHTML, 'text/html')
-    return cloned
-  }
-  else {
-    return doc.cloneNode(true) as Document
-  }
-}
-
 export async function getAccessibleMarkdown(options: GetAccessibleDomTreeOptions = {}) {
   logger.debug('Getting accessible markdown', { options })
 
@@ -125,14 +99,13 @@ export async function getAccessibleMarkdown(options: GetAccessibleDomTreeOptions
 
     const { elements: interactiveElements } = markInternalIdForInteractiveElements(getInteractiveElements(), options.internalIdPrefix ?? '')
 
-    const clonedDocument = cloneDocument(document)
-
-    let filteredDocument = clonedDocument
+    let filteredDocument: Document
     let removedElements: Element[] = []
     if (!noFilter) {
-      ({ document: filteredDocument, removedElements } = new PruningContentFilter(4, 'fixed', contentFilterThreshold ?? 0.28).filterContent(clonedDocument))
+      ({ document: filteredDocument, removedElements } = new PruningContentFilter(4, 'fixed', contentFilterThreshold ?? 0.28).filterContent(document))
     }
     else {
+      filteredDocument = cloneDocument(document)
       logger.debug('Skipping content filtering in last attempt')
     }
 

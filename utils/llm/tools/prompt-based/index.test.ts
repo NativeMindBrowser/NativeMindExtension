@@ -239,6 +239,23 @@ another text
     expect(text).toBe('start\n\n\nanother text\n')
   })
 
+  it('should parse the tool calls', async () => {
+    const response = `Test \n\n<tool_calls>\n<click>\n<element_id>85</element_id>\n</click>\n</tool_calls>`
+
+    const extractor = PromptBasedTool.createToolCallsStreamParser(promptBasedTools)
+
+    const calls = []
+    for (const char of response) {
+      const { toolCalls: currentCalls } = extractor(char)
+      for (const call of currentCalls) {
+        calls.push(call)
+      }
+    }
+
+    expect(calls.length).toBe(1)
+    expect(calls[0].params).toEqual({ element_id: '85' })
+  })
+
   it('should ignore the unrelated tags', async () => {
     const tagWalker = new TagWalker([{ start: '<view_tab>', end: '</view_tab>' }])
     const input = `<think>this is a test</think>`
@@ -310,6 +327,74 @@ test block response
 <fetch_page>
 <url>https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html</url>
 </fetch_page>
+</tool_calls>`,
+        tool: promptBasedTools[4],
+        params: {
+          url: 'https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html',
+        },
+      },
+    ])
+  })
+
+  it('should handle weird response from gpt-oss', async () => {
+    const response = `>
+
+<tool_calls>
+<browser.fetch_page>
+<url>https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html</url>
+</browser.fetch_page>
+</tool_calls>`
+
+    const extractor = PromptBasedTool.createToolCallsStreamParser(promptBasedTools)
+
+    const calls = []
+    for (const char of response) {
+      const { toolCalls: currentCalls } = extractor(char)
+      for (const call of currentCalls) {
+        calls.push(call)
+      }
+    }
+
+    expect(calls).toEqual([
+      {
+        tagText: `<tool_calls>
+<browser.fetch_page>
+<url>https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html</url>
+</browser.fetch_page>
+</tool_calls>`,
+        tool: promptBasedTools[4],
+        params: {
+          url: 'https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html',
+        },
+      },
+    ])
+  })
+
+  it('should handle weird response from gpt-oss (2)', async () => {
+    const response = `>
+
+<tool_calls>
+<browser_use.fetch_page>
+<url>https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html</url>
+</browser_use.fetch_page>
+</tool_calls>`
+
+    const extractor = PromptBasedTool.createToolCallsStreamParser(promptBasedTools)
+
+    const calls = []
+    for (const char of response) {
+      const { toolCalls: currentCalls } = extractor(char)
+      for (const call of currentCalls) {
+        calls.push(call)
+      }
+    }
+
+    expect(calls).toEqual([
+      {
+        tagText: `<tool_calls>
+<browser_use.fetch_page>
+<url>https://weather.sz.gov.cn/qixiangfuwu/yubaofuwu/index.html</url>
+</browser_use.fetch_page>
 </tool_calls>`,
         tool: promptBasedTools[4],
         params: {
