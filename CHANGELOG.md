@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v1.8.0-beta.15
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.14...v1.8.0-beta.15)
+
+### 🚀 Enhancements
+
+- **Chat:** Database version upgrade to 2. add reasoningEnabled property to chat history and update handling. ([516f2f2](https://github.com/NativeMindBrowser/NativeMindExtension/commit/516f2f2))
+- **chat:** Trim trailing line breaks from message content and reasoning ([4fa44f6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4fa44f6))
+
+### 🩹 Fixes
+
+- **Chat:** Adjust ModelSelector width for better responsiveness ([64e94cd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/64e94cd))
+- **agent:** Improve loading icon ui layout ([0d1227f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0d1227f))
+- **tool-calls:** Correct task message summary i18n for fetch page action ([1d612a9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1d612a9))
+- **document-parser:** Increase debounce delay for document stability check ([38ec154](https://github.com/NativeMindBrowser/NativeMindExtension/commit/38ec154))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.8.0-beta.14
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.13...v1.8.0-beta.14)
