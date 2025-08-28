@@ -1,4 +1,4 @@
-import { cloneDocument } from './helpers'
+import { checkNodeType, cloneDocument } from './helpers'
 
 interface MetricConfig {
   textDensity: boolean
@@ -149,9 +149,9 @@ export class PruningContentFilter {
     const markedSelectors = new Set<string>()
     const treeWalker = document.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT)
     while (treeWalker.nextNode()) {
-      const node = treeWalker.currentNode as HTMLElement
-      if (this.shouldIgnoreElement(node)) {
-        node.setAttribute(PruningContentFilter.dataKeys.IGNORE_ELEMENT, 'true')
+      const el = treeWalker.currentNode as HTMLElement
+      if (this.shouldIgnoreElement(el)) {
+        el.setAttribute(PruningContentFilter.dataKeys.IGNORE_ELEMENT, 'true')
         markedSelectors.add(`[${PruningContentFilter.dataKeys.IGNORE_ELEMENT}]`)
       }
     }
@@ -167,6 +167,16 @@ export class PruningContentFilter {
     const elStyle = getComputedStyle(element)
     if (element.offsetHeight === 0 && element.offsetWidth === 0 && elStyle.position !== 'absolute') {
       return true
+    }
+    if (checkNodeType(HTMLButtonElement, element)) {
+      const text = element.textContent?.trim() ?? ''
+      if (text.length <= 3) return true
+    }
+    if (checkNodeType(HTMLImageElement, element)) {
+      if (!element.src || !element.alt) return true
+    }
+    if (checkNodeType(HTMLAnchorElement, element)) {
+      if (!element.textContent?.trim()) return true
     }
     return false
   }
@@ -292,7 +302,7 @@ export class PruningContentFilter {
     if (this.minWordThreshold) {
       // Get raw text from metrics node - avoid extra processing
       const text = metrics.node.textContent?.trim() || ''
-      const wordCount = text.split(/\s+/).length
+      const wordCount = text.length
       if (wordCount < this.minWordThreshold) {
         return -1.0 // Guaranteed removal
       }

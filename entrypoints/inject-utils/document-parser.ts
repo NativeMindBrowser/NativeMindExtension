@@ -102,7 +102,7 @@ export async function getAccessibleMarkdown(options: GetAccessibleDomTreeOptions
     let filteredDocument: Document
     let removedElements: Element[] = []
     if (!noFilter) {
-      ({ document: filteredDocument, removedElements } = new PruningContentFilter(4, 'fixed', contentFilterThreshold ?? 0.28).filterContent(document))
+      ({ document: filteredDocument, removedElements } = new PruningContentFilter(3, 'fixed', contentFilterThreshold ?? 0.28).filterContent(document))
     }
     else {
       filteredDocument = cloneDocument(document)
@@ -121,9 +121,11 @@ export async function getAccessibleMarkdown(options: GetAccessibleDomTreeOptions
       codeBlockStyle: 'fenced',
     })
       .addRule('preserve-interactive', {
-        filter: (node) => !!node.getAttribute(INTERNAL_ID_DATA_KEY),
+        filter: (node) => !!node.getAttribute(INTERNAL_ID_DATA_KEY) || node.tagName.toLowerCase() === 'img',
         replacement(content, node) {
           if (checkNodeType(HTMLElement, node)) {
+            if (checkNodeType(HTMLImageElement, node)) return `![${node.alt}]()`
+
             const internalId = node.getAttribute(INTERNAL_ID_DATA_KEY)
             if (internalId) {
               const trimmedText = content.trim()
