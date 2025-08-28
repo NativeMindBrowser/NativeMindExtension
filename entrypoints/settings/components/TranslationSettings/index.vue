@@ -55,6 +55,8 @@
 
 <script setup lang="tsx">
 
+import { computed } from 'vue'
+
 import ModelSelector from '@/components/ModelSelector.vue'
 import Selector from '@/components/Selector.vue'
 import Textarea from '@/components/Textarea.vue'
@@ -82,12 +84,12 @@ const { value: translationSystemPrompt, errorMessage: translationSystemPromptErr
   }
 })
 
-const resetDefaultTranslationSystemPrompt = () => {
+const resetDefaultTranslationSystemPrompt = computed(() => {
   if (translationSystemPrompt.value !== translationSystemPromptConfig.getDefault()) {
     return () => translationSystemPromptConfig.resetDefault()
   }
   return undefined
-}
+})
 
 const translationLanguageOptions = SUPPORTED_LANGUAGES.map((lang) => ({
   id: lang.code,
