@@ -125,7 +125,7 @@ export function register() {
           <div class="task-action">
             <slot></slot>
           </div>
-          <div class="task-content-wrapper"> 
+          <div class="task-content-wrapper" title=${this.content}> 
             <span class="task-icon">${unsafeHTML(icon)}</span>
             <div class="task-content">
               <span class="task-filename">${partA}</span>
@@ -142,7 +142,7 @@ export function register() {
             <div class="task-action">
               <slot></slot>
             </div>
-            <div class="task-content-wrapper">
+            <div class="task-content-wrapper" title=${this.content}>
               <div class="task-content">
                 <span class="task-filename">${this.content}</span>
               </div>
@@ -157,7 +157,7 @@ export function register() {
             <div class="task-action">
               <slot></slot>
             </div>
-            <a class="task-content-wrapper" href="${this.url}" target="_blank"> 
+            <a class="task-content-wrapper" href="${this.url}" target="_blank" title=${this.content}> 
               <span class="task-icon">${unsafeHTML(icon)}</span>
               <div class="task-content">
                 <span class="task-filename">${this.content}</span>

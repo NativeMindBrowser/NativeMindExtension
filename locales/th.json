@@ -43,17 +43,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "กำลังอ่าน",
+        "read_failed": "การอ่านล้มเหลว: {error}",
+        "reading_success": "การอ่านเสร็จสิ้น"
+      },
       "search_online": {
         "searching": "กำลังค้นหา: \"{query}\"...",
         "search_completed": "การค้นหาเสร็จสิ้น: \"{query}\"",
         "search_failed": "การค้นหาล้มเหลว: {query}"
       },
       "fetch_page": {
-        "reading": "การอ่าน: {title}",
-        "read_failed": "การอ่านล้มเหลว: {error}",
-        "error_no_content": "ไม่พบเนื้อหา",
-        "reading_success": "อ่านเสร็จแล้ว",
-        "fetch_success": "ดึงข้อมูลจาก"
+        "error_no_content": "ไม่พบเนื้อหา"
       },
       "view_image": {
         "analyzing": "กำลังวิเคราะห์: {title}",

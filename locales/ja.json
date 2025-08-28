@@ -43,17 +43,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "読み込み中",
+        "read_failed": "読み込み失敗：{error}",
+        "reading_success": "読み込み完了"
+      },
       "search_online": {
         "searching": "検索中: \"{query}\"...",
         "search_completed": "検索完了: \"{query}\"",
         "search_failed": "検索に失敗しました: {query}"
       },
       "fetch_page": {
-        "reading": "読書: {title}",
-        "read_failed": "読み込みに失敗しました: {error}",
-        "error_no_content": "コンテンツが見つかりません",
-        "reading_success": "読了",
-        "fetch_success": "取得元"
+        "error_no_content": "コンテンツが見つかりません"
       },
       "view_image": {
         "analyzing": "分析中: {title}",

@@ -228,17 +228,18 @@
       }
     },
     "tool_calls": {
+      "common": {
+        "reading": "Reading",
+        "read_failed": "Reading failed: {error}",
+        "reading_success": "Completed reading"
+      },
       "search_online": {
         "searching": "Searching: \"{query}\"...",
         "search_completed": "Search completed: \"{query}\"",
         "search_failed": "Search failed: {query}"
       },
       "fetch_page": {
-        "reading": "Reading: {title}",
-        "read_failed": "Reading failed: {error}",
-        "error_no_content": "no content found",
-        "reading_success": "Read complete",
-        "fetch_success": "Fetched from"
+        "error_no_content": "no content found"
       },
       "view_tab": {
         "tab_not_found": "tab not found"
