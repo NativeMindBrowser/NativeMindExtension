@@ -1,6 +1,20 @@
 # Changelog
 
 
+## v1.8.0-beta.14
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.13...v1.8.0-beta.14)
+
+### 🚀 Enhancements
+
+- **agent:** Update agent task message ([27a4c52](https://github.com/NativeMindBrowser/NativeMindExtension/commit/27a4c52))
+- **document-parser:** Refactor document cloning and enhance content filtering logic ([8fa666f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8fa666f))
+- **prompt-based-tool:** Enhance parsing logic for tool calls and add tests for edge cases ([eb2184e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/eb2184e))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.13
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.12...v1.8.0-beta.13)
