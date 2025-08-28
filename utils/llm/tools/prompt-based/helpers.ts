@@ -141,7 +141,9 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
   }
 
   parseFromText(text: string): { params: InferredParams<T>, lastIndex: number, errors: string[] } | null {
-    const normalized = text.replace(new RegExp(`\`\`\`${this.toolName}(.*?)\`\`\``, 's'), `<${this.toolName}>$1</${this.toolName}>`)
+    const normalized = text
+      .replace(new RegExp(`\`\`\`${this.toolName}(.*?)\`\`\``, 's'), `<${this.toolName}>$1</${this.toolName}>`)
+      .replace(new RegExp(`<.{3,12}\\.${this.toolName}>(.*?)</.{3,12}\\.${this.toolName}>`, 's'), `<${this.toolName}>$1</${this.toolName}>`)
     const regex = new RegExp(`<${this.toolName}>(.*?)</${this.toolName}>`, 's')
     const match = normalized.match(regex)
     // currently only parse the first match
@@ -213,12 +215,13 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
   static createToolCallsStreamParser<Tools extends PromptBasedToolType[]>(tools: Tools) {
     type ToolWithParams = ExtractToolWithParams<Tools[number]> & { tagText: string }
     let accText = ''
-    const pairs = tools.map((tool) => ([
-      { start: `<${tool.toolName}>`, end: `</${tool.toolName}>` },
-      { start: `\`\`\`${tool.toolName}`, end: '```' },
-      { start: `<tool_calls>\n<${tool.toolName}>`, end: `</tool_calls>` },
-      { start: `<tool_calls><${tool.toolName}>`, end: `</tool_calls>` },
-    ])).flat()
+    const pairs = [
+      ...tools.map((tool) => ([
+        { start: `<${tool.toolName}>`, end: `</${tool.toolName}>` },
+        { start: `\`\`\`${tool.toolName}`, end: '```' },
+      ])).flat(),
+      { start: `<tool_calls>`, end: `</tool_calls>` },
+    ]
     const toolCallsWalkParser = new TagWalker(pairs)
     return (text: string) => {
       const errors: string[] = []
