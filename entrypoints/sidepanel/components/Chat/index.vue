@@ -90,7 +90,7 @@
           <div class="flex grow items-center gap-2">
             <ModelSelector
               containerClass="h-7"
-              :class="classNames(isThinkingToggleable ? 'max-w-[30%]' : 'max-w-[50%]')"
+              :class="classNames(isThinkingToggleable ? 'max-w-[35vw]' : 'max-w-[50vw]')"
               dropdownAlign="left"
               triggerStyle="ghost"
             />
