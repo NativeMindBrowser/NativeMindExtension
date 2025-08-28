@@ -12,5 +12,8 @@ export function useValueGuard<T>(value: Ref<T>, validator: (value: T) => { isVal
       value.value = newValue
     }
   }, { deep: true })
+  watch(value, (newValue) => {
+    v.value = newValue
+  })
   return { value: v, guardedValue: value, isValid, errorMessage }
 }
