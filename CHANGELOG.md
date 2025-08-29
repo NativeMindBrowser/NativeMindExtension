@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v1.8.0-beta.17
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.16...v1.8.0-beta.17)
+
+### 🚀 Enhancements
+
+- **browser-use:** Add feature flag for browser-use (disabled by default) ([f60c64a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f60c64a))
+
+### 🩹 Fixes
+
+- **ollama:** Initialize default model from user config on first use ([e5bba79](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e5bba79))
+- **package:** Add NODE_ENV for zip commands in beta environment ([f4fa06b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f4fa06b))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.16
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.15...v1.8.0-beta.16)
