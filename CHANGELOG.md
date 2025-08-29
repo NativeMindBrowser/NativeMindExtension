@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.0-beta.18
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.17...v1.8.0-beta.18)
+
+### 🚀 Enhancements
+
+- **Chat:** Add stop icon and adjust ModelSelector width for improved layout ([1490b42](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1490b42))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.8.0-beta.17
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.16...v1.8.0-beta.17)
