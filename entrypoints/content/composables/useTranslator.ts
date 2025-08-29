@@ -75,10 +75,13 @@ async function _useTranslator() {
           showSettings({ scrollTarget: 'server-address-section' })
           return
         }
-        else if ((await ollamaStatusStore.updateModelList()).length === 0) {
-          toast('No model found, please download a model.', { duration: 2000 })
-          showSettings({ scrollTarget: 'model-download-section' })
-          return
+        else {
+          const { modelList } = await ollamaStatusStore.initDefaultModel()
+          if (modelList.length === 0) {
+            toast('No model found, please download a model.', { duration: 2000 })
+            showSettings({ scrollTarget: 'model-download-section' })
+            return
+          }
         }
       }
       if (e.menuItemId === 'native-mind-page-translate') {
