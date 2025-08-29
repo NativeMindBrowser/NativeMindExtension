@@ -1,6 +1,7 @@
 import { browser } from 'wxt/browser'
 
 import { SerializedElementInfo } from '@/types/tab'
+import { makeAbortable } from '@/utils/abort-controller'
 import { markdownSectionDiff } from '@/utils/diff'
 import { useGlobalI18n } from '@/utils/i18n'
 import Logger from '@/utils/logger'
@@ -91,8 +92,7 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
   else {
     const tab = new Tab()
     await tab.openUrl(url)
-    const documentResult = await tab.getContentMarkdown()
-    tab.dispose()
+    const documentResult = await makeAbortable(tab.getContentMarkdown(), abortSignal).finally(() => tab.dispose())
     if (documentResult) {
       content = {
         url,
@@ -169,7 +169,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   }
   else {
     const tabControl = Tab.fromTab(tab.value.tabId)
-    const result = await tabControl.getContentMarkdown()
+    const result = await makeAbortable(tabControl.getContentMarkdown(), abortSignal)
     if (result) {
       content = {
         url: (await tabControl.getInfo()).url || '',
