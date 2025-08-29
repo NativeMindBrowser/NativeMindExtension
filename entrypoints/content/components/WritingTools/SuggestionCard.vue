@@ -107,6 +107,7 @@ import Button from '@/components/ui/Button.vue'
 import Divider from '@/components/ui/Divider.vue'
 import Text from '@/components/ui/Text.vue'
 import { useToast } from '@/composables/useToast'
+import { fromError } from '@/utils/error'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
@@ -159,11 +160,14 @@ async function checkOllamaStatus() {
     emit('close')
     return false
   }
-  else if ((await ollamaStatusStore.updateModelList()).length === 0) {
-    toast(t('errors.model_not_found'), { duration: 2000 })
-    showSettings({ scrollTarget: 'model-download-section' })
-    emit('close')
-    return false
+  else {
+    const { modelList } = await ollamaStatusStore.initDefaultModel()
+    if (modelList.length === 0) {
+      toast(t('errors.model_not_found'), { duration: 2000 })
+      showSettings({ scrollTarget: 'model-download-section' })
+      emit('close')
+      return false
+    }
   }
   return true
 }
@@ -181,6 +185,7 @@ const start = async () => {
       prompt: prompt.user.extractText(),
       system: prompt.system,
       abortSignal: abortController.signal,
+      autoThinking: true,
     })
     for await (const chunk of iter) {
       if (chunk.type === 'text-delta') {
@@ -190,9 +195,9 @@ const start = async () => {
     }
     log.debug('Rewrite response:', output.value)
   }
-  catch (error) {
-    const errorMessage = (error && typeof error === 'object' && 'name' in error) ? error.name : 'Unknown error'
-    output.value = `Error generating suggestion: ${errorMessage}`
+  catch (_error) {
+    const error = fromError(_error)
+    output.value = `Error generating suggestion: ${error.message || error.code || 'Unknown error'}`
     log.error('Error in writing tool stream:', error)
   }
   finally {

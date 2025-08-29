@@ -81,10 +81,22 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
     }
   }
 
+  const initDefaultModel = async () => {
+    const userConfig = await getUserConfig()
+    const endpointType = userConfig.llm.endpointType.get()
+    const commonModelConfig = userConfig.llm.model
+    const modelList = await updateModelList()
+    if (endpointType === 'ollama' && !modelList.some((model) => model.model === commonModelConfig.get())) {
+      commonModelConfig.set(modelList[0]?.model)
+    }
+    return { modelList, commonModel: commonModelConfig.get() }
+  }
+
   return {
     connectionStatusLoading,
     connectionStatus,
     modelList,
+    initDefaultModel,
     unloadModel,
     updateModelList,
     updateConnectionStatus,

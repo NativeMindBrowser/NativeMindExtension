@@ -221,17 +221,6 @@
           <div class="mt-3">
             <div class="flex flex-col gap-3 justify-start items-stretch">
               <div>
-                <div>summarize system prompt</div>
-              </div>
-              <textarea
-                v-model="summarizeSystemPrompt"
-                class="font-light text-[8px]"
-              />
-            </div>
-          </div>
-          <div class="mt-3">
-            <div class="flex flex-col gap-3 justify-start items-stretch">
-              <div>
                 <div>writing tools rewrite prompt</div>
               </div>
               <textarea
@@ -342,6 +331,20 @@
           <div class="flex flex-col gap-3 justify-start items-stretch">
             <div class="flex gap-3 text-xs items-center">
               <div class="flex flex-col min-w-[250px]">
+                <span>Enable</span>
+                <span class="font-light text-[8px]">(reload the extension to take effect)</span>
+              </div>
+              <Switch
+                v-model="enableBrowserUse"
+                slotClass="rounded-lg border-gray-200 border bg-white"
+                itemClass="h-5 flex items-center justify-center text-xs px-2"
+                thumbClass="bg-blue-500 rounded-md"
+                activeItemClass="text-white"
+                :items="[{label: 'Enable',key: true},{label: 'Disable',key: false}]"
+              />
+            </div>
+            <div class="flex gap-3 text-xs items-center">
+              <div class="flex flex-col min-w-[250px]">
                 <span>Debug mode</span>
                 <span class="font-light text-[8px]">(will highlight interactive elements)</span>
               </div>
@@ -436,30 +439,6 @@
                   parse
                 </button>
               </div>
-            </div>
-            <div class="flex flex-col gap-2">
-              <span>Parser <span class="font-light text-xs">(this option will affect the parser used by agent)</span></span>
-              <Switch
-                v-model="documentParserType"
-                slotClass="rounded-lg border-gray-200 border bg-white"
-                itemClass="h-6 flex items-center justify-center text-xs px-2"
-                thumbClass="bg-blue-500 rounded-md"
-                activeItemClass="text-white"
-                :items="[
-                  {
-                    label: 'Auto',
-                    key: 'auto',
-                  },
-                  {
-                    label: 'Readability',
-                    key: 'readability',
-                  },
-                  {
-                    label: 'Turndown',
-                    key: 'turndown',
-                  }
-                ]"
-              />
             </div>
             <details
               v-for="(article, idx) of articles"
@@ -649,7 +628,6 @@ const numCtx = userConfig.llm.numCtx.toRef()
 const enableNumCtx = userConfig.llm.enableNumCtx.toRef()
 const translationSystemPrompt = userConfig.translation.systemPrompt.toRef()
 const chatSystemPrompt = userConfig.chat.systemPrompt.toRef()
-const summarizeSystemPrompt = userConfig.llm.summarizeSystemPrompt.toRef()
 const enableReasoning = userConfig.llm.reasoning.toRef()
 const onboardingVersion = userConfig.ui.onboarding.version.toRef()
 const enabledChromeAIPolyfill = userConfig.browserAI.polyfill.enable.toRef()
@@ -668,7 +646,6 @@ const maxAgentIterationsForAdvancedModels = userConfig.chat.agent.maxIterationsF
 const updateEnvironmentDetailsFrequency = userConfig.chat.environmentDetails.fullUpdateFrequency.toRef()
 const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.toRef()
 
-const documentParserType = userConfig.documentParser.parserType.toRef()
 const translationSystemPromptError = ref('')
 const newModelId = ref('')
 const pulling = ref<{ modelId: string, total: number, completed: number, abort: () => void, status: string, error?: string }[]>([])
@@ -677,6 +654,7 @@ const webllmCacheStatus = ref<{ modelId: WebLLMSupportedModel, hasCache: boolean
 // ---- browser use ------
 const browserUseOpenUrl = ref('https://example.com')
 const browserUseParsedResults = ref<Awaited<ReturnType<BrowserSession['buildAccessibleMarkdown']>>[]>([])
+const enableBrowserUse = userConfig.browserUse.enable.toRef()
 const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.toRef()
 const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.toRef()
 const closeTabOpenedByAgent = userConfig.browserUse.closeTabOpenedByAgent.toRef()
