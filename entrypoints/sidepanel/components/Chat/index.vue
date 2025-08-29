@@ -90,7 +90,7 @@
           <div class="flex grow items-center gap-2">
             <ModelSelector
               containerClass="h-7"
-              :class="classNames(isThinkingToggleable ? 'max-w-[35vw]' : 'max-w-[50vw]')"
+              :class="classNames(isThinkingToggleable ? 'max-w-[33vw]' : 'max-w-[50vw]')"
               dropdownAlign="left"
               triggerStyle="ghost"
             />
@@ -106,10 +106,10 @@
             <Button
               v-if="chat.isAnswering()"
               variant="secondary"
-              class="px-[6px] grow-0 shrink-0"
+              class="size-6 rounded-md flex items-center justify-center hover:bg-[#E4E7EB]/80 bg-[#E4E7EB] cursor-pointer shadow-none"
               @click="onStop"
             >
-              {{ "Stop" }}
+              <IconStop class="size-[15px] text-white" />
             </Button>
             <button
               v-else
@@ -131,6 +131,7 @@ import { useElementBounding } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 import IconSendFill from '@/assets/icons/send-fill.svg?component'
+import IconStop from '@/assets/icons/stop.svg?component'
 import AutoExpandTextArea from '@/components/AutoExpandTextArea.vue'
 import ExhaustiveError from '@/components/ExhaustiveError.vue'
 import ModelSelector from '@/components/ModelSelector.vue'
