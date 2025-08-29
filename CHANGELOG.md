@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.0-beta.19
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.18...v1.8.0-beta.19)
+
+### 🩹 Fixes
+
+- **agent:** Make tab content fetching abortable to improve reliability ([45d88c9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/45d88c9))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0-beta.18
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.17...v1.8.0-beta.18)
