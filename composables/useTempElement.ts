@@ -1,7 +1,7 @@
 import { IntrinsicElementAttributes, onScopeDispose, Ref, watch } from 'vue'
 
 interface Options {
-  parentElement?: Ref<HTMLElement | null>
+  parentElement?: Ref<HTMLElement | null | undefined>
   mountPoint?: HTMLElement
   attributes?: IntrinsicElementAttributes[keyof IntrinsicElementAttributes]
 }

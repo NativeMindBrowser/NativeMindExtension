@@ -6,6 +6,7 @@
 
 <script setup lang="tsx">
 import { useToast } from '@/composables/useToast'
+import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { registerContentScriptRpcEventFromMainWorld } from '@/utils/rpc/content-main-world-fns'
 
 import WritingTools from './components/WritingTools/index.vue'
@@ -17,6 +18,7 @@ import { useInjectOllamaDownloadButtons } from './utils/page-injection/ollama-se
 useTranslator()
 useInjectOllamaDownloadButtons()
 initContextMenu()
+useOllamaStatusStore().initDefaultModel()
 const toast = useToast()
 
 registerContentScriptRpcEventFromMainWorld('toast', (toastInfo) => {

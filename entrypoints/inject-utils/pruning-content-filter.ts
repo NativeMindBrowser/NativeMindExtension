@@ -165,7 +165,7 @@ export class PruningContentFilter {
 
   shouldIgnoreElement(element: HTMLElement) {
     const elStyle = getComputedStyle(element)
-    if (element.offsetHeight === 0 && element.offsetWidth === 0 && elStyle.position !== 'absolute') {
+    if (elStyle.display === 'none' || elStyle.visibility === 'hidden' || elStyle.opacity === '0') {
       return true
     }
     if (checkNodeType(HTMLButtonElement, element)) {

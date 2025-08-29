@@ -6,7 +6,6 @@ import { DocumentResult } from '@/types/document-parser'
 
 import { deepCloneDocumentWithShadowDOM } from '../dom'
 import logger from '../logger'
-import { getUserConfig } from '../user-config'
 
 function trimTextContent(text: string): string {
   return text.replace(/([ \t]{0,}\n{1,}[ \t]{0,})+/g, '\n').replace(/[ \t]+/g, ' ').trim()
@@ -84,28 +83,15 @@ export async function parseDocumentWithTurndown(doc: Document): Promise<Document
 }
 
 export async function parseDocument(doc: Document) {
-  const config = await getUserConfig()
-  const parser = config.documentParser.parserType.get()
   const textLength = doc.documentElement.innerText.length
-  if (parser === 'readability' || parser === 'auto') {
-    const parsed = await parseDocumentWithReadability(doc)
-    if (parser === 'auto') {
-      const textLengthPercent = parsed.textContent.length / textLength
-      logger.debug(`Document text length percent: ${textLengthPercent.toFixed(2)}`)
-      if (textLengthPercent > 0.1) {
-        return parsed
-      }
-      else {
-        logger.debug('Document text length is too short, using turndown parser instead', { textLength, textLengthPercent, parsed })
-        return parseDocumentWithTurndown(doc)
-      }
-    }
+  const parsed = await parseDocumentWithReadability(doc)
+  const textLengthPercent = parsed.textContent.length / textLength
+  logger.debug(`Document text length percent: ${textLengthPercent.toFixed(2)}`)
+  if (textLengthPercent > 0.1) {
     return parsed
   }
-  else if (parser === 'turndown') {
-    return parseDocumentWithTurndown(doc)
-  }
   else {
-    throw new Error(`Unknown document parser: ${parser}`)
+    logger.debug('Document text length is too short, using turndown parser instead', { textLength, textLengthPercent, parsed })
+    return parseDocumentWithTurndown(doc)
   }
 }

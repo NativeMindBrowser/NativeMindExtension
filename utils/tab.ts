@@ -165,6 +165,11 @@ export class Tab {
     return await this.executeUtils('waitUntilDocumentMaybeLoaded')
   }
 
+  async getContentMarkdown() {
+    const result = await this.executeUtils('getContentMarkdown')
+    return result
+  }
+
   async getAccessibleMarkdown(...args: Parameters<typeof window.__NATIVEMIND_UTILS__['getAccessibleMarkdown']>) {
     const result = await this.executeUtils('getAccessibleMarkdown', ...args)
     this.cachedAccessibleResult = result

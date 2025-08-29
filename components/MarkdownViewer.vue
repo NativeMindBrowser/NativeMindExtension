@@ -13,7 +13,7 @@ import { Marked, Renderer, Tokens } from 'marked'
 import { createDirectives, type DirectiveConfig } from 'marked-directive'
 import { markedHighlight } from 'marked-highlight'
 import morphdom from 'morphdom'
-import { useTemplateRef, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 import IconMDLink from '@/assets/icons/md-link.svg?raw'
 import { useTempElement } from '@/composables/useTempElement'
@@ -23,7 +23,7 @@ import { getIconSvg, IconName, unescapeDirectiveText } from '../entrypoints/side
 import { webComponents } from './web-components'
 
 const log = logger.child('MarkdownViewer')
-const containerRef = useTemplateRef('containerRef')
+const containerRef = ref<HTMLElement>()
 
 const props = defineProps<{
   text?: string

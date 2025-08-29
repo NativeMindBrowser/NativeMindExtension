@@ -3,6 +3,7 @@ import TurndownService from 'turndown'
 import { SerializedElementInfo } from '@/types/tab'
 import { nonNullable } from '@/utils/array'
 import { waitUntilDocumentMaybeLoaded } from '@/utils/document'
+import { parseDocument } from '@/utils/document-parser'
 import Logger from '@/utils/logger'
 import { sleep } from '@/utils/sleep'
 import { serializeElement } from '@/utils/tab'
@@ -89,6 +90,11 @@ export function markInternalIdForInteractiveElements(elements: Element[], intern
     })
   }
   return { cleanup, elements: items }
+}
+
+export async function getContentMarkdown() {
+  await waitUntilDocumentMaybeLoaded()
+  return parseDocument(document)
 }
 
 export async function getAccessibleMarkdown(options: GetAccessibleDomTreeOptions = {}) {

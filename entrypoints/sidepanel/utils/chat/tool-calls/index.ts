@@ -6,6 +6,7 @@ import { useGlobalI18n } from '@/utils/i18n'
 import Logger from '@/utils/logger'
 import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { Tab } from '@/utils/tab'
 import { timeout } from '@/utils/timeout'
 import { isUrlEqual } from '@/utils/url'
 import { getUserConfig } from '@/utils/user-config'
@@ -73,16 +74,33 @@ export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async 
 
 export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
   const userConfig = await getUserConfig()
+  const enableBrowserUse = userConfig.browserUse.enable.get()
   const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
   const { url } = params
   const { t } = await useGlobalI18n()
   const taskMsg = taskMessageModifier.addTaskMessage({ summary: makeTaskSummary('page', t('chat.tool_calls.common.reading'), url, url) })
   taskMsg.icon = 'taskFetchPage'
-  const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
-  await browserSession.navigateTo(url, { newTab: true, active: false, abortSignal })
-  hooks.addListener('onAgentFinished', () => browserSession.dispose())
-  const content = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
+  let content: { url: string, title: string, content: string } | undefined
+  if (enableBrowserUse) {
+    const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
+    await browserSession.navigateTo(url, { newTab: true, active: false, abortSignal })
+    hooks.addListener('onAgentFinished', () => browserSession.dispose())
+    content = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
+  }
+  else {
+    const tab = new Tab()
+    await tab.openUrl(url)
+    const documentResult = await tab.getContentMarkdown()
+    tab.dispose()
+    if (documentResult) {
+      content = {
+        url,
+        title: documentResult.title,
+        content: documentResult.textContent,
+      }
+    }
+  }
   if (!content?.content) {
     taskMsg.icon = 'warningColored'
     taskMsg.summary = t('chat.tool_calls.common.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })
@@ -141,13 +159,27 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
   if (agentStorage.isCurrentTab(tab.value.tabId)) {
     agentStorage.persistCurrentTab()
   }
+  let content: { url: string, title: string, content: string } | undefined
+  const enableBrowserUse = userConfig.browserUse.enable.get()
+  if (enableBrowserUse) {
+    const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
+    hooks.addListener('onAgentFinished', () => browserSession.dispose())
+    await browserSession.attachExistingTab(tab.value.tabId)
+    content = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
+  }
+  else {
+    const tabControl = Tab.fromTab(tab.value.tabId)
+    const result = await tabControl.getContentMarkdown()
+    if (result) {
+      content = {
+        url: (await tabControl.getInfo()).url || '',
+        title: result.title,
+        content: result.textContent,
+      }
+    }
+  }
 
-  const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
-  hooks.addListener('onAgentFinished', () => browserSession.dispose())
-  await browserSession.attachExistingTab(tab.value.tabId)
-  const result = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
-
-  if (!result?.content) {
+  if (!content?.content) {
     taskMsg.summary = t('chat.tool_calls.common.read_failed', { error: t('chat.tool_calls.fetch_page.error_no_content') })
     taskMsg.icon = 'warningColored'
     return [{
@@ -165,7 +197,7 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
     results: {
       tab_id: attachmentId,
       status: 'completed',
-      tab_content: `Title: ${result.title}\nURL: ${result.url}\n\n${result.content}`,
+      tab_content: `Title: ${content.title}\nURL: ${content.url}\n\n${content.content}`,
     },
   }]
 }
@@ -265,6 +297,7 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
 
 export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, taskMessageModifier, agentStorage, hooks, abortSignal }) => {
   const userConfig = await getUserConfig()
+  if (!userConfig.browserUse.enable.get()) return [] // return empty if disabled
   const { t } = await useGlobalI18n()
   const log = logger.child('tool:executePageClick')
   const highlightInteractiveElements = userConfig.documentParser.highlightInteractiveElements.get()

@@ -2,11 +2,12 @@ import { defineUnlistedScript } from 'wxt/utils/define-unlisted-script'
 
 import { waitUntilDocumentInteractive, waitUntilDocumentLoad, waitUntilDocumentMaybeLoaded, waitUntilDocumentStable } from '@/utils/document'
 
-import { clickElementByInternalId, getAccessibleDomTree, getAccessibleMarkdown, getElementByInternalId, queryElements } from './document-parser'
+import { clickElementByInternalId, getAccessibleDomTree, getAccessibleMarkdown, getContentMarkdown, getElementByInternalId, queryElements } from './document-parser'
 import { disableHighlight, highlightElement, removeHighlights } from './highlight'
 
 const NM_INJECT_UTILS = {
   queryElements,
+  getContentMarkdown,
   getAccessibleDomTree,
   getAccessibleMarkdown,
   getElementByInternalId,
