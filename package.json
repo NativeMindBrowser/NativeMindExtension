@@ -45,9 +45,9 @@
     "release:beta": "release-it --preRelease=beta --config .release-it.beta.json",
     "release:prod": "release-it",
     "release:patch": "release-it patch",
-    "zip:beta": "wxt zip -c wxt.config.beta.ts",
-    "zip:beta:edge": "wxt zip -c wxt.config.beta.ts -b edge",
-    "zip:beta:firefox": "wxt zip -c wxt.config.beta.ts -b firefox --mv3",
+    "zip:beta": "NODE_ENV=beta wxt zip -c wxt.config.beta.ts",
+    "zip:beta:edge": "NODE_ENV=beta wxt zip -c wxt.config.beta.ts -b edge",
+    "zip:beta:firefox": "NODE_ENV=beta wxt zip -c wxt.config.beta.ts -b firefox --mv3",
     "zip:prod": "wxt zip",
     "zip:prod:firefox": "wxt zip -b firefox --mv3",
     "prepare": "husky"
