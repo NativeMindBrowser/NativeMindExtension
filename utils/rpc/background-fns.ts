@@ -88,11 +88,12 @@ const makeLoadingModelListener = (port: Browser.runtime.Port) => (ev: ModelLoadi
 }
 
 const normalizeError = (_error: unknown) => {
+  const networkErrorMessages = ['NetworkError', 'Failed to fetch']
   let error
   if (_error instanceof AppError) {
     error = _error
   }
-  else if (_error instanceof Error && _error.message.includes('Failed to fetch')) {
+  else if (_error instanceof Error && networkErrorMessages.some((msg) => _error.message.includes(msg))) {
     error = new ModelRequestError(_error.message)
   }
   else if (AISDKError.isInstance(_error)) {
