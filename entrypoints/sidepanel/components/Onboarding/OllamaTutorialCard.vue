@@ -23,7 +23,7 @@
           color="primary"
           class="grow-0 shrink-0"
         >
-          <IconTick class="w-4 h-4 inline-block mr-2" />
+          <IconTick class="size-4 shrink-0 inline-block mr-2" />
         </Text>
         <Text color="secondary">
           {{ t('onboarding.guide.features.1') }}
@@ -34,7 +34,7 @@
           color="primary"
           class="grow-0 shrink-0"
         >
-          <IconTick class="w-4 h-4 inline-block mr-2" />
+          <IconTick class="size-4 shrink-0 inline-block mr-2" />
         </Text>
         <Text color="secondary">
           {{ t('onboarding.guide.features.2') }}
@@ -45,7 +45,7 @@
           color="primary"
           class="grow-0 shrink-0"
         >
-          <IconTick class="w-4 h-4 inline-block mr-2" />
+          <IconTick class="size-4 shrink-0 inline-block mr-2" />
         </Text>
         <Text color="secondary">
           {{ t('onboarding.guide.features.3') }}

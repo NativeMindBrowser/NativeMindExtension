@@ -43,6 +43,9 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
       return []
     }
   }
+  const clearModelList = () => {
+    modelList.value = []
+  }
 
   const connectionStatusLoading = ref(false)
   const updateConnectionStatus = async () => {
@@ -99,6 +102,7 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
     initDefaultModel,
     unloadModel,
     updateModelList,
+    clearModelList,
     updateConnectionStatus,
     checkCurrentModelSupportVision,
     checkModelSupportThinking,

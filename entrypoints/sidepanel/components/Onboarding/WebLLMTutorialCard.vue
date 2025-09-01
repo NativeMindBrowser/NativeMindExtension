@@ -23,7 +23,7 @@
     </Modal>
     <Button
       variant="secondary"
-      class="shrink-0 grow-0 flex mt-1 items-center justify-center rounded-md gap-2 font-bold cursor-pointer h-7"
+      class="shrink-0 grow-0 flex mt-1 items-center justify-center rounded-md gap-2 font-bold cursor-pointer min-h-7"
       :disabled="!supportWebLLM.supported"
       @click="initWebLLM"
     >

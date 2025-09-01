@@ -173,8 +173,7 @@ export type SearchingMessage =
   }
 
 export async function searchWebsites(query: string, options?: SearchByGoogleOptions) {
-  const { abortSignal, ...restOptions } = options || {}
-  const links = await _searchByGoogle(query, restOptions)
+  const links = await _searchByGoogle(query, options)
   return links
 }
 

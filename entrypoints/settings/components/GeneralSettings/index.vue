@@ -245,6 +245,7 @@ import { MIN_CONTEXT_WINDOW_SIZE, OLLAMA_HOMEPAGE_URL, OLLAMA_SEARCH_URL, OLLAMA
 import { useI18n } from '@/utils/i18n/index'
 import logger from '@/utils/logger'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { settings2bRpc } from '@/utils/rpc'
 import { getUserConfig } from '@/utils/user-config'
 
 import { useSettingsInitialQuery } from '../../composables/useQuery'
@@ -303,9 +304,8 @@ const testConnection = async () => {
   try {
     await reScanOllama()
     const success = await ollamaStatusStore.updateConnectionStatus()
-    if (success) {
-      await ollamaStatusStore.updateModelList()
-    }
+    success ? (await ollamaStatusStore.updateModelList()) : ollamaStatusStore.clearModelList()
+    settings2bRpc.updateSidepanelModelList()
     return success
   }
   catch (error) {

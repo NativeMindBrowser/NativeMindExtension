@@ -454,8 +454,7 @@ export class Agent<T extends PromptBasedToolName> {
       if (tool) {
         const params = chunk.params
         this.log.debug('Tool call start', chunk)
-        const abortController = new AbortController()
-        this.abortControllers.push(abortController)
+        const abortController = this.createAbortController()
         try {
           const executedResults = await tool.execute({
             params,

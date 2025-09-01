@@ -2,21 +2,28 @@ import { useGlobalI18n } from './i18n'
 
 export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType' | 'fetchError' | 'parseFunctionCallError' | 'aiSDKError' | 'generateObjectSchemaError'
 
-export abstract class AppError<Code extends ErrorCode> extends Error {
-  private _appError = true
+// we use a base AppError class instead of extending the native Error class directly because of Firefox compatibility issues of error instance transform in postMessage
+export abstract class AppError<Code extends ErrorCode = ErrorCode> {
+  private _appError = true // this is a symbol to identify AppError instances
+  name?: string
   message: string
+  private nativeError: Error
   static isAppError(error: unknown): error is AppError<ErrorCode> {
     // can not check instanceof AppError directly because it may be from another context (e.g. from background script to content script)
     return (typeof error === 'object' && error !== null && '_appError' in error && error._appError === true)
   }
 
   constructor(public code: Code, message?: string) {
-    super(message)
+    this.nativeError = new Error(message)
     this.message = message ?? ''
   }
 
   async toLocaleMessage(_locale?: string): Promise<string> {
     return this.message
+  }
+
+  get stack(): string | undefined {
+    return this.nativeError.stack
   }
 }
 
