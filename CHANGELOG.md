@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.8.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0...v1.8.1)
+
+### 🩹 Fixes
+
+- **firefox:** Improve responsive UI and compatibility ([05dd31c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/05dd31c))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0-beta.19...v1.8.0)
