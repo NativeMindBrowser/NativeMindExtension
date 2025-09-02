@@ -33,7 +33,7 @@ function makeDownloadButton(modelName: string, text: string, additionalCss?: str
     width: fit-content;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     cursor: pointer;
     font-size: 12px;
     font-weight: 500;

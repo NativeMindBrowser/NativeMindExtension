@@ -3,7 +3,6 @@ import { useAsyncState } from '@vueuse/core'
 import { RouterView } from 'vue-router'
 
 import IconGithub from '@/assets/icons/logo-github.svg?component'
-import SettingsLogo from '@/assets/icons/settings-logo.svg'
 import Logo from '@/components/Logo.vue'
 import Button from '@/components/ui/Button.vue'
 import { FEEDBACK_EMAIL, NATIVEMIND_HOMEPAGE_URL, NATIVEMIND_REPOSITORY_URL } from '@/utils/constants'
@@ -45,7 +44,10 @@ const onClickTitle = () => {
           class="text-base"
           @click="onClickTitle"
         >
-          <SettingsLogo />
+          <Logo
+            showText
+            :size="26"
+          />
         </div>
         <div class="flex gap-3 items-stretch min-h-7">
           <a
@@ -68,7 +70,7 @@ const onClickTitle = () => {
               class="px-2 flex items-center gap-2 h-full"
               variant="secondary"
             >
-              <Logo />
+              <Logo :size="19" />
               {{ t('settings.header.goto_website') }}
             </Button>
           </a>

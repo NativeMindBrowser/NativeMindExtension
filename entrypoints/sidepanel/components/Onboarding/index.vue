@@ -4,7 +4,7 @@
     class="bg-[#F5F6FB]"
   >
     <div ref="topRef">
-      <div class="h-12 px-3 flex items-center justify-start border-b border-gray-200">
+      <div class="h-11 px-3 flex items-center justify-start">
         <div class="text-center" />
         <div class="absolute right-4 h-full flex items-center gap-4">
           <IconClose
@@ -17,12 +17,13 @@
     <ScrollContainer
       containerClass="h-full"
       itemContainerClass="h-max min-h-full"
-      class="absolute top-12 left-0 right-0 bottom-0"
+      class="absolute top-11 left-0 right-0 bottom-0"
     >
       <div
         class="flex flex-col items-stretch gap-4 justify-start px-4 py-2 pb-4 min-h-full"
       >
         <Logo
+          :size="20"
           showText
           class="mx-auto text-base"
         />
