@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.0-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.1...v1.9.0-beta.0)
+
+### 🚀 Enhancements
+
+- **logo:** Use new logo ([2b026ad](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2b026ad))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.8.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.0...v1.8.1)
