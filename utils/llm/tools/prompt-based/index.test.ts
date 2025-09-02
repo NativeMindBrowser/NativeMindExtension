@@ -403,4 +403,48 @@ test block response
       },
     ])
   })
+
+  it('should handle weird response from gpt-oss (3)', async () => {
+    const response = `
+Some text
+<tool_calls>
+<browser.view_tab>
+<tab_id>123</tab_id>
+</browser.view_tab>
+</tool_calls>`
+
+    const extractor = PromptBasedTool.createToolCallsStreamParser(promptBasedTools)
+
+    const calls = []
+    for (const char of response) {
+      const { toolCalls: currentCalls } = extractor(char)
+      for (const call of currentCalls) {
+        calls.push(call)
+      }
+    }
+
+    expect(calls[0].params).toEqual({ tab_id: '123' })
+  })
+
+  it('should handle weird response from gpt-oss (4)', async () => {
+    const response = `
+Some text
+<tool_calls>
+<browser.click>
+<element_id>123</element_id>
+</browser.click>
+</tool_calls>`
+
+    const extractor = PromptBasedTool.createToolCallsStreamParser(promptBasedTools)
+
+    const calls = []
+    for (const char of response) {
+      const { toolCalls: currentCalls } = extractor(char)
+      for (const call of currentCalls) {
+        calls.push(call)
+      }
+    }
+
+    expect(calls[0].params).toEqual({ element_id: '123' })
+  })
 })
