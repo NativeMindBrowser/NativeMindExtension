@@ -1,4 +1,4 @@
-import { CoreAssistantMessage, CoreMessage, CoreUserMessage } from 'ai'
+import { CoreAssistantMessage, CoreMessage, CoreUserMessage, FilePart, ImagePart, TextPart } from 'ai'
 import { isEqual } from 'es-toolkit'
 import EventEmitter from 'events'
 import { Ref, ref } from 'vue'
@@ -8,17 +8,17 @@ import { AssistantMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData, ImageDataWithId } from '@/types/image'
 import { TagBuilderJSON } from '@/types/prompt'
-import { AGENT_LOOP_COUNT_REFILL_USER_PROMPT } from '@/utils/constants'
 import { AbortError, AiSDKError, AppError, ErrorCode, fromError, ModelNotFoundError, ModelRequestError, ParseFunctionCallError, UnknownError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
 import { GetPromptBasedTool, PromptBasedToolName, PromptBasedToolNameAndParams } from '@/utils/llm/tools/prompt-based/tools'
 import logger from '@/utils/logger'
-import { renderPrompt, TagBuilder, UserPrompt } from '@/utils/prompts/helpers'
+import { renderPrompt, TagBuilder, TextBuilder, UserPrompt } from '@/utils/prompts/helpers'
 
 import { ReactiveHistoryManager } from '../chat'
 import { streamTextInBackground } from '../llm'
+import { AGENT_CHECKPOINT_MESSAGES, AGENT_FORCE_FINAL_ANSWER, AGENT_INITIAL_GUIDANCE, AGENT_TOOL_CALL_RESULT_GUIDANCE } from './constants'
 import { AgentStorage } from './strorage'
 
 type AgentToolCallHandOffResult = {
@@ -114,7 +114,7 @@ export class Agent<T extends PromptBasedToolName> {
     }
   }
 
-  injectImagesLastMessage(messages: CoreMessage[], images: Base64ImageData[]) {
+  injectImagesToLastMessage(messages: CoreMessage[], images: Base64ImageData[]) {
     const lastMessage = messages[messages.length - 1]
     if (lastMessage && lastMessage.role === 'user') {
       if (typeof lastMessage.content === 'string') {
@@ -140,24 +140,20 @@ export class Agent<T extends PromptBasedToolName> {
     return clonedMessages
   }
 
-  injectContentToLastUserMessage(messages: CoreMessage[], content?: string, newLine = true) {
+  replaceLastUserMessage(messages: CoreMessage[], content: string) {
     if (!content) return messages
-    content = newLine ? `\n${content}` : content
     const lastMessage = messages[messages.length - 1]
     if (lastMessage && lastMessage.role === 'user') {
       if (typeof lastMessage.content === 'string') {
-        lastMessage.content = [
-          { type: 'text', text: lastMessage.content },
-          { type: 'text', text: content },
-        ]
+        lastMessage.content = [{ type: 'text', text: content }]
       }
       else {
-        const text = lastMessage.content.map((c) => c.type === 'text' ? c.text : '').join('')
-        lastMessage.content = [
-          { type: 'text', text: text },
-          { type: 'text', text: content },
-        ]
+        const nonTextParts = lastMessage.content.filter((part) => part.type !== 'text') as (TextPart | ImagePart | FilePart)[]
+        lastMessage.content = [...nonTextParts, { type: 'text', text: content }]
       }
+    }
+    else {
+      throw new UnknownError('Last message is not a user message')
     }
     return messages
   }
@@ -257,13 +253,26 @@ export class Agent<T extends PromptBasedToolName> {
     }
   }
 
-  async runWithPrompt(baseMessages: CoreMessage[]) {
+  // iteration starts from 1
+  buildExtendedUserMessage(iteration: number, originalUserMessage: string, toolResults?: string) {
+    if (iteration === 1) return `${originalUserMessage}\n\n${AGENT_INITIAL_GUIDANCE.build()}`
+    const textBuilder = new TextBuilder(`${originalUserMessage}`)
+    if (toolResults) textBuilder.insertContent(toolResults)
+    const checkPointMessageBuilder = AGENT_CHECKPOINT_MESSAGES[iteration]
+    if (checkPointMessageBuilder) textBuilder.insertContent(checkPointMessageBuilder.build())
+    textBuilder.insertContent(AGENT_TOOL_CALL_RESULT_GUIDANCE)
+    return textBuilder.build()
+  }
+
+  async run(rawBaseMessages: CoreMessage[]) {
     this.stop()
     const abortController = this.createAbortController()
     let reasoningStart: number | undefined
+    const baseMessages = structuredClone(rawBaseMessages)
     this.log.debug('baseMessages', baseMessages)
     const originalUserMessageText = this.extractTheLastUserMessageText(baseMessages)
-    if (!originalUserMessageText) this.log.warn('Missing original user message')
+    if (!originalUserMessageText) throw new UnknownError('Missing original user message')
+    this.replaceLastUserMessage(baseMessages, this.buildExtendedUserMessage(1, originalUserMessageText))
     // clone the message to avoid ui changes in agent's running process
 
     // this messages only used for the agent iteration but not user-facing
@@ -282,20 +291,16 @@ export class Agent<T extends PromptBasedToolName> {
       }
       iteration++
       const shouldForceAnswer = iteration === this.maxIterations
-      const shouldRefillOriginalUserPrompt = iteration >= AGENT_LOOP_COUNT_REFILL_USER_PROMPT
-      this.log.debug('Agent iteration', iteration, { shouldForceAnswer, shouldRefillOriginalUserPrompt })
+      this.log.debug('Agent iteration', iteration, { shouldForceAnswer })
 
       const thisLoopMessages: CoreMessage[] = [...baseMessages, ...loopMessages]
-      if (shouldForceAnswer) {
-        thisLoopMessages.push({ role: 'user', content: `Answer Language: Strictly follow the LANGUAGE POLICY above.\nBased on all the information collected above, please provide a comprehensive final answer.\nDo not use any tools.` })
-      }
+      if (shouldForceAnswer) thisLoopMessages.push({ role: 'user', content: AGENT_FORCE_FINAL_ANSWER })
       let taskMessageModifier = this.makeTaskMessageGroupProxy(abortController.signal)
       const agentMessageManager = this.makeTempAgentMessageManager()
       const agentMessage = agentMessageManager.getOrAddAgentMessage()
       const response = streamTextInBackground({
         abortSignal: abortController.signal,
-        // do not modify the original messages to avoid duplicated images in history
-        messages: this.injectContentToLastUserMessage(this.injectImagesLastMessage(thisLoopMessages, loopImages), shouldRefillOriginalUserPrompt ? originalUserMessageText : undefined),
+        messages: this.injectImagesToLastMessage(thisLoopMessages, loopImages),
       })
       let hasError = false
       let text = ''
@@ -349,13 +354,14 @@ export class Agent<T extends PromptBasedToolName> {
               const subAgent = new Agent({ tools: this.tools, agentStorage: this.agentStorage, historyManager: this.historyManager, maxIterations: this.maxIterations })
               abortController.signal.addEventListener('abort', () => subAgent.stop())
               loopMessages.push({ role: 'user', content: handoffResult.userPrompt })
-              const lastMsg = await subAgent.runWithPrompt(this.overrideSystemPrompt([...baseMessages, ...loopMessages], handoffResult.overrideSystemPrompt))
+              const lastMsg = await subAgent.run(this.overrideSystemPrompt([...baseMessages, ...loopMessages], handoffResult.overrideSystemPrompt))
               this.log.debug('Sub-agent finished', lastMsg)
               if (lastMsg?.content) loopMessages.push(lastMsg)
             }
           }
           else {
-            loopMessages.push({ role: 'user', content: this.toolResultsToPrompt(toolResults.filter((t) => t.type === 'tool-result')) })
+            const toolResultPart = this.toolResultsToPrompt(toolResults.filter((t) => t.type === 'tool-result'))
+            loopMessages.push({ role: 'user', content: this.buildExtendedUserMessage(iteration + 1, originalUserMessageText, toolResultPart) })
           }
         }
       }

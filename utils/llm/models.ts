@@ -97,7 +97,7 @@ export async function getModel(options: {
   })
 }
 
-export type LLMEndpointType = 'ollama' | 'web-llm'
+export type LLMEndpointType = 'ollama' | 'lm-studio' | 'web-llm'
 
 export function parseErrorMessageFromChunk(error: unknown): string | null {
   if (error && typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string') {

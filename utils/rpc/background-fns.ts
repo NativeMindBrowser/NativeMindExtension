@@ -635,6 +635,7 @@ async function checkModelReady(modelId: string) {
     const userConfig = await getUserConfig()
     const endpointType = userConfig.llm.endpointType.get()
     if (endpointType === 'ollama') return true
+    else if (endpointType === 'lm-studio') return true
     else if (endpointType === 'web-llm') {
       return await hasWebLLMModelInCache(modelId as WebLLMSupportedModel)
     }
@@ -651,6 +652,9 @@ async function initCurrentModel() {
   const endpointType = userConfig.llm.endpointType.get()
   const model = userConfig.llm.model.get()
   if (endpointType === 'ollama') {
+    return false
+  }
+  else if (endpointType === 'lm-studio') {
     return false
   }
   else if (endpointType === 'web-llm') {
