@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.9.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.0...v1.9.0-beta.1)
+
+### 🚀 Enhancements
+
+- **agent:** Add initial guidance and checkpoint messages for user interactions ([e77bf50](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e77bf50))
+
+### 🩹 Fixes
+
+- **agent:** Enhance tool call parsing in responses ([839e0d7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/839e0d7))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.0-beta.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.8.1...v1.9.0-beta.0)
