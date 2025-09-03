@@ -4,12 +4,16 @@ import type { LanguageModelV1Middleware, LanguageModelV1StreamPart } from 'ai'
 import { extractReasoningMiddleware } from 'ai'
 import { z } from 'zod'
 
+import { nonNullable } from '../array'
 import { debounce } from '../debounce'
 import { ParseFunctionCallError } from '../error'
 import { generateRandomId } from '../id'
-import logger from '../logger'
+import Logger from '../logger'
+import { TagBuilder } from '../prompts/helpers'
 import { PromptBasedTool } from './tools/prompt-based/helpers'
 import { promptBasedTools } from './tools/prompt-based/tools'
+
+const logger = Logger.child('Agent')
 
 export const reasoningMiddleware = extractReasoningMiddleware({
   tagName: 'think',
@@ -56,7 +60,7 @@ export const extractPromptBasedToolCallsMiddleware: LanguageModelV1Middleware = 
             log.warn('Error parsing prompt-based tool calls', errors)
             controller.enqueue({
               type: 'error',
-              error: new ParseFunctionCallError(`${errors.map((e) => e).join(', ')}`),
+              error: new ParseFunctionCallError(`${errors.map((e) => e).join(', ')}`, 'invalidFormat'),
             })
             controller.terminate()
             return
@@ -87,27 +91,68 @@ export const extractPromptBasedToolCallsMiddleware: LanguageModelV1Middleware = 
   },
 }
 
+function normalizeToolCall<T extends LanguageModelV1FunctionToolCall>(toolCall: T) {
+  const log = logger.child('normalizeToolCallsMiddleware')
+
+  const normalizeToolName = (toolName: string) => {
+  // sometimes gpt-oss return tool named xxx.toolName, we should normalize it to toolName
+    return toolName.split('.').pop()!
+  }
+  if (toolCall.toolName === 'tool_calls' && toolCall.args) {
+    // 1. {name: 'tool_calls', arguments: { name: <toolName>, arguments: { a: 1 } }}
+    const newToolCall = safeParseJSON({ text: toolCall.args, schema: z.object({ name: z.string(), arguments: z.any() }) })
+    if (newToolCall.success) {
+      const { name: toolName, ...restArgs } = newToolCall.value
+      toolCall.toolName = normalizeToolName(toolName)
+      toolCall.args = JSON.stringify(restArgs.arguments ?? restArgs)
+    }
+    // 2. {name: 'tool_calls', arguments: { tool: <toolName>, ...otherArgs }}
+    else {
+      const newToolCall = safeParseJSON({ text: toolCall.args, schema: z.record(z.any(), z.any()) })
+      if (newToolCall.success && newToolCall.value.tool) {
+        const { tool: toolName, ...restArgs } = newToolCall.value
+        toolCall.toolName = normalizeToolName(toolName)
+        toolCall.args = JSON.stringify(typeof restArgs.arguments === 'object' && restArgs.arguments ? restArgs.arguments : restArgs)
+      }
+    }
+  }
+  else {
+    toolCall.toolName = normalizeToolName(toolCall.toolName)
+  }
+  const paramsParsedResult = safeParseJSON({ text: toolCall.args, schema: z.record(z.any(), z.any()).optional() })
+  const params = paramsParsedResult.success ? (paramsParsedResult.value ?? {}) : {}
+  const tool = promptBasedTools.find((t) => t.toolName === toolCall.toolName)
+  // ignore invalid tool calls
+  if (tool) {
+    const { success, errors } = tool.validateParameters(params)
+    if (!success) {
+      log.warn('Tool call validation failed', { toolCall, errors })
+      return { errors, toolCall, params }
+    }
+  }
+  return { toolCall, params }
+}
+
 export const normalizeToolCallsMiddleware: LanguageModelV1Middleware = {
   wrapGenerate: async ({ doGenerate }) => {
+    const log = logger.child('normalizeToolCallsMiddleware')
+
     const result = await doGenerate()
 
     if (result.toolCalls?.length) {
+      const originalToolCalls = structuredClone(result.toolCalls)
       result.toolCalls = result.toolCalls?.map((toolCall) => {
-        if (toolCall.toolName === 'tool_calls' && toolCall.args) {
-          const newToolCall = safeParseJSON({ text: toolCall.args, schema: z.object({ name: z.string(), arguments: z.any() }) })
-          if (newToolCall.success) {
-            toolCall.toolName = newToolCall.value.name
-            toolCall.args = JSON.stringify(newToolCall.value.arguments)
-          }
-        }
-        return toolCall
-      })
+        const { toolCall: normalizedToolCall } = normalizeToolCall(toolCall)
+        return normalizedToolCall
+      }).filter(nonNullable)
+      log.debug('Normalized tool calls', { originalToolCalls, normalizedToolCalls: result.toolCalls })
     }
 
     return result
   },
 
   wrapStream: async ({ doStream }) => {
+    const log = logger.child('normalizeToolCallsMiddleware')
     const { stream, ...rest } = await doStream()
 
     const transformStream = new TransformStream<
@@ -115,15 +160,23 @@ export const normalizeToolCallsMiddleware: LanguageModelV1Middleware = {
       LanguageModelV1StreamPart
     >({
       transform(chunk, controller) {
-        if (chunk.type === 'tool-call' && chunk.toolName === 'tool_calls' && chunk.args) {
-          const newToolCall = safeParseJSON({ text: chunk.args, schema: z.object({ name: z.string(), arguments: z.any() }) })
-          logger.debug('Normalizing tool call', chunk, newToolCall)
-          if (newToolCall.success) {
-            chunk.toolName = newToolCall.value.name
-            chunk.args = JSON.stringify(newToolCall.value.arguments)
+        if (chunk.type === 'tool-call') {
+          const originalToolCalls = structuredClone(chunk)
+          const { toolCall: normalizedToolCall, errors, params } = normalizeToolCall(chunk)
+          log.debug('Normalized tool call', { originalToolCalls, normalizedToolCall })
+          if (errors?.length) {
+            controller.enqueue({
+              type: 'error',
+              error: new ParseFunctionCallError(`${TagBuilder.fromStructured(normalizedToolCall.toolName, params).build()}\n\nError: ${errors.join(',')}`, 'toolNotFound', normalizedToolCall.toolName),
+            })
+          }
+          else {
+            controller.enqueue(normalizedToolCall)
           }
         }
-        controller.enqueue(chunk)
+        else {
+          controller.enqueue(chunk)
+        }
       },
     })
 

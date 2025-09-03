@@ -573,7 +573,7 @@ export class Chat {
       },
     })
     this.currentAgent = agent
-    await agent.runWithPrompt(baseMessages)
+    await agent.run(baseMessages)
   }
 
   private async generateEnvironmentDetails(currentUserMessageId: string) {

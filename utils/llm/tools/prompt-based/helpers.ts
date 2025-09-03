@@ -212,6 +212,19 @@ export class PromptBasedTool<Name extends string, T extends PromptBasedToolParam
     return null
   }
 
+  validateParameters(params: Record<string, unknown>): { errors: string[], success: boolean } {
+    const errors: string[] = []
+    for (const key in this.parameters) {
+      const schema = this.parameters[key]
+      const value = params[key]
+      const result = schema.safeParse(value)
+      if (!result.success) {
+        errors.push(`Invalid parameter <${key}>: ${result.error.message}`)
+      }
+    }
+    return { errors, success: errors.length === 0 }
+  }
+
   static createToolCallsStreamParser<Tools extends PromptBasedToolType[]>(tools: Tools) {
     type ToolWithParams = ExtractToolWithParams<Tools[number]> & { tagText: string }
     let accText = ''

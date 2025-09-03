@@ -134,7 +134,7 @@ export class TimeoutError extends AppError<'timeoutError'> {
 }
 
 export class ParseFunctionCallError extends AppError<'parseFunctionCallError'> {
-  constructor(message: string) {
+  constructor(message: string, public type?: 'toolNotFound' | 'invalidFormat', public toolName?: string) {
     super('parseFunctionCallError', message)
   }
 
