@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.1...v1.9.0-beta.2)
+
+### 🏡 Chore
+
+- **logo:** Remove unused icon files & update extension logo ([ad1cc22](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ad1cc22))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.0...v1.9.0-beta.1)
