@@ -1,7 +1,7 @@
 export type PredefinedOllamaModel = {
   name: string
   id: string
-  size: number
+  size?: number
   description?: string
   url?: string
   tags?: string[]
@@ -69,5 +69,52 @@ export const PREDEFINED_OLLAMA_MODELS: PredefinedOllamaModel[] = [
     name: 'gpt-oss:20b',
     id: 'gpt-oss:20b',
     size: 12.83 * GB,
+  },
+]
+
+export const PREDEFINED_LM_STUDIO_MODELS: PredefinedOllamaModel[] = [
+  {
+    name: 'DeepSeek-R1 8B',
+    id: 'lmstudio-community/DeepSeek-R1-0528-Qwen3-8B',
+  },
+  {
+    name: 'DeepSeek-R1 14B',
+    id: 'lmstudio-community/DeepSeek-R1-Distill-Qwen-14B',
+  },
+  {
+    name: 'Qwen3 4B',
+    id: 'lmstudio-community/Qwen3-4B',
+  },
+  {
+    name: 'Qwen3 8B',
+    id: 'lmstudio-community/Qwen3-8B',
+  },
+  {
+    name: 'Qwen3 14B',
+    id: 'lmstudio-community/Qwen3-14B',
+  },
+  {
+    name: 'Llama3.2 3B',
+    id: 'lmstudio-community/Llama-3.2-3B',
+  },
+  {
+    name: 'Gemma3 4B',
+    id: 'lmstudio-community/Gemma-3-4B',
+  },
+  {
+    name: 'Gemma3 12B',
+    id: 'lmstudio-community/Gemma-3-12B',
+  },
+  {
+    name: 'Phi4-mini',
+    id: 'lmstudio-community/Phi-4-mini-reasoning',
+  },
+  {
+    name: 'Phi4',
+    id: 'lmstudio-community/Phi-4-reasoning',
+  },
+  {
+    name: 'gpt-oss 20B',
+    id: 'lmstudio-community/gpt-oss-20b',
   },
 ]

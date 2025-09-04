@@ -7,7 +7,6 @@ import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
 import { ADVANCED_MODELS_FOR_AGENT } from '@/utils/constants'
 import { debounce } from '@/utils/debounce'
-import { AbortError, AppError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { PromptBasedToolName } from '@/utils/llm/tools/prompt-based/tools'
@@ -421,7 +420,7 @@ export class Chat {
   static createActionEventDispatcher<ActionType extends ActionTypeV1>(action: ActionType) {
     return function actionEvent(data: ActionV1[ActionType], el?: HTMLElement | EventTarget | null) {
       log.debug('Creating action event', action, data)
-      ;(el ?? window).dispatchEvent(new ActionEvent<ActionType>(action, data))
+      ; (el ?? window).dispatchEvent(new ActionEvent<ActionType>(action, data))
     }
   }
 
@@ -462,19 +461,6 @@ export class Chat {
 
   isAnswering() {
     return this.status.value === 'pending' || this.status.value === 'streaming'
-  }
-
-  private async errorHandler(e: unknown, msg?: AssistantMessageV1) {
-    log.error('Error in chat', e)
-    if (!(e instanceof AbortError)) {
-      const errorMsg = msg || this.historyManager.appendAssistantMessage()
-      errorMsg.isError = true
-      errorMsg.done = true
-      errorMsg.content = e instanceof AppError ? await e.toLocaleMessage() : 'Unexpected error occurred'
-    }
-    else if (msg) {
-      this.historyManager.deleteMessage(msg)
-    }
   }
 
   statusScope(status: Exclude<ChatStatus, 'idle'>) {

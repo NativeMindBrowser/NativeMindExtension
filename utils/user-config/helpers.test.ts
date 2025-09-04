@@ -40,7 +40,7 @@ describe('user config', () => {
     })
     const { _getUserConfig: getUserConfig } = await import('./index')
     const userConfig = await getUserConfig()
-    expect(userConfig.llm.enableNumCtx.get()).toBe(false)
+    expect(userConfig.llm.backends.ollama.enableNumCtx.get()).toBe(false)
   })
 
   it('enableNumCtx should be true when system memory is greater than 8GB', async () => {
@@ -53,7 +53,7 @@ describe('user config', () => {
     })
     const { _getUserConfig: getUserConfig } = await import('./index')
     const userConfig = await getUserConfig()
-    expect(userConfig.llm.enableNumCtx.get()).toBe(true)
+    expect(userConfig.llm.backends.ollama.enableNumCtx.get()).toBe(true)
   })
 
   it('should migrate from old value', async () => {

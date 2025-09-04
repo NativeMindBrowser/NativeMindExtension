@@ -8,7 +8,7 @@ import { AssistantMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData, ImageDataWithId } from '@/types/image'
 import { TagBuilderJSON } from '@/types/prompt'
-import { AbortError, AiSDKError, AppError, ErrorCode, fromError, ModelNotFoundError, ModelRequestError, ParseFunctionCallError, UnknownError } from '@/utils/error'
+import { AbortError, AiSDKError, AppError, ErrorCode, fromError, LMStudioLoadModelError, ModelNotFoundError, ModelRequestError, ParseFunctionCallError, UnknownError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
@@ -408,7 +408,7 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      errorMsg.content = t('errors.model_not_found')
+      errorMsg.content = t('errors.model_not_found', { endpointType: error.endpointType === 'ollama' ? 'Ollama' : 'LM Studio' })
       // unresolvable error, break the loop
       return false
     }
@@ -416,14 +416,21 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      errorMsg.content = t('errors.model_request_error')
+      errorMsg.content = t('errors.model_request_error', { endpointType: error.endpointType === 'ollama' ? 'Ollama' : 'LM Studio' })
       return false
     }
-    else if (error instanceof UnknownError) {
+    else if (error instanceof LMStudioLoadModelError) {
       const { t } = await useGlobalI18n()
       const errorMsg = agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      errorMsg.content = t('errors.unknown_error', { error: error.message })
+      errorMsg.content = t('errors.unknown_error', { message: error.message.split('\n')[0].slice(0, 50) })
+      return false
+    }
+    else if (error instanceof AppError) {
+      const { t } = await useGlobalI18n()
+      const errorMsg = agentMessageManager.convertToAssistantMessage()
+      errorMsg.isError = true
+      errorMsg.content = t('errors.unknown_error', { message: error.message })
       return false
     }
     return true // continue loop if not fatal error

@@ -7,7 +7,7 @@ import { getUserConfig } from '../user-config'
 
 async function getOllamaClient() {
   const userConfig = await getUserConfig()
-  const baseUrl = userConfig.llm.baseUrl.get()
+  const baseUrl = userConfig.llm.backends.ollama.baseUrl.get()
   const origin = new URL(baseUrl).origin
   const ollama = new Ollama({ host: origin })
   return ollama
@@ -107,5 +107,22 @@ export async function showModelDetails(modelId: string) {
   const info = await ollama.show({ model: modelId })
   return info as ShowResponse & {
     capabilities?: ModelCapability[]
+  }
+}
+
+export async function testConnection() {
+  const userConfig = await getUserConfig()
+  try {
+    const baseUrl = userConfig.llm.backends.ollama.baseUrl.get()
+    const origin = new URL(baseUrl).origin
+    const response = await fetch(origin)
+    if (!response.ok) return false
+    const text = await response.text()
+    if (text.includes('Ollama is running')) return true
+    else return false
+  }
+  catch (error: unknown) {
+    logger.error('error connecting to ollama api', error)
+    return false
   }
 }

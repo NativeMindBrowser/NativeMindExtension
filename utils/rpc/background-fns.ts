@@ -13,10 +13,11 @@ import { BackgroundCacheServiceManager } from '../../entrypoints/background/serv
 import { BackgroundChatHistoryServiceManager } from '../../entrypoints/background/services/chat-history-service'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
-import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
+import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, fromError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
 import { parsePartialJson } from '../json/parser/parse-partial-json'
-import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
-import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
+import * as lmStudioUtils from '../llm/lm-studio'
+import { getModel, getModelUserConfig, LLMEndpointType, ModelLoadingProgressEvent } from '../llm/models'
+import * as ollamaUtils from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
 import { PromptBasedTool } from '../llm/tools/prompt-based/helpers'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
@@ -87,21 +88,21 @@ const makeLoadingModelListener = (port: Browser.runtime.Port) => (ev: ModelLoadi
   })
 }
 
-const normalizeError = (_error: unknown) => {
+const normalizeError = (_error: unknown, endpointType?: LLMEndpointType) => {
   const networkErrorMessages = ['NetworkError', 'Failed to fetch']
   let error
   if (_error instanceof AppError) {
     error = _error
   }
   else if (_error instanceof Error && networkErrorMessages.some((msg) => _error.message.includes(msg))) {
-    error = new ModelRequestError(_error.message)
+    error = new ModelRequestError(_error.message, endpointType)
   }
   else if (AISDKError.isInstance(_error)) {
     error = new AiSDKError(_error.message)
     error.name = _error.name
   }
   else {
-    error = new UnknownError(`Unexpected error occurred during request: ${_error}`)
+    error = new UnknownError(String(_error))
   }
   return error
 }
@@ -120,12 +121,14 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
     })
 
     try {
+      const userConfig = await getModelUserConfig()
+      const modelInfo = await getModel({
+        ...userConfig,
+        onLoadingModel: makeLoadingModelListener(port),
+        ...generateExtraModelOptions(options),
+      })
       const response = originalStreamText({
-        model: await getModel({
-          ...(await getModelUserConfig()),
-          onLoadingModel: makeLoadingModelListener(port),
-          ...generateExtraModelOptions(options),
-        }),
+        model: modelInfo,
         messages: options.messages,
         prompt: options.prompt,
         system: options.system,
@@ -138,7 +141,7 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
       for await (const chunk of response.fullStream) {
         if (chunk.type === 'error') {
           logger.error(chunk.error)
-          port.postMessage({ type: 'error', error: normalizeError(chunk.error) })
+          port.postMessage({ type: 'error', error: normalizeError(chunk.error, userConfig.endpointType) })
         }
         else {
           port.postMessage(chunk)
@@ -470,14 +473,14 @@ const fetchAsText = async (url: string, initOptions?: RequestInit) => {
 }
 
 const deleteOllamaModel = async (modelId: string) => {
-  await deleteModel(modelId)
+  await ollamaUtils.deleteModel(modelId)
 }
 
 const unloadOllamaModel = async (modelId: string) => {
-  await unloadModel(modelId)
+  await ollamaUtils.unloadModel(modelId)
   const start = Date.now()
   while (Date.now() - start < 10000) {
-    const modelList = await getRunningModelList()
+    const modelList = await ollamaUtils.getRunningModelList()
     if (!modelList.models.some((m) => m.model === modelId)) {
       break
     }
@@ -485,8 +488,56 @@ const unloadOllamaModel = async (modelId: string) => {
   }
 }
 
+const unloadLMStudioModel = async (identifier: string) => {
+  await lmStudioUtils.unloadModel(identifier)
+  const start = Date.now()
+  while (Date.now() - start < 10000) {
+    const modelList = await lmStudioUtils.getRunningModelList()
+    if (!modelList.models.some((m) => m.identifier === identifier)) {
+      break
+    }
+    await sleep(1000)
+  }
+}
+
+const pullLMStudioModel = async (modelName: string) => {
+  const portName = `pullLMStudioModel-${Date.now().toString(32)}`
+  const abortController = new AbortController()
+  preparePortConnection(portName).then(async (port) => {
+    if (port.name !== portName) {
+      return
+    }
+    port.onDisconnect.addListener(() => {
+      abortController.abort()
+      logger.debug('port disconnected from client')
+    })
+    logger.debug('Starting to pull LMStudio model', modelName)
+    const response = await lmStudioUtils.pullModel({ modelName, abortSignal: abortController.signal })
+    try {
+      for await (const chunk of response) {
+        port.postMessage(chunk)
+      }
+    }
+    catch (_error: unknown) {
+      const error = fromError(_error)
+      logger.debug('[pullLMStudioModel] error', error)
+      if (error instanceof Error) {
+        port.postMessage({ error: error.message })
+      }
+      else if (error instanceof AppError) {
+        port.postMessage({ error: error.message })
+      }
+      else {
+        port.postMessage({ error: 'Unknown error' })
+      }
+    }
+    port.disconnect()
+  })
+  return { portName }
+}
+
 const showOllamaModelDetails = async (modelId: string) => {
-  return showModelDetails(modelId)
+  return ollamaUtils.showModelDetails(modelId)
 }
 
 const pullOllamaModel = async (modelId: string) => {
@@ -501,7 +552,7 @@ const pullOllamaModel = async (modelId: string) => {
       logger.debug('port disconnected from client')
       abortController.abort()
     })
-    const response = await pullModel(modelId)
+    const response = await ollamaUtils.pullModel(modelId)
     abortController.signal.addEventListener('abort', () => {
       response.abort()
     })
@@ -530,23 +581,6 @@ const pullOllamaModel = async (modelId: string) => {
     browser.runtime.onConnect.removeListener(onStart)
   }, 20000)
   return { portName }
-}
-
-async function testOllamaConnection() {
-  const userConfig = await getUserConfig()
-  try {
-    const baseUrl = userConfig.llm.baseUrl.get()
-    const origin = new URL(baseUrl).origin
-    const response = await fetch(origin)
-    if (!response.ok) return false
-    const text = await response.text()
-    if (text.includes('Ollama is running')) return true
-    else return false
-  }
-  catch (error: unknown) {
-    logger.error('error connecting to ollama api', error)
-    return false
-  }
 }
 
 function initWebLLMEngine(model: WebLLMSupportedModel) {
@@ -1020,12 +1054,18 @@ export const backgroundFunctions = {
   generateTextAsync,
   streamText,
   getAllTabs,
-  getLocalModelList,
-  getRunningModelList,
+  getOllamaLocalModelList: ollamaUtils.getLocalModelList,
+  getOllamaRunningModelList: ollamaUtils.getRunningModelList,
+  testOllamaConnection: ollamaUtils.testConnection,
+  unloadOllamaModel,
+  pullLMStudioModel,
+  getLMStudioModelList: lmStudioUtils.getLocalModelList,
+  getLMStudioRunningModelList: lmStudioUtils.getRunningModelList,
+  testLMStudioConnection: lmStudioUtils.testConnection,
+  unloadLMStudioModel,
   deleteOllamaModel,
   pullOllamaModel,
   showOllamaModelDetails,
-  unloadOllamaModel,
   openAndFetchUrlsContent,
   searchWebsites,
   generateObjectFromSchema,
@@ -1047,7 +1087,6 @@ export const backgroundFunctions = {
   initCurrentModel,
   checkSupportWebLLM,
   getSystemMemoryInfo,
-  testOllamaConnection,
   captureVisibleTab,
   // Translation cache functions
   cacheGetEntry,
@@ -1074,4 +1113,4 @@ export const backgroundFunctions = {
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,
 }
-;(self as unknown as { backgroundFunctions: unknown }).backgroundFunctions = backgroundFunctions
+  ; (self as unknown as { backgroundFunctions: unknown }).backgroundFunctions = backgroundFunctions

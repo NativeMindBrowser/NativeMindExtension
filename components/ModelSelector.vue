@@ -33,11 +33,11 @@
       <template #button="{ option }">
         <div v-if="!isGhostBtn">
           <div
-            v-if="option"
+            v-if="option && option.type === 'option'"
             class="flex items-center gap-[6px] min-w-0"
           >
             <ModelLogo
-              :modelId="option.model.model"
+              :modelId="option.model.id"
               class="shrink-0 grow-0"
             />
             <span class="text-ellipsis overflow-hidden whitespace-nowrap">
@@ -62,45 +62,28 @@
       <template #option="{ option }">
         <div class="flex items-center gap-2 justify-between w-full">
           <div
-            v-if="showDetails"
+            v-if="option.type === 'option'"
             class="flex items-center gap-[6px]"
           >
             <ModelLogo
-              :modelId="option.model.model"
+              :modelId="option.model.id"
               class="shrink-0 grow-0"
             />
-            <div>
-              <div class="text-left wrap-anywhere">
-                {{ option.label }}
-              </div>
-              <div
-                v-if="option.model.size || option.model.size_vram"
-                class="text-gray-500 text-[8px] flex items-center font-light"
-              >
-                <div v-if="option.model.size_vram">
-                  {{ formatSize(option.model.size_vram) }} (vram)
-                </div>
-                <div v-else-if="option.model.size">
-                  {{ formatSize(option.model.size) }}
-                </div>
-              </div>
+            <div class="text-left wrap-anywhere">
+              {{ option.label }}
             </div>
           </div>
-          <div v-else>
-            <div class="flex items-center gap-[6px]">
-              <ModelLogo
-                :modelId="option.model.model"
-                class="shrink-0 grow-0"
-              />
-              <div class="text-left wrap-anywhere">
-                {{ option.label }}
-              </div>
+          <div
+            v-else-if="option.type === 'header'"
+            class="flex items-center gap-[6px]"
+          >
+            <div class="text-left wrap-anywhere font-medium">
+              {{ option.label }}
             </div>
           </div>
-          <IconDelete
-            v-if="allowDelete"
-            class="w-3 h-3 hover:text-red-400 cursor-pointer shrink-0 grow-0"
-            @click="onClickDelete(option.model.model)"
+          <ExhaustiveError
+            v-else
+            :value="option"
           />
         </div>
       </template>
@@ -129,25 +112,25 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue'
 
-import IconDelete from '@/assets/icons/delete.svg?component'
 import IconExpand from '@/assets/icons/model-expand.svg?component'
 import IconOllamaRedirect from '@/assets/icons/ollama-redirect.svg?component'
 import IconRedirect from '@/assets/icons/redirect.svg?component'
 import ModelLogo from '@/components/ModelLogo.vue'
 import { OLLAMA_SEARCH_URL } from '@/utils/constants'
-import { formatSize } from '@/utils/formatter'
 import { useI18n } from '@/utils/i18n'
+import { LLMEndpointType } from '@/utils/llm/models'
 import { SUPPORTED_MODELS } from '@/utils/llm/web-llm'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { only } from '@/utils/runtime'
 import { showSettings } from '@/utils/settings'
 import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
+import ExhaustiveError from './ExhaustiveError.vue'
 import Selector from './Selector.vue'
 import Button from './ui/Button.vue'
 import Divider from './ui/Divider.vue'
@@ -155,9 +138,7 @@ import Text from './ui/Text.vue'
 
 const props = withDefaults(defineProps<{
   modelType?: 'chat' | 'translation'
-  showDetails?: boolean
   showDiscoverMore?: boolean
-  allowDelete?: boolean
   dropdownAlign?: 'left' | 'center' | 'right' | 'stretch' | undefined
   containerClass?: string
   dropdownClass?: string
@@ -169,67 +150,89 @@ const props = withDefaults(defineProps<{
 })
 
 const { t } = useI18n()
-const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
-const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
+const { modelList: composedModelList } = toRefs(useLLMBackendStatusStore())
+const { updateModelList, updateOllamaModelList, updateLMStudioModelList } = useLLMBackendStatusStore()
 
 only(['sidepanel'], () => {
-  const removeListener = registerSidepanelRpcEvent('updateModelList', async () => await updateOllamaModelList())
+  const removeListener = registerSidepanelRpcEvent('updateModelList', async () => await updateModelList())
   onBeforeUnmount(() => removeListener())
 })
-
-const isGhostBtn = computed(() => props.triggerStyle === 'ghost')
-
-const modelList = computed(() => {
-  if (endpointType.value === 'ollama') {
-    return ollamaModelList.value
-  }
-  else {
-    return SUPPORTED_MODELS.map((model) => ({
-      name: model.name,
-      model: model.modelId,
-    }))
-  }
-})
-
-const updateModelList = async () => {
-  if (endpointType.value === 'ollama') {
-    await updateOllamaModelList()
-  }
-}
 
 defineExpose({
   updateModelList,
 })
 
 const userConfig = await getUserConfig()
-const baseUrl = userConfig.llm.baseUrl.toRef()
+const ollamaBaseUrl = userConfig.llm.backends.ollama.baseUrl.toRef()
+const lmStudioBaseUrl = userConfig.llm.backends.lmStudio.baseUrl.toRef()
 const commonModel = userConfig.llm.model.toRef()
 const translationModel = userConfig.translation.model.toRef()
-const selectedModel = computed({
-  get() {
-    if (props.modelType === 'chat' || translationModel.value === undefined) return commonModel.value
-    else return translationModel.value
-  },
-  set(value) {
-    if (props.modelType === 'chat') commonModel.value = value
-    else translationModel.value = value
-  },
-})
 const endpointType = userConfig.llm.endpointType.toRef()
+const translationEndpointType = userConfig.translation.endpointType.toRef()
+const isGhostBtn = computed(() => props.triggerStyle === 'ghost')
+
+const modelList = computed(() => {
+  if (endpointType.value !== 'web-llm') {
+    return composedModelList.value
+  }
+  else {
+    return SUPPORTED_MODELS.map((model) => ({
+      name: model.name as string,
+      model: model.modelId as string,
+      backend: 'web-llm' as LLMEndpointType,
+    }))
+  }
+})
 
 const modelOptions = computed(() => {
-  return modelList.value.map((model) => ({
-    id: model.model,
-    label: model.name,
-    value: model.model,
-    model: { size: undefined, size_vram: undefined, ...model },
-  }))
-})
+  const ollamaModels = modelList.value.filter((model) => model.backend === 'ollama')
+  const lmStudioModels = modelList.value.filter((model) => model.backend === 'lm-studio')
+  const webllmModels = modelList.value.filter((model) => model.backend === 'web-llm')
 
-const onClickDelete = async (model: string) => {
-  await props.onDeleteModel?.(model)
-  await updateModelList()
-}
+  const makeModelOptions = (model: typeof modelList.value[number]) => ({ type: 'option' as const, id: `${model.backend}#${model.model}`, label: model.name, model: { backend: model.backend, id: model.model } })
+  const makeHeader = (label: string) => ({ type: 'header' as const, id: `header-${label}`, label, selectable: false })
+
+  if (webllmModels.length > 0) {
+    return webllmModels.map((model) => makeModelOptions(model))
+  }
+  else {
+    const options = []
+    if (ollamaModels.length) {
+      options.push(
+        makeHeader(t('settings.models.ollama_models', { count: ollamaModels.length })),
+        ...ollamaModels.map((model) => makeModelOptions(model)))
+    }
+    if (lmStudioModels.length) {
+      options.push(
+        makeHeader(t('settings.models.lmstudio_models', { count: lmStudioModels.length })),
+        ...lmStudioModels.map((model) => makeModelOptions(model)),
+      )
+    }
+    return options
+  }
+})
+const selectedModel = computed({
+  get() {
+    if (props.modelType === 'chat' || translationModel.value === undefined) {
+      return modelOptions.value.find((opt) => opt.type === 'option' && opt.model.backend === endpointType.value && opt.model.id === commonModel.value)?.id
+    }
+    else {
+      return modelOptions.value.find((opt) => opt.type === 'option' && opt.model.backend === translationEndpointType.value && opt.model.id === translationModel.value)?.id
+    }
+  },
+  set(value) {
+    const modelInfo = modelOptions.value.find((opt) => opt.id === value)
+    if (!modelInfo || modelInfo.type === 'header') return
+    if (props.modelType === 'chat') {
+      commonModel.value = modelInfo.model.id
+      endpointType.value = modelInfo.model.backend as LLMEndpointType
+    }
+    else {
+      translationModel.value = modelInfo.model.id
+      translationEndpointType.value = modelInfo.model.backend as LLMEndpointType
+    }
+  },
+})
 
 const onClick = () => {
   if (modelList.value.length === 0) {
@@ -245,13 +248,22 @@ watch(modelList, (modelList) => {
   }
   const newTranslationModel = modelList.find((m) => m.model === translationModel.value) ?? modelList[0] ?? undefined
   const newCommonModel = modelList.find((m) => m.model === commonModel.value) ?? modelList[0] ?? undefined
-  translationModel.value = newTranslationModel.model
-  commonModel.value = newCommonModel.model
+  if (newTranslationModel) {
+    translationModel.value = newTranslationModel.model
+    translationEndpointType.value = newTranslationModel.backend
+  }
+  if (newCommonModel) {
+    commonModel.value = newCommonModel.model
+    endpointType.value = newCommonModel.backend
+  }
 })
 
-watch([baseUrl, endpointType, selectedModel], async () => {
+watch([endpointType, selectedModel], async () => {
   updateModelList()
 })
+
+watch(ollamaBaseUrl, async () => updateOllamaModelList())
+watch(lmStudioBaseUrl, async () => updateLMStudioModelList())
 
 onMounted(async () => {
   updateModelList()

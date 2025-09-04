@@ -4,28 +4,28 @@ import logger from '@/utils/logger'
 
 const log = logger.child('web-request')
 // a constants for removing old rules
-const RULE_ID_REMOVE_ORIGIN = 1
+const RULE_ID_REMOVE_ORIGIN_FOR_OLLAMA_REQUEST = 1
 const RULE_ID_REMOVE_DISPOSITION = 2
 
 export function registerDeclarativeNetRequestRule() {
   // firefox has some bugs with declarativeNetRequest API, we use rules.json instead
   if (import.meta.env.FIREFOX) return
-  const URL_FILTER = /https?:\/\/[^/]*:11434\/.*/
+  const OLLAMA_URL_FILTER = /https?:\/\/[^/]*:11434\/.*/
   const { resolve, promise } = Promise.withResolvers<void>()
 
   const timeout = setTimeout(() => {
     log.warn('Origin-rewrite rule timeout')
     resolve()
-  }, 1000)
+  }, 2000)
 
   browser.runtime.onInstalled.addListener(async () => {
     // reset the rules when the extension is installed or updated
     log.debug('Registering origin-rewrite rule', browser.runtime.id)
     await browser.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: [RULE_ID_REMOVE_ORIGIN],
+      removeRuleIds: [RULE_ID_REMOVE_ORIGIN_FOR_OLLAMA_REQUEST],
       addRules: [
         {
-          id: RULE_ID_REMOVE_ORIGIN,
+          id: RULE_ID_REMOVE_ORIGIN_FOR_OLLAMA_REQUEST,
           priority: 1,
           action: {
             type: browser.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
@@ -37,7 +37,7 @@ export function registerDeclarativeNetRequestRule() {
             ],
           },
           condition: {
-            regexFilter: URL_FILTER.source,
+            regexFilter: OLLAMA_URL_FILTER.source,
             initiatorDomains: [browser.runtime.id],
             resourceTypes: [browser.declarativeNetRequest.ResourceType.XMLHTTPREQUEST],
           },

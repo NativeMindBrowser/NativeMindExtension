@@ -100,17 +100,15 @@
       "title": "あなたのために開発されたオンデバイスAI"
     },
     "guide": {
-      "already_installed": "すでにOllamaをインストールして実行していますか？",
+      "already_installed": "既に{endpointType}をインストールして実行していますか？",
       "features": {
         "1": "高度なモデル（gpt-oss、DeepSeek、Qwen、Llama）を実行する",
         "2": "完全な制御でモデルをカスタマイズし切り替えられます",
         "3": "あなたのデータはデバイス上でプライベートに保たれます"
       },
       "follow_our_tutorial": "インストールガイドを確認する",
-      "get_ollama": "Ollamaを入手する",
-      "install_desc": "Ollamaをインストールして、ローカルAI環境を構築しましょう。",
+      "install_desc": "AIをローカルで実行するにはどうしたいですか？",
       "need_help": "お困りですか？",
-      "ollama_desc": "Ollamaで完全なローカルAIのパワーを活用しましょう。",
       "setup": "セットアップ",
       "step1": "ステップ 1",
       "download_model_to_begin": "モデルをダウンロードして開始してください。",
@@ -120,7 +118,11 @@
       "no_sure_which_one": "🤔 どれを選べばよいかわからない？",
       "learn_about_models": "モデルについて学ぶ",
       "looking_for_more_options": "🔍 より多くのオプションをお探しですか？",
-      "browse_more_models": "他のモデルを見る"
+      "browse_more_models": "他のモデルを見る",
+      "get_endpoint": "{endpointType}を取得",
+      "lm_studio_select_desc": "使いやすいデスクトップアプリ",
+      "ollama_select_desc": "プロフェッショナル開発者ツール",
+      "unlock_full_power_with": "{endpointType}でローカルAIの全機能を解放しましょう。"
     },
     "webllm_tutorial": {
       "desc": "ブラウザで直接軽量モデル（Qwen 0.6b）を使用できます。セットアップ不要、待ち時間なし。",
@@ -132,7 +134,8 @@
       "title": "👋 **NativeMind** へようこそ",
       "body": "NativeMindは、プライバシー重視のAIブラウザ拡張機能で、オンデバイス言語モデルを活用したチャット、検索、翻訳機能を提供します。\n\nNativeMindでできることは次のとおりです：\n\n- 複数のタブでチャットし、異なるページを管理できます。\n- チャット内で直接ウェブ検索を行い、より多くのコンテキストを得られます。\n- 右クリックでページの任意の部分を即座に翻訳できます。\n- 設定からいつでもモデルの切り替えやダウンロードが可能です。\n\n下記のクイックアクションを試してみましょう。"
     },
-    "ollama_is_running": "Ollamaが実行中です"
+    "ollama_is_running": "Ollamaが実行中です",
+    "backend_is_running": "{endpointType}が実行中です"
   },
   "settings": {
     "cache": {
@@ -160,7 +163,9 @@
       "title": "モデル",
       "discover_more": "より多くのモデルを発見する",
       "no_model": "⚠️ モデルなし",
-      "add_model_to_start": "モデルを追加して開始"
+      "add_model_to_start": "モデルを追加して開始",
+      "ollama_models": "Ollama モデル ({count})",
+      "lmstudio_models": "LM Studio モデル ({count})"
     },
     "ollama": {
       "already_installed": "Ollamaをすでにインストールして実行していますか？",
@@ -182,18 +187,14 @@
       "unload": "アンロード",
       "expires_in": "{duration}で期限切れ",
       "running": "実行中",
-      "running_models": "実行中のモデル"
+      "running_models": "実行中のモデル",
+      "model_management": "モデル管理",
+      "downloaded_models": "ダウンロード済みモデル"
     },
     "prompts": {
       "chat_system_prompt": "チャットシステムプロンプト",
       "title": "プロンプト",
       "translation_system_prompt": "翻訳システムプロンプト"
-    },
-    "provider": {
-      "title": "接続"
-    },
-    "provider_model": {
-      "title": "Ollamaを設定する"
     },
     "quick_actions": {
       "description": "新規チャットや右クリックメニューから、お気に入りのプロンプトをより速く実行できるようクイックアクションを設定します。",
@@ -236,8 +237,11 @@
         "quant": "{level}クオント",
         "thinking": "思考",
         "no_active_models": "Ollamaに接続されていますが、アクティブなモデルがありません",
-        "not_connected_to_ollama": "Ollamaに接続されていません"
-      }
+        "not_connected_to_ollama": "Ollamaに接続されていません",
+        "lm_studio_no_active_models": "LM Studio に接続されましたが、アクティブなモデルがありません",
+        "not_connected_to_lm_studio": "Ollamaに接続されていません"
+      },
+      "delete_model_confirm": "モデル「{model}」を削除してもよろしいですか？"
     },
     "title": "設定",
     "model_downloader": {
@@ -248,7 +252,8 @@
       "download": "ダウンロード",
       "retry": "リトライ",
       "unable_to_download": "ダウンロードを開始できません",
-      "could_not_connect_ollama": "Ollamaに接続できませんでした。Ollamaが実行されていることを確認して、もう一度お試しください。"
+      "could_not_connect_ollama": "Ollamaに接続できませんでした。Ollamaが実行されていることを確認して、もう一度お試しください。",
+      "could_not_connect": "{endpointType}に接続できませんでした。{endpointType}が実行されていることを確認して、もう一度お試しください。"
     },
     "webllm_downloader": {
       "description": "ローカルモードを使用するには、{model}モデル（{size}）をダウンロードする必要があります。今すぐダウンロードしますか？"
@@ -317,7 +322,24 @@
     "header": {
       "starts_on_github": "GitHubでスター",
       "goto_website": "ウェブサイトに移動"
-    }
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "LM Studioを設定する",
+        "already_installed": "LM Studioはすでにインストールして実行していますか？",
+        "model_management_desc": "モデルのダウンロード、読み込み、削除はLM Studio デスクトップアプリで行う必要があります。これは現在の実行状態のみを表示します。"
+      },
+      "ollama": {
+        "title": "Ollamaを設定する"
+      }
+    },
+    "get_lm_studio": "LM Studioを入手",
+    "delete": "削除",
+    "lm_studio": {
+      "server_address": "サーバーアドレス",
+      "server_address_desc": "LM Studio サーバー API エンドポイント"
+    },
+    "webllm_desc_lm_studio": "WebLLMを使用中：クイック試用のためのqwen3:0.6b。フルモデルサポートとより良いパフォーマンスのために、LM Studioをインストールしてください。"
   },
   "context_menu": {
     "quick_actions": {
@@ -336,11 +358,11 @@
     }
   },
   "errors": {
-    "model_not_found": "おっと！何か問題が発生しました。設定でOllama接続を確認し、再度お試しください。",
+    "model_not_found": "おっと！何かが間違いました。設定で{endpointType}接続を確認して、もう一度お試しください。",
     "timeout_error": "操作がタイムアウトしました：{message}",
     "unknown_error": "予期しないエラーが発生しました：{message}",
-    "model_request_error": "おっと！何か問題が発生しました。設定でOllama接続を確認し、再度お試しください。",
-    "model_request_timeout": "リクエストがタイムアウトしました。Ollama接続を確認するか、長いコンテキストが応答時間に影響を与える可能性があるため、新しいセッションの開始をご検討ください。",
+    "model_request_error": "おっと！何かが間違いました。設定で{endpointType}接続を確認して、もう一度お試しください。",
+    "model_request_timeout": "リクエストタイムアウトです。{endpointType}接続を確認するか、長いコンテキストが応答時間に影響する可能性があるため、新しいセッションを開始することを検討してください。",
     "webllm_not_supported": "WebLLMはお使いのデバイスではサポートされていません。",
     "max_characters_error": "最大 {count} 文字まで入力可能です"
   },

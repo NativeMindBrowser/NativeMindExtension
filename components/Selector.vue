@@ -100,9 +100,9 @@
           <div
             v-for="(option, index) in options"
             :key="index"
-            class="p-2 cursor-pointer hover:bg-[#EAECEF] transition-colors flex items-center rounded-sm"
-            :class="{ 'bg-[#DFE1E5]': isSelected(option), 'opacity-50 pointer-events-none': option.disabled }"
-            @click="selectOption(option)"
+            class="p-2 transition-colors flex items-center rounded-sm"
+            :class="{ 'bg-[#DFE1E5]': isSelected(option), 'opacity-50 pointer-events-none': option.disabled, 'hover:bg-[#EAECEF] cursor-pointer': option.selectable !== false }"
+            @click="option.selectable !== false && selectOption(option)"
           >
             <slot
               name="option"
@@ -126,7 +126,7 @@
   </div>
 </template>
 
-<script setup lang="tsx" generic="Id extends string, OptionValue, Option extends { id: Id; value?: OptionValue; label: string | Component, textLabel?: string, disabled?: boolean }">
+<script setup lang="tsx" generic="Id extends string, OptionValue, Option extends { id: Id; value?: OptionValue; label: string | Component, textLabel?: string, disabled?: boolean, selectable?: boolean | undefined }">
 import { useElementBounding, useEventListener, useVModel } from '@vueuse/core'
 import { Component, computed, FunctionalComponent, Ref, ref, watch, watchEffect } from 'vue'
 

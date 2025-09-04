@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
+import { LMStudioModelInfo } from '@/types/lm-studio-models'
 import { OllamaModelInfo } from '@/types/ollama-models'
 import { logger } from '@/utils/logger'
 import { c2bRpc, s2bRpc, settings2bRpc } from '@/utils/rpc'
@@ -17,13 +18,14 @@ const rpc = forRuntimes({
   default: () => { throw new Error('Unsupported runtime') },
 })
 
-export const useOllamaStatusStore = defineStore('ollama-status', () => {
-  const modelList = ref<OllamaModelInfo[]>([])
-  const connectionStatus = ref<'connected' | 'error' | 'unconnected'>('unconnected')
-  const updateModelList = async (): Promise<OllamaModelInfo[]> => {
+export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => {
+  // Ollama model list and connection status
+  const ollamaModelList = ref<OllamaModelInfo[]>([])
+  const ollamaConnectionStatus = ref<'connected' | 'error' | 'unconnected'>('unconnected')
+  const updateOllamaModelList = async (): Promise<OllamaModelInfo[]> => {
     try {
-      const response = await rpc.getLocalModelList()
-      connectionStatus.value = 'connected'
+      const response = await rpc.getOllamaLocalModelList()
+      ollamaConnectionStatus.value = 'connected'
       log.debug('Model list fetched:', response)
 
       // Check thinking support for each model
@@ -34,31 +36,76 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
         })),
       )
 
-      modelList.value = modelsWithThinkingSupport
-      return modelList.value
+      ollamaModelList.value = modelsWithThinkingSupport
+      return ollamaModelList.value
     }
     catch (error) {
       log.error('Failed to fetch model list:', error)
-      connectionStatus.value = 'error'
+      ollamaConnectionStatus.value = 'error'
       return []
     }
   }
-  const clearModelList = () => {
-    modelList.value = []
+  const clearOllamaModelList = () => {
+    ollamaModelList.value = []
+  }
+  const deleteOllamaModel = async (model: string) => {
+    await rpc.deleteOllamaModel(model)
+    await updateOllamaModelList()
   }
 
-  const connectionStatusLoading = ref(false)
-  const updateConnectionStatus = async () => {
-    connectionStatusLoading.value = true
+  const ollamaConnectionStatusLoading = ref(false)
+  const updateOllamaConnectionStatus = async () => {
+    ollamaConnectionStatusLoading.value = true
     const success = await rpc.testOllamaConnection().catch(() => false)
-    connectionStatus.value = success ? 'connected' : 'error'
-    connectionStatusLoading.value = false
+    ollamaConnectionStatus.value = success ? 'connected' : 'error'
+    ollamaConnectionStatusLoading.value = false
     return success
   }
 
-  const unloadModel = async (model: string) => {
+  const unloadOllamaModel = async (model: string) => {
     await rpc.unloadOllamaModel(model)
-    await updateModelList()
+    await updateOllamaModelList()
+  }
+
+  // LMStudio model list and connection status
+  const lmStudioModelList = ref<LMStudioModelInfo[]>([])
+  const updateLMStudioModelList = async (): Promise<LMStudioModelInfo[]> => {
+    try {
+      const response = await rpc.getLMStudioModelList()
+      const runningModels = await rpc.getLMStudioRunningModelList().catch(() => ({ models: [] }))
+      log.debug('LMStudio Model list fetched:', response, runningModels)
+      lmStudioModelList.value = response.models.map((model) => {
+        const instances = runningModels.models.filter((m) => m.modelKey === model.modelKey)
+        return {
+          ...model,
+          instances,
+        }
+      })
+      return lmStudioModelList.value
+    }
+    catch (error) {
+      log.error('Failed to fetch LMStudio model list:', error)
+      return []
+    }
+  }
+
+  const unloadLMStudioModel = async (identifier: string) => {
+    await rpc.unloadLMStudioModel(identifier)
+    await updateLMStudioModelList()
+  }
+
+  const clearLMStudioModelList = () => {
+    lmStudioModelList.value = []
+  }
+
+  const lmStudioConnectionStatus = ref<'unconnected' | 'connected'>('unconnected')
+  const lmStudioConnectionStatusLoading = ref(false)
+  const updateLMStudioConnectionStatus = async () => {
+    lmStudioConnectionStatusLoading.value = true
+    const success = await rpc.testLMStudioConnection().catch(() => false)
+    lmStudioConnectionStatus.value = success ? 'connected' : 'unconnected'
+    lmStudioConnectionStatusLoading.value = false
+    return success
   }
 
   const checkCurrentModelSupportVision = async () => {
@@ -84,27 +131,86 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
     }
   }
 
-  const initDefaultModel = async () => {
+  const modelList = computed(() => {
+    return [
+      ...ollamaModelList.value.map((m) => ({
+        backend: 'ollama' as const,
+        model: m.model,
+        name: m.name,
+      })),
+      ...lmStudioModelList.value.map((m) => ({
+        backend: 'lm-studio' as const,
+        model: m.modelKey,
+        name: m.displayName ?? m.modelKey,
+      })),
+    ]
+  })
+
+  // this function has side effects: it may change the common model in user config
+  const checkCurrentBackendStatus = async () => {
     const userConfig = await getUserConfig()
     const endpointType = userConfig.llm.endpointType.get()
     const commonModelConfig = userConfig.llm.model
-    const modelList = await updateModelList()
-    if (endpointType === 'ollama' && !modelList.some((model) => model.model === commonModelConfig.get())) {
-      commonModelConfig.set(modelList[0]?.model)
+    let status: 'no-model' | 'ok' | 'backend-unavailable' = 'ok'
+    if (endpointType === 'ollama') {
+      const backendStatus = await updateOllamaConnectionStatus()
+      if (backendStatus) {
+        const ollamaModelList = await updateOllamaModelList()
+        if (!ollamaModelList.some((model) => model.model === commonModelConfig.get())) {
+          if (ollamaModelList.length) {
+            commonModelConfig.set(ollamaModelList[0]?.model)
+            status = 'ok'
+          }
+          else { status = 'no-model' }
+        }
+      }
+      else { status = 'backend-unavailable' }
     }
-    return { modelList, commonModel: commonModelConfig.get() }
+    else if (endpointType === 'lm-studio') {
+      const backendStatus = await updateLMStudioConnectionStatus()
+      if (backendStatus) {
+        const lmStudioModelList = await updateLMStudioModelList()
+        if (!lmStudioModelList.some((model) => model.modelKey === commonModelConfig.get())) {
+          if (lmStudioModelList.length) {
+            commonModelConfig.set(lmStudioModelList[0]?.modelKey)
+            status = 'ok'
+          }
+          else { status = 'no-model' }
+        }
+      }
+      else { status = 'backend-unavailable' }
+    }
+    return { modelList, commonModel: commonModelConfig.get(), status, endpointType }
+  }
+
+  const updateModelList = async () => {
+    await Promise.allSettled([updateOllamaModelList(), updateLMStudioModelList()])
+    return modelList.value
   }
 
   return {
-    connectionStatusLoading,
-    connectionStatus,
-    modelList,
-    initDefaultModel,
-    unloadModel,
-    updateModelList,
-    clearModelList,
-    updateConnectionStatus,
+    // Ollama
+    ollamaConnectionStatusLoading,
+    ollamaConnectionStatus,
+    ollamaModelList,
+    unloadOllamaModel,
+    updateOllamaModelList,
+    clearOllamaModelList,
+    updateOllamaConnectionStatus,
+    // LMStudio
+    lmStudioConnectionStatusLoading,
+    lmStudioConnectionStatus,
+    lmStudioModelList,
+    unloadLMStudioModel,
+    updateLMStudioModelList,
+    deleteOllamaModel,
+    clearLMStudioModelList,
+    updateLMStudioConnectionStatus,
+    // Common
     checkCurrentModelSupportVision,
     checkModelSupportThinking,
+    checkCurrentBackendStatus,
+    updateModelList,
+    modelList,
   }
 })

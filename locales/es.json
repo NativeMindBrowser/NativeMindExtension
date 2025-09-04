@@ -111,9 +111,9 @@
     }
   },
   "errors": {
-    "model_not_found": "¡Ups! Algo salió mal. Por favor, verifica tu conexión de Ollama en la configuración e inténtalo de nuevo.",
-    "model_request_error": "¡Ups! Algo salió mal. Por favor, verifica tu conexión de Ollama en la configuración e inténtalo de nuevo.",
-    "model_request_timeout": "Tiempo de espera agotado. Por favor verifica tu conexión de Ollama o considera iniciar una nueva sesión, ya que los contextos largos pueden afectar los tiempos de respuesta.",
+    "model_not_found": "¡Ups! Algo salió mal. Por favor verifica tu conexión de {endpointType} en la configuración e inténtalo de nuevo.",
+    "model_request_error": "¡Ups! Algo salió mal. Por favor verifica tu conexión de {endpointType} en la configuración e inténtalo de nuevo.",
+    "model_request_timeout": "Tiempo de espera agotado, por favor verifica tu conexión {endpointType} o considera iniciar una nueva sesión ya que los contextos largos pueden afectar los tiempos de respuesta.",
     "timeout_error": "La operación agotó el tiempo de espera: {message}",
     "unknown_error": "Se produjo un error inesperado: {message}",
     "webllm_not_supported": "WebLLM no es compatible con tu dispositivo.",
@@ -125,17 +125,15 @@
       "title": "IA en el dispositivo, creada solo para ti"
     },
     "guide": {
-      "already_installed": "¿Ya instalaste y ejecutaste Ollama?",
+      "already_installed": "¿Ya instalaste y ejecutaste {endpointType}?",
       "features": {
         "1": "Ejecuta modelos avanzados como gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Personaliza y cambia modelos con control total",
         "3": "Tus datos permanecen privados, en tu dispositivo"
       },
       "follow_our_tutorial": "Sigue nuestra guía de instalación",
-      "get_ollama": "Obtener Ollama",
-      "install_desc": "Instala Ollama para configurar tu IA local.",
+      "install_desc": "¿Cómo quieres ejecutar IA localmente?",
       "need_help": "¿Necesitas ayuda?",
-      "ollama_desc": "Desbloquea todo el poder de la IA local con Ollama.",
       "setup": "Configuración",
       "step1": "PASO 1",
       "download_model_to_begin": "Descarga un modelo para comenzar.",
@@ -145,7 +143,11 @@
       "no_sure_which_one": "🤔 ¿No estás seguro cuál elegir?",
       "learn_about_models": "Aprende sobre modelos",
       "looking_for_more_options": "🔍 ¿Buscas más opciones?",
-      "browse_more_models": "Explorar más modelos"
+      "browse_more_models": "Explorar más modelos",
+      "get_endpoint": "Obtener {endpointType}",
+      "lm_studio_select_desc": "Aplicación de Escritorio Fácil de Usar",
+      "ollama_select_desc": "Herramienta de Desarrollador Profesional",
+      "unlock_full_power_with": "Desbloquea todo el poder de la IA local con {endpointType}."
     },
     "webllm_tutorial": {
       "desc": "Usa un modelo ligero (Qwen 0.6b) directamente en tu navegador — sin configuración, sin espera.",
@@ -157,7 +159,8 @@
       "body": "NativeMind es una extensión de navegador con IA que prioriza la privacidad y te ayuda a chatear, buscar y traducir — todo impulsado por modelos de lenguaje en el dispositivo.\n\nEsto es lo que puedes hacer con NativeMind:\n\n- Chatear en múltiples pestañas para hacer seguimiento de diferentes páginas.\n- Buscar en la web directamente dentro del chat para más contexto.\n- Hacer clic derecho para traducir cualquier parte de la página al instante.\n- Cambiar o descargar modelos en cualquier momento en Configuración.\n\nPuedes empezar probando las acciones rápidas a continuación.",
       "title": "👋 Bienvenido a **NativeMind**"
     },
-    "ollama_is_running": "Ollama está ejecutándose"
+    "ollama_is_running": "Ollama está ejecutándose",
+    "backend_is_running": "{endpointType} está ejecutándose"
   },
   "settings": {
     "cache": {
@@ -193,15 +196,20 @@
         "quant": "{level} cuantitativo",
         "thinking": "Pensando",
         "no_active_models": "Ollama conectado, pero no hay modelos activos",
-        "not_connected_to_ollama": "No conectado a Ollama"
-      }
+        "not_connected_to_ollama": "No conectado a Ollama",
+        "lm_studio_no_active_models": "LM Studio conectado, pero no hay modelos activos",
+        "not_connected_to_lm_studio": "No conectado a Ollama"
+      },
+      "delete_model_confirm": "¿Estás seguro de que quieres eliminar el modelo \"{model}\"?"
     },
     "get_ollama": "Obtener Ollama",
     "models": {
       "title": "Modelos",
       "discover_more": "Descubre más modelos",
       "no_model": "⚠️ Sin modelo",
-      "add_model_to_start": "Añadir un modelo para empezar"
+      "add_model_to_start": "Añadir un modelo para empezar",
+      "ollama_models": "Modelos de Ollama ({count})",
+      "lmstudio_models": "Modelos de LM Studio ({count})"
     },
     "ollama": {
       "already_installed": "¿Ya instalaste y ejecutaste Ollama?",
@@ -223,18 +231,14 @@
       "unload": "Descargar",
       "expires_in": "Expira en {duration}",
       "running": "Ejecutándose",
-      "running_models": "Modelos en Ejecución"
+      "running_models": "Modelos en Ejecución",
+      "model_management": "Gestión de Modelos",
+      "downloaded_models": "Modelos Descargados"
     },
     "prompts": {
       "chat_system_prompt": "Sistema de Indicaciones de Chat",
       "title": "Instrucciones",
       "translation_system_prompt": "Prompt del sistema de traducción"
-    },
-    "provider": {
-      "title": "Conexión"
-    },
-    "provider_model": {
-      "title": "Configurar Ollama"
     },
     "quick_actions": {
       "description": "Configura Acciones Rápidas para ejecutar tus instrucciones favoritas más rápido -- desde Nuevo Chat o el menú contextual.",
@@ -273,7 +277,8 @@
       "download": "Descargar",
       "retry": "Reintentar",
       "unable_to_download": "No se puede iniciar la descarga",
-      "could_not_connect_ollama": "No pudimos conectar con Ollama. Por favor, asegúrate de que Ollama esté ejecutándose e inténtalo de nuevo."
+      "could_not_connect_ollama": "No pudimos conectar con Ollama. Por favor, asegúrate de que Ollama esté ejecutándose e inténtalo de nuevo.",
+      "could_not_connect": "No pudimos conectar con {endpointType}. Por favor, asegúrate de que {endpointType} esté ejecutándose e inténtalo de nuevo."
     },
     "webllm_downloader": {
       "description": "Para usar el modo Local, necesitas descargar el modelo {model} ({size}). ¿Te gustaría descargarlo ahora?"
@@ -342,7 +347,24 @@
     "header": {
       "starts_on_github": "Estrellas en GitHub",
       "goto_website": "Ir al Sitio Web"
-    }
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "Configurar LM Studio",
+        "already_installed": "¿Ya instalaste y ejecutaste LM Studio?",
+        "model_management_desc": "La descarga, carga y eliminación de modelos debe realizarse en la aplicación de escritorio de LM Studio. Esto solo muestra el estado de ejecución actual."
+      },
+      "ollama": {
+        "title": "Configurar Ollama"
+      }
+    },
+    "get_lm_studio": "Obtener LM Studio",
+    "delete": "Eliminar",
+    "lm_studio": {
+      "server_address": "Dirección del Servidor",
+      "server_address_desc": "Punto final de la API del servidor LM Studio"
+    },
+    "webllm_desc_lm_studio": "Ahora estás usando WebLLM: qwen3:0.6b para una prueba rápida. Para soporte completo del modelo y mejor rendimiento, por favor instala LM Studio."
   },
   "common": {
     "cancel": "Cancelar",

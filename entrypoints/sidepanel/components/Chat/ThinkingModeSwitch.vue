@@ -42,7 +42,7 @@ import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue'
 import IconThinking from '@/assets/icons/thinking-capability.svg?component'
 import { useI18n } from '@/utils/i18n'
 import { isToggleableThinkingModel } from '@/utils/llm/thinking-models'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { only } from '@/utils/runtime'
 import { getUserConfig } from '@/utils/user-config'
@@ -50,8 +50,8 @@ import { getUserConfig } from '@/utils/user-config'
 import { Chat } from '../../utils/chat'
 
 const { t } = useI18n()
-const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
-const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
+const { ollamaModelList } = toRefs(useLLMBackendStatusStore())
+const { updateOllamaModelList } = useLLMBackendStatusStore()
 
 // Register RPC event listener for model list updates (following ModelSelector pattern)
 only(['sidepanel'], () => {
@@ -104,7 +104,7 @@ const isModelSupportsThinking = computed(() => {
 // Check if model can toggle thinking on/off
 const isThinkingToggleable = computed(() => {
   if (!currentModel.value) return false
-  return isToggleableThinkingModel(currentModel.value)
+  return isToggleableThinkingModel(endpointType.value, currentModel.value)
 })
 
 const toggleThinking = () => {

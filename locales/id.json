@@ -100,17 +100,15 @@
       "title": "AI di perangkat, dibuat khusus untuk Anda"
     },
     "guide": {
-      "already_installed": "Sudah menginstal dan menjalankan Ollama?",
+      "already_installed": "Sudah terinstal dan menjalankan {endpointType}?",
       "features": {
         "1": "Jalankan model canggih seperti gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Sesuaikan dan beralih antar model dengan kontrol penuh",
         "3": "Data Anda tetap pribadi, tersimpan di perangkat Anda"
       },
       "follow_our_tutorial": "Ikuti panduan instalasi kami",
-      "get_ollama": "Dapatkan Ollama",
-      "install_desc": "Instal Ollama untuk mengatur AI lokal Anda.",
+      "install_desc": "Bagaimana Anda ingin menjalankan AI secara lokal?",
       "need_help": "Butuh bantuan?",
-      "ollama_desc": "Buka kekuatan penuh AI lokal dengan Ollama.",
       "setup": "Pengaturan",
       "step1": "LANGKAH 1",
       "download_model_to_begin": "Unduh model untuk memulai.",
@@ -120,7 +118,11 @@
       "no_sure_which_one": "🤔 Tidak yakin yang mana yang dipilih?",
       "learn_about_models": "Pelajari tentang model",
       "looking_for_more_options": "🔍 Mencari lebih banyak opsi?",
-      "browse_more_models": "Jelajahi lebih banyak model"
+      "browse_more_models": "Jelajahi lebih banyak model",
+      "get_endpoint": "Dapatkan {endpointType}",
+      "lm_studio_select_desc": "Aplikasi Desktop yang Mudah Digunakan",
+      "ollama_select_desc": "Alat Pengembang Profesional",
+      "unlock_full_power_with": "Buka kekuatan AI lokal penuh dengan {endpointType}."
     },
     "webllm_tutorial": {
       "desc": "Gunakan model ringan (Qwen 0.6b) langsung di browser Anda — tanpa pengaturan, tanpa menunggu.",
@@ -132,7 +134,8 @@
       "title": "👋 Selamat datang di **NativeMind**",
       "body": "NativeMind adalah ekstensi browser AI yang mengutamakan privasi dan membantu Anda mengobrol, mencari, dan menerjemahkan — semuanya didukung oleh model bahasa yang berjalan di perangkat Anda.\n\nInilah yang dapat Anda lakukan dengan NativeMind:\n\n- Mengobrol di beberapa tab untuk melacak berbagai halaman.\n- Mencari di web secara langsung dalam obrolan untuk mendapatkan konteks lebih banyak.\n- Klik kanan untuk menerjemahkan bagian mana pun dari halaman secara instan.\n- Beralih atau mengunduh model kapan saja di Pengaturan.\n\nAnda dapat mulai dengan mencoba tindakan cepat di bawah ini."
     },
-    "ollama_is_running": "Ollama sedang berjalan"
+    "ollama_is_running": "Ollama sedang berjalan",
+    "backend_is_running": "{endpointType} sedang berjalan"
   },
   "settings": {
     "cache": {
@@ -160,7 +163,9 @@
       "title": "Model",
       "discover_more": "Temukan lebih banyak model",
       "no_model": "⚠️ Tidak ada model",
-      "add_model_to_start": "Tambahkan model untuk memulai"
+      "add_model_to_start": "Tambahkan model untuk memulai",
+      "ollama_models": "Model Ollama ({count})",
+      "lmstudio_models": "Model LM Studio ({count})"
     },
     "ollama": {
       "already_installed": "Sudah menginstal dan menjalankan Ollama?",
@@ -182,18 +187,14 @@
       "unload": "Bongkar",
       "expires_in": "Berakhir dalam {duration}",
       "running": "Berjalan",
-      "running_models": "Model yang Berjalan"
+      "running_models": "Model yang Berjalan",
+      "model_management": "Manajemen Model",
+      "downloaded_models": "Model yang Diunduh"
     },
     "prompts": {
       "chat_system_prompt": "Prompt sistem obrolan",
       "title": "Prompt",
       "translation_system_prompt": "Prompt sistem terjemahan"
-    },
-    "provider": {
-      "title": "Koneksi"
-    },
-    "provider_model": {
-      "title": "Konfigurasi Ollama"
     },
     "quick_actions": {
       "description": "Siapkan tindakan cepat untuk menjalankan prompt favorit Anda lebih cepat -- dari Obrolan Baru atau menu klik kanan.",
@@ -236,8 +237,11 @@
         "quant": "{level} kuant",
         "thinking": "Berpikir",
         "no_active_models": "Ollama terhubung, tetapi tidak ada model yang aktif",
-        "not_connected_to_ollama": "Tidak terhubung ke Ollama"
-      }
+        "not_connected_to_ollama": "Tidak terhubung ke Ollama",
+        "lm_studio_no_active_models": "LM Studio terhubung, tetapi tidak ada model yang aktif",
+        "not_connected_to_lm_studio": "Tidak terhubung ke Ollama"
+      },
+      "delete_model_confirm": "Apakah Anda yakin ingin menghapus model \"{model}\"?"
     },
     "title": "Pengaturan",
     "model_downloader": {
@@ -248,7 +252,8 @@
       "download": "Unduh",
       "retry": "Coba lagi",
       "unable_to_download": "Tidak Dapat Memulai Unduhan",
-      "could_not_connect_ollama": "Kami tidak dapat terhubung ke Ollama. Pastikan Ollama sedang berjalan dan coba lagi."
+      "could_not_connect_ollama": "Kami tidak dapat terhubung ke Ollama. Pastikan Ollama sedang berjalan dan coba lagi.",
+      "could_not_connect": "Kami tidak dapat terhubung ke {endpointType}. Pastikan {endpointType} sedang berjalan dan coba lagi."
     },
     "webllm_downloader": {
       "description": "Untuk menggunakan mode Lokal, Anda perlu mengunduh model {model} ({size}). Apakah Anda ingin mengunduhnya sekarang?"
@@ -317,7 +322,24 @@
     "header": {
       "starts_on_github": "Bintang di GitHub",
       "goto_website": "Kunjungi Situs Web"
-    }
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "Konfigurasi LM Studio",
+        "already_installed": "Sudah menginstal dan menjalankan LM Studio?",
+        "model_management_desc": "Unduhan, pemuatan, dan penghapusan model harus dilakukan di aplikasi desktop LM Studio. Ini hanya menampilkan status yang sedang berjalan saat ini."
+      },
+      "ollama": {
+        "title": "Konfigurasi Ollama"
+      }
+    },
+    "get_lm_studio": "Dapatkan LM Studio",
+    "delete": "Hapus",
+    "lm_studio": {
+      "server_address": "Alamat Server",
+      "server_address_desc": "Endpoint API server LM Studio"
+    },
+    "webllm_desc_lm_studio": "Anda sekarang menggunakan WebLLM: qwen3:0.6b untuk percobaan cepat. Untuk dukungan model lengkap dan performa yang lebih baik, silakan instal LM Studio."
   },
   "context_menu": {
     "quick_actions": {
@@ -336,9 +358,9 @@
     }
   },
   "errors": {
-    "model_not_found": "Ups! Ada yang salah. Silakan periksa koneksi Ollama Anda di pengaturan dan coba lagi.",
-    "model_request_error": "Ups! Ada yang salah. Silakan periksa koneksi Ollama Anda di pengaturan dan coba lagi.",
-    "model_request_timeout": "Waktu permintaan habis. Silakan periksa koneksi Ollama Anda atau pertimbangkan untuk memulai sesi baru karena konteks yang panjang dapat memengaruhi waktu respons.",
+    "model_not_found": "Ups! Ada yang salah. Silakan periksa koneksi {endpointType} Anda di pengaturan dan coba lagi.",
+    "model_request_error": "Ups! Ada yang salah. Silakan periksa koneksi {endpointType} Anda di pengaturan dan coba lagi.",
+    "model_request_timeout": "Waktu permintaan habis, silakan periksa koneksi {endpointType} Anda atau pertimbangkan untuk memulai sesi baru karena konteks yang panjang dapat mempengaruhi waktu respons.",
     "timeout_error": "Operasi waktu habis: {message}",
     "unknown_error": "Terjadi kesalahan yang tidak terduga: {message}",
     "webllm_not_supported": "WebLLM tidak didukung pada perangkat Anda.",

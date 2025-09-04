@@ -1,3 +1,4 @@
+import { DownloadProgressUpdate } from '@lmstudio/sdk'
 import type { InitProgressReport } from '@mlc-ai/web-llm'
 import { TextStreamPart, ToolSet } from 'ai'
 import type { ProgressResponse } from 'ollama/browser'
@@ -89,6 +90,18 @@ export async function* pullOllamaModel(modelId: string, abortSignal?: AbortSigna
     port.disconnect()
   })
   const iter = readPortMessageIntoIterator<ProgressResponse>(port, { abortSignal })
+  yield* iter
+}
+
+export async function* pullLMStudioModel(modelName: string, abortSignal?: AbortSignal) {
+  const { portName } = await s2bRpc.pullLMStudioModel(modelName)
+  const aliveKeeper = new BackgroundAliveKeeper()
+  const port = browser.runtime.connect({ name: portName })
+  port.onDisconnect.addListener(() => aliveKeeper.dispose())
+  abortSignal?.addEventListener('abort', () => {
+    port.disconnect()
+  })
+  const iter = readPortMessageIntoIterator<DownloadProgressUpdate>(port, { abortSignal })
   yield* iter
 }
 

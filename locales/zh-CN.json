@@ -37,7 +37,9 @@
       "unload": "卸载",
       "expires_in": "在 {duration} 后过期",
       "running": "运行中",
-      "running_models": "运行中的模型"
+      "running_models": "运行中的模型",
+      "model_management": "模型管理",
+      "downloaded_models": "已下载的模型"
     },
     "choose_model": "选择模型",
     "download": "下载",
@@ -50,7 +52,9 @@
       "title": "模型",
       "discover_more": "发现更多模型",
       "no_model": "⚠️ 无模型",
-      "add_model_to_start": "添加模型以开始"
+      "add_model_to_start": "添加模型以开始",
+      "ollama_models": "Ollama 模型 ({count})",
+      "lmstudio_models": "LM Studio 模型 ({count})"
     },
     "quick_actions": {
       "title": "自定义快捷操作",
@@ -69,12 +73,6 @@
       "join_waitlist": "💼 想在工作中使用？{join_waitlist_link}获取企业版更新。",
       "join_waitlist_link": "加入等待名单",
       "discord": "Discord"
-    },
-    "provider": {
-      "title": "连接"
-    },
-    "provider_model": {
-      "title": "配置 Ollama"
     },
     "cache": {
       "title": "翻译缓存",
@@ -101,8 +99,11 @@
         "quant": "{level} 量化",
         "thinking": "推理",
         "no_active_models": "Ollama 已连接，但没有活跃的模型",
-        "not_connected_to_ollama": "未连接到 Ollama"
-      }
+        "not_connected_to_ollama": "未连接到 Ollama",
+        "lm_studio_no_active_models": "LM Studio 已连接，但没有活跃的模型",
+        "not_connected_to_lm_studio": "未连接到 Ollama"
+      },
+      "delete_model_confirm": "您确定要删除模型\"{model}\"吗？"
     },
     "title": "设置",
     "model_downloader": {
@@ -113,7 +114,8 @@
       "download": "下载",
       "retry": "重试",
       "unable_to_download": "无法开始下载",
-      "could_not_connect_ollama": "我们无法连接到 Ollama。请确保 Ollama 正在运行，然后重试。"
+      "could_not_connect_ollama": "我们无法连接到 {endpointType}。请确保 {endpointType} 正在运行，然后重试。",
+      "could_not_connect": "我们无法连接到 {endpointType}。请确保 {endpointType} 正在运行，然后重试。"
     },
     "webllm_downloader": {
       "description": "要使用本地模式，您需要下载 {model} 模型（{size}）。您现在想要下载吗？"
@@ -182,7 +184,24 @@
     "header": {
       "starts_on_github": "Stars on GitHub",
       "goto_website": "前往网站"
-    }
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "配置 LM Studio",
+        "already_installed": "已经安装并运行了 LM Studio？",
+        "model_management_desc": "模型下载、加载和删除必须在 LM Studio 桌面应用程序中完成。这里只显示当前运行状态。"
+      },
+      "ollama": {
+        "title": "配置 Ollama"
+      }
+    },
+    "get_lm_studio": "获取 LM Studio",
+    "delete": "删除",
+    "lm_studio": {
+      "server_address": "服务器地址",
+      "server_address_desc": "LM Studio 服务器 API 端点"
+    },
+    "webllm_desc_lm_studio": "您现在正在使用 WebLLM: qwen3:0.6b 进行快速试用。如需完整模型支持和更好的性能，请安装 LM Studio。"
   },
   "chat": {
     "messages": {
@@ -285,17 +304,15 @@
       "title": "为您打造的本地AI助手"
     },
     "guide": {
-      "already_installed": "已安装并运行Ollama？",
+      "already_installed": "已安装并运行 {endpointType}？",
       "features": {
         "1": "运行高级模型，如 gpt-oss、DeepSeek、Qwen、Llama",
         "2": "完全掌控模型的自定义和切换",
         "3": "您的数据始终保持在本地设备上"
       },
       "follow_our_tutorial": "查看我们的安装指南",
-      "get_ollama": "获取Ollama",
-      "install_desc": "安装Ollama以设置您的本地AI助手。",
+      "install_desc": "您想如何在本地运行AI？",
       "need_help": "需要帮助？",
-      "ollama_desc": "借助Ollama释放AI的全部潜力。",
       "setup": "开始设置",
       "step1": "步骤1",
       "download_model_to_begin": "下载模型以开始。",
@@ -305,7 +322,11 @@
       "no_sure_which_one": "🤔 不确定选择哪一个？",
       "learn_about_models": "了解模型",
       "looking_for_more_options": "🔍 寻找更多选项？",
-      "browse_more_models": "浏览更多模型"
+      "browse_more_models": "浏览更多模型",
+      "get_endpoint": "获取 {endpointType}",
+      "lm_studio_select_desc": "易于使用的桌面应用程序",
+      "ollama_select_desc": "专业开发者工具",
+      "unlock_full_power_with": "使用 {endpointType} 释放本地 AI 的全部潜力。"
     },
     "webllm_tutorial": {
       "desc": "在浏览器中使用轻量级模型（Qwen 0.6B）- 无需设置，即刻体验。",
@@ -317,7 +338,8 @@
       "body": "NativeMind是一款注重隐私的AI浏览器扩展，可帮助您聊天、搜索和翻译 — 所有功能均由本地设备上的语言模型提供支持。\n\n通过NativeMind，您可以：\n- 在多个标签页之间聊天，轻松跟踪不同页面内容。\n- 直接在聊天中搜索网页获取更多信息。\n- 右键点击即可立即翻译页面任何部分。\n- 在设置中随时切换或下载新模型。\n\n您可以从下方的快捷操作开始体验。",
       "title": "👋欢迎使用 **NativeMind**"
     },
-    "ollama_is_running": "Ollama 正在运行"
+    "ollama_is_running": "Ollama 正在运行",
+    "backend_is_running": "{endpointType} 正在运行"
   },
   "context_menu": {
     "quick_actions": {
@@ -336,11 +358,11 @@
     }
   },
   "errors": {
-    "model_not_found": "哎呀！\n出了点问题。\n请在设置中检查您的Ollama连接，然后重试。",
-    "model_request_error": "哎呀！\n出了点问题。\n请在设置中检查您的Ollama连接，然后重试。",
+    "model_not_found": "哎呀！出了点问题。请在设置中检查您的 {endpointType} 连接并重试。",
+    "model_request_error": "哎呀！出了点问题。请在设置中检查您的 {endpointType} 连接并重试。",
     "timeout_error": "操作超时：{message}",
     "unknown_error": "发生意外错误：{message}",
-    "model_request_timeout": "请求超时，请检查您的Ollama连接或考虑启动新会话，因为长上下文可能会影响响应时间。",
+    "model_request_timeout": "请求超时，请检查您的{endpointType}连接或考虑开始新会话，因为长上下文可能会影响响应时间。",
     "webllm_not_supported": "WebLLM 在您的设备上不受支持。",
     "max_characters_error": "最多允许 {count} 个字符"
   },

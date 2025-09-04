@@ -75,13 +75,22 @@ export async function _getUserConfig() {
     llm: {
       defaultFirstTokenTimeout: await new Config('llm.firstTokenTimeout').default(60 * 1000).build(), // 60 seconds
       endpointType: await new Config('llm.endpointType').default('ollama' as LLMEndpointType).build(),
-      baseUrl: await new Config('llm.baseUrl').default('http://localhost:11434/api').build(),
       model: await new Config<string, undefined>('llm.model').build(),
       apiKey: await new Config('llm.apiKey').default('ollama').build(),
-      numCtx: await new Config('llm.numCtx').default(1024 * 8).build(),
-      enableNumCtx: await new Config('llm.enableNumCtx').default(enableNumCtx).build(),
       reasoning: await new Config('llm.reasoning').default(true).build(),
       titleGenerationSystemPrompt: await new Config('llm.titleGenerationSystemPrompt').default(DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT).build(),
+      backends: {
+        ollama: {
+          numCtx: await new Config('llm.backends.ollama.numCtx').default(1024 * 8).build(),
+          enableNumCtx: await new Config('llm.backends.ollama.enableNumCtx').default(enableNumCtx).build(),
+          baseUrl: await new Config('llm.backends.ollama.baseUrl').default('http://localhost:11434/api').migrateFrom('llm.baseUrl', (v) => v).build(),
+        },
+        lmStudio: {
+          numCtx: await new Config('llm.backends.lmStudio.numCtx').default(1024 * 8).build(),
+          enableNumCtx: await new Config('llm.backends.lmStudio.enableNumCtx').default(enableNumCtx).build(),
+          baseUrl: await new Config('llm.backends.lmStudio.baseUrl').default('http://localhost:1234/api').build(),
+        },
+      },
     },
     browserAI: {
       polyfill: {
@@ -123,6 +132,7 @@ export async function _getUserConfig() {
       thinkingVisibility: await new Config('chat.thinkingVisibility').default('preview' as 'hide' | 'preview' | 'full').build(),
     },
     translation: {
+      endpointType: await new Config('translation.endpointType').default('ollama' as LLMEndpointType).build(),
       model: await new Config<string, undefined>('translation.model').build(),
       targetLocale: await new Config('translation.targetLocale').default('zh' as LanguageCode).build(),
       systemPrompt: await new Config('translation.systemPrompt').default(DEFAULT_TRANSLATOR_SYSTEM_PROMPT).build(),
@@ -158,6 +168,16 @@ export async function _getUserConfig() {
       sparkle: {
         enable: await new Config('writingTools.sparkle.enable').default(true).build(),
         systemPrompt: await new Config('writingTools.sparkle.systemPrompt').default(DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT).build(),
+      },
+    },
+    settings: {
+      blocks: {
+        ollamaConfig: {
+          open: await new Config('settings.blocks.ollamaConfig.open').default(true).build(),
+        },
+        lmStudioConfig: {
+          open: await new Config('settings.blocks.lmStudioConfig.open').default(true).build(),
+        },
       },
     },
   }

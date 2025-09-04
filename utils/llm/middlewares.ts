@@ -98,7 +98,7 @@ function normalizeToolCall<T extends LanguageModelV1FunctionToolCall>(toolCall: 
   // sometimes gpt-oss return tool named xxx.toolName, we should normalize it to toolName
     return toolName.split('.').pop()!
   }
-  if (toolCall.toolName === 'tool_calls' && toolCall.args) {
+  if ((toolCall.toolName === 'tool_calls' || toolCall.toolName === 'tool_result' || toolCall.toolName === 'tool_results') && toolCall.args) {
     // 1. {name: 'tool_calls', arguments: { name: <toolName>, arguments: { a: 1 } }}
     const newToolCall = safeParseJSON({ text: toolCall.args, schema: z.object({ name: z.string(), arguments: z.any() }) })
     if (newToolCall.success) {
@@ -195,8 +195,9 @@ export const rawLoggingMiddleware: LanguageModelV1Middleware = {
 
     log.debug('Stream started', { params })
     let text = ''
+    let reasoning = ''
     const printLog = debounce(() => {
-      log.debug('Stream progress', { text })
+      log.debug('Stream progress', { text, reasoning })
     }, 2000)
 
     const transformStream = new TransformStream<
@@ -206,6 +207,9 @@ export const rawLoggingMiddleware: LanguageModelV1Middleware = {
       transform(chunk, controller) {
         if (chunk.type === 'text-delta') {
           text += chunk.textDelta
+        }
+        else if (chunk.type === 'reasoning') {
+          reasoning += chunk.textDelta
         }
         printLog()
         controller.enqueue(chunk)
@@ -219,9 +223,223 @@ export const rawLoggingMiddleware: LanguageModelV1Middleware = {
   },
 }
 
+const errorResponse = /<\|channel\|>(?!\s*commentary\s+to=[a-z_.]+\s*>)[^<]+>(<\/assistant)?/gs
+const extractHarmonyResponse = /<\|channel\|>commentary\s*?<\|constrain\|>\s*(?!json\b)(.*?)<\|message\|>/s
+const extractHarmonyFunctionCall = /<\|channel\|>commentary(.+)?to=([a-z_.]+).+?\{/s
+const extractHarmonyJSONObject = /<\|channel\|>(.+)?<\|constrain\|>json<\|message\|>\{/s
+
+function sliceBalancedJson(str: string, startIdx: number) {
+  let i = startIdx
+  let depth = 0
+  let inString = false
+  let escape = false
+
+  for (; i < str.length; i++) {
+    const ch = str[i]
+
+    if (inString) {
+      if (escape) {
+        escape = false
+      }
+      else if (ch === '\\') {
+        escape = true
+      }
+      else if (ch === '"') {
+        inString = false
+      }
+      continue
+    }
+
+    // 不在字符串里
+    if (ch === '"') {
+      inString = true
+    }
+    else if (ch === '{') {
+      depth++
+    }
+    else if (ch === '}') {
+      depth--
+      if (depth === 0) {
+        return str.slice(startIdx, i + 1)
+      }
+    }
+  }
+  return null
+}
+
+export const lmStudioHarmonyEncodingMiddleware: LanguageModelV1Middleware = {
+  wrapGenerate: async ({ doGenerate }) => {
+    const log = logger.child('lmStudioHarmonyParserMiddleware')
+
+    const result = await doGenerate()
+
+    const originalText = result.text ?? ''
+    result.text = originalText?.replace(extractHarmonyResponse, '').replace(errorResponse, '')
+
+    const matchedFunctionCall = result.text?.match(extractHarmonyFunctionCall)
+
+    if (matchedFunctionCall) {
+      const matchStartIdx = matchedFunctionCall.index!
+      const jsonStartIdx = matchStartIdx + matchedFunctionCall[0].lastIndexOf('{')
+      const balancedJson = sliceBalancedJson(originalText, jsonStartIdx)
+      const jsonEndIdx = balancedJson ? (jsonStartIdx + balancedJson.length) : jsonStartIdx
+      if (balancedJson) {
+        result.text = originalText.slice(0, matchStartIdx) + originalText.slice(jsonEndIdx)
+        const [_, _1, functionName, parameters] = matchedFunctionCall
+        result.toolCalls = result.toolCalls ?? []
+        result.toolCalls.push({
+          toolCallId: generateRandomId(),
+          toolCallType: 'function',
+          toolName: functionName.trim(),
+          args: balancedJson.trim(),
+        })
+        log.debug('Harmony function call extracted', { functionName, parameters })
+      }
+    }
+    else {
+      const matchedJSONObject = result.text?.match(extractHarmonyJSONObject)
+      if (matchedJSONObject) {
+        const matchStartIdx = matchedJSONObject.index!
+        const jsonStartIdx = matchStartIdx + matchedJSONObject[0].lastIndexOf('{')
+        const balancedJson = sliceBalancedJson(originalText, jsonStartIdx)
+        const jsonEndIdx = balancedJson ? (jsonStartIdx + balancedJson.length) : jsonStartIdx
+        const [_raw, _channelName] = matchedJSONObject
+        result.text = originalText.slice(0, matchStartIdx) + originalText.slice(jsonEndIdx)
+        log.debug('Harmony json object extracted', { originalText, text: result.text })
+      }
+    }
+
+    return result
+  },
+  wrapStream: async ({ doStream, params }) => {
+    const log = logger.child('lmStudioHarmonyParserMiddleware')
+
+    const { stream, ...rest } = await doStream()
+
+    log.debug('Stream started', { params })
+
+    let channelStarted = false
+    let channelContent = ''
+    const TOKEN_CHANNEL = '<|channel|>'
+
+    const transformStream = new TransformStream<
+      LanguageModelV1StreamPart,
+      LanguageModelV1StreamPart
+    >({
+      transform(chunk, controller) {
+        if (chunk.type === 'text-delta') {
+          if (!channelStarted && chunk.textDelta.trim().startsWith(TOKEN_CHANNEL)) {
+            channelStarted = true
+          }
+          if (channelStarted) {
+            channelContent += chunk.textDelta
+            const matchedResponse = channelContent.match(extractHarmonyResponse)
+            if (matchedResponse) {
+              const restContent = channelContent.replace(extractHarmonyResponse, '')
+              log.debug('extract response or error from harmony response', { channelContent, restContent })
+              if (restContent.trim().startsWith(TOKEN_CHANNEL)) {
+                channelContent = restContent
+                channelStarted = true
+              }
+              else {
+                controller.enqueue({
+                  type: 'text-delta',
+                  textDelta: restContent,
+                })
+                channelStarted = false
+                channelContent = ''
+              }
+            }
+            if (channelStarted) {
+              const matchedFunctionCall = channelContent.match(extractHarmonyFunctionCall)
+              if (matchedFunctionCall) {
+                const matchStartIdx = matchedFunctionCall.index!
+                const jsonStartIdx = matchStartIdx + matchedFunctionCall[0].lastIndexOf('{')
+                const balancedJson = sliceBalancedJson(channelContent, jsonStartIdx)
+                const jsonEndIdx = balancedJson ? (jsonStartIdx + balancedJson.length) : jsonStartIdx
+                if (balancedJson) {
+                  const [_, _1, functionName] = matchedFunctionCall
+                  controller.enqueue({
+                    type: 'tool-call',
+                    toolCallId: generateRandomId(),
+                    toolCallType: 'function',
+                    toolName: functionName.trim(),
+                    args: balancedJson.trim(),
+                  })
+                  const restContent = channelContent.slice(0, matchStartIdx) + channelContent.slice(jsonEndIdx)
+                  if (restContent) {
+                    controller.enqueue({
+                      type: 'text-delta',
+                      textDelta: restContent,
+                    })
+                  }
+                  log.debug('extract function call from harmony response', { channelContent, functionName, parameters: balancedJson, restContent })
+                  channelStarted = false
+                  channelContent = ''
+                }
+              }
+              else {
+                const matchedJSONObject = channelContent.match(extractHarmonyJSONObject)
+                if (matchedJSONObject) {
+                  const matchStartIdx = matchedJSONObject.index!
+                  const jsonStartIdx = matchStartIdx + matchedJSONObject[0].lastIndexOf('{')
+                  const balancedJson = sliceBalancedJson(channelContent, jsonStartIdx)
+                  const jsonEndIdx = balancedJson ? (jsonStartIdx + balancedJson.length) : jsonStartIdx
+                  const [_raw, _channelName] = matchedJSONObject
+                  if (balancedJson) {
+                    controller.enqueue({
+                      type: 'text-delta',
+                      textDelta: balancedJson,
+                    })
+                    const restContent = channelContent.slice(0, matchStartIdx) + channelContent.slice(jsonEndIdx)
+                    if (restContent) {
+                      controller.enqueue({
+                        type: 'text-delta',
+                        textDelta: restContent,
+                      })
+                    }
+                    log.debug('extract json object from harmony response', { channelContent, balancedJson, restContent })
+                  }
+                }
+                else {
+                  const matchedError = channelContent.match(errorResponse)
+                  if (matchedError) {
+                    const restContent = channelContent.replace(errorResponse, '')
+                    if (restContent) {
+                      controller.enqueue({
+                        type: 'text-delta',
+                        textDelta: restContent,
+                      })
+                    }
+                    log.debug('extract error from harmony response', { channelContent, restContent })
+                    channelStarted = false
+                    channelContent = ''
+                  }
+                }
+              }
+            }
+          }
+          else {
+            controller.enqueue(chunk)
+          }
+        }
+        else {
+          controller.enqueue(chunk)
+        }
+      },
+    })
+
+    return {
+      stream: stream.pipeThrough(transformStream),
+      ...rest,
+    }
+  },
+}
+
 export const middlewares = [
+  // rawLoggingMiddleware,
   normalizeToolCallsMiddleware,
   extractPromptBasedToolCallsMiddleware,
+  lmStudioHarmonyEncodingMiddleware,
   reasoningMiddleware,
-  // rawLoggingMiddleware,
 ]

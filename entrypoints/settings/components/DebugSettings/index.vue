@@ -76,37 +76,6 @@
                 dropdownAlign="left"
               />
             </div>
-            <div class="flex flex-col gap-3 justify-start items-start">
-              Enable Context Window Size (Num ctx)
-              <Switch
-                v-model="enableNumCtx"
-                slotClass="rounded-lg border-gray-200 border bg-white"
-                itemClass="h-6 flex items-center justify-center text-xs px-2"
-                thumbClass="bg-blue-500 rounded-md"
-                activeItemClass="text-white"
-                :items="[
-                  {
-                    label: 'Enable',
-                    key: true,
-                  },
-                  {
-                    label: 'Disable',
-                    key: false,
-                    activeThumbClass: 'bg-gray-200',
-                  }
-                ]"
-              />
-            </div>
-            <div class="flex gap-3 justify-start items-center">
-              <div>Num ctx</div>
-              <Input
-                v-model.number="numCtx"
-                type="number"
-                min="0"
-                class="border-b border-gray-200 py-1 disabled:opacity-50"
-                :disabled="!enableNumCtx"
-              />
-            </div>
             <div class="flex gap-3 justify-start items-center">
               <div>Default first token timeout (ms)</div>
               <Input
@@ -624,8 +593,6 @@ defineProps<{
 }>()
 
 const userConfig = await getUserConfig()
-const numCtx = userConfig.llm.numCtx.toRef()
-const enableNumCtx = userConfig.llm.enableNumCtx.toRef()
 const translationSystemPrompt = userConfig.translation.systemPrompt.toRef()
 const chatSystemPrompt = userConfig.chat.systemPrompt.toRef()
 const enableReasoning = userConfig.llm.reasoning.toRef()
@@ -663,6 +630,7 @@ const simulateClickOnLink = userConfig.browserUse.simulateClickOnLink.toRef()
 const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string, parser: string }[]>()
 const modelProviderOptions = [
   { id: 'ollama' as const, label: 'Ollama' },
+  { id: 'lm-studio' as const, label: 'LM Studio' },
   { id: 'web-llm' as const, label: 'Web LLM' },
 ]
 

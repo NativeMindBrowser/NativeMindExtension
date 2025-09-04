@@ -4,19 +4,27 @@ import { analyzer } from 'vite-bundle-analyzer'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import svgLoader from 'vite-svg-loader'
 import { defineConfig } from 'wxt'
+import { Browser } from 'wxt/browser'
 
 import { version } from './package.json'
 import { EXTENSION_SHORT_NAME } from './utils/constants'
 
+type ManifestPermissions = Browser.runtime.ManifestPermissions | (string & Record<never, never>)
+
 export const VERSION = version.split('-')[0]
 
 const IS_FIREFOX = process.argv.includes('firefox')
+const IS_DEV = import.meta.env.NODE_ENV === 'development'
 const FIREFOX_EXTENSION_ID = '{48e0818d-6c94-43d4-9465-61ceb28080e3}'
 const ENABLE_BUNDLE_ANALYZER = process.argv.includes('--analyze') || process.env.ANALYZE === 'true'
 
-const permissionsForChrome = ['system.memory']
-const permissionsForFirefox = ['menus']
-const extraPermissions = IS_FIREFOX ? permissionsForFirefox : permissionsForChrome
+const permissionsForChrome: ManifestPermissions[] = ['system.memory']
+const permissionsForFirefox: ManifestPermissions[] = ['menus']
+const permissionsForDev: ManifestPermissions[] = ['declarativeNetRequestFeedback']
+const extraPermissions: ManifestPermissions[] = [
+  ...(IS_FIREFOX ? permissionsForFirefox : permissionsForChrome),
+  ...(IS_DEV ? permissionsForDev : []),
+]
 
 const svgLoaderPlugin = svgLoader({
   svgoConfig: {
@@ -101,6 +109,6 @@ export default defineConfig({
         world: 'MAIN',
       },
     ],
-    host_permissions: ['*://*/*'],
+    host_permissions: ['*://*/*', 'ws://*/*', 'wss://*/*'],
   },
 })

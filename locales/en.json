@@ -37,7 +37,9 @@
       "running_models": "Running Models",
       "unload": "Unload",
       "running": "Running",
-      "expires_in": "Expires in {duration}"
+      "expires_in": "Expires in {duration}",
+      "model_management": "Model Management",
+      "downloaded_models": "Downloaded Models"
     },
     "choose_model": "Choose Model",
     "download": "Download",
@@ -50,7 +52,9 @@
       "title": "Models",
       "discover_more": " Discover more models",
       "no_model": "⚠️ No model",
-      "add_model_to_start": "Add a model to start"
+      "add_model_to_start": "Add a model to start",
+      "ollama_models": "Ollama Models ({count})",
+      "lmstudio_models": "LM Studio Models ({count})"
     },
     "quick_actions": {
       "title": "Customize Quick Actions",
@@ -70,11 +74,15 @@
       "join_waitlist": "💼 Want to use it at work? {join_waitlist_link} for enterprise updates.",
       "join_waitlist_link": "Join the waitlist"
     },
-    "provider": {
-      "title": "Connection"
-    },
-    "provider_model": {
-      "title": "Configure Ollama"
+    "providers": {
+      "ollama": {
+        "title": "Configure Ollama"
+      },
+      "lm_studio": {
+        "title": "Configure LM Studio",
+        "model_management_desc": "Model download, loading, and deletion must be done in the LM Studio desktop app. This only shows current running status.",
+        "already_installed": "Already installed and run LM Studio?"
+      }
     },
     "cache": {
       "title": "Translation Cache",
@@ -101,8 +109,11 @@
         "quant": "{level} quant",
         "thinking": "Thinking",
         "not_connected_to_ollama": "Not connected to Ollama",
-        "no_active_models": "Ollama connected, but no active models"
-      }
+        "no_active_models": "Ollama connected, but no active models",
+        "lm_studio_no_active_models": "LM Studio connected, but no active models",
+        "not_connected_to_lm_studio": "Not connected to Ollama"
+      },
+      "delete_model_confirm": "Are you sure you want to delete the model \"{model}\"?"
     },
     "title": "Settings",
     "model_downloader": {
@@ -113,7 +124,8 @@
       "download_model": "Download “{model}“\t",
       "unable_to_download": "Unable to Start Download",
       "retry": "Retry",
-      "could_not_connect_ollama": "We couldn’t connect to Ollama. Please make sure Ollama is running and try again."
+      "could_not_connect_ollama": "We couldn’t connect to {endpointType}. Please make sure {endpointType} is running and try again.",
+      "could_not_connect": "We couldn’t connect to {endpointType}. Please make sure {endpointType} is running and try again."
     },
     "webllm_downloader": {
       "description": "To use Local mode, you need to download the {model} model ({size}). Would you like to download it now?"
@@ -182,7 +194,14 @@
     "header": {
       "starts_on_github": "Stars on GitHub",
       "goto_website": "Go to the Website"
-    }
+    },
+    "get_lm_studio": "Get LM Studio",
+    "lm_studio": {
+      "server_address": "Server Address",
+      "server_address_desc": "LM Studio server API endpoint"
+    },
+    "delete": "Delete",
+    "webllm_desc_lm_studio": "You are now using WebLLM: qwen3:0.6b for quick tryout. For full model support and better performance, please install LM Studio."
   },
   "chat": {
     "messages": {
@@ -286,15 +305,14 @@
     },
     "guide": {
       "step1": "STEP 1",
-      "install_desc": "Install Ollama to set up your local AI.",
-      "ollama_desc": "Unlock full local AI power with Ollama.",
+      "install_desc": "How do you want to run AI locally?",
       "features": {
         "1": "Run advanced models like gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Customize and switch models with full control",
         "3": "Your data stays private, on your device"
       },
-      "get_ollama": "Get Ollama",
-      "already_installed": "Already installed and run Ollama?",
+      "get_endpoint": "Get {endpointType}",
+      "already_installed": "Already installed and run {endpointType}?",
       "setup": "Setup",
       "need_help": "Need help?",
       "follow_our_tutorial": "Follow our installation guide",
@@ -305,7 +323,10 @@
       "no_sure_which_one": "🤔 Not sure which one to choose?",
       "learn_about_models": "Learn about models",
       "looking_for_more_options": "🔍 Looking for more options?",
-      "browse_more_models": "Browse more models"
+      "browse_more_models": "Browse more models",
+      "ollama_select_desc": "Professional Developer Tool",
+      "lm_studio_select_desc": "Easy-to-use Desktop App",
+      "unlock_full_power_with": "Unlock full local AI power with {endpointType}."
     },
     "webllm_tutorial": {
       "title": "Not ready to install? Try it instantly.",
@@ -317,7 +338,8 @@
       "title": "👋 Welcome to **NativeMind**",
       "body": "NativeMind is a privacy-first AI browser extension that helps you chat, search, and translate — all powered by on-device language models.\n\nHere’s what you can do with NativeMind:\n\n\n- Chat across multiple tabs to keep track of different pages.\n- Search the web directly within the chat for more context.\n- Right-click to translate any part of the page instantly.\n- Switch or download models anytime in Settings.\n\nYou can start by trying out the quick actions below."
     },
-    "ollama_is_running": "Ollama is running"
+    "ollama_is_running": "Ollama is running",
+    "backend_is_running": "{endpointType} is running"
   },
   "context_menu": {
     "quick_actions": {
@@ -337,9 +359,9 @@
   },
   "errors": {
     "unknown_error": "An unexpected error occurred: {message}",
-    "model_request_error": "Oops! Something went wrong. Please check your Ollama connection in settings and try again.",
-    "model_not_found": "Oops! Something went wrong. Please check your Ollama connection in settings and try again.",
-    "model_request_timeout": "Request timeout, please check your Ollama connection or consider starting a new session as long contexts may affect response times.",
+    "model_request_error": "Oops! Something went wrong. Please check your {endpointType} connection in settings and try again.",
+    "model_not_found": "Oops! Something went wrong. Please check your {endpointType} connection in settings and try again.",
+    "model_request_timeout": "Request timeout, please check your {endpointType} connection or consider starting a new session as long contexts may affect response times.",
     "timeout_error": "Operation timed out: {message}",
     "webllm_not_supported": "WebLLM not supported on your device.",
     "max_characters_error": "Maximum {count} characters allowed"

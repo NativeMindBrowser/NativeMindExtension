@@ -4,7 +4,9 @@ import { getUserConfig } from '@/utils/user-config'
 
 import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
+import { loadModel as loadLMStudioModel } from './lm-studio'
 import { middlewares } from './middlewares'
+import { LMStudioChatLanguageModel } from './providers/lm-studio/chat-language-model'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
 import { isToggleableThinkingModel } from './thinking-models'
@@ -13,13 +15,14 @@ import { getWebLLMEngine, WebLLMSupportedModel } from './web-llm'
 export async function getModelUserConfig() {
   const userConfig = await getUserConfig()
   const model = userConfig.llm.model.get()
-  const baseUrl = userConfig.llm.baseUrl.get()
+  const endpointType = userConfig.llm.endpointType.get()
+  const baseUrl = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].baseUrl.get()
   const apiKey = userConfig.llm.apiKey.get()
-  const numCtx = userConfig.llm.numCtx.get()
-  const enableNumCtx = userConfig.llm.enableNumCtx.get()
+  const numCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].numCtx.get()
+  const enableNumCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].enableNumCtx.get()
   const reasoning = userConfig.llm.reasoning.get()
   if (!model) {
-    throw new ModelNotFoundError()
+    throw new ModelNotFoundError(undefined, endpointType)
   }
   return {
     baseUrl,
@@ -28,6 +31,7 @@ export async function getModelUserConfig() {
     numCtx,
     enableNumCtx,
     reasoning,
+    endpointType,
   }
 }
 
@@ -41,11 +45,11 @@ export async function getModel(options: {
   enableNumCtx: boolean
   reasoning: boolean
   autoThinking?: boolean
+  endpointType: LLMEndpointType
   onLoadingModel?: (prg: ModelLoadingProgressEvent) => void
 }) {
-  const userConfig = await getUserConfig()
+  const endpointType = options.endpointType
   let model: LanguageModelV1
-  const endpointType = userConfig.llm.endpointType.get()
   if (endpointType === 'ollama') {
     const customFetch = makeCustomFetch({
       bodyTransformer: (body) => {
@@ -54,7 +58,7 @@ export async function getModel(options: {
         if (typeof body !== 'string') return body
 
         // add additional check to avoid errors, eg gamma3 does not support think argument
-        const _isToggleableThinkingModel = isToggleableThinkingModel(options.model)
+        const _isToggleableThinkingModel = isToggleableThinkingModel('ollama', options.model)
 
         const parsedBody = JSON.parse(body)
         return JSON.stringify({
@@ -71,6 +75,10 @@ export async function getModel(options: {
       numCtx: options.enableNumCtx ? options.numCtx : undefined,
       structuredOutputs: true,
     })
+  }
+  else if (endpointType === 'lm-studio') {
+    const lmStudioClientModel = await loadLMStudioModel(options.model, { contextLength: options.enableNumCtx ? options.numCtx : undefined })
+    model = new LMStudioChatLanguageModel(lmStudioClientModel.client, lmStudioClientModel.model)
   }
   else if (endpointType === 'web-llm') {
     const engine = await getWebLLMEngine({
@@ -93,7 +101,7 @@ export async function getModel(options: {
   }
   return wrapLanguageModel({
     model,
-    middleware: middlewares,
+    middleware: middlewares.slice(),
   })
 }
 

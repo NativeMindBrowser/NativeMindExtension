@@ -6,7 +6,7 @@
     :fadeInAnimation="false"
   >
     <ConfirmPanel
-      v-if="ollamaStatusStore.connectionStatus === 'connected'"
+      v-if="llmBackendStatusStore.ollamaConnectionStatus === 'connected'"
       :okButtonText="!pulling ? t('settings.model_downloader.download') : undefined"
       :cancelButtonText="t('common.cancel')"
       @ok="installModel"
@@ -51,7 +51,7 @@
       v-else
       :okButtonText="t('settings.model_downloader.retry')"
       :cancelButtonText="t('common.cancel')"
-      @ok="ollamaStatusStore.updateConnectionStatus"
+      @ok="llmBackendStatusStore.updateOllamaConnectionStatus"
       @cancel="cancel"
     >
       <template #title>
@@ -75,7 +75,7 @@ import { formatSize } from '@/utils/formatter'
 import { useI18n } from '@/utils/i18n'
 import { PREDEFINED_OLLAMA_MODELS } from '@/utils/llm/predefined-models'
 import logger from '@/utils/logger'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { settings2bRpc } from '@/utils/rpc'
 import dayjs from '@/utils/time'
 import { getUserConfig } from '@/utils/user-config'
@@ -96,7 +96,7 @@ const modelInfo = PREDEFINED_OLLAMA_MODELS.find((model) => model.id === props.mo
   name: props.model,
   size: 0,
 }
-const ollamaStatusStore = useOllamaStatusStore()
+const llmBackendStatusStore = useLLMBackendStatusStore()
 const userConfig = await getUserConfig()
 const currentModel = userConfig.llm.model.toRef()
 
@@ -111,7 +111,7 @@ const installModel = async () => {
   const abortController = new AbortController()
   pulling.value = {
     modelId: modelInfo.id,
-    total: modelInfo.size,
+    total: modelInfo.size ?? 0,
     completed: 0,
     abort: () => abortController.abort(),
     status: 'pulling',
@@ -148,7 +148,7 @@ const updateCurrentModel = async () => {
   await settings2bRpc.updateSidepanelModelList().catch((error) => {
     log.error('Failed to update model list:', error)
   })
-  const modelList = await ollamaStatusStore.updateModelList()
+  const modelList = await llmBackendStatusStore.updateOllamaModelList()
   const latestUpdatedModel = modelList.filter((model) => model.modifiedAt).sort((a, b) =>
     dayjs(b.modifiedAt).diff(dayjs(a.modifiedAt)),
   )[0]
@@ -163,6 +163,6 @@ onBeforeUnmount(() => {
 })
 
 onMounted(() => {
-  ollamaStatusStore.updateConnectionStatus()
+  llmBackendStatusStore.updateOllamaConnectionStatus()
 })
 </script>
