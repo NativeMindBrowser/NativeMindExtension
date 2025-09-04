@@ -189,12 +189,6 @@
       "title": "提示詞",
       "translation_system_prompt": "翻譯系統提示詞"
     },
-    "provider": {
-      "title": "連接"
-    },
-    "provider_model": {
-      "title": "配置 Ollama"
-    },
     "quick_actions": {
       "description": "設置快捷操作以更快地執行您喜歡的提示詞 - 從新建聊天或右鍵選單中。",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "Stars on GitHub",
       "goto_website": "前往網站"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "配置 LM Studio"
+      },
+      "ollama": {
+        "title": "配置 Ollama"
+      }
     }
   },
   "context_menu": {

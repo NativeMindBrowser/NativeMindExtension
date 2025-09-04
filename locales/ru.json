@@ -189,12 +189,6 @@
       "title": "Подсказки",
       "translation_system_prompt": "Системный промпт для перевода"
     },
-    "provider": {
-      "title": "Соединение"
-    },
-    "provider_model": {
-      "title": "Настроить Ollama"
-    },
     "quick_actions": {
       "description": "Настройте быстрые действия для запуска ваших любимых подсказок из нового чата или через контекстное меню.",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "Звезды на GitHub",
       "goto_website": "Перейти на сайт"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "Настроить LM Studio"
+      },
+      "ollama": {
+        "title": "Настроить Ollama"
+      }
     }
   },
   "context_menu": {

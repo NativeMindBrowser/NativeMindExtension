@@ -189,12 +189,6 @@
       "title": "プロンプト",
       "translation_system_prompt": "翻訳システムプロンプト"
     },
-    "provider": {
-      "title": "接続"
-    },
-    "provider_model": {
-      "title": "Ollamaを設定する"
-    },
     "quick_actions": {
       "description": "新規チャットや右クリックメニューから、お気に入りのプロンプトをより速く実行できるようクイックアクションを設定します。",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "GitHubでスター",
       "goto_website": "ウェブサイトに移動"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "LM Studioを設定する"
+      },
+      "ollama": {
+        "title": "Ollamaを設定する"
+      }
     }
   },
   "context_menu": {

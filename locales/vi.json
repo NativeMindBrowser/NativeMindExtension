@@ -189,12 +189,6 @@
       "title": "Nhắc nhở",
       "translation_system_prompt": "Prompt hệ thống dịch thuật"
     },
-    "provider": {
-      "title": "Kết nối"
-    },
-    "provider_model": {
-      "title": "Cấu hình Ollama"
-    },
     "quick_actions": {
       "description": "Thiết lập các thao tác nhanh để chạy lời nhắc yêu thích của bạn nhanh hơn - từ trò chuyện mới hoặc menu chuột phải.",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "Sao trên GitHub",
       "goto_website": "Đi đến Trang web"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "Cấu hình LM Studio"
+      },
+      "ollama": {
+        "title": "Cấu hình Ollama"
+      }
     }
   },
   "context_menu": {

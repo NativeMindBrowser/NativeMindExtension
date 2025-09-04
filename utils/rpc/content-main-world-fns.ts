@@ -78,12 +78,21 @@ export async function checkBackendModelReady(model?: string): Promise<{ backend:
   const userConfig = await getUserConfig()
   try {
     if (userConfig.llm.endpointType.get() === 'ollama') {
-      const modelList = await c2bRpc.getLocalModelList()
+      const modelList = await c2bRpc.getOllamaLocalModelList()
       if (model === undefined) {
         return { backend: true, model: modelList.models.length > 0 }
       }
       else {
         return { backend: true, model: modelList.models.some((m) => m.model === model) }
+      }
+    }
+    else if (userConfig.llm.endpointType.get() === 'lm-studio') {
+      const modelList = await c2bRpc.getLMStudioModelList()
+      if (model === undefined) {
+        return { backend: true, model: modelList.models.length > 0 }
+      }
+      else {
+        return { backend: true, model: modelList.models.some((m) => m.modelKey === model) }
       }
     }
     else if (userConfig.llm.endpointType.get() === 'web-llm') {

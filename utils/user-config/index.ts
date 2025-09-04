@@ -75,13 +75,20 @@ export async function _getUserConfig() {
     llm: {
       defaultFirstTokenTimeout: await new Config('llm.firstTokenTimeout').default(60 * 1000).build(), // 60 seconds
       endpointType: await new Config('llm.endpointType').default('ollama' as LLMEndpointType).build(),
-      baseUrl: await new Config('llm.baseUrl').default('http://localhost:11434/api').build(),
       model: await new Config<string, undefined>('llm.model').build(),
       apiKey: await new Config('llm.apiKey').default('ollama').build(),
       numCtx: await new Config('llm.numCtx').default(1024 * 8).build(),
       enableNumCtx: await new Config('llm.enableNumCtx').default(enableNumCtx).build(),
       reasoning: await new Config('llm.reasoning').default(true).build(),
       titleGenerationSystemPrompt: await new Config('llm.titleGenerationSystemPrompt').default(DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT).build(),
+      backends: {
+        ollama: {
+          baseUrl: await new Config('llm.backends.ollama.baseUrl').default('http://localhost:11434/api').migrateFrom('llm.baseUrl', (v) => v).build(),
+        },
+        lmStudio: {
+          baseUrl: await new Config('llm.backends.lmStudio.baseUrl').default('http://localhost:1234/api').build(),
+        },
+      },
     },
     browserAI: {
       polyfill: {

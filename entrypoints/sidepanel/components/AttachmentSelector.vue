@@ -216,7 +216,7 @@ import { useI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { convertImageFileToJpegBase64 } from '@/utils/image'
 import { checkReadableTextContent, extractPdfText } from '@/utils/pdf'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { s2bRpc } from '@/utils/rpc'
 import { ByteSize } from '@/utils/sizes'
 import { tabToTabInfo } from '@/utils/tab'
@@ -250,7 +250,7 @@ const emit = defineEmits<{
   (e: 'update:attachments', images: ContextAttachment[]): void
 }>()
 
-const ollamaStatusStore = useOllamaStatusStore()
+const llmBackendStatusStore = useLLMBackendStatusStore()
 const attachmentStorage = useVModel(props, 'attachmentStorage', emit)
 const attachments = toRef(attachmentStorage.value, 'attachments')
 const attachmentsWithCurrentTab = computed(() => {
@@ -310,7 +310,7 @@ const SUPPORTED_ATTACHMENT_TYPES: AttachmentItem[] = [
     type: 'image',
     matchMimeType: (mimeType) => /image\/*/.test(mimeType),
     validateFile: async ({ attachments }, file: File) => {
-      if (!await ollamaStatusStore.checkCurrentModelSupportVision()) {
+      if (!await llmBackendStatusStore.checkCurrentModelSupportVision()) {
         showErrorMessage(t('chat.input.attachment_selector.unsupported_model'))
         return false
       }

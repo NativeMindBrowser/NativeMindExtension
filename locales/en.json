@@ -70,11 +70,13 @@
       "join_waitlist": "💼 Want to use it at work? {join_waitlist_link} for enterprise updates.",
       "join_waitlist_link": "Join the waitlist"
     },
-    "provider": {
-      "title": "Connection"
-    },
-    "provider_model": {
-      "title": "Configure Ollama"
+    "providers": {
+      "ollama": {
+        "title": "Configure Ollama"
+      },
+      "lm_studio": {
+        "title": "Configure LM Studio"
+      }
     },
     "cache": {
       "title": "Translation Cache",

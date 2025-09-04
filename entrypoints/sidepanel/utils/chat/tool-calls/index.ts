@@ -6,7 +6,7 @@ import { markdownSectionDiff } from '@/utils/diff'
 import { useGlobalI18n } from '@/utils/i18n'
 import Logger from '@/utils/logger'
 import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { Tab } from '@/utils/tab'
 import { timeout } from '@/utils/timeout'
 import { isUrlEqual } from '@/utils/url'
@@ -265,7 +265,7 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
       },
     }]
   }
-  const supportVision = await useOllamaStatusStore().checkCurrentModelSupportVision()
+  const supportVision = await useLLMBackendStatusStore().checkCurrentModelSupportVision()
   if (!supportVision) {
     taskMsg.icon = 'warningColored'
     taskMsg.summary = `Current model does not support image processing`

@@ -189,12 +189,6 @@
       "title": "Prompt",
       "translation_system_prompt": "Prompt sistem terjemahan"
     },
-    "provider": {
-      "title": "Koneksi"
-    },
-    "provider_model": {
-      "title": "Konfigurasi Ollama"
-    },
     "quick_actions": {
       "description": "Siapkan tindakan cepat untuk menjalankan prompt favorit Anda lebih cepat -- dari Obrolan Baru atau menu klik kanan.",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "Bintang di GitHub",
       "goto_website": "Kunjungi Situs Web"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "Konfigurasi LM Studio"
+      },
+      "ollama": {
+        "title": "Konfigurasi Ollama"
+      }
     }
   },
   "context_menu": {

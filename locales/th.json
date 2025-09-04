@@ -189,12 +189,6 @@
       "title": "แจ้ง",
       "translation_system_prompt": "พรอมต์ระบบการแปล"
     },
-    "provider": {
-      "title": "การเชื่อมต่อ"
-    },
-    "provider_model": {
-      "title": "กำหนดค่า Ollama"
-    },
     "quick_actions": {
       "description": "ตั้งค่าการกระทำที่รวดเร็วเพื่อเรียกใช้พรอมต์ที่คุณชื่นชอบเร็วขึ้น-จากการแชทใหม่หรือเมนูคลิกขวา",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "ให้ดาวบน GitHub",
       "goto_website": "ไปที่เว็บไซต์"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "กำหนดค่า LM Studio"
+      },
+      "ollama": {
+        "title": "กำหนดค่า Ollama"
+      }
     }
   },
   "context_menu": {

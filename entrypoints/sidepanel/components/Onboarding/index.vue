@@ -62,7 +62,7 @@ import ExhaustiveError from '@/components/ExhaustiveError.vue'
 import Logo from '@/components/Logo.vue'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import { useI18n } from '@/utils/i18n'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { getUserConfig, TARGET_ONBOARDING_VERSION } from '@/utils/user-config'
 
 import { showSettings } from '../../../../utils/settings'
@@ -77,7 +77,7 @@ const isFirefox = import.meta.env.FIREFOX
 const { t } = useI18n()
 const userConfig = await getUserConfig()
 const chat = await Chat.getInstance()
-const ollamaStatusStore = useOllamaStatusStore()
+const llmBackendStatusStore = useLLMBackendStatusStore()
 const endpointType = userConfig.llm.endpointType.toRef()
 const onboardingVersion = userConfig.ui.onboarding.version.toRef()
 const panel = ref<'tutorial' | 'model-downloader'>('tutorial')
@@ -87,7 +87,7 @@ const isShow = computed(() => {
 
 const onOllamaInstalled = async () => {
   endpointType.value = 'ollama'
-  const modelList = await ollamaStatusStore.updateModelList()
+  const modelList = await llmBackendStatusStore.updateOllamaModelList()
   if (modelList.length === 0) {
     panel.value = 'model-downloader'
   }
@@ -104,8 +104,8 @@ const onOpenSettings = async () => {
 
 const onModelDownloaderFinished = async () => {
   endpointType.value = 'ollama'
-  await ollamaStatusStore.updateConnectionStatus()
-  await ollamaStatusStore.updateModelList()
+  await llmBackendStatusStore.updateOllamaConnectionStatus()
+  await llmBackendStatusStore.updateOllamaModelList()
   close()
 }
 
@@ -134,7 +134,7 @@ const close = () => {
 
 onMounted(async () => {
   if (isShow.value) {
-    const success = await ollamaStatusStore.updateConnectionStatus()
+    const success = await llmBackendStatusStore.updateOllamaConnectionStatus()
     if (success) {
       onOllamaInstalled()
     }

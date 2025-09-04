@@ -189,12 +189,6 @@
       "title": "프롬프트",
       "translation_system_prompt": "번역 시스템 프롬프트"
     },
-    "provider": {
-      "title": "연결"
-    },
-    "provider_model": {
-      "title": "Ollama 구성"
-    },
     "quick_actions": {
       "description": "새 채팅이나 컨텍스트 메뉴에서 자주 사용하는 프롬프트를 더 빠르게 실행할 수 있도록 빠른 액션을 설정하세요.",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "GitHub에서 별점 주기",
       "goto_website": "웹사이트로 이동"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "LM Studio 구성"
+      },
+      "ollama": {
+        "title": "Ollama 구성"
+      }
     }
   },
   "context_menu": {

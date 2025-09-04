@@ -70,12 +70,6 @@
       "join_waitlist_link": "加入等待名单",
       "discord": "Discord"
     },
-    "provider": {
-      "title": "连接"
-    },
-    "provider_model": {
-      "title": "配置 Ollama"
-    },
     "cache": {
       "title": "翻译缓存",
       "enable": "启用缓存",
@@ -182,6 +176,14 @@
     "header": {
       "starts_on_github": "Stars on GitHub",
       "goto_website": "前往网站"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "配置 LM Studio"
+      },
+      "ollama": {
+        "title": "配置 Ollama"
+      }
     }
   },
   "chat": {

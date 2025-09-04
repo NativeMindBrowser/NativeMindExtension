@@ -663,6 +663,7 @@ const simulateClickOnLink = userConfig.browserUse.simulateClickOnLink.toRef()
 const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content: string, html?: string, fileName?: string, parser: string }[]>()
 const modelProviderOptions = [
   { id: 'ollama' as const, label: 'Ollama' },
+  { id: 'lm-studio' as const, label: 'LM Studio' },
   { id: 'web-llm' as const, label: 'Web LLM' },
 ]
 

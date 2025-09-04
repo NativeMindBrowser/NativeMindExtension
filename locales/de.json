@@ -189,12 +189,6 @@
       "title": "Prompt",
       "translation_system_prompt": "Übersetzungs-System-Prompt"
     },
-    "provider": {
-      "title": "Modellanbieter"
-    },
-    "provider_model": {
-      "title": "Anbieter"
-    },
     "quick_actions": {
       "description": "Richten Sie schnelle Aktionen ein, um Ihre bevorzugten Eingabeaufforderungen schneller auszuführen-aus dem neuen Chat oder dem Rechtsklickmenü.",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "Sterne auf GitHub",
       "goto_website": "Gehen Sie zur Website"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "LM Studio konfigurieren"
+      },
+      "ollama": {
+        "title": "Ollama konfigurieren"
+      }
     }
   },
   "context_menu": {

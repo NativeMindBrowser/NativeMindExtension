@@ -15,8 +15,9 @@ import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
 import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
 import { parsePartialJson } from '../json/parser/parse-partial-json'
+import * as lmStudioUtils from '../llm/lm-studio'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
-import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
+import * as ollamaUtils from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
 import { PromptBasedTool } from '../llm/tools/prompt-based/helpers'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
@@ -470,14 +471,14 @@ const fetchAsText = async (url: string, initOptions?: RequestInit) => {
 }
 
 const deleteOllamaModel = async (modelId: string) => {
-  await deleteModel(modelId)
+  await ollamaUtils.deleteModel(modelId)
 }
 
 const unloadOllamaModel = async (modelId: string) => {
-  await unloadModel(modelId)
+  await ollamaUtils.unloadModel(modelId)
   const start = Date.now()
   while (Date.now() - start < 10000) {
-    const modelList = await getRunningModelList()
+    const modelList = await ollamaUtils.getRunningModelList()
     if (!modelList.models.some((m) => m.model === modelId)) {
       break
     }
@@ -486,7 +487,7 @@ const unloadOllamaModel = async (modelId: string) => {
 }
 
 const showOllamaModelDetails = async (modelId: string) => {
-  return showModelDetails(modelId)
+  return ollamaUtils.showModelDetails(modelId)
 }
 
 const pullOllamaModel = async (modelId: string) => {
@@ -501,7 +502,7 @@ const pullOllamaModel = async (modelId: string) => {
       logger.debug('port disconnected from client')
       abortController.abort()
     })
-    const response = await pullModel(modelId)
+    const response = await ollamaUtils.pullModel(modelId)
     abortController.signal.addEventListener('abort', () => {
       response.abort()
     })
@@ -530,23 +531,6 @@ const pullOllamaModel = async (modelId: string) => {
     browser.runtime.onConnect.removeListener(onStart)
   }, 20000)
   return { portName }
-}
-
-async function testOllamaConnection() {
-  const userConfig = await getUserConfig()
-  try {
-    const baseUrl = userConfig.llm.baseUrl.get()
-    const origin = new URL(baseUrl).origin
-    const response = await fetch(origin)
-    if (!response.ok) return false
-    const text = await response.text()
-    if (text.includes('Ollama is running')) return true
-    else return false
-  }
-  catch (error: unknown) {
-    logger.error('error connecting to ollama api', error)
-    return false
-  }
 }
 
 function initWebLLMEngine(model: WebLLMSupportedModel) {
@@ -1020,8 +1004,12 @@ export const backgroundFunctions = {
   generateTextAsync,
   streamText,
   getAllTabs,
-  getLocalModelList,
-  getRunningModelList,
+  getOllamaLocalModelList: ollamaUtils.getLocalModelList,
+  getOllamaRunningModelList: ollamaUtils.getRunningModelList,
+  testOllamaConnection: ollamaUtils.testConnection,
+  getLMStudioModelList: lmStudioUtils.getLocalModelList,
+  getLMStudioRunningModelList: lmStudioUtils.getRunningModelList,
+  testLMStudioConnection: lmStudioUtils.testConnection,
   deleteOllamaModel,
   pullOllamaModel,
   showOllamaModelDetails,
@@ -1047,7 +1035,6 @@ export const backgroundFunctions = {
   initCurrentModel,
   checkSupportWebLLM,
   getSystemMemoryInfo,
-  testOllamaConnection,
   captureVisibleTab,
   // Translation cache functions
   cacheGetEntry,

@@ -189,12 +189,6 @@
       "title": "Prompts",
       "translation_system_prompt": "Prompt do sistema de tradução"
     },
-    "provider": {
-      "title": "Conexão"
-    },
-    "provider_model": {
-      "title": "Configurar Ollama"
-    },
     "quick_actions": {
       "description": "Configure ações rápidas para executar seus prompts favoritos mais rapidamente - em um novo chat ou no menu de contexto.",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "Estrelas no GitHub",
       "goto_website": "Ir para o Website"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "Configurar LM Studio"
+      },
+      "ollama": {
+        "title": "Configurar Ollama"
+      }
     }
   },
   "context_menu": {

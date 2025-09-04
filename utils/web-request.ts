@@ -4,13 +4,15 @@ import logger from '@/utils/logger'
 
 const log = logger.child('web-request')
 // a constants for removing old rules
-const RULE_ID_REMOVE_ORIGIN = 1
+const RULE_ID_REMOVE_ORIGIN_FOR_OLLAMA_REQUEST = 1
+const RULE_ID_REMOVE_ORIGIN_FOR_LM_STUDIO_REQUEST = 2
 const RULE_ID_REMOVE_DISPOSITION = 2
 
 export function registerDeclarativeNetRequestRule() {
   // firefox has some bugs with declarativeNetRequest API, we use rules.json instead
   if (import.meta.env.FIREFOX) return
-  const URL_FILTER = /https?:\/\/[^/]*:11434\/.*/
+  const OLLAMA_URL_FILTER = /https?:\/\/[^/]*:11434\/.*/
+  const LM_STUDIO_URL_FILTER = /wss?:\/\/[^/]*:1234\/.*/
   const { resolve, promise } = Promise.withResolvers<void>()
 
   const timeout = setTimeout(() => {
@@ -22,10 +24,10 @@ export function registerDeclarativeNetRequestRule() {
     // reset the rules when the extension is installed or updated
     log.debug('Registering origin-rewrite rule', browser.runtime.id)
     await browser.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds: [RULE_ID_REMOVE_ORIGIN],
+      removeRuleIds: [RULE_ID_REMOVE_ORIGIN_FOR_OLLAMA_REQUEST, RULE_ID_REMOVE_ORIGIN_FOR_LM_STUDIO_REQUEST],
       addRules: [
         {
-          id: RULE_ID_REMOVE_ORIGIN,
+          id: RULE_ID_REMOVE_ORIGIN_FOR_OLLAMA_REQUEST,
           priority: 1,
           action: {
             type: browser.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
@@ -37,9 +39,27 @@ export function registerDeclarativeNetRequestRule() {
             ],
           },
           condition: {
-            regexFilter: URL_FILTER.source,
+            regexFilter: OLLAMA_URL_FILTER.source,
             initiatorDomains: [browser.runtime.id],
             resourceTypes: [browser.declarativeNetRequest.ResourceType.XMLHTTPREQUEST],
+          },
+        },
+        {
+          id: RULE_ID_REMOVE_ORIGIN_FOR_LM_STUDIO_REQUEST,
+          priority: 1,
+          action: {
+            type: browser.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
+            requestHeaders: [
+              {
+                header: 'Origin',
+                operation: browser.declarativeNetRequest.HeaderOperation.REMOVE,
+              },
+            ],
+          },
+          condition: {
+            regexFilter: LM_STUDIO_URL_FILTER.source,
+            initiatorDomains: [browser.runtime.id],
+            resourceTypes: [browser.declarativeNetRequest.ResourceType.WEBSOCKET, browser.declarativeNetRequest.ResourceType.XMLHTTPREQUEST],
           },
         },
       ],

@@ -189,12 +189,6 @@
       "title": "Instructions",
       "translation_system_prompt": "Prompt système de traduction"
     },
-    "provider": {
-      "title": "Connexion"
-    },
-    "provider_model": {
-      "title": "Configurer Ollama"
-    },
     "quick_actions": {
       "description": "Configurez des actions rapides pour exécuter vos instructions préférées plus rapidement - depuis le nouveau chat ou le menu contextuel.",
       "edit": {
@@ -317,6 +311,14 @@
     "header": {
       "starts_on_github": "Étoiles sur GitHub",
       "goto_website": "Aller sur le site Web"
+    },
+    "providers": {
+      "lm_studio": {
+        "title": "Configurer LM Studio"
+      },
+      "ollama": {
+        "title": "Configurer Ollama"
+      }
     }
   },
   "context_menu": {

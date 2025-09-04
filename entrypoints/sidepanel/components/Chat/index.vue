@@ -176,6 +176,7 @@ const chat = await Chat.getInstance()
 const userConfig = await getUserConfig()
 const contextAttachmentStorage = chat.contextAttachmentStorage
 const currentModel = userConfig.llm.model.toRef()
+const endpointType = userConfig.llm.endpointType.toRef()
 
 initChatSideEffects()
 
@@ -198,7 +199,7 @@ const allowAsk = computed(() => {
 
 const isThinkingToggleable = computed(() => {
   if (!currentModel.value) return false
-  return isToggleableThinkingModel(currentModel.value)
+  return isToggleableThinkingModel(endpointType.value, currentModel.value)
 })
 
 const cleanUp = chat.historyManager.onMessageAdded(() => {

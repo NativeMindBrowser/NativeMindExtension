@@ -141,7 +141,7 @@ import { OLLAMA_SEARCH_URL } from '@/utils/constants'
 import { formatSize } from '@/utils/formatter'
 import { useI18n } from '@/utils/i18n'
 import { SUPPORTED_MODELS } from '@/utils/llm/web-llm'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { only } from '@/utils/runtime'
 import { showSettings } from '@/utils/settings'
@@ -169,19 +169,19 @@ const props = withDefaults(defineProps<{
 })
 
 const { t } = useI18n()
-const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
-const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
+const { modelList: composedModelList } = toRefs(useLLMBackendStatusStore())
+const { updateModelList } = useLLMBackendStatusStore()
 
 only(['sidepanel'], () => {
-  const removeListener = registerSidepanelRpcEvent('updateModelList', async () => await updateOllamaModelList())
+  const removeListener = registerSidepanelRpcEvent('updateModelList', async () => await updateModelList())
   onBeforeUnmount(() => removeListener())
 })
 
 const isGhostBtn = computed(() => props.triggerStyle === 'ghost')
 
 const modelList = computed(() => {
-  if (endpointType.value === 'ollama') {
-    return ollamaModelList.value
+  if (endpointType.value !== 'web-llm') {
+    return composedModelList.value
   }
   else {
     return SUPPORTED_MODELS.map((model) => ({
@@ -191,18 +191,13 @@ const modelList = computed(() => {
   }
 })
 
-const updateModelList = async () => {
-  if (endpointType.value === 'ollama') {
-    await updateOllamaModelList()
-  }
-}
-
 defineExpose({
   updateModelList,
 })
 
 const userConfig = await getUserConfig()
-const baseUrl = userConfig.llm.baseUrl.toRef()
+const ollamaBaseUrl = userConfig.llm.backends.ollama.baseUrl.toRef()
+const lmStudioBaseUrl = userConfig.llm.backends.lmStudio.baseUrl.toRef()
 const commonModel = userConfig.llm.model.toRef()
 const translationModel = userConfig.translation.model.toRef()
 const selectedModel = computed({
@@ -249,7 +244,7 @@ watch(modelList, (modelList) => {
   commonModel.value = newCommonModel.model
 })
 
-watch([baseUrl, endpointType, selectedModel], async () => {
+watch([ollamaBaseUrl, lmStudioBaseUrl, endpointType, selectedModel], async () => {
   updateModelList()
 })
 

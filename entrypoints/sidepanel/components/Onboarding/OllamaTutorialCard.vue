@@ -107,11 +107,11 @@ import Text from '@/components/ui/Text.vue'
 import { OLLAMA_HOMEPAGE_URL, OLLAMA_TUTORIAL_URL } from '@/utils/constants'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 
 const log = logger.child('OllamaTutorialCard')
 const emit = defineEmits(['installed', 'settings'])
-const ollamaStatusStore = useOllamaStatusStore()
+const llmBackendStatusStore = useLLMBackendStatusStore()
 const { t } = useI18n()
 
 const tutorialUrl = OLLAMA_TUTORIAL_URL
@@ -127,7 +127,7 @@ const onClickInstall = () => {
 }
 
 const reScanOllama = async () => {
-  const success = await ollamaStatusStore.updateConnectionStatus()
+  const success = await llmBackendStatusStore.updateOllamaConnectionStatus()
   log.info('Ollama connection test result:', success)
   if (success) emit('installed')
 }
