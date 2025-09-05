@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.9.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.2...v1.9.0-beta.3)
+
+### 🚀 Enhancements
+
+- **agent:** Add task-click-page icon and update related references ([fef0052](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fef0052))
+
+### 🏡 Chore
+
+- **logo:** Update extension logo in toolbar ([7335374](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7335374))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.0-beta.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.1...v1.9.0-beta.2)
