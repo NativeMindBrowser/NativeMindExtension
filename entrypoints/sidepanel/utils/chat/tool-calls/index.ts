@@ -304,7 +304,7 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
   const contentFilterThreshold = userConfig.documentParser.contentFilterThreshold.get()
   const { element_id: elementId } = params
   const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.page_click.click', { content: elementId }) })
-  taskMsg.icon = 'taskReadFile'
+  taskMsg.icon = 'taskClickPage'
   const browserSession = agentStorage.getOrSetScopedItem('browserSession', () => new BrowserSession())
   hooks.addListener('onAgentFinished', () => browserSession.dispose())
   const normalizeInnerText = (text?: string) => {

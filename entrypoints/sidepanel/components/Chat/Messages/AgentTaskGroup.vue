@@ -22,7 +22,7 @@
       </motion.div>
       <div
         v-else-if="task.icon"
-        :class="classNames('shrink-0 grow-0 size-5 p-0.5', task.details?.expanded ? 'self-start' : 'self-center')"
+        :class="['shrink-0 grow-0 size-5 p-0.5 text-text-secondary', task.details?.expanded ? 'self-start' : 'self-center']"
       >
         <div v-html="getIconSvg(task.icon)" />
         <!-- vertical line -->
