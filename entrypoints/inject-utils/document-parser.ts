@@ -15,9 +15,9 @@ import { PruningContentFilter } from './pruning-content-filter'
 const logger = Logger.child('document-parser')
 
 const INTERNAL_ID_DATA_KEY = 'data-nativemind-parser-internal-id'
-const IGNORE_TAGS: (keyof HTMLElementTagNameMap)[] = ['head', 'nav', 'style', 'link', 'meta', 'script', 'noscript', 'canvas', 'iframe', 'object', 'embed', 'footer', 'dialog']
-const IGNORE_CLASSES: string[] = ['hidden', 'ignore', 'skip-link', 'sidenav', 'footer', 'blog-footer-bottom']
-const IGNORE_IDS: string[] = ['side_nav', 'sidenav', 'blog-calendar', 'footer', 'page_end_html']
+const IGNORE_TAGS: (keyof HTMLElementTagNameMap)[] = ['head', 'style', 'link', 'meta', 'script', 'noscript', 'canvas', 'iframe', 'object', 'embed', 'footer', 'dialog']
+const IGNORE_CLASSES: string[] = ['hidden', 'ignore', 'skip-link', 'footer', 'blog-footer-bottom']
+const IGNORE_IDS: string[] = ['blog-calendar', 'footer', 'page_end_html']
 const IGNORE_ATTRS: string[] = []
 
 function ignoreElement(node: Node) {
