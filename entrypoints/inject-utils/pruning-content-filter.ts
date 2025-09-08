@@ -133,10 +133,10 @@ export class PruningContentFilter {
 
     // Common excluded tags
     this.excludedTags = [
-      'script', 'style', 'header', 'footer', 'aside', 'menu',
+      'script', 'style', 'header', 'footer', 'menu',
       'noscript', 'meta', 'link', 'title', 'head',
-      '.hidden', '.ignore', '.skip-link', '.sidenav', '.footer', '.blog-footer-bottom',
-      '#side_nav', '#sidenav', '#blog-calendar', '#footer', '#page_end_html',
+      '.ignore', '.skip-link', '.footer', '.blog-footer-bottom',
+      '#blog-calendar', '#footer', '#page_end_html',
       '[id*="skip-link"]', '[class*="skip-link"]', '[id*="skip_link"]', '[class*="skip_link"]',
     ]
     this.includedTags = ['code']
