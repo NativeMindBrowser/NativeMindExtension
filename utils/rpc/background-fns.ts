@@ -686,6 +686,7 @@ export function registerBackgroundRpcEvent<E extends EventKey>(ev: E, fn: (...ar
 export async function showSidepanel() {
   if (browser.sidePanel) {
     // Get cached current window id (synchronous to avoid async delay before sidePanel.open)
+    // FYI: https://stackoverflow.com/questions/77213045/error-sidepanel-open-may-only-be-called-in-response-to-a-user-gesture-re
     const cachedWindowId = BackgroundWindowManager.getCurrentWindowId()
     logger.debug('Opening side panel with cached window ID:', cachedWindowId)
 
