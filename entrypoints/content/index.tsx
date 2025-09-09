@@ -18,11 +18,11 @@ export default defineContentScript({
   cssInjectionMode: 'manual',
   runAt: 'document_start',
   async main(ctx) {
-    const ui = await createShadowRootOverlay(ctx, ({ rootElement }) => {
+    const ui = await createShadowRootOverlay(ctx, ({ rootElement, writingToolsRoot, gmailToolsRoot }) => {
       rootElement.classList.add('font-inter', 'nativemind-style-boundary')
       return (
         <Suspense>
-          <RootProvider rootElement={rootElement}>
+          <RootProvider rootElement={rootElement} writingToolsRoot={writingToolsRoot} gmailToolsRoot={gmailToolsRoot}>
             <App />
           </RootProvider>
         </Suspense>

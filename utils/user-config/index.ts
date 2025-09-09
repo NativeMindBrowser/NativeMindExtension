@@ -10,7 +10,7 @@ import logger from '../logger'
 import { lazyInitialize } from '../memo'
 import { forRuntimes } from '../runtime'
 import { ByteSize } from '../sizes'
-import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
+import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT, DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT, DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
 import { Config } from './helpers'
 
 const log = logger.child('user-config')
@@ -158,6 +158,20 @@ export async function _getUserConfig() {
       sparkle: {
         enable: await new Config('writingTools.sparkle.enable').default(true).build(),
         systemPrompt: await new Config('writingTools.sparkle.systemPrompt').default(DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT).build(),
+      },
+    },
+    emailTools: {
+      enable: await new Config('emailTools.enable').default(true).build(),
+      outputLanguage: await new Config('emailTools.outputLanguage').default('auto' as LanguageCode | 'auto').build(),
+      outputStyle: await new Config('emailTools.outputStyle').default('default' as 'default' | 'formal' | 'friendly' | 'urgent').build(),
+      summary: {
+        systemPrompt: await new Config('emailTools.summary.systemPrompt').default(DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT).build(),
+      },
+      reply: {
+        systemPrompt: await new Config('emailTools.reply.systemPrompt').default(DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT).build(),
+      },
+      compose: {
+        systemPrompt: await new Config('emailTools.compose.systemPrompt').default(DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT).build(),
       },
     },
   }

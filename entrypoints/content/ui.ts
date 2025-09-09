@@ -18,7 +18,7 @@ async function loadStyleSheet(shadowRoot: ShadowRoot) {
   injectStyleSheetToDocument(document, fontFaceStyleSheet)
 }
 
-export async function createShadowRootOverlay(ctx: ContentScriptContext, component: Component<{ rootElement: HTMLDivElement }>) {
+export async function createShadowRootOverlay(ctx: ContentScriptContext, component: Component<{ rootElement: HTMLDivElement, writingToolsRoot: HTMLDivElement, gmailToolsRoot: HTMLDivElement }>) {
   const existingUI = document.querySelector(CONTENT_UI_SHADOW_ROOT_NAME)
   if (existingUI) {
     try {
@@ -39,8 +39,12 @@ export async function createShadowRootOverlay(ctx: ContentScriptContext, compone
     async onMount(uiContainer, shadowRoot, shadowHost) {
       await loadStyleSheet(shadowRoot)
       const rootElement = document.createElement('div')
+      const writingToolsRoot = document.createElement('div')
+      const gmailToolsRoot = document.createElement('div')
       const toastRoot = document.createElement('div')
       uiContainer.appendChild(rootElement)
+      uiContainer.appendChild(writingToolsRoot)
+      uiContainer.appendChild(gmailToolsRoot)
       uiContainer.appendChild(toastRoot)
       shadowHost.dataset.testid = 'nativemind-container'
       shadowHost.style.setProperty('position', 'fixed')
@@ -48,7 +52,7 @@ export async function createShadowRootOverlay(ctx: ContentScriptContext, compone
       shadowHost.style.setProperty('left', '0px')
       shadowHost.style.setProperty('z-index', 'calc(infinity)')
       const pinia = createPinia()
-      const app = createApp(component, { rootElement })
+      const app = createApp(component, { rootElement, writingToolsRoot, gmailToolsRoot })
       app.use(await createI18nInstance())
       app.use(initToast(toastRoot))
       app.use(pinia)

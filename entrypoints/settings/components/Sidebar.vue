@@ -35,6 +35,7 @@ import { RouterLink } from 'vue-router'
 import { browser } from 'wxt/browser'
 
 import IconChat from '@/assets/icons/settings-chat.svg?component'
+import IconEmail from '@/assets/icons/settings-email.svg?component'
 import IconGeneral from '@/assets/icons/settings-general.svg?component'
 import IconTranslation from '@/assets/icons/settings-translation.svg?component'
 import IconWritingTools from '@/assets/icons/settings-writing-tools.svg?component'
@@ -57,6 +58,7 @@ const menu = computed(() => (
     { title: t('settings.chat.title'), to: '/chat', icon: IconChat },
     { title: t('settings.translation.title'), to: '/translation', icon: IconTranslation },
     { title: t('settings.writing_tools.title'), to: '/writing-tools', icon: IconWritingTools },
+    { title: 'Gmail Tools', to: '/email-tools', icon: IconEmail },
     props.debug ? { title: 'Debug', to: '/debug' } : undefined,
   ]
     .filter(nonNullable)),
