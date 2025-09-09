@@ -58,7 +58,7 @@ const menu = computed(() => (
     { title: t('settings.chat.title'), to: '/chat', icon: IconChat },
     { title: t('settings.translation.title'), to: '/translation', icon: IconTranslation },
     { title: t('settings.writing_tools.title'), to: '/writing-tools', icon: IconWritingTools },
-    { title: 'Gmail Tools', to: '/email-tools', icon: IconEmail },
+    { title: t('settings.gmail_tools.title'), to: '/gmail-tools', icon: IconEmail },
     props.debug ? { title: 'Debug', to: '/debug' } : undefined,
   ]
     .filter(nonNullable)),

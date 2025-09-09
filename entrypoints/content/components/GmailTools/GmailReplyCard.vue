@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card min-w-80 max-w-100 text-xs">
+    <div class="card min-w-80 max-w-110 text-xs">
       <div class="title flex items-center justify-between h-9 px-3">
         <Text
           size="small"
@@ -8,7 +8,7 @@
         >
           <div class="flex items-center gap-2">
             <ReplySuggestionIcon />
-            Reply Suggestion
+            {{ t('gmail_tools.cards.reply.title') }}
           </div>
         </Text>
         <button
@@ -38,20 +38,20 @@
             </div>
             <div
               v-else
-              class="max-h-[min(90vh,500px)] overflow-y-auto relative"
+              class="relative"
             >
               <MarkdownViewer
-                class="text-[#03943D]"
+                class="text-[#03943D] mr-10"
                 :text="output"
               />
               <!-- Copy Button -->
               <button
                 v-if="output.trim()"
-                class="absolute top-1 right-1 p-1 rounded hover:bg-white/50 opacity-70 hover:opacity-100 transition-opacity"
-                :title="'Copy to clipboard'"
+                class="absolute top-0 right-1 rounded hover:bg-white/30 transition cursor-pointer"
+                :title="t('gmail_tools.cards.reply.copy_to_clipboard')"
                 @click="copyToClipboard"
               >
-                <CopyIcon class="w-3.5 h-3.5 text-[#03943D]" />
+                <CopyIcon class="w-4 h-4 text-[#03943D]" />
               </button>
             </div>
           </div>
@@ -64,7 +64,7 @@
           <IconSelector
             v-model="selectedLanguage"
             :options="languageOptions"
-            placeholder="Language"
+            :placeholder="t('gmail_tools.cards.reply.language_selector')"
             :icon="LanguageIcon"
             @update:modelValue="onLanguageChange"
           />
@@ -73,7 +73,7 @@
           <IconSelector
             v-model="selectedStyle"
             :options="styleOptions"
-            placeholder="Style"
+            :placeholder="t('gmail_tools.cards.reply.style_selector')"
             :icon="WritingStyleIcon"
             @update:modelValue="onStyleChange"
           />
@@ -83,11 +83,11 @@
           <Button
             v-if="hasSettingsChanged"
             variant="secondary"
-            class="px-2 h-8 text-xs font-medium rounded-md cursor-pointer"
+            class="px-2 h-8 text-xs leading-4 font-medium rounded-md cursor-pointer whitespace-nowrap"
             @click="regenerate"
           >
             <RegenerateIcon class="w-4 h-4 mr-1 inline" />
-            Regenerate
+            {{ t('gmail_tools.cards.reply.regenerate') }}
           </Button>
 
           <!-- Apply button -->
@@ -97,7 +97,7 @@
             :class="{ 'opacity-50 pointer-events-none': runningStatus !== 'idle' }"
             @click="applyReply"
           >
-            Apply
+            {{ t('gmail_tools.cards.reply.apply') }}
           </Button>
         </div>
       </div>
@@ -162,7 +162,8 @@ const abortControllers: AbortController[] = []
 
 // Settings state
 const defaultStyle = userConfig.emailTools.outputStyle.get()
-const selectedLanguage = ref<LanguageCode>()
+const defaultLang = userConfig.emailTools.outputLanguage.get()
+const selectedLanguage = ref<LanguageCode | undefined>(defaultLang === 'auto' ? undefined : (SUPPORTED_LANGUAGES.find((lang) => lang.code === defaultLang)?.code || undefined))
 const selectedStyle = ref<string>(defaultStyle === 'default' ? '' : defaultStyle)
 
 // Create options for selectors
@@ -174,19 +175,19 @@ const languageOptions = computed(() => SUPPORTED_LANGUAGES.map((lang) => ({
 const styleOptions = computed(() => [
   {
     id: '',
-    label: defaultStyle ? capitalizeFirst(defaultStyle) : 'Change style',
+    label: defaultStyle ? capitalizeFirst(defaultStyle) : t('gmail_tools.cards.styles.change_style'),
   },
   {
     id: 'formal',
-    label: 'Formal',
+    label: t('gmail_tools.cards.styles.formal'),
   },
   {
     id: 'friendly',
-    label: 'Friendly',
+    label: t('gmail_tools.cards.styles.friendly'),
   },
   {
     id: 'urgent',
-    label: 'Urgent',
+    label: t('gmail_tools.cards.styles.urgent'),
   },
 ])
 
@@ -222,11 +223,11 @@ function capitalizeFirst(str: string): string {
 async function copyToClipboard() {
   try {
     await navigator.clipboard.writeText(output.value.trim())
-    toast('Copied to clipboard!', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.copied_to_clipboard'), { duration: 2000 })
   }
   catch (error) {
     logger.error('Failed to copy to clipboard:', error)
-    toast('Failed to copy to clipboard', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.failed_to_copy'), { duration: 2000 })
   }
 }
 
@@ -252,7 +253,7 @@ async function regenerate() {
 function applyReply() {
   const replyText = output.value.trim()
   if (!replyText) {
-    toast('No content to apply', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.no_content_to_apply'), { duration: 2000 })
     return
   }
   if (composeElement?.value == null) return
@@ -261,7 +262,7 @@ function applyReply() {
     // Find the message body input box
     const messageBodyInputs = composeElement.value.querySelectorAll<HTMLElement>('[aria-label="Message Body"][role="textbox"]')
     if (messageBodyInputs.length == 0) {
-      toast('No compose box found', { duration: 2000 })
+      toast(t('gmail_tools.cards.notifications.no_compose_box_found'), { duration: 2000 })
       return
     }
 
@@ -301,12 +302,12 @@ function applyReply() {
       lastInput.dispatchEvent(new Event('input', { bubbles: true }))
     }
 
-    toast('Reply applied to compose box!', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.reply_applied'), { duration: 2000 })
     emit('apply', replyText)
   }
   catch (error) {
     logger.error('Failed to apply reply:', error)
-    toast('Failed to apply reply content', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.failed_to_apply_reply'), { duration: 2000 })
   }
 }
 
@@ -346,7 +347,7 @@ const start = async () => {
       composeElement.value = props.clickedButtonElement.closest('[role="presentation"]') as HTMLElement
     }
     else {
-      throw Error('Failed to locate reply compose element')
+      throw Error(t('gmail_tools.cards.errors.failed_to_locate_reply_element'))
     }
     let emailContent = ''
     let currentBody = ''
@@ -423,7 +424,7 @@ const start = async () => {
   }
   catch (_error) {
     const error = fromError(_error)
-    output.value = `Error generating reply: ${error.message || error.code || 'Unknown error'}`
+    output.value = t('gmail_tools.cards.errors.error_generating_reply', { error: error.message || error.code || 'Unknown error' })
     logger.error('Error in Gmail reply generation:', error)
   }
   finally {

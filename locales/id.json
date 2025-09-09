@@ -317,6 +317,39 @@
     "header": {
       "starts_on_github": "Bintang di GitHub",
       "goto_website": "Kunjungi Situs Web"
+    },
+    "gmail_tools": {
+      "title": "Alat Gmail",
+      "description": "Konfigurasi berbagai fitur bantuan penulisan",
+      "basic_config": {
+        "title": "Pengaturan dasar",
+        "enable": "Aktifkan alat Gmail",
+        "enable_desc": "Tampilkan fitur bantuan AI langsung di dalam Gmail.",
+        "output_language": "Bahasa keluaran",
+        "output_language_desc": "Pilih bahasa default untuk email yang dihasilkan AI.",
+        "output_style": "Gaya keluaran",
+        "output_style_desc": "Pilih nada default untuk email Anda",
+        "options": {
+          "auto": "Otomatis",
+          "default": "Default"
+        }
+      },
+      "system_prompt": {
+        "title": "Prompt sistem",
+        "summarize": {
+          "title": "Ringkas",
+          "description": "Ekstrak poin-poin utama dengan cepat dari email panjang atau seluruh thread."
+        },
+        "reply": {
+          "title": "Balas",
+          "description": "Buat balasan alami secara instan berdasarkan konten email dan catatan Anda."
+        },
+        "compose": {
+          "title": "Tulis",
+          "description": "Mulai dari awal atau sempurnakan draft Anda."
+        },
+        "reset_to_default": "Reset ke default"
+      }
     }
   },
   "context_menu": {
@@ -391,5 +424,62 @@
     "chat_history": "Sejarah",
     "new_chat": "Obrolan baru",
     "back": "Kembali"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "Ringkasan AI",
+      "ai_reply": "Balasan AI",
+      "ai_polish": "Poles AI"
+    },
+    "cards": {
+      "reply": {
+        "title": "Saran balasan",
+        "processing": "Memproses...",
+        "regenerate": "Generate ulang",
+        "apply": "Terapkan",
+        "language_selector": "Bahasa",
+        "style_selector": "Gaya",
+        "copy_to_clipboard": "Salin ke clipboard"
+      },
+      "compose": {
+        "title": "Tulis AI",
+        "subject": "Subjek:",
+        "email_body": "Isi email:",
+        "processing": "Memproses...",
+        "regenerate": "Generate ulang",
+        "apply": "Terapkan",
+        "language_selector": "Bahasa",
+        "style_selector": "Gaya",
+        "copy_subject_to_clipboard": "Salin subjek ke clipboard",
+        "copy_body_to_clipboard": "Salin isi ke clipboard",
+        "no_subject_generated": "Tidak ada subjek yang dihasilkan"
+      },
+      "styles": {
+        "change_style": "Ubah gaya",
+        "formal": "Formal",
+        "friendly": "Ramah",
+        "urgent": "Mendesak"
+      },
+      "notifications": {
+        "copied_to_clipboard": "Disalin ke clipboard!",
+        "subject_copied": "Subjek disalin ke clipboard!",
+        "body_copied": "Isi disalin ke clipboard!",
+        "reply_applied": "Balasan diterapkan ke kotak tulis!",
+        "email_content_applied": "Konten email diterapkan ke bidang tulis!",
+        "no_content_to_apply": "Tidak ada konten untuk diterapkan",
+        "no_compose_box_found": "Kotak tulis tidak ditemukan",
+        "failed_to_copy": "Gagal menyalin ke clipboard",
+        "failed_to_apply_reply": "Gagal menerapkan konten balasan",
+        "failed_to_apply_compose": "Gagal menerapkan konten penulisan"
+      },
+      "errors": {
+        "failed_to_summarize": "Gagal meringkas email:",
+        "failed_to_show_reply_card": "Gagal menampilkan kartu balasan Gmail:",
+        "failed_to_show_compose_card": "Gagal menampilkan kartu tulis Gmail:",
+        "failed_to_locate_reply_element": "Gagal menemukan elemen tulis balasan",
+        "error_generating_reply": "Error saat menghasilkan balasan: {error}",
+        "error_generating_compose": "Error saat menghasilkan konten penulisan: {error}"
+      }
+    }
   }
 }

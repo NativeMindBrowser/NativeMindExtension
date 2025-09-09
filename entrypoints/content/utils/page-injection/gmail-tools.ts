@@ -1,4 +1,5 @@
-import { onScopeDispose, watchEffect } from 'vue'
+import { computed, onScopeDispose, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import LogoSvg from '@/assets/icons/logo.svg?raw'
 import { useDocumentLoaded } from '@/composables/useDocumentLoaded'
@@ -6,6 +7,7 @@ import { useLogger } from '@/composables/useLogger'
 import { c2bRpc } from '@/utils/rpc'
 import { toggleContainer } from '@/utils/rpc/content-main-world-fns'
 import { sleep } from '@/utils/sleep'
+import { getUserConfig } from '@/utils/user-config'
 
 import { useGmailDetector } from '../../composables/useGmailDetector'
 import { EmailExtractor } from '../gmail/email-extractor'
@@ -17,11 +19,11 @@ const NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS = 'nativemind-gmail-compose-btn'
 
 const LogoIcon = LogoSvg.replace('<svg', '<svg width="12" height="12" style="display: block;"')
 
-function makeSummaryButton(threadElement: HTMLElement, externalStyle?: string) {
+function makeSummaryButton(threadElement: HTMLElement, buttonText: string, externalStyle?: string) {
   const button = document.createElement('button')
   button.innerHTML = `
     ${LogoIcon}
-    AI Summary
+    ${buttonText}
   `
   // Inject CSS styles for the button
   const styleId = 'nativemind-gmail-summary-btn-styles'
@@ -140,15 +142,14 @@ function makeSummaryButton(threadElement: HTMLElement, externalStyle?: string) {
 
       button.innerHTML = `
         ${LogoIcon}
-        AI Summary
+        ${buttonText}
       `
       button.disabled = false
     }
-    catch (error) {
-      logger.error('Failed to summarize email:', error)
+    catch {
       button.innerHTML = `
         ${LogoIcon}
-        AI Summary
+        ${buttonText}
       `
       button.disabled = false
     }
@@ -157,11 +158,11 @@ function makeSummaryButton(threadElement: HTMLElement, externalStyle?: string) {
   return button
 }
 
-function makeReplyButton() {
+function makeReplyButton(buttonText: string) {
   const button = document.createElement('button')
   button.innerHTML = `
     ${LogoIcon}
-    AI Reply
+    ${buttonText}
   `
 
   // Inject CSS styles for the button
@@ -238,11 +239,11 @@ function makeReplyButton() {
   return button
 }
 
-function makeComposeButton() {
+function makeComposeButton(buttonText: string) {
   const button = document.createElement('button')
   button.innerHTML = `
     ${LogoIcon}
-    AI Polish
+    ${buttonText}
   `
 
   // Inject CSS styles for the button
@@ -338,7 +339,7 @@ function findSummaryButtonInjectionPoint(threadElement: HTMLElement): { parent: 
   return null
 }
 
-function injectReplyButton() {
+function injectReplyButton(buttonText: string) {
   if (location.hostname !== 'mail.google.com') return
 
   // Find elements with class 'btC' under role="listitem"
@@ -351,7 +352,7 @@ function injectReplyButton() {
       return
     }
 
-    const replyButton = makeReplyButton()
+    const replyButton = makeReplyButton(buttonText)
 
     // Insert as second child
     if (btcElement.children.length >= 1) {
@@ -368,7 +369,7 @@ function injectReplyButton() {
   })
 }
 
-function injectComposeButton() {
+function injectComposeButton(buttonText: string) {
   if (location.hostname !== 'mail.google.com') return
 
   // Find elements with class 'btC' under elements with role="dialog"
@@ -381,7 +382,7 @@ function injectComposeButton() {
       return
     }
 
-    const composeButton = makeComposeButton()
+    const composeButton = makeComposeButton(buttonText)
 
     // Insert as second child
     if (btcElement.children.length >= 1) {
@@ -398,7 +399,7 @@ function injectComposeButton() {
   })
 }
 
-function injectSummaryButton(currentThreadElement: HTMLElement | null) {
+function injectSummaryButton(currentThreadElement: HTMLElement | null, buttonText: string) {
   if (location.hostname !== 'mail.google.com' || !currentThreadElement) return
 
   // Check if our summary button already exists in this thread
@@ -410,12 +411,12 @@ function injectSummaryButton(currentThreadElement: HTMLElement | null) {
   const injectionInfo = findSummaryButtonInjectionPoint(currentThreadElement)
   if (injectionInfo) {
     if (injectionInfo.insertAfter) {
-      const summaryButton = makeSummaryButton(currentThreadElement, 'margin: 8px 0 0 72px') // align with title
+      const summaryButton = makeSummaryButton(currentThreadElement, buttonText, 'margin: 8px 0 0 72px') // align with title
       // Insert after the specified element (Rule 2)
       injectionInfo.insertAfter.insertAdjacentElement('afterend', summaryButton)
     }
     else {
-      const summaryButton = makeSummaryButton(currentThreadElement)
+      const summaryButton = makeSummaryButton(currentThreadElement, buttonText)
       // Append to parent (Rule 1)
       injectionInfo.parent.appendChild(summaryButton)
     }
@@ -425,6 +426,7 @@ function injectSummaryButton(currentThreadElement: HTMLElement | null) {
 }
 
 export function useInjectGmailSummaryButtons() {
+  const { t } = useI18n()
   let disposed = false
   const { currentThread } = useGmailDetector()
 
@@ -446,7 +448,7 @@ export function useInjectGmailSummaryButtons() {
     // Watch for currentThread changes and inject when it changes
     watchEffect(() => {
       if (currentThread.value?.element) {
-        injectSummaryButton(currentThread.value.element)
+        injectSummaryButton(currentThread.value.element, t('gmail_tools.buttons.ai_summary'))
       }
     })
   }
@@ -455,6 +457,7 @@ export function useInjectGmailSummaryButtons() {
 }
 
 export function useInjectGmailReplyButtons() {
+  const { t } = useI18n()
   let disposed = false
 
   onScopeDispose(() => {
@@ -474,7 +477,7 @@ export function useInjectGmailReplyButtons() {
 
     // Use MutationObserver to watch for DOM changes and inject buttons
     const observer = new MutationObserver(() => {
-      injectReplyButton()
+      injectReplyButton(t('gmail_tools.buttons.ai_reply'))
     })
 
     observer.observe(document.body, {
@@ -483,7 +486,7 @@ export function useInjectGmailReplyButtons() {
     })
 
     // Initial injection
-    injectReplyButton()
+    injectReplyButton(t('gmail_tools.buttons.ai_reply'))
 
     onScopeDispose(() => {
       observer.disconnect()
@@ -494,6 +497,8 @@ export function useInjectGmailReplyButtons() {
 }
 
 export function useInjectGmailComposeButtons() {
+  const { t } = useI18n()
+
   let disposed = false
 
   onScopeDispose(() => {
@@ -513,7 +518,7 @@ export function useInjectGmailComposeButtons() {
 
     // Use MutationObserver to watch for DOM changes and inject buttons
     const observer = new MutationObserver(() => {
-      injectComposeButton()
+      injectComposeButton(t('gmail_tools.buttons.ai_polish'))
     })
 
     observer.observe(document.body, {
@@ -522,7 +527,7 @@ export function useInjectGmailComposeButtons() {
     })
 
     // Initial injection
-    injectComposeButton()
+    injectComposeButton(t('gmail_tools.buttons.ai_polish'))
 
     onScopeDispose(() => {
       observer.disconnect()
@@ -538,10 +543,32 @@ export async function useInjectGmailTools() {
     useInjectGmailReplyButtons(),
     useInjectGmailComposeButtons(),
   ]
+  const userConfig = await getUserConfig()
+  const enabled = userConfig.emailTools.enable.toRef()
 
-  useDocumentLoaded(() => {
-    injections.forEach((inject) => {
-      inject()
-    })
+  const enableGmailTools = computed(() => {
+    return enabled.value
+  })
+
+  // Watch for settings changes and manage button injection
+  watchEffect(() => {
+    if (enableGmailTools.value) {
+      // Gmail tools enabled - inject buttons
+      useDocumentLoaded(() => {
+        injections.forEach((inject) => {
+          inject()
+        })
+      })
+    }
+    else {
+      // FIXME: Gmail tools disabled - remove existing buttons
+      const summaryButtons = document.querySelectorAll(`.${NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS}`)
+      const replyButtons = document.querySelectorAll(`.${NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS}`)
+      const composeButtons = document.querySelectorAll(`.${NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS}`)
+
+      summaryButtons.forEach((button) => button.remove())
+      replyButtons.forEach((button) => button.remove())
+      composeButtons.forEach((button) => button.remove())
+    }
   })
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card min-w-80 max-w-100 text-xs">
+    <div class="card min-w-80 max-w-110 text-xs">
       <div class="title flex items-center justify-between h-9 px-3">
         <Text
           size="small"
@@ -8,7 +8,7 @@
         >
           <div class="flex items-center gap-2">
             <SettingsEmailIcon />
-            AI Compose
+            {{ t('gmail_tools.cards.compose.title') }}
           </div>
         </Text>
         <button
@@ -39,7 +39,7 @@
                 color="primary"
                 weight="medium"
               >
-                Subject:
+                {{ t('gmail_tools.cards.compose.subject') }}
               </Text>
             </div>
             <div v-if="runningStatus === 'pending'">
@@ -49,19 +49,19 @@
             </div>
             <div
               v-else
-              class="max-h-[min(90vh,200px)] overflow-y-auto relative"
+              class="relative"
             >
-              <div class="text-[#1565C0] text-sm">
-                {{ optimizedSubject || 'No subject generated' }}
+              <div class="text-[#1565C0] text-sm mr-10">
+                {{ optimizedSubject }}
               </div>
               <!-- Copy Button for Subject -->
               <button
                 v-if="optimizedSubject.trim()"
-                class="absolute top-1 right-1 p-1 rounded hover:bg-white/50 opacity-70 hover:opacity-100 transition-opacity"
-                :title="'Copy subject to clipboard'"
+                class="absolute top-0 right-1 rounded hover:bg-white/30 transition cursor-pointer"
+                :title="t('gmail_tools.cards.compose.copy_subject_to_clipboard')"
                 @click="copySubjectToClipboard"
               >
-                <CopyIcon class="w-3.5 h-3.5 text-[#1565C0]" />
+                <CopyIcon class="w-4 h-4 text-[#1565C0]" />
               </button>
             </div>
           </div>
@@ -85,7 +85,7 @@
                 color="primary"
                 weight="medium"
               >
-                Email Body:
+                {{ t('gmail_tools.cards.compose.email_body') }}
               </Text>
             </div>
             <div v-if="runningStatus === 'pending'">
@@ -95,20 +95,20 @@
             </div>
             <div
               v-else
-              class="max-h-[min(90vh,300px)] overflow-y-auto relative"
+              class="relative"
             >
               <MarkdownViewer
-                class="text-[#03943D]"
+                class="text-[#03943D] mr-10"
                 :text="optimizedBody"
               />
               <!-- Copy Button for Body -->
               <button
                 v-if="optimizedBody.trim()"
-                class="absolute top-1 right-1 p-1 rounded hover:bg-white/50 opacity-70 hover:opacity-100 transition-opacity"
-                :title="'Copy body to clipboard'"
+                class="absolute top-0 right-1 rounded hover:bg-white/30 transition cursor-pointer"
+                :title="t('gmail_tools.cards.compose.copy_body_to_clipboard')"
                 @click="copyBodyToClipboard"
               >
-                <CopyIcon class="w-3.5 h-3.5 text-[#03943D]" />
+                <CopyIcon class="w-4 h-4 text-[#03943D]" />
               </button>
             </div>
           </div>
@@ -122,7 +122,7 @@
           <IconSelector
             v-model="selectedLanguage"
             :options="languageOptions"
-            placeholder="Language"
+            :placeholder="t('gmail_tools.cards.compose.language_selector')"
             :icon="LanguageIcon"
             @update:modelValue="onLanguageChange"
           />
@@ -131,7 +131,7 @@
           <IconSelector
             v-model="selectedStyle"
             :options="styleOptions"
-            placeholder="Style"
+            :placeholder="t('gmail_tools.cards.compose.style_selector')"
             :icon="WritingStyleIcon"
             @update:modelValue="onStyleChange"
           />
@@ -141,11 +141,11 @@
           <Button
             v-if="hasSettingsChanged"
             variant="secondary"
-            class="px-2 h-8 text-xs font-medium rounded-md cursor-pointer"
+            class="px-2 h-8 text-xs leading-4 font-medium rounded-md cursor-pointer whitespace-nowrap"
             @click="regenerate"
           >
             <RegenerateIcon class="w-4 h-4 mr-1 inline" />
-            Regenerate
+            {{ t('gmail_tools.cards.compose.regenerate') }}
           </Button>
 
           <!-- Apply button -->
@@ -155,7 +155,7 @@
             :class="{ 'opacity-50 pointer-events-none': runningStatus !== 'idle' }"
             @click="applyCompose"
           >
-            Apply
+            {{ t('gmail_tools.cards.compose.apply') }}
           </Button>
         </div>
       </div>
@@ -219,7 +219,8 @@ const abortControllers: AbortController[] = []
 
 // Settings state
 const defaultStyle = userConfig.emailTools.outputStyle.get()
-const selectedLanguage = ref<LanguageCode>()
+const defaultLang = userConfig.emailTools.outputLanguage.get()
+const selectedLanguage = ref<LanguageCode | undefined>(defaultLang === 'auto' ? undefined : (SUPPORTED_LANGUAGES.find((lang) => lang.code === defaultLang)?.code || undefined))
 const selectedStyle = ref<string>(defaultStyle === 'default' ? '' : defaultStyle)
 
 // Create options for selectors
@@ -231,19 +232,19 @@ const languageOptions = computed(() => SUPPORTED_LANGUAGES.map((lang) => ({
 const styleOptions = computed(() => [
   {
     id: '',
-    label: defaultStyle ? capitalizeFirst(defaultStyle) : 'Change style',
+    label: defaultStyle ? capitalizeFirst(defaultStyle) : t('gmail_tools.cards.styles.change_style'),
   },
   {
     id: 'formal',
-    label: 'Formal',
+    label: t('gmail_tools.cards.styles.formal'),
   },
   {
     id: 'friendly',
-    label: 'Friendly',
+    label: t('gmail_tools.cards.styles.friendly'),
   },
   {
     id: 'urgent',
-    label: 'Urgent',
+    label: t('gmail_tools.cards.styles.urgent'),
   },
 ])
 
@@ -280,22 +281,22 @@ function capitalizeFirst(str: string): string {
 async function copySubjectToClipboard() {
   try {
     await navigator.clipboard.writeText(optimizedSubject.value.trim())
-    toast('Subject copied to clipboard!', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.subject_copied'), { duration: 2000 })
   }
   catch (error) {
     logger.error('Failed to copy subject to clipboard:', error)
-    toast('Failed to copy subject to clipboard', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.failed_to_copy'), { duration: 2000 })
   }
 }
 
 async function copyBodyToClipboard() {
   try {
     await navigator.clipboard.writeText(optimizedBody.value.trim())
-    toast('Body copied to clipboard!', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.body_copied'), { duration: 2000 })
   }
   catch (error) {
     logger.error('Failed to copy body to clipboard:', error)
-    toast('Failed to copy body to clipboard', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.failed_to_copy'), { duration: 2000 })
   }
 }
 
@@ -323,7 +324,7 @@ function applyCompose() {
   const body = optimizedBody.value.trim()
 
   if (!subject && !body) {
-    toast('No content to apply', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.no_content_to_apply'), { duration: 2000 })
     return
   }
 
@@ -381,12 +382,12 @@ function applyCompose() {
       }
     }
 
-    toast('Email content applied to compose fields!', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.email_content_applied'), { duration: 2000 })
     emit('apply', { subject, body })
   }
   catch (error) {
     logger.error('Failed to apply compose content:', error)
-    toast('Failed to apply compose content', { duration: 2000 })
+    toast(t('gmail_tools.cards.notifications.failed_to_apply_compose'), { duration: 2000 })
   }
 }
 
@@ -513,7 +514,7 @@ const start = async () => {
   }
   catch (_error) {
     const error = fromError(_error)
-    optimizedBody.value = `Error generating compose content: ${error.message || error.code || 'Unknown error'}`
+    optimizedBody.value = t('gmail_tools.cards.errors.error_generating_compose', { error: error.message || error.code || 'Unknown error' })
     logger.error('Error in Gmail compose generation:', error)
   }
   finally {

@@ -317,6 +317,39 @@
     "header": {
       "starts_on_github": "Stars on GitHub",
       "goto_website": "前往網站"
+    },
+    "gmail_tools": {
+      "title": "Gmail 工具",
+      "description": "配置各種寫作輔助功能",
+      "basic_config": {
+        "title": "基本設定",
+        "enable": "啟用 Gmail 工具",
+        "enable_desc": "在 Gmail 內直接顯示 AI 輔助功能。",
+        "output_language": "輸出語言",
+        "output_language_desc": "選擇 AI 生成郵件的預設語言。",
+        "output_style": "輸出風格",
+        "output_style_desc": "選擇郵件的預設語調",
+        "options": {
+          "auto": "自動",
+          "default": "預設"
+        }
+      },
+      "system_prompt": {
+        "title": "系統提示",
+        "summarize": {
+          "title": "總結",
+          "description": "快速提取長郵件或整個郵件串的關鍵要點。"
+        },
+        "reply": {
+          "title": "回覆",
+          "description": "基於郵件內容和您的備註即時起草自然回覆。"
+        },
+        "compose": {
+          "title": "撰寫",
+          "description": "從頭開始或完善您的草稿。"
+        },
+        "reset_to_default": "重置為預設"
+      }
     }
   },
   "context_menu": {
@@ -391,5 +424,62 @@
     "chat_history": "歷史",
     "new_chat": "新聊天",
     "back": "返回"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "AI 總結",
+      "ai_reply": "AI 回覆",
+      "ai_polish": "AI 潤色"
+    },
+    "cards": {
+      "reply": {
+        "title": "回覆建議",
+        "processing": "處理中...",
+        "regenerate": "重新生成",
+        "apply": "套用",
+        "language_selector": "語言",
+        "style_selector": "風格",
+        "copy_to_clipboard": "複製到剪貼簿"
+      },
+      "compose": {
+        "title": "AI 撰寫",
+        "subject": "主旨：",
+        "email_body": "郵件內容：",
+        "processing": "處理中...",
+        "regenerate": "重新生成",
+        "apply": "套用",
+        "language_selector": "語言",
+        "style_selector": "風格",
+        "copy_subject_to_clipboard": "複製主旨到剪貼簿",
+        "copy_body_to_clipboard": "複製內容到剪貼簿",
+        "no_subject_generated": "未生成主旨"
+      },
+      "styles": {
+        "change_style": "更改風格",
+        "formal": "正式",
+        "friendly": "友善",
+        "urgent": "緊急"
+      },
+      "notifications": {
+        "copied_to_clipboard": "已複製到剪貼簿！",
+        "subject_copied": "主旨已複製到剪貼簿！",
+        "body_copied": "內容已複製到剪貼簿！",
+        "reply_applied": "回覆已套用到撰寫框！",
+        "email_content_applied": "郵件內容已套用到撰寫欄位！",
+        "no_content_to_apply": "沒有內容可套用",
+        "no_compose_box_found": "未找到撰寫框",
+        "failed_to_copy": "複製到剪貼簿失敗",
+        "failed_to_apply_reply": "套用回覆內容失敗",
+        "failed_to_apply_compose": "套用撰寫內容失敗"
+      },
+      "errors": {
+        "failed_to_summarize": "總結郵件失敗：",
+        "failed_to_show_reply_card": "顯示 Gmail 回覆卡片失敗：",
+        "failed_to_show_compose_card": "顯示 Gmail 撰寫卡片失敗：",
+        "failed_to_locate_reply_element": "無法定位回覆撰寫元素",
+        "error_generating_reply": "生成回覆出錯：{error}",
+        "error_generating_compose": "生成撰寫內容出錯：{error}"
+      }
+    }
   }
 }
