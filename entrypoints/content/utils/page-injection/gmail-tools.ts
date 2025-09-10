@@ -48,7 +48,6 @@ function makeSummaryButton(threadElement: HTMLElement, buttonText: string, exter
         transition: all 0.2s ease;
         font-family: 'Google Sans', Roboto, Arial, sans-serif;
         white-space: nowrap;
-        min-width: 120px;
       }
       
       .${NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS}:hover:not(:disabled) {
