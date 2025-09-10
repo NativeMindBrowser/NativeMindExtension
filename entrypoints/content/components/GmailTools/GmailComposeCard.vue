@@ -131,7 +131,7 @@
           <IconSelector
             v-model="selectedStyle"
             :options="styleOptions"
-            :placeholder="t('gmail_tools.cards.compose.style_selector')"
+            :placeholder="t('gmail_tools.cards.styles.change_style')"
             :icon="WritingStyleIcon"
             @update:modelValue="onStyleChange"
           />
@@ -221,7 +221,7 @@ const abortControllers: AbortController[] = []
 const defaultStyle = userConfig.emailTools.outputStyle.get()
 const defaultLang = userConfig.emailTools.outputLanguage.get()
 const selectedLanguage = ref<LanguageCode | undefined>(defaultLang === 'auto' ? undefined : (SUPPORTED_LANGUAGES.find((lang) => lang.code === defaultLang)?.code || undefined))
-const selectedStyle = ref<string>(defaultStyle === 'default' ? '' : defaultStyle)
+const selectedStyle = ref<string | undefined>(defaultStyle === 'default' ? undefined : defaultStyle)
 
 // Create options for selectors
 const languageOptions = computed(() => SUPPORTED_LANGUAGES.map((lang) => ({
@@ -230,10 +230,6 @@ const languageOptions = computed(() => SUPPORTED_LANGUAGES.map((lang) => ({
 })))
 
 const styleOptions = computed(() => [
-  {
-    id: '',
-    label: defaultStyle ? capitalizeFirst(defaultStyle) : t('gmail_tools.cards.styles.change_style'),
-  },
   {
     id: 'formal',
     label: t('gmail_tools.cards.styles.formal'),
@@ -270,11 +266,6 @@ function processGmailTemplate(template: string, variables: Record<string, string
     processed = processed.replaceAll(placeholder, value || '')
   }
   return processed
-}
-
-// Utility functions
-function capitalizeFirst(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 // Copy to clipboard functions
