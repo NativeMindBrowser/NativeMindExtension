@@ -11,6 +11,7 @@ const eventEmitter = new EventEmitter()
 
 export type Events = {
   contextMenuClicked(options: Browser.contextMenus.OnClickData & { menuItemId: ContextMenuId, tabInfo: TabInfo }): void
+  gmailAction(options: { action: 'summary' | 'reply' | 'compose', data: unknown, tabInfo: TabInfo }): void
   updateModelList(): void
   updateChatList(): void
 }

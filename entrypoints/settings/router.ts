@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 
 import ChatSettings from './components/ChatSettings/index.vue'
 import DebugSettings from './components/DebugSettings/index.vue'
+import EmailToolsSettings from './components/EmailToolsSettings/index.vue'
 import GeneralSettings from './components/GeneralSettings/index.vue'
 import Layout from './components/Layout.vue'
 import TranslationSettings from './components/TranslationSettings/index.vue'
@@ -17,6 +18,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'chat', component: ChatSettings },
       { path: 'translation', component: TranslationSettings },
       { path: 'writing-tools', component: WritingToolsSettings },
+      { path: 'gmail-tools', component: EmailToolsSettings },
       { path: 'debug', component: DebugSettings },
     ],
   },

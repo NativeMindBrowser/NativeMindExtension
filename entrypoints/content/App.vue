@@ -2,20 +2,26 @@
   <Suspense>
     <WritingTools />
   </Suspense>
+  <Suspense>
+    <GmailTools />
+  </Suspense>
 </template>
 
 <script setup lang="tsx">
 import { useToast } from '@/composables/useToast'
 import { registerContentScriptRpcEventFromMainWorld } from '@/utils/rpc/content-main-world-fns'
 
+import GmailTools from './components/GmailTools/index.vue'
 import WritingTools from './components/WritingTools/index.vue'
 import { useTranslator } from './composables/useTranslator'
 import { initContextMenu } from './utils/context-menu'
+import { useInjectGmailTools } from './utils/page-injection/gmail-tools'
 import { useInjectOllamaDownloadButtons } from './utils/page-injection/ollama-search-page'
 
 // init translator global event listeners
 useTranslator()
 useInjectOllamaDownloadButtons()
+useInjectGmailTools()
 initContextMenu()
 const toast = useToast()
 

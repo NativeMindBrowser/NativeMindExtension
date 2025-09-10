@@ -18,6 +18,8 @@ import { browser } from 'wxt/browser'
 import { useZIndex } from '@/composables/useZIndex'
 import { ContextMenuId } from '@/utils/context-menu'
 import { FileGetter } from '@/utils/file'
+import logger from '@/utils/logger'
+import { UserPrompt } from '@/utils/prompts/helpers'
 import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { sleep } from '@/utils/sleep'
 import { extractFileNameFromUrl } from '@/utils/url'
@@ -33,6 +35,53 @@ initContextMenu()
 const mainRef = useTemplateRef('mainRef')
 const { index: onboardingPanelZIndex } = useZIndex('settings')
 const userConfig = await getUserConfig()
+
+registerSidepanelRpcEvent('gmailAction', async (e) => {
+  const { action, data } = e
+  logger.debug('Gmail action triggered:', action, data)
+  if (action === 'summary') {
+    const emailContent = (data as { emailContent?: string })?.emailContent || ''
+    if (emailContent) {
+      const chat = await Chat.getInstance()
+      // create new chat
+      await chat.createNewChat()
+
+      // wait for the chat component to be ready
+      await sleep(500)
+
+      // Create the Gmail summary prompt with the proper instructions
+      const instructionsPrompt = `Instructions:
+1. Summarize in chronological order (oldest to newest), indicating sender and key points of each message.
+2. Be concise: keep important updates, decisions, deadlines, and action items; remove pleasantries or redundant text.
+3. Add a 📝 TODO section for specific tasks, responsibilities, or follow-ups (if any).
+4. Add a ⚠️ Risks / Issues section for any risks, problems, disagreements, or blockers (if any).
+5. Format:
+   - Title: short headline for the thread
+   - Summary: bullet points in chronological order
+   - 📝 TODO: bullet points (only if applicable)
+   - ⚠️ Risks / Issues: bullet points (only if applicable)
+
+Output plain text only, no explanations.
+
+Email Thread:
+${emailContent}`
+
+      const gmailSystemPrompt = userConfig.emailTools.summary.systemPrompt.get()
+
+      try {
+        logger.debug('trying to ask Gmail summary')
+        // Use the ask method and then modify the display content
+        await chat.ask('Summarize this email', {
+          user: UserPrompt.fromText(instructionsPrompt),
+          system: gmailSystemPrompt,
+        })
+      }
+      catch (error) {
+        logger.error('Failed to ask Gmail summary:', error)
+      }
+    }
+  }
+})
 
 registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
   const menuItemId = e.menuItemId as ContextMenuId

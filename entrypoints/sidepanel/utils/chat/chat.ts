@@ -534,7 +534,7 @@ export class Chat {
     }
   }
 
-  async ask(question: string) {
+  async ask(question: string, _prompt?: { system: string, user: UserPrompt }) {
     using _s = this.statusScope('pending')
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
@@ -543,11 +543,13 @@ export class Chat {
     this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
 
     const userMsg = this.historyManager.appendUserMessage()
+
     const environmentDetails = await this.generateEnvironmentDetails(userMsg.id)
-    const prompt = await chatWithEnvironment(question, environmentDetails)
+    const prompt = _prompt ?? await chatWithEnvironment(question, environmentDetails)
     // the display content on UI and the content that should be sent to the LLM are different
     userMsg.displayContent = question
     userMsg.content = prompt.user.extractText()
+
     const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
     await this.prepareModel()
     if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
