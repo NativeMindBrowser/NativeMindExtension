@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v1.10.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.2...v1.10.0-beta.1)
+
+### 🚀 Enhancements
+
+- **agent:** Add task-click-page icon and update related references ([fef0052](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fef0052))
+- **lm-studio:** Initial support for LM Studio ([0f318d9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f318d9))
+
+### 🏡 Chore
+
+- **logo:** Update extension logo in toolbar ([7335374](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7335374))
+- **package:** Update version to 1.10.0 ([d933b93](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d933b93))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.0-beta.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.1...v1.9.0-beta.2)
