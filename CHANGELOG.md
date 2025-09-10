@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.1...v1.10.0-beta.2)
+
+### 🩹 Fixes
+
+- **lm-studio:** Return consistent structured response format ([24d9636](https://github.com/NativeMindBrowser/NativeMindExtension/commit/24d9636))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.2...v1.10.0-beta.1)
