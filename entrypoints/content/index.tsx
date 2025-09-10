@@ -1,8 +1,8 @@
-import '@/utils/rpc'
-import '@/utils/polyfill'
-import 'tailwindcss/index.css'
-import '@/utils/time'
 import '@/styles/style.css'
+import '@/utils/polyfill'
+import '@/utils/rpc'
+import '@/utils/time'
+import 'tailwindcss/index.css'
 
 import { Suspense } from 'vue'
 import { defineContentScript } from 'wxt/utils/define-content-script'
@@ -18,11 +18,11 @@ export default defineContentScript({
   cssInjectionMode: 'manual',
   runAt: 'document_start',
   async main(ctx) {
-    const ui = await createShadowRootOverlay(ctx, ({ rootElement, writingToolsRoot, gmailToolsRoot }) => {
+    const ui = await createShadowRootOverlay(ctx, ({ rootElement }) => {
       rootElement.classList.add('font-inter', 'nativemind-style-boundary')
       return (
         <Suspense>
-          <RootProvider rootElement={rootElement} writingToolsRoot={writingToolsRoot} gmailToolsRoot={gmailToolsRoot}>
+          <RootProvider rootElement={rootElement}>
             <App />
           </RootProvider>
         </Suspense>

@@ -51,12 +51,12 @@ import { useLogger } from '@/composables/useLogger'
 import { injectStyleSheetToDocument, loadContentScriptStyleSheet } from '@/utils/css'
 import { getUserConfig } from '@/utils/user-config'
 
-import { useGmailToolsRootElement } from '../../composables/useGmailToolsRootElement'
+import { useRootElement } from '../../composables/useRootElement'
 import GmailComposeCard from './GmailComposeCard.vue'
 import GmailReplyCard from './GmailReplyCard.vue'
 
 const logger = useLogger()
-const rootElement = useGmailToolsRootElement()
+const rootElement = useRootElement()
 const styleSheet = shallowRef<CSSStyleSheet | null>(null)
 const shadowRootRef = ref<InstanceType<typeof ShadowRoot>>()
 const containerRef = ref<HTMLDivElement>()

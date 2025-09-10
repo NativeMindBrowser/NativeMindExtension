@@ -32,12 +32,12 @@ import { injectStyleSheetToDocument, loadContentScriptStyleSheet } from '@/utils
 import { isContentEditableElement, isEditorFrameworkElement, shouldExcludeEditableElement } from '@/utils/selection'
 import { getUserConfig } from '@/utils/user-config'
 
-import { useWritingToolsRootElement } from '../../composables/useWritingToolsRootElement'
+import { useRootElement } from '../../composables/useRootElement'
 import EditableEntry from './EditableEntry.vue'
 import { WritingToolType } from './types'
 
 const logger = useLogger()
-const rootElement = useWritingToolsRootElement()
+const rootElement = useRootElement()
 const styleSheet = shallowRef<CSSStyleSheet | null>(null)
 const shadowRootRef = ref<InstanceType<typeof ShadowRoot>>()
 const userConfig = await getUserConfig()

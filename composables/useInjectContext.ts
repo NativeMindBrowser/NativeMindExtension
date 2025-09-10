@@ -2,8 +2,6 @@ import { inject, provide } from 'vue'
 
 type InjectContext = {
   rootElement: HTMLElement
-  writingToolsRoot: HTMLElement | undefined
-  gmailToolsRoot: HTMLElement | undefined
   selectorScrollListenElement: HTMLElement[]
 }
 
