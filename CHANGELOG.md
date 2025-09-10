@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v1.9.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.4...v1.9.0-beta.5)
+
+### 🚀 Enhancements
+
+- Add Gmail Tools settings and functionality ([7919850](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7919850))
+- Update SVG icons for copy and regenerate with new designs ([b4b9550](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b4b9550))
+- **gmail-tools:** Add i18n support, enhace UI. ([24f4ab8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/24f4ab8))
+- Update to use new logo in gmail tools, remove outdated svg ([21152d1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/21152d1))
+
+### 🩹 Fixes
+
+- Add comment for issue in showSidepanel function ([703c1bd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/703c1bd))
+
+### 🏡 Chore
+
+- Remove deprecated components ([591162f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/591162f))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.9.0-beta.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.3...v1.9.0-beta.4)
