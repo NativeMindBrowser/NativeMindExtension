@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.5...v1.9.0-beta.6)
+
+### 🩹 Fixes
+
+- **AttachmentSelector:** Dynamically update title on same-page navigation ([91b28d3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/91b28d3))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.0-beta.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.4...v1.9.0-beta.5)
