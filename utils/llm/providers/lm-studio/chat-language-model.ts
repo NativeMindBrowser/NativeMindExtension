@@ -49,6 +49,7 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
   }
 
   private async getArgs({
+    mode,
     prompt,
     maxTokens,
     temperature,
@@ -57,11 +58,18 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
     frequencyPenalty,
     presencePenalty,
     stopSequences,
-    responseFormat,
     seed,
     abortSignal,
   }: Parameters<LanguageModelV1['doGenerate']>[0]) {
     const warnings: LanguageModelV1CallWarning[] = []
+
+    if (mode?.type === 'object-tool') {
+      warnings.push({
+        type: 'unsupported-setting',
+        setting: 'responseFormat',
+        details: 'object-tool mode is not supported by LM Studio models, using object-json mode instead',
+      })
+    }
 
     const baseArgs = {
       signal: abortSignal,
@@ -72,14 +80,12 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
       topK,
       frequencyPenalty,
       presencePenalty,
-      response_format:
-        responseFormat?.type === 'json'
-          ? responseFormat.schema != null
-            ? {
-                type: 'json' as const,
-                schema: JSON.stringify(responseFormat.schema),
-              }
-            : undefined
+      structured:
+        mode?.type === 'object-json'
+          ? {
+              type: 'json' as const,
+              jsonSchema: mode.schema,
+            }
           : undefined,
 
       stop: stopSequences,
@@ -99,7 +105,7 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
 
     const body = args
 
-    log.debug('doGenerate called', { args })
+    log.debug('doGenerate called', { args, options })
 
     const responseBody = await this.model.respond(args.messages, {
       signal: body.signal,
@@ -108,6 +114,8 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
       topKSampling: body.topK,
       temperature: body.temperature,
       stopStrings: body.stop,
+      contextOverflowPolicy: 'truncateMiddle',
+      structured: body.structured,
     })
 
     const { messages: rawPrompt, ...rawSettings } = args
@@ -130,7 +138,7 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
     const { args, warnings } = await this.getArgs({ ...options })
 
     const body = args
-    log.debug('doStream called', { args })
+    log.debug('doStream called', { args, options })
     const resp = this.model.respond(args.messages, {
       signal: body.signal,
       maxTokens: body.maxTokens,
@@ -138,6 +146,8 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
       topKSampling: body.topK,
       temperature: body.temperature,
       stopStrings: body.stop,
+      contextOverflowPolicy: 'truncateMiddle',
+      structured: body.structured,
     })
 
     const { messages: rawPrompt, ...rawSettings } = args
