@@ -1,7 +1,7 @@
 import { computed, onScopeDispose, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import LogoSvg from '@/assets/icons/logo.svg?raw'
+import LogoSvg from '@/assets/icons/logo-custom-color.svg?raw'
 import { useDocumentLoaded } from '@/composables/useDocumentLoaded'
 import { useLogger } from '@/composables/useLogger'
 import { c2bRpc } from '@/utils/rpc'
@@ -17,7 +17,7 @@ const NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS = 'nativemind-gmail-summary-btn'
 const NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS = 'nativemind-gmail-reply-btn'
 const NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS = 'nativemind-gmail-compose-btn'
 
-const LogoIcon = LogoSvg.replace('<svg', '<svg width="12" height="12" style="display: block;"')
+const LogoIcon = LogoSvg.replace('<svg', '<svg width="14" height="14" style="display: block;"')
 
 function makeSummaryButton(threadElement: HTMLElement, buttonText: string, externalStyle?: string) {
   const button = document.createElement('button')
@@ -35,7 +35,7 @@ function makeSummaryButton(threadElement: HTMLElement, buttonText: string, exter
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 4px;
         padding: 8px 10px;
         background: #FBF8F4;
         color: #3c4043;
@@ -175,7 +175,7 @@ function makeReplyButton(buttonText: string) {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 4px;
         padding: 8px 10px;
         background: #FBF8F4;
         color: #3c4043;
@@ -256,7 +256,7 @@ function makeComposeButton(buttonText: string) {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 4px;
         padding: 8px 10px;
         background: #FBF8F4;
         color: #3c4043;
