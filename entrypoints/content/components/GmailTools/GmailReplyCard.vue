@@ -84,6 +84,7 @@
             v-if="hasSettingsChanged"
             variant="secondary"
             class="px-2 h-8 text-xs leading-4 font-medium rounded-md cursor-pointer whitespace-nowrap"
+            :class="{ 'opacity-50 pointer-events-none': runningStatus !== 'idle' }"
             @click="regenerate"
           >
             <RegenerateIcon class="w-4 h-4 mr-1 inline" />
