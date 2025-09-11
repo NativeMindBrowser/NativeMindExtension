@@ -344,6 +344,7 @@ const start = async () => {
     let emailContent = ''
     let currentBody = ''
     let recipients = ''
+    let fromUserEmail = ''
 
     // Get current thread and extract email content
     if (currentThread.value?.element) {
@@ -377,6 +378,7 @@ const start = async () => {
         ...recipientData.bcc.map((bcc) => `BCC: ${bcc}`),
       ]
       recipients = recipientsList.join('\n') || 'No recipients'
+      fromUserEmail = recipientData.from
     }
 
     // Build the prompt using Gmail reply prompts with template replacement
@@ -392,6 +394,7 @@ const start = async () => {
       content: emailContent,
       draft: currentBody,
       recipients: recipients,
+      user_email: fromUserEmail,
       output_language: outputLanguage,
       style: outputStyle || '',
     })

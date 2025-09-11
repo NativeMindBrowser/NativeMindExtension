@@ -492,6 +492,9 @@ User Selected Output Language (may be empty):
 
 Style (optional: formal / friendly / urgent / custom):
 {{style}}
+
+User Email Address (optional):
+{{user_email}}
 `
 
 export const DEFAULT_GMAIL_COMPOSE_USER_PROMPT = `
@@ -533,4 +536,23 @@ User Selected Output Language (may be empty):
 
 Style (optional: formal / friendly / urgent / custom):
 {{style}}
+
+User Email Address (optional):
+{{user_email}}
 `
+
+export const DEFAULT_GMAIL_SUMMARY_USER_PROMPT = `Instructions:
+1. Summarize in chronological order (oldest to newest), indicating sender and key points of each message.
+2. Be concise: keep important updates, decisions, deadlines, and action items; remove pleasantries or redundant text.
+3. Add a 📝 TODO section for specific tasks, responsibilities, or follow-ups (if any).
+4. Add a ⚠️ Risks / Issues section for any risks, problems, disagreements, or blockers (if any).
+5. Format:
+   - Title: short headline for the thread
+   - Summary: bullet points in chronological order
+   - 📝 TODO: bullet points (only if applicable)
+   - ⚠️ Risks / Issues: bullet points (only if applicable)
+
+Output plain text only, no explanations.
+
+Email Thread:
+{{content}}`

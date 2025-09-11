@@ -425,6 +425,7 @@ const start = async () => {
     let currentSubject = ''
     let currentBody = ''
     let recipients = ''
+    let fromUserEmail = ''
 
     if (composeElement.value) {
       logger.debug(`Found elements: ${props.clickedButtonElement}`)
@@ -439,6 +440,8 @@ const start = async () => {
         ...recipientData.bcc.map((bcc) => `BCC: ${bcc}`),
       ]
       recipients = recipientsList.join('\n') || 'No recipients'
+
+      fromUserEmail = recipientData.from
 
       logger.debug('Extracted compose data:', { currentSubject, currentBody, recipients })
     }
@@ -459,6 +462,7 @@ const start = async () => {
       current_subject: currentSubject,
       current_body: currentBody,
       recipients: recipients,
+      user_email: fromUserEmail,
       output_language: outputLanguage,
       style: outputStyle || '',
     })

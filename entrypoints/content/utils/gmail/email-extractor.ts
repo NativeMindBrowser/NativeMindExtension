@@ -202,32 +202,15 @@ export class EmailExtractor {
   /**
    * Extract recipients from compose area
    */
-  extractRecipients(composeElement: HTMLElement): { to: string[], cc: string[], bcc: string[] } {
-    const extractRecipientsFromListbox = (listbox: HTMLElement): string[] => {
-      const recipients: string[] = []
-      const options = this.querySelectorSafeAll<HTMLElement>(listbox, '[role="option"][data-hovercard-id]')
-
-      for (const option of options) {
-        const email = option.getAttribute('data-hovercard-id') || ''
-        const name = option.getAttribute('data-name') || ''
-
-        if (email) {
-          if (name && name !== email) {
-            recipients.push(`${name} <${email}>`)
-          }
-          else {
-            recipients.push(email)
-          }
-        }
-      }
-
-      return recipients
-    }
-
+  extractRecipients(composeElement: HTMLElement): { to: string[], cc: string[], bcc: string[], from: string } {
     // Use specific selectors for each recipient type within the compose dialog
     const toListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[aria-label="To"] [role="listbox"]')
     const ccListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[aria-label="Cc"] [role="listbox"]')
     const bccListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[aria-label="Bcc"] [role="listbox"]')
+
+    const container = toListboxes[0].closest('tbody')
+
+    const fromElement = this.querySelectorSafe<HTMLElement>(container!, 'span[dir="ltr"]')
 
     // Extract recipients from each type of listbox
     const toRecipients: string[] = []
@@ -236,23 +219,24 @@ export class EmailExtractor {
 
     // Extract TO recipients
     for (const listbox of toListboxes) {
-      toRecipients.push(...extractRecipientsFromListbox(listbox))
+      toRecipients.push(...this.extractRecipientsFromListbox(listbox))
     }
 
     // Extract CC recipients
     for (const listbox of ccListboxes) {
-      ccRecipients.push(...extractRecipientsFromListbox(listbox))
+      ccRecipients.push(...this.extractRecipientsFromListbox(listbox))
     }
 
     // Extract BCC recipients
     for (const listbox of bccListboxes) {
-      bccRecipients.push(...extractRecipientsFromListbox(listbox))
+      bccRecipients.push(...this.extractRecipientsFromListbox(listbox))
     }
 
     return {
       to: toRecipients,
       cc: ccRecipients,
       bcc: bccRecipients,
+      from: fromElement?.innerText || '',
     }
   }
 
@@ -262,5 +246,26 @@ export class EmailExtractor {
   extractSubject(composeElement: HTMLElement): string {
     const subjectField = this.querySelectorSafe<HTMLInputElement>(composeElement, 'input[name="subjectbox"]')
     return subjectField?.value || ''
+  }
+
+  extractRecipientsFromListbox(listbox: HTMLElement): string[] {
+    const recipients: string[] = []
+    const options = this.querySelectorSafeAll<HTMLElement>(listbox, '[role="option"][data-hovercard-id]')
+
+    for (const option of options) {
+      const email = option.getAttribute('data-hovercard-id') || ''
+      const name = option.getAttribute('data-name') || ''
+
+      if (email) {
+        if (name && name !== email) {
+          recipients.push(`${name} <${email}>`)
+        }
+        else {
+          recipients.push(email)
+        }
+      }
+    }
+
+    return recipients
   }
 }
