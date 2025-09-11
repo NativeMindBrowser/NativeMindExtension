@@ -1,6 +1,26 @@
 # Changelog
 
 
+## v1.9.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.6...v1.9.0-beta.7)
+
+### 🚀 Enhancements
+
+- **GmailTools:** Extract user email from compose and reply cards, update prompts to include user email ([15f65c8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/15f65c8))
+- **GmailTools:** Implement processGmailTemplate function for dynamic template processing in Gmail prompts ([5a0d434](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5a0d434))
+
+### 🩹 Fixes
+
+- **gmail-tools:** Remove min-width from summary button styles ([b7166b6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b7166b6))
+- **GmailTools:** Update placeholder text and refactor selectedStyle initialization in Compose and Reply cards ([2b5577b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2b5577b))
+- **GmailTools:** Disable regenerate button when running status is not idle in Compose and Reply cards ([809d056](https://github.com/NativeMindBrowser/NativeMindExtension/commit/809d056))
+- **GmailTools:** Adjust layout of control bar in Compose and Reply cards for better responsiveness ([d6b57e9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d6b57e9))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.9.0-beta.6
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.5...v1.9.0-beta.6)
