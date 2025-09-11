@@ -58,7 +58,7 @@
         </div>
       </div>
       <!-- Control bar with style and language options -->
-      <div class="flex items-center justify-between gap-2 p-3 pt-0">
+      <div class="flex items-center justify-between gap-2 p-3 pt-0 flex-wrap">
         <div class="flex flex-row gap-2">
           <!-- Language selector -->
           <IconSelector
@@ -78,7 +78,7 @@
             @update:modelValue="onStyleChange"
           />
         </div>
-        <div class="flex flex-row gap-2">
+        <div class="flex flex-row gap-2 ml-auto">
           <!-- Regenerate button (only show when settings changed) -->
           <Button
             v-if="hasSettingsChanged"
