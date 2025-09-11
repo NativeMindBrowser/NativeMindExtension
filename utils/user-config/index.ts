@@ -45,6 +45,16 @@ export const DEFAULT_QUICK_ACTIONS = [
   },
 ]
 
+// Template replacement function for Gmail prompts
+export function processGmailTemplate(template: string, variables: Record<string, string>): string {
+  let processed = template
+  for (const [key, value] of Object.entries(variables)) {
+    const placeholder = `{{${key}}}`
+    processed = processed.replaceAll(placeholder, value || '')
+  }
+  return processed
+}
+
 export async function _getUserConfig() {
   let enableNumCtx = true
 

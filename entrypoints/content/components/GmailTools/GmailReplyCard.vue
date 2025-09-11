@@ -129,7 +129,7 @@ import type { LanguageCode } from '@/utils/language/detect'
 import { getLanguageName, SUPPORTED_LANGUAGES } from '@/utils/language/detect'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { showSettings } from '@/utils/settings'
-import { getUserConfig } from '@/utils/user-config'
+import { getUserConfig, processGmailTemplate } from '@/utils/user-config'
 import { DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT, DEFAULT_GMAIL_REPLY_USER_PROMPT } from '@/utils/user-config/defaults'
 
 import { useGmailDetector } from '../../composables/useGmailDetector'
@@ -199,16 +199,6 @@ const abortExistingStreams = () => {
   abortControllers.forEach((controller) => controller.abort())
   abortControllers.length = 0
   output.value = ''
-}
-
-// Template replacement function for Gmail prompts
-function processGmailTemplate(template: string, variables: Record<string, string>): string {
-  let processed = template
-  for (const [key, value] of Object.entries(variables)) {
-    const placeholder = `{{${key}}}`
-    processed = processed.replaceAll(placeholder, value || '')
-  }
-  return processed
 }
 
 // Copy to clipboard function

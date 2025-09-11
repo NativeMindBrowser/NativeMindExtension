@@ -23,7 +23,8 @@ import { UserPrompt } from '@/utils/prompts/helpers'
 import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { sleep } from '@/utils/sleep'
 import { extractFileNameFromUrl } from '@/utils/url'
-import { getUserConfig } from '@/utils/user-config'
+import { getUserConfig, processGmailTemplate } from '@/utils/user-config'
+import { DEFAULT_GMAIL_SUMMARY_USER_PROMPT } from '@/utils/user-config/defaults'
 
 import { showSettings } from '../../utils/settings'
 import Main from './components/Main.vue'
@@ -41,30 +42,19 @@ registerSidepanelRpcEvent('gmailAction', async (e) => {
   logger.debug('Gmail action triggered:', action, data)
   if (action === 'summary') {
     const emailContent = (data as { emailContent?: string })?.emailContent || ''
-    if (emailContent) {
-      const chat = await Chat.getInstance()
+    const chat = await Chat.getInstance()
+
+    // only create new chat and ask when there is email content and the chat is not answering
+    if (emailContent && !chat.isAnswering()) {
       // create new chat
       await chat.createNewChat()
 
       // wait for the chat component to be ready
       await sleep(500)
 
-      // Create the Gmail summary prompt with the proper instructions
-      const instructionsPrompt = `Instructions:
-1. Summarize in chronological order (oldest to newest), indicating sender and key points of each message.
-2. Be concise: keep important updates, decisions, deadlines, and action items; remove pleasantries or redundant text.
-3. Add a 📝 TODO section for specific tasks, responsibilities, or follow-ups (if any).
-4. Add a ⚠️ Risks / Issues section for any risks, problems, disagreements, or blockers (if any).
-5. Format:
-   - Title: short headline for the thread
-   - Summary: bullet points in chronological order
-   - 📝 TODO: bullet points (only if applicable)
-   - ⚠️ Risks / Issues: bullet points (only if applicable)
-
-Output plain text only, no explanations.
-
-Email Thread:
-${emailContent}`
+      const userPrompt = processGmailTemplate(DEFAULT_GMAIL_SUMMARY_USER_PROMPT, {
+        content: emailContent,
+      })
 
       const gmailSystemPrompt = userConfig.emailTools.summary.systemPrompt.get()
 
@@ -72,7 +62,7 @@ ${emailContent}`
         logger.debug('trying to ask Gmail summary')
         // Use the ask method and then modify the display content
         await chat.ask('Summarize this email', {
-          user: UserPrompt.fromText(instructionsPrompt),
+          user: UserPrompt.fromText(userPrompt),
           system: gmailSystemPrompt,
         })
       }
@@ -94,6 +84,8 @@ registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
     const actionIdx = parseInt(menuItemId.replace('native-mind-quick-actions-', '')) || 0
     const action = userConfig.chat.quickActions.actions.get()[actionIdx]
     const chat = await Chat.getInstance()
+
+    // prevent asking when the chat is answering
     if (action && !chat.isAnswering()) {
       chat.ask(action.prompt)
     }
