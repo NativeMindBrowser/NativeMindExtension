@@ -1,6 +1,8 @@
-import { type BrowserContext, chromium, Page, test as base } from '@playwright/test'
+import { type BrowserContext, chromium, Page, test as base, Worker } from '@playwright/test'
 import fs from 'fs'
 import path from 'path'
+
+import { sleep } from '@/utils/sleep'
 
 import { ollamaPsResponse } from './mock-responses/ollama/ps'
 import { ollamaTagsResponse } from './mock-responses/ollama/tags'
@@ -10,7 +12,9 @@ type Extended = {
   extensionId: string
   extension: {
     activateActiveTab: (() => Promise<void>)
+    setStorageItem: (key: string, value: string | number | boolean) => Promise<void>
   }
+  extensionBackground: Worker
 }
 
 const ALLOWED_ENV = ['production', 'beta', 'development'] as const
@@ -29,10 +33,25 @@ if (fs.existsSync(pathToExtension) === false) {
   throw new Error(`Extension path does not exist: ${pathToExtension}. Please build the extension first.`)
 }
 
+async function waitForServiceWorker(context: BrowserContext): Promise<Worker> {
+  let [background] = context.serviceWorkers()
+  if (!background) {
+    background = await context.waitForEvent('serviceworker')
+  }
+
+  // @ts-expect-error - self.registration is not recognized in types
+  while (await background.evaluate(() => self.registration?.active?.state) !== 'activated') {
+    await sleep(300)
+  }
+
+  return background
+}
+
 export const test = base.extend<Extended>({
-  context: async ({ context: _ }, use) => {
+  context: async ({ context: _, locale }, use) => {
     const context = await chromium.launchPersistentContext('', {
       channel: 'chromium',
+      locale: locale || 'en-US',
       args: [
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
@@ -42,17 +61,13 @@ export const test = base.extend<Extended>({
     await context.close()
   },
   extensionId: async ({ context }, use) => {
-    let [background] = context.serviceWorkers()
-    if (!background)
-      background = await context.waitForEvent('serviceworker')
+    const background = await waitForServiceWorker(context)
 
     const extensionId = background.url().split('/')[2]
     await use(extensionId)
   },
   extension: async ({ context }, use) => {
-    let [background] = context.serviceWorkers()
-    if (!background)
-      background = await context.waitForEvent('serviceworker')
+    const background = await waitForServiceWorker(context)
     use({
       activateActiveTab: async () =>
         await background.evaluate(() => {
@@ -62,9 +77,18 @@ export const test = base.extend<Extended>({
             chrome.action.onClicked.dispatch(tabs[0])
           })
         }),
+      setStorageItem: async (key: string, value: string | number | boolean) =>
+        await background.evaluate(
+          ([k, v]) => {
+            // @ts-expect-error - this is a Chrome extension API
+            chrome.storage.local.set({ [k]: v })
+          },
+          [key, value],
+        ),
     })
   },
 })
+
 export const expect = test.expect
 
 interface OllamaMockOptions {

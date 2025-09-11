@@ -36,7 +36,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "compile": "vue-tsc --noEmit",
-    "test:e2e": "playwright test --config=playwright.config.ts",
+    "test:e2e": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test --config=playwright.config.ts",
     "test:unit": "vitest run",
     "dev": "NODE_ENV=development wxt",
     "dev:edge": "NODE_ENV=development wxt -b edge",

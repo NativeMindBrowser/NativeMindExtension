@@ -20,3 +20,7 @@ export const ollamaPsResponse = {
     },
   ],
 }
+
+export const ollamaPsEmptyResponse = {
+  models: [],
+}
