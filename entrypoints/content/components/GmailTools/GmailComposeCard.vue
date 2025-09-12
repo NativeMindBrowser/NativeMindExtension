@@ -476,8 +476,8 @@ const start = async () => {
 
     logger.debug('Full response from stream:', fullResponse)
     // Parse the response to extract subject and body
-    const subjectMatch = fullResponse.match(/\*\*Subject:\*\*\s*(.+?)(?:\n|$)/s) || fullResponse.match(/Subject:\s*(.+?)(?:\n\n|\n\*\*Email Body:\*\*|\nEmail Body:)/s)
-    const bodyMatch = fullResponse.match(/\*\*Email Body:\*\*\s*(.+)/s) || fullResponse.match(/Email Body:\s*(.+)/s)
+    const subjectMatch = fullResponse.match(/\*\*Subject\*\*:\s*(.+?)(?:\n|$)/s) || fullResponse.match(/Subject:\s*(.+?)(?:\n\n|\n\*\*Email Body\*\*:|\nEmail Body:)/s)
+    const bodyMatch = fullResponse.match(/\*\*Email Body\*\*:\s*(.+)/s) || fullResponse.match(/Email Body:\s*(.+)/s)
 
     if (subjectMatch) {
       // Clean up any leading/trailing asterisks and whitespace
