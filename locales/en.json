@@ -281,6 +281,11 @@
         "error_click_before_view_tab": "Try clicking a page link before viewing any pages",
         "error_click_incorrect_link": "Try clicking on the incorrect page link"
       }
+    },
+    "tools": {
+      "online_search": {
+        "title": "Search"
+      }
     }
   },
   "chat_history": {

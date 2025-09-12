@@ -64,6 +64,18 @@ export class BackgroundChatHistoryService {
     }
   }
 
+  migrateFromOldHistoryRecord(record: ChatHistoryRecord): ChatHistoryV1 {
+    return {
+      id: record.id,
+      title: record.title,
+      lastInteractedAt: record.lastInteractedAt,
+      contextUpdateInfo: record.contextUpdateInfo ? JSON.parse(record.contextUpdateInfo) : undefined,
+      reasoningEnabled: record.reasoningEnabled,
+      onlineSearchEnabled: record.onlineSearchEnabled ?? true, // default to true if undefined for backward compatibility
+      history: JSON.parse(record.history) as HistoryItemV1[],
+    }
+  }
+
   /**
    * Get chat history by ID
    */
@@ -75,14 +87,7 @@ export class BackgroundChatHistoryService {
       const record = await db.get(CHAT_OBJECT_STORES.CHAT_HISTORY, chatId)
       if (!record) return null
 
-      return {
-        id: record.id,
-        title: record.title,
-        lastInteractedAt: record.lastInteractedAt,
-        contextUpdateInfo: record.contextUpdateInfo ? JSON.parse(record.contextUpdateInfo) : undefined,
-        reasoningEnabled: record.reasoningEnabled,
-        history: JSON.parse(record.history) as HistoryItemV1[],
-      }
+      return this.migrateFromOldHistoryRecord(record)
     }
     catch (error) {
       log.error('Failed to get chat history:', error)
@@ -108,6 +113,7 @@ export class BackgroundChatHistoryService {
         history: JSON.stringify(chatHistory.history),
         contextUpdateInfo: chatHistory.contextUpdateInfo ? JSON.stringify(chatHistory.contextUpdateInfo) : undefined,
         reasoningEnabled: chatHistory.reasoningEnabled,
+        onlineSearchEnabled: chatHistory.onlineSearchEnabled,
         createdAt: now, // Will be overwritten if record exists
         updatedAt: now,
       }

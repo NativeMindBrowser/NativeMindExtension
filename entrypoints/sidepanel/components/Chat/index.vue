@@ -59,66 +59,67 @@
           v-model:attachmentStorage="contextAttachmentStorage"
         />
       </div>
-      <div class="gap-1 flex relative shadow-02 bg-white rounded-md px-3 pt-2 pb-9 max-h-36">
-        <ScrollContainer
-          class="overflow-hidden w-full"
-          :arrivalShadow="{
-            top: { color: '#FFFFFF', size: 12, offset: 8 },
-            bottom: { color: '#FFFFFF', size: 12, offset: 8 }
-          }"
-        >
-          <div class="h-max min-h-[48px] place-items-center">
-            <AutoExpandTextArea
-              v-model="userInput"
-              maxlength="2000"
-              type="text"
-              :placeholder="chat.historyManager.onlyHasDefaultMessages() ||
-                chat.historyManager.isEmpty()
-                ? t('chat.input.placeholder.ask_anything')
-                : t('chat.input.placeholder.ask_follow_up')
-              "
-              class="w-full block outline-none border-none resize-none field-sizing-content leading-5 text-sm wrap-anywhere grow h-full"
-              @paste="onPaste"
-              @keydown="onKeydown"
-              @compositionstart="isComposing = true"
-              @compositionend="isComposing = false"
-            />
-          </div>
-        </ScrollContainer>
-        <!-- Toolbar -->
-        <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
-          <div class="flex grow items-center gap-2">
-            <ModelSelector
-              containerClass="h-7"
-              :class="classNames(isThinkingToggleable ? 'max-w-[33vw]' : 'max-w-[50vw]')"
-              dropdownAlign="left"
-              triggerStyle="ghost"
-            />
-            <div
-              v-if="isThinkingToggleable"
-              class="h-4 w-px bg-[#E5E7EB]"
-            />
-            <ThinkingModeSwitch v-if="isThinkingToggleable" />
-          </div>
-          <div
-            ref="sendButtonContainerRef"
+      <div class="border-[#E4E4E7] border rounded-md bg-[#E9E9EC]">
+        <div>
+          <ModelSelector
+            containerClass="h-[30px] pl-3"
+            class="max-w-[50vw]"
+            dropdownAlign="left"
+            triggerStyle="ghost"
+          />
+        </div>
+        <div class="gap-1 flex relative border-[#E4E4E7] border rounded-md bg-white px-3 pt-2 pb-9 -m-px max-h-36">
+          <ScrollContainer
+            class="overflow-hidden w-full"
+            :arrivalShadow="{
+              top: { color: '#FFFFFF', size: 12, offset: 8 },
+              bottom: { color: '#FFFFFF', size: 12, offset: 8 }
+            }"
           >
-            <Button
-              v-if="chat.isAnswering()"
-              variant="secondary"
-              class="size-6 rounded-md flex items-center justify-center hover:bg-[#E4E7EB]/80 bg-[#E4E7EB] cursor-pointer shadow-none"
-              @click="onStop"
+            <div class="h-max min-h-[48px] place-items-center">
+              <AutoExpandTextArea
+                v-model="userInput"
+                maxlength="2000"
+                type="text"
+                :placeholder="chat.historyManager.onlyHasDefaultMessages() ||
+                  chat.historyManager.isEmpty()
+                  ? t('chat.input.placeholder.ask_anything')
+                  : t('chat.input.placeholder.ask_follow_up')
+                "
+                class="w-full block outline-none border-none resize-none field-sizing-content leading-5 text-sm wrap-anywhere grow h-full"
+                @paste="onPaste"
+                @keydown="onKeydown"
+                @compositionstart="isComposing = true"
+                @compositionend="isComposing = false"
+              />
+            </div>
+          </ScrollContainer>
+          <!-- Toolbar -->
+          <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
+            <div class="flex grow items-center gap-1">
+              <ThinkingModeSwitch v-if="isThinkingToggleable" />
+              <OnlineSearchSwitch />
+            </div>
+            <div
+              ref="sendButtonContainerRef"
             >
-              <IconStop class="size-[15px] text-white" />
-            </Button>
-            <button
-              v-else
-              :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-[#24B960]/80 bg-[#24B960] cursor-pointer' : 'cursor-not-allowed')"
-              :disabled="!allowAsk"
-              @click="onSubmit"
-            >
-              <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-[#9EA3A8]')" />
-            </button>
+              <Button
+                v-if="chat.isAnswering()"
+                variant="secondary"
+                class="size-6 rounded-md flex items-center justify-center hover:bg-[#E4E7EB]/80 bg-[#E4E7EB] cursor-pointer shadow-none"
+                @click="onStop"
+              >
+                <IconStop class="size-[15px] text-white" />
+              </Button>
+              <button
+                v-else
+                :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-[#24B960]/80 bg-[#24B960] cursor-pointer' : 'cursor-not-allowed')"
+                :disabled="!allowAsk"
+                @click="onSubmit"
+              >
+                <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-[#9EA3A8]')" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -156,6 +157,7 @@ import MessageAction from './Messages/Action.vue'
 import MessageTaskGroup from './Messages/AgentTaskGroup.vue'
 import MessageAssistant from './Messages/Assistant.vue'
 import MessageTask from './Messages/Task.vue'
+import OnlineSearchSwitch from './OnlineSearchSwitch.vue'
 import ThinkingModeSwitch from './ThinkingModeSwitch.vue'
 
 const inputContainerRef = ref<HTMLDivElement>()

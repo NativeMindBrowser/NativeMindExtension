@@ -77,6 +77,11 @@
         "error_click_before_view_tab": "Versuchen Sie, auf einen Seitenlink zu klicken, bevor Sie Seiten anzeigen",
         "error_click_incorrect_link": "Versuchen Sie, auf den fehlerhaften Seitenlink zu klicken"
       }
+    },
+    "tools": {
+      "online_search": {
+        "title": "Suchen"
+      }
     }
   },
   "chat_history": {

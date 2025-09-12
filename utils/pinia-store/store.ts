@@ -21,9 +21,11 @@ const rpc = forRuntimes({
 export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => {
   // Ollama model list and connection status
   const ollamaModelList = ref<OllamaModelInfo[]>([])
+  const ollamaModelListUpdating = ref(false)
   const ollamaConnectionStatus = ref<'connected' | 'error' | 'unconnected'>('unconnected')
   const updateOllamaModelList = async (): Promise<OllamaModelInfo[]> => {
     try {
+      ollamaModelListUpdating.value = true
       const response = await rpc.getOllamaLocalModelList()
       ollamaConnectionStatus.value = 'connected'
       log.debug('Model list fetched:', response)
@@ -43,6 +45,9 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       log.error('Failed to fetch model list:', error)
       ollamaConnectionStatus.value = 'error'
       return []
+    }
+    finally {
+      ollamaModelListUpdating.value = false
     }
   }
   const clearOllamaModelList = () => {
@@ -69,8 +74,10 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
 
   // LMStudio model list and connection status
   const lmStudioModelList = ref<LMStudioModelInfo[]>([])
+  const lmStudioModelListUpdating = ref(false)
   const updateLMStudioModelList = async (): Promise<LMStudioModelInfo[]> => {
     try {
+      lmStudioModelListUpdating.value = true
       const response = await rpc.getLMStudioModelList()
       const runningModels = await rpc.getLMStudioRunningModelList().catch(() => ({ models: [] }))
       log.debug('LMStudio Model list fetched:', response, runningModels)
@@ -86,6 +93,9 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     catch (error) {
       log.error('Failed to fetch LMStudio model list:', error)
       return []
+    }
+    finally {
+      lmStudioModelListUpdating.value = false
     }
   }
 
@@ -146,6 +156,10 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     ]
   })
 
+  const modelListUpdating = computed(() => {
+    return ollamaModelListUpdating.value || lmStudioModelListUpdating.value
+  })
+
   // this function has side effects: it may change the common model in user config
   const checkCurrentBackendStatus = async () => {
     const userConfig = await getUserConfig()
@@ -193,6 +207,7 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     ollamaConnectionStatusLoading,
     ollamaConnectionStatus,
     ollamaModelList,
+    ollamaModelListUpdating,
     unloadOllamaModel,
     updateOllamaModelList,
     clearOllamaModelList,
@@ -201,6 +216,7 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     lmStudioConnectionStatusLoading,
     lmStudioConnectionStatus,
     lmStudioModelList,
+    lmStudioModelListUpdating,
     unloadLMStudioModel,
     updateLMStudioModelList,
     deleteOllamaModel,
@@ -212,5 +228,6 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     checkCurrentBackendStatus,
     updateModelList,
     modelList,
+    modelListUpdating,
   }
 })

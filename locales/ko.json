@@ -77,6 +77,11 @@
         "error_click_before_view_tab": "페이지를 보기 전에 페이지 링크를 클릭해 보세요",
         "error_click_incorrect_link": "잘못된 페이지 링크를 클릭해 보세요"
       }
+    },
+    "tools": {
+      "online_search": {
+        "title": "검색"
+      }
     }
   },
   "chat_history": {

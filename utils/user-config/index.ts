@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { browser } from 'wxt/browser'
 
 import { c2bRpc } from '@/utils/rpc'
@@ -6,11 +7,12 @@ import { SupportedLocaleCode } from '../i18n/constants'
 import { generateRandomId } from '../id'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
+import { promptBasedToolCollections } from '../llm/tools/prompt-based/tools'
 import logger from '../logger'
 import { lazyInitialize } from '../memo'
 import { forRuntimes } from '../runtime'
 import { ByteSize } from '../sizes'
-import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
+import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
 import { Config } from './helpers'
 
 const log = logger.child('user-config')
@@ -65,6 +67,19 @@ export async function _getUserConfig() {
   }
 
   const enableBrowserUse = await new Config('browserUse.enable').default(false).build()
+  const enableOnlineSearch = await new Config('chat.onlineSearch.enable').default(true).build()
+  const defaultChatSystemPrompt = computed(() => {
+    const enableBrowserUseStatus = enableBrowserUse.get()
+    const enableOnlineSearchStatus = enableOnlineSearch.get()
+    if (enableBrowserUseStatus) {
+      if (enableOnlineSearchStatus) return DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(promptBasedToolCollections.browserUse.onlineSearch)
+      else return DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(promptBasedToolCollections.browserUse.nonOnlineSearch)
+    }
+    else {
+      if (enableOnlineSearchStatus) return DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(promptBasedToolCollections.nonBrowserUse.onlineSearch)
+      else return DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(promptBasedToolCollections.nonBrowserUse.nonOnlineSearch)
+    }
+  })
 
   return {
     locale: {
@@ -117,11 +132,12 @@ export async function _getUserConfig() {
       },
       systemPrompt: await new Config('chat.systemPrompt_1')
         .migrateFrom('chat.systemPrompt', (v) => v === DEFAULT_CHAT_SYSTEM_PROMPT ? undefined : v)
-        .default(enableBrowserUse.get() ? DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE : DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
+        .default(defaultChatSystemPrompt).build(),
       history: {
         currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
       },
       onlineSearch: {
+        enable: enableOnlineSearch,
         pageReadCount: await new Config('chat.onlineSearch.pageReadCount').default(5).build(), // how many pages to read when online search is enabled
       },
       quickActions: {

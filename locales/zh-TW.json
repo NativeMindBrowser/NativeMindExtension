@@ -77,6 +77,11 @@
         "error_click_before_view_tab": "在查看任何頁面之前，請先嘗試點擊頁面連結",
         "error_click_incorrect_link": "請嘗試點擊錯誤的頁面連結"
       }
+    },
+    "tools": {
+      "online_search": {
+        "title": "搜尋"
+      }
     }
   },
   "chat_history": {

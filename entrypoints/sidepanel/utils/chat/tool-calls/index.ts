@@ -21,6 +21,18 @@ const logger = Logger.child('tool-calls-execute')
 
 export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async ({ params, abortSignal, taskMessageModifier }) => {
   const { t } = await useGlobalI18n()
+  const userConfig = await getUserConfig()
+  const enableOnlineSearch = userConfig.chat.onlineSearch.enable.get()
+  if (!enableOnlineSearch) {
+    return [{
+      type: 'tool-result',
+      results: {
+        query: params.query,
+        status: 'failed',
+        error_message: 'Online search is disabled in settings',
+      },
+    }]
+  }
   const log = logger.child('tool:executeSearchOnline')
   const HARD_MAX_RESULTS = 10
   const { query, max_results } = params

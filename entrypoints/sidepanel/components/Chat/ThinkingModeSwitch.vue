@@ -1,38 +1,27 @@
 <template>
-  <div class="flex items-center gap-1">
-    <IconThinking
-      class="w-4 h-4 text-[#5B5B5B]"
-      :class="{ 'opacity-50': !isModelSupportsThinking }"
-    />
-    <span
-      class="text-xs text-[#5B5B5B] font-medium select-none"
-      :class="{ 'opacity-50': !isModelSupportsThinking }"
-    >
-      {{ t('chat.thinking_mode.label') }}
-    </span>
-    <button
-      :disabled="!isModelSupportsThinking || !isThinkingToggleable"
+  <div>
+    <div
+      class="flex items-center gap-1 px-1 py-1 min-h-6 rounded-sm"
       :class="[
-        'relative inline-flex h-4 w-7 items-center rounded-full transition-colors',
         {
-          'bg-[#24B960]': isThinkingEnabled && isModelSupportsThinking,
-          'bg-gray-300': !isThinkingEnabled || !isModelSupportsThinking,
           'cursor-not-allowed opacity-50': !isModelSupportsThinking || !isThinkingToggleable,
-          'cursor-pointer': isModelSupportsThinking && isThinkingToggleable
-        }
+          'cursor-pointer': isModelSupportsThinking && isThinkingToggleable,
+        },
+        isThinkingEnabled ? 'bg-[#DEFFEB] text-[#5B5B5B]' : 'text-[#AEB5BD]',
       ]"
       @click="toggleThinking"
     >
-      <span
-        :class="[
-          'inline-block h-3 w-3 transform rounded-full bg-white transition-transform',
-          {
-            'translate-x-3.5': isThinkingEnabled && isModelSupportsThinking,
-            'translate-x-0.5': !isThinkingEnabled || !isModelSupportsThinking
-          }
-        ]"
+      <IconThinking
+        class="w-4 h-4"
+        :class="{ 'opacity-50': !isModelSupportsThinking }"
       />
-    </button>
+      <span
+        class="text-xs font-medium select-none"
+        :class="{ 'opacity-50': !isModelSupportsThinking }"
+      >
+        {{ t('chat.thinking_mode.label') }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -147,18 +136,4 @@ watch([endpointType, currentModel], async () => {
 onMounted(async () => {
   await updateModelList()
 })
-
-// Debug logging for development, temporarily keep
-// watch([currentModel, endpointType, isModelSupportsThinking, isThinkingToggleable, isThinkingEnabled],
-//   ([model, endpoint, supportsThinking, toggleable, enabled]) => {
-//     logger.debug('ThinkingModeSwitch state:', {
-//       currentModel: model,
-//       endpointType: endpoint,
-//       isModelSupportsThinking: supportsThinking,
-//       isThinkingToggleable: toggleable,
-//       isThinkingEnabled: enabled,
-//     })
-//   },
-//   { immediate: true },
-// )
 </script>

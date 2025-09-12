@@ -44,6 +44,9 @@
               {{ option.label }}
             </span>
           </div>
+          <div v-else-if="modelListUpdating">
+            <Loading :size="12" />
+          </div>
           <div v-else>
             ⚠️ No model
           </div>
@@ -52,7 +55,13 @@
           <div
             class="cursor-pointer text-[13px] text-[#5B5B5B] font-medium px-1 leading-5 flex flex-row gap-1 items-center justify-center"
           >
-            <span class="text-ellipsis overflow-hidden whitespace-nowrap">
+            <div v-if="modelListUpdating">
+              <Loading :size="12" />
+            </div>
+            <span
+              v-else
+              class="text-ellipsis overflow-hidden whitespace-nowrap"
+            >
               {{ option?.label || t('settings.models.no_model') }}
             </span>
             <IconExpand class="shrink-0" />
@@ -131,6 +140,7 @@ import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
 import ExhaustiveError from './ExhaustiveError.vue'
+import Loading from './Loading.vue'
 import Selector from './Selector.vue'
 import Button from './ui/Button.vue'
 import Divider from './ui/Divider.vue'
@@ -150,8 +160,8 @@ const props = withDefaults(defineProps<{
 })
 
 const { t } = useI18n()
-const { modelList: composedModelList } = toRefs(useLLMBackendStatusStore())
-const { updateModelList, updateOllamaModelList, updateLMStudioModelList } = useLLMBackendStatusStore()
+const { modelList: composedModelList, modelListUpdating } = toRefs(useLLMBackendStatusStore())
+const { updateModelList } = useLLMBackendStatusStore()
 
 only(['sidepanel'], () => {
   const removeListener = registerSidepanelRpcEvent('updateModelList', async () => await updateModelList())
@@ -240,7 +250,8 @@ const onClick = () => {
   }
 }
 
-watch(modelList, (modelList) => {
+watch([modelList, modelListUpdating], ([modelList, updating]) => {
+  if (updating) return
   if (modelList.length === 0) {
     commonModel.value = undefined
     translationModel.value = undefined
@@ -262,8 +273,7 @@ watch([endpointType, selectedModel], async () => {
   updateModelList()
 })
 
-watch(ollamaBaseUrl, async () => updateOllamaModelList())
-watch(lmStudioBaseUrl, async () => updateLMStudioModelList())
+watch([ollamaBaseUrl, lmStudioBaseUrl], async () => updateModelList())
 
 onMounted(async () => {
   updateModelList()

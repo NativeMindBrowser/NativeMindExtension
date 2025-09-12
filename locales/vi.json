@@ -77,6 +77,11 @@
         "error_click_before_view_tab": "Hãy thử nhấp vào một liên kết trang trước khi xem bất kỳ trang nào",
         "error_click_incorrect_link": "Hãy thử nhấp vào liên kết trang không chính xác"
       }
+    },
+    "tools": {
+      "online_search": {
+        "title": "Tìm kiếm"
+      }
     }
   },
   "chat_history": {

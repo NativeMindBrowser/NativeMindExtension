@@ -1,6 +1,7 @@
 import { afterEach } from 'node:test'
 
 import { beforeEach, describe, expect, it } from 'vitest'
+import { computed, ref } from 'vue'
 import { storage } from 'wxt/utils/storage'
 
 import { resetFakeBrowser, resetFakeEntrypoint } from '@/tests/utils/fake-browser'
@@ -141,5 +142,18 @@ describe('user config', () => {
     expect(await storage.getItem(config.areaKey)).toBe('test-1')
     config.resetDefault()
     expect(await storage.getItem(config.areaKey)).toBe(null)
+  })
+
+  it('reactive default value', async () => {
+    resetFakeBrowser()
+
+    const enabled = ref(false)
+    const reactiveDefault = computed(() => (enabled.value ? 'on' : 'off'))
+    const config = await new Config('testKey').default(reactiveDefault).build()
+    const reactiveConfig = config.toRef()
+
+    expect(reactiveConfig.value).toBe('off')
+    enabled.value = true
+    expect(reactiveConfig.value).toBe('on')
   })
 })

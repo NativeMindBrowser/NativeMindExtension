@@ -77,6 +77,11 @@
         "error_click_before_view_tab": "Попробуйте нажать на ссылку страницы перед просмотром любых страниц",
         "error_click_incorrect_link": "Попробуйте нажать на неправильную ссылку страницы"
       }
+    },
+    "tools": {
+      "online_search": {
+        "title": "Поиск"
+      }
     }
   },
   "chat_history": {

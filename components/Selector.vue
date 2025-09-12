@@ -6,7 +6,7 @@
     <div
       v-if="isGhostBtn"
       ref="selectorRef"
-      :class="['flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 h-8', containerClass]"
+      :class="classNames('flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 h-8', containerClass)"
       :disabled="disabled"
       @click="toggleDropdown"
     >
@@ -132,6 +132,7 @@ import { Component, computed, FunctionalComponent, Ref, ref, watch, watchEffect 
 
 import { useInjectContext } from '@/composables/useInjectContext'
 import { useZIndex } from '@/composables/useZIndex'
+import { classNames } from '@/utils/vue/utils'
 
 import ScrollContainer from './ScrollContainer.vue'
 import Button from './ui/Button.vue'
