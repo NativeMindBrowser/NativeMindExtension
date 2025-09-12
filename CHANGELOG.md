@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v1.9.0-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.7...v1.9.0-beta.8)
+
+### 🚀 Enhancements
+
+- **Assistant:** Add watch for thinking visibility changes to scroll to latest content ([c7c44f8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c7c44f8))
+- **GmailTools:** Enhance email closing signature logic and improve output format instructions, fix prompt params ([db1ff21](https://github.com/NativeMindBrowser/NativeMindExtension/commit/db1ff21))
+
+### 🩹 Fixes
+
+- **GmailTools:** Correct regex patterns for subject and body extraction in response parsing ([778626b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/778626b))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.9.0-beta.7
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.6...v1.9.0-beta.7)
