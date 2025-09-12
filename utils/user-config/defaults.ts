@@ -472,7 +472,11 @@ Instructions:
    - If style is specified (formal / friendly / urgent / custom), adjust the reply accordingly.
 6. Be concise and clear, avoiding redundant pleasantries or unnecessary length.
 7. Ensure the reply covers all important questions, requests, or action items in the thread.
-8. Output format:
+8. For the closing signature, use:
+   - If My Email Address contains User's Name and Email Address, use "Best regards, \n<User's Name>".
+   - Else If My Email Address only contains Email Address, use "Best regards,\n<My Email Address>".
+   - Else, use "Best regards,\n[Your Name]" as a placeholder.
+9. Output format:
    - **Reply**: full email reply text, ready to send.
 
 Output plain text only, no explanations.
@@ -493,40 +497,37 @@ User Selected Output Language (may be empty):
 Style (optional: formal / friendly / urgent / custom):
 {{style}}
 
-User Email Address (optional):
+My Email Address (optional):
 {{user_email}}
 `
 
 export const DEFAULT_GMAIL_COMPOSE_USER_PROMPT = `
-You are an AI email assistant. Based on the current subject, current body content, recipient information, 
-and user preferences, optimize both the email subject and body for better clarity, professionalism, and effectiveness.
-
 Instructions:
 1. **Output Language Priority**:
    - If User Selected Output Language is provided (not empty), use it.
-   - Else if the Current Body or Current Subject is not empty, use the same language.
-   - Else use English as default.
-2. Improve both subject and body while maintaining the original intent and key information.
-3. If current content is provided, enhance it rather than replacing it completely.
-4. If current content is empty or minimal, generate appropriate content based on recipients and context.
-5. Address recipients naturally if available (prefer names, fallback to neutral greeting if not).
-6. **Style Control**:
-   - Default tone is polite and professional.
-   - If style is specified (formal / friendly / urgent / custom), adjust both subject and body accordingly.
-7. Ensure the subject is concise, clear, and accurately reflects the email content.
-8. Make the body well-structured, engaging, and appropriate for the context.
-9. Output format:
-   - **Subject:** optimized email subject line
-   - **Email Body:** optimized email body text, ready to send
+   - Else if the User Draft is not empty, use the same language as the draft.
+   - Else use the default language of the subject or thread context.
+2. Ensure the output is a natural, well-structured email, ready to send.
+3. Incorporate the user’s subject, recipients, and draft content smoothly into the email.
+4. Default tone is polite and professional; adjust if the user specifies a style (formal / friendly / urgent / custom).
+5. If recipients are provided, address them naturally (prefer names if available, fallback to neutral if not).
+6. For the closing signature, use:
+   - If My Email Address contains My Name and Email Address, use "Best regards, \n<My Name>".
+   - Else If My Email Address only contains Email Address, use "Best regards,\n<My Email Address>".
+   - Else, use "Best regards,\n[Your Name]" as a placeholder.
+7. Be concise and clear, avoiding unnecessary length or repetition.
+8. Output format:
+   - **Subject**: improved or confirmed subject line
+   - **Email Body**: polished email body text
 
-Output plain text in the specified format only, no explanations.
+Output plain text only, no explanations.
 
 <<<PARAMS>>>
-Current Subject:
-{{current_subject}}
+Subject:
+{{subject}}
 
-Current Body:
-{{current_body}}
+Draft (may be empty):
+{{draft}}
 
 Recipients (if available):
 {{recipients}}
@@ -534,10 +535,10 @@ Recipients (if available):
 User Selected Output Language (may be empty):
 {{output_language}}
 
-Style (optional: formal / friendly / urgent / custom):
+Style (optional: formal / friendly / urgent):
 {{style}}
 
-User Email Address (optional):
+My Email Address (optional):
 {{user_email}}
 `
 

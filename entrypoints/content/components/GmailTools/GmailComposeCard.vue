@@ -449,8 +449,8 @@ const start = async () => {
 
     // Process the template with actual values
     const userPrompt = processGmailTemplate(userPromptTemplate, {
-      current_subject: currentSubject,
-      current_body: currentBody,
+      subject: currentSubject,
+      draft: currentBody,
       recipients: recipients,
       user_email: fromUserEmail,
       output_language: outputLanguage,
