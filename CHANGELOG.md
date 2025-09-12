@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v1.9.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.10...v1.9.0)
+
 ## v1.9.0-beta.10
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.9...v1.9.0-beta.10)
