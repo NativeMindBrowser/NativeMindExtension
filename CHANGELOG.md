@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v1.10.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.2...v1.10.0-beta.3)
+
+### 🚀 Enhancements
+
+- **tests:** Add onboarding and settings tests, enhance mock responses ([e8793b7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e8793b7))
+- **chat:** Add toggle to enable online search and its settings ([a60f489](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a60f489))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.1...v1.10.0-beta.2)
