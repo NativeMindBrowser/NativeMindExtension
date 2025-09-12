@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.9.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.9...v1.9.0-beta.10)
+
+### 🚀 Enhancements
+
+- **GmailTools:** Implement structured response handling for email composition and update output format ([ece0e89](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ece0e89))
+
+### 🩹 Fixes
+
+- **ThinkingModeSwitch:** Refactor thinking state management to centralize setting updates ([05a3b29](https://github.com/NativeMindBrowser/NativeMindExtension/commit/05a3b29))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.9.0-beta.9
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.7...v1.9.0-beta.9)
