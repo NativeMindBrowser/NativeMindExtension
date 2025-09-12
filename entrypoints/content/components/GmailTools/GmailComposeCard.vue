@@ -186,12 +186,12 @@ import { useI18n } from '@/utils/i18n'
 import type { LanguageCode } from '@/utils/language/detect'
 import { getLanguageName, SUPPORTED_LANGUAGES } from '@/utils/language/detect'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { c2bRpc } from '@/utils/rpc'
 import { showSettings } from '@/utils/settings'
 import { getUserConfig, processGmailTemplate } from '@/utils/user-config'
 import { DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT, DEFAULT_GMAIL_COMPOSE_USER_PROMPT } from '@/utils/user-config/defaults'
 
 import { EmailExtractor } from '../../utils/gmail/email-extractor'
-import { streamTextInBackground } from '../../utils/llm'
 
 const logger = useLogger()
 
@@ -459,41 +459,17 @@ const start = async () => {
 
     logger.debug('Gmail compose prompt:', { systemPrompt, userPrompt })
 
-    const iter = streamTextInBackground({
+    const result = await c2bRpc.generateObjectFromSchema({
       prompt: userPrompt,
       system: systemPrompt,
-      abortSignal: abortController.signal,
-      autoThinking: true,
+      schema: 'emailCompose',
     })
 
-    let fullResponse = ''
-    for await (const chunk of iter) {
-      if (chunk.type === 'text-delta') {
-        runningStatus.value = 'streaming'
-        fullResponse += chunk.textDelta
-      }
-    }
+    // Extract the structured result
+    optimizedSubject.value = result.object.subject || ''
+    optimizedBody.value = result.object.body || ''
 
-    logger.debug('Full response from stream:', fullResponse)
-    // Parse the response to extract subject and body
-    const subjectMatch = fullResponse.match(/\*\*Subject\*\*:\s*(.+?)(?:\n|$)/s) || fullResponse.match(/Subject:\s*(.+?)(?:\n\n|\n\*\*Email Body\*\*:|\nEmail Body:)/s)
-    const bodyMatch = fullResponse.match(/\*\*Email Body\*\*:\s*(.+)/s) || fullResponse.match(/Email Body:\s*(.+)/s)
-
-    if (subjectMatch) {
-      // Clean up any leading/trailing asterisks and whitespace
-      optimizedSubject.value = subjectMatch[1].trim().replace(/^\*+|\*+$/g, '').trim()
-    }
-    if (bodyMatch) {
-      // Clean up any leading/trailing asterisks and whitespace
-      optimizedBody.value = bodyMatch[1].trim().replace(/^\*+/, '').trim()
-    }
-
-    // Fallback: if no clear sections found, use the whole response as body
-    if (!subjectMatch && !bodyMatch && fullResponse.trim()) {
-      optimizedBody.value = fullResponse.trim()
-    }
-
-    logger.debug('Gmail compose response parsed:', {
+    logger.debug('Gmail compose structured response:', {
       subject: optimizedSubject.value,
       body: optimizedBody.value,
     })

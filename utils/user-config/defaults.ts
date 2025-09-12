@@ -516,11 +516,11 @@ Instructions:
    - Else If My Email Address only contains Email Address, use "Best regards,\n<My Email Address>".
    - Else, use "Best regards,\n[Your Name]" as a placeholder.
 7. Be concise and clear, avoiding unnecessary length or repetition.
-8. Output format:
-   - **Subject**: improved or confirmed subject line
-   - **Email Body**: polished email body text
-
-Output plain text only, no explanations.
+8. Output format: Return a JSON object with the following structure:
+{
+  "subject": "improved or confirmed subject line",
+  "body": "polished email body text"
+}
 
 <<<PARAMS>>>
 Subject:
