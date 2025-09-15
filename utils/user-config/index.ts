@@ -6,6 +6,7 @@ import { SupportedLocaleCode } from '../i18n/constants'
 import { generateRandomId } from '../id'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
+import { chatDefaultPromptBasedTools } from '../llm/tools/prompt-based/tools'
 import logger from '../logger'
 import { lazyInitialize } from '../memo'
 import { forRuntimes } from '../runtime'
@@ -120,7 +121,7 @@ export async function _getUserConfig() {
       },
       systemPrompt: await new Config('chat.systemPrompt_1')
         .migrateFrom('chat.systemPrompt', (v) => v === DEFAULT_CHAT_SYSTEM_PROMPT ? undefined : v)
-        .default(enableBrowserUse.get() ? DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE : DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
+        .default(enableBrowserUse.get() ? DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(chatDefaultPromptBasedTools) : DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
       history: {
         currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
       },
