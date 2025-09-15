@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0...v1.9.1)
+
+### 🏡 Chore
+
+- **browser-use:** Update default browser usage setting to true ([17ff164](https://github.com/NativeMindBrowser/NativeMindExtension/commit/17ff164))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.10...v1.9.0)
