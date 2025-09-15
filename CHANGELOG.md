@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.3...v1.9.3-beta.4)
+
+### 🩹 Fixes
+
+- **GmailTools:** Implement retry logic for Gmail compose streaming ([9aea67c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9aea67c))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.3
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.2...v1.9.3-beta.3)
