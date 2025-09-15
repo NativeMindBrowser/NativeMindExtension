@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v1.9.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.2...v1.9.3)
+
+### 🩹 Fixes
+
+- **GmailTools:** Update selector for message body input to improve compatibility ([11d0391](https://github.com/NativeMindBrowser/NativeMindExtension/commit/11d0391))
+
+### 🏡 Chore
+
+- **prompt:** Update default chat system prompt ([a2ee1a2](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a2ee1a2))
+- **quick-actions:** Update prompt for searching similar content ([b64ce59](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b64ce59))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.1...v1.9.2)
