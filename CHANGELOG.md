@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.9.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.1...v1.9.2)
+
+### 🩹 Fixes
+
+- **GmailTools:** Update selectors for message body and recipient extraction ([84a7c25](https://github.com/NativeMindBrowser/NativeMindExtension/commit/84a7c25))
+
+### 🏡 Chore
+
+- **browser-use:** Update browser usage settings to enable link simulation and tab closure by default ([1ac99d6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1ac99d6))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0...v1.9.1)
