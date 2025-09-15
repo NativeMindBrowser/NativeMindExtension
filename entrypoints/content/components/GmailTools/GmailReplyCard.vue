@@ -242,7 +242,7 @@ function applyReply() {
 
   try {
     // Find the message body input box
-    const messageBodyInputs = composeElement.value.querySelectorAll<HTMLElement>('[aria-label="Message Body"][role="textbox"]')
+    const messageBodyInputs = composeElement.value.querySelectorAll<HTMLElement>('[g_editable="true"][role="textbox"]')
     if (messageBodyInputs.length == 0) {
       toast(t('gmail_tools.cards.notifications.no_compose_box_found'), { duration: 2000 })
       return
