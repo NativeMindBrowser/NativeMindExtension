@@ -186,12 +186,12 @@ import { useI18n } from '@/utils/i18n'
 import type { LanguageCode } from '@/utils/language/detect'
 import { getLanguageName, SUPPORTED_LANGUAGES } from '@/utils/language/detect'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
-import { c2bRpc } from '@/utils/rpc'
 import { showSettings } from '@/utils/settings'
 import { getUserConfig, processGmailTemplate } from '@/utils/user-config'
 import { DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT, DEFAULT_GMAIL_COMPOSE_USER_PROMPT } from '@/utils/user-config/defaults'
 
 import { EmailExtractor } from '../../utils/gmail/email-extractor'
+import { streamObjectInBackground } from '../../utils/llm'
 
 const logger = useLogger()
 
@@ -459,15 +459,20 @@ const start = async () => {
 
     logger.debug('Gmail compose prompt:', { systemPrompt, userPrompt })
 
-    const result = await c2bRpc.generateObjectFromSchema({
+    const iter = streamObjectInBackground({
       prompt: userPrompt,
       system: systemPrompt,
       schema: 'emailCompose',
     })
 
-    // Extract the structured result
-    optimizedSubject.value = result.object.subject || ''
-    optimizedBody.value = result.object.body || ''
+    for await (const part of iter) {
+      // Extract the structured result
+      if (part.type === 'object') {
+        runningStatus.value = 'streaming'
+        optimizedSubject.value = part.object.subject || ''
+        optimizedBody.value = part.object.body || ''
+      }
+    }
 
     logger.debug('Gmail compose structured response:', {
       subject: optimizedSubject.value,
