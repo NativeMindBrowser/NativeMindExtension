@@ -107,8 +107,8 @@ export async function _getUserConfig() {
     },
     browserUse: {
       enable: enableBrowserUse,
-      simulateClickOnLink: await new Config('browserUse.simulateClickOnLink').default(false).build(),
-      closeTabOpenedByAgent: await new Config('browserUse.closeTabOpenedByAgent').default(false).build(),
+      simulateClickOnLink: await new Config('browserUse.simulateClickOnLink').default(true).build(),
+      closeTabOpenedByAgent: await new Config('browserUse.closeTabOpenedByAgent').default(true).build(),
     },
     chat: {
       agent: {
