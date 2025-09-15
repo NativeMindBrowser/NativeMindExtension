@@ -74,7 +74,7 @@ export async function _getUserConfig() {
     }
   }
 
-  const enableBrowserUse = await new Config('browserUse.enable').default(false).build()
+  const enableBrowserUse = await new Config('browserUse.enable').default(true).build()
 
   return {
     locale: {
