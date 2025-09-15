@@ -40,7 +40,7 @@ export const DEFAULT_QUICK_ACTIONS = [
     editedTitle: '',
     defaultTitleKey: 'chat.prompt.search_more.title' as const,
     prompt:
-      'Help me find more content similar to this topic and provide relevant search suggestions.',
+      'Please help me search for more similar content.',
     showInContextMenu: false,
     edited: false,
   },
