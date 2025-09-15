@@ -98,7 +98,7 @@ function makeSummaryButton(threadElement: HTMLElement, buttonText: string, exter
   button.style.cssText = externalStyle || ''
   button.className = NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS
 
-  button.addEventListener('click', async (ev) => {
+  button.addEventListener('mousedown', async (ev) => {
     // Return early if button is disabled
     if (button.disabled) {
       return
