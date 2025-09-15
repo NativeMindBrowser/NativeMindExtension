@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.1...v1.9.3-beta.2)
+
+### 🚀 Enhancements
+
+- **GmailTools:** Implement streaming for Gmail compose object generation ([5374e1d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5374e1d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3...v1.9.3-beta.1)
