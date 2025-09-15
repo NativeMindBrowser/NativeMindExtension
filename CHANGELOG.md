@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.2...v1.9.3-beta.3)
+
+### 🩹 Fixes
+
+- **GmailTools:** Adjust MarkdownViewer max height styles for better responsiveness ([05910a1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/05910a1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.1...v1.9.3-beta.2)
