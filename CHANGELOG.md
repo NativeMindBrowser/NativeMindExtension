@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3...v1.9.3-beta.1)
+
+### 🏡 Chore
+
+- **package:** Update version to 1.9.3-beta.0 ([cbe79fa](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cbe79fa))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.2...v1.9.3)
