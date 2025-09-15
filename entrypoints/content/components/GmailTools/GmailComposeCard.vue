@@ -459,20 +459,25 @@ const start = async () => {
 
     logger.debug('Gmail compose prompt:', { systemPrompt, userPrompt })
 
-    const iter = streamObjectInBackground({
-      prompt: userPrompt,
-      system: systemPrompt,
-      schema: 'emailCompose',
-    })
+    const retry = 0
+    do {
+      logger.debug(`Gmail compose attempt #${retry + 1}`)
+      const iter = streamObjectInBackground({
+        prompt: userPrompt,
+        system: systemPrompt,
+        schema: 'emailCompose',
+        abortSignal: abortController.signal,
+      })
 
-    for await (const part of iter) {
-      // Extract the structured result
-      if (part.type === 'object') {
-        runningStatus.value = 'streaming'
-        optimizedSubject.value = part.object.subject || ''
-        optimizedBody.value = part.object.body || ''
+      for await (const part of iter) {
+        // Extract the structured result
+        if (part.type === 'object') {
+          runningStatus.value = 'streaming'
+          optimizedSubject.value = part.object.subject || ''
+          optimizedBody.value = part.object.body || ''
+        }
       }
-    }
+    } while ((!optimizedSubject.value || !optimizedBody.value) && retry < 3)
 
     logger.debug('Gmail compose structured response:', {
       subject: optimizedSubject.value,
