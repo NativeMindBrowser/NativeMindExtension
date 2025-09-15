@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.4...v1.9.3-beta.5)
+
+### 🩹 Fixes
+
+- **GmailTools:** Change summary button event listener from click to mousedown ([fa5f09a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fa5f09a))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.3...v1.9.3-beta.4)
