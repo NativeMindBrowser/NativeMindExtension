@@ -41,7 +41,7 @@
               class="relative"
             >
               <MarkdownViewer
-                class="text-[#03943D] mr-10"
+                class="text-[#03943D] mr-5 pr-5 max-h-[max(calc(100vh-250px),100px)] overflow-y-auto"
                 :text="output"
               />
               <!-- Copy Button -->
