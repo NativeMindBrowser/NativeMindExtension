@@ -66,7 +66,7 @@ export async function _getUserConfig() {
     }
   }
 
-  const enableBrowserUse = await new Config('browserUse.enable').default(false).build()
+  const enableBrowserUse = await new Config('browserUse.enable').default(true).build()
   const enableOnlineSearch = await new Config('chat.onlineSearch.enable').default(true).build()
   const defaultChatSystemPrompt = computed(() => {
     const enableBrowserUseStatus = enableBrowserUse.get()
