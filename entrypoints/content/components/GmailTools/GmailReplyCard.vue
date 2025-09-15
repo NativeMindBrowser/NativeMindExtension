@@ -410,7 +410,7 @@ const start = async () => {
   catch (_error) {
     const error = fromError(_error)
     output.value = t('gmail_tools.cards.errors.error_generating_reply', { error: error.message || error.code || 'Unknown error' })
-    logger.error('Error in Gmail reply generation:', error)
+    logger.error('Error in Gmail reply generation:', error, _error)
   }
   finally {
     if (abortControllers.includes(abortController) && abortControllers.length === 1) {

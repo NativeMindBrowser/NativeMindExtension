@@ -204,13 +204,13 @@ export class EmailExtractor {
    */
   extractRecipients(composeElement: HTMLElement): { to: string[], cc: string[], bcc: string[], from: string } {
     // Use specific selectors for each recipient type within the compose dialog
-    const toListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[aria-label="To"] [role="listbox"]')
-    const ccListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[aria-label="Cc"] [role="listbox"]')
-    const bccListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[aria-label="Bcc"] [role="listbox"]')
+    const toListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[name="to"] [role="listbox"]')
+    const ccListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[name="cc"] [role="listbox"]')
+    const bccListboxes = this.querySelectorSafeAll<HTMLElement>(composeElement, '[name="bcc"] [role="listbox"]')
 
-    const container = toListboxes[0].closest('tbody')
+    const container = toListboxes[0]?.closest('tbody')
 
-    const fromElement = this.querySelectorSafe<HTMLElement>(container!, 'span[dir="ltr"]')
+    const fromElement = container && this.querySelectorSafe<HTMLElement>(container, 'span[dir="ltr"]')
 
     // Extract recipients from each type of listbox
     const toRecipients: string[] = []

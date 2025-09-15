@@ -324,7 +324,7 @@ function applyCompose() {
 
     // Find and update message body field
     if (body && composeElement.value) {
-      const messageBodyInputs = composeElement.value.querySelectorAll<HTMLElement>('[aria-label="Message Body"][role="textbox"]')
+      const messageBodyInputs = composeElement.value.querySelectorAll<HTMLElement>('[g_editable="true"][role="textbox"]')
       if (messageBodyInputs.length > 0) {
         const bodyInput = messageBodyInputs[messageBodyInputs.length - 1]
 
@@ -477,7 +477,7 @@ const start = async () => {
   catch (_error) {
     const error = fromError(_error)
     optimizedBody.value = t('gmail_tools.cards.errors.error_generating_compose', { error: error.message || error.code || 'Unknown error' })
-    logger.error('Error in Gmail compose generation:', error)
+    logger.error('Error in Gmail compose generation:', error, _error)
   }
   finally {
     if (abortControllers.includes(abortController) && abortControllers.length === 1) {
