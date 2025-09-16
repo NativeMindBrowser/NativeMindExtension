@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.10...v1.9.3-beta.11)
+
+### 🚀 Enhancements
+
+- **models:** Enhance model list retrieval to include capabilities support ([0c2cb71](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0c2cb71))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.9.3-beta.10
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.9...v1.9.3-beta.10)
