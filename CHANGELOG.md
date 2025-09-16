@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.6...v1.9.3-beta.7)
+
+### 🏡 Chore
+
+- **agent:** Remove unused checkpoint messages and advanced model constants ([98ca82d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/98ca82d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.6
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.5...v1.9.3-beta.6)
