@@ -12,7 +12,7 @@
 
 <script setup lang="tsx">
 import mime from 'mime'
-import { useTemplateRef, watch } from 'vue'
+import { onBeforeUnmount, useTemplateRef, watch } from 'vue'
 import { browser } from 'wxt/browser'
 
 import { useZIndex } from '@/composables/useZIndex'
@@ -37,7 +37,7 @@ const mainRef = useTemplateRef('mainRef')
 const { index: onboardingPanelZIndex } = useZIndex('settings')
 const userConfig = await getUserConfig()
 
-registerSidepanelRpcEvent('gmailAction', async (e) => {
+const cleanupGmailActionEvent = registerSidepanelRpcEvent('gmailAction', async (e) => {
   const { action, data } = e
   logger.debug('Gmail action triggered:', action, data)
   if (action === 'summary') {
@@ -73,7 +73,7 @@ registerSidepanelRpcEvent('gmailAction', async (e) => {
   }
 })
 
-registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
+const cleanupContextMenuEvent = registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
   const menuItemId = e.menuItemId as ContextMenuId
   const windowId = e.tabInfo.windowId
   if (windowId !== (await browser.windows.getCurrent()).id) return
@@ -117,6 +117,11 @@ registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
       sleep(0).then(() => stopWatch())
     }, { immediate: true })
   }
+})
+
+onBeforeUnmount(() => {
+  cleanupContextMenuEvent()
+  cleanupGmailActionEvent()
 })
 </script>
 
