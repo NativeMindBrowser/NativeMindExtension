@@ -183,6 +183,7 @@ import { useLogger } from '@/composables/useLogger'
 import { useToast } from '@/composables/useToast'
 import { fromError } from '@/utils/error'
 import { useI18n } from '@/utils/i18n'
+import { extractValueOfKeyByPattern } from '@/utils/json/parser/pattern-extractor'
 import type { LanguageCode } from '@/utils/language/detect'
 import { getLanguageName, SUPPORTED_LANGUAGES } from '@/utils/language/detect'
 import { useOllamaStatusStore } from '@/utils/pinia-store/store'
@@ -459,8 +460,11 @@ const start = async () => {
 
     logger.debug('Gmail compose prompt:', { systemPrompt, userPrompt })
 
-    const retry = 0
+    let retry = 0
+    let text = ''
     do {
+      text = ''
+      retry += 1
       logger.debug(`Gmail compose attempt #${retry + 1}`)
       const iter = streamObjectInBackground({
         prompt: userPrompt,
@@ -470,14 +474,26 @@ const start = async () => {
       })
 
       for await (const part of iter) {
-        // Extract the structured result
         if (part.type === 'object') {
           runningStatus.value = 'streaming'
           optimizedSubject.value = part.object.subject || ''
           optimizedBody.value = part.object.body || ''
         }
+        else if (part.type === 'text-delta') {
+          text += part.textDelta
+        }
       }
-    } while ((!optimizedSubject.value || !optimizedBody.value) && retry < 3)
+    } while ((!optimizedSubject.value || !optimizedBody.value) && retry < 2)
+
+    // Fallback: try to extract from raw text if structured extraction failed
+    if (!optimizedSubject.value) {
+      const extractSubjectMatch = extractValueOfKeyByPattern(text, 'subject')
+      if (extractSubjectMatch) optimizedSubject.value = extractSubjectMatch
+    }
+    if (!optimizedBody.value) {
+      const extractBodyMatch = extractValueOfKeyByPattern(text, 'body')
+      if (extractBodyMatch) optimizedBody.value = extractBodyMatch
+    }
 
     logger.debug('Gmail compose structured response:', {
       subject: optimizedSubject.value,

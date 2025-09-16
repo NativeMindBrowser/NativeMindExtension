@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n'
 
 import LogoSvg from '@/assets/icons/logo-custom-color.svg?raw'
 import { useDocumentLoaded } from '@/composables/useDocumentLoaded'
-import { useLogger } from '@/composables/useLogger'
+import Logger from '@/utils/logger'
 import { c2bRpc } from '@/utils/rpc'
 import { toggleContainer } from '@/utils/rpc/content-main-world-fns'
 import { sleep } from '@/utils/sleep'
@@ -12,7 +12,7 @@ import { getUserConfig } from '@/utils/user-config'
 import { useGmailDetector } from '../../composables/useGmailDetector'
 import { EmailExtractor } from '../gmail/email-extractor'
 
-const logger = useLogger()
+const logger = Logger.child('gmail-tools')
 const NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS = 'nativemind-gmail-summary-btn'
 const NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS = 'nativemind-gmail-reply-btn'
 const NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS = 'nativemind-gmail-compose-btn'
