@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v1.9.3-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.7...v1.9.3-beta.8)
+
+### 🩹 Fixes
+
+- **Chat:** Change default reasoningEnabled to undefined for new chats ([d045449](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d045449))
+- **ThinkingMode:** Enhance model thinking capability checks in getModel function and ThinkingModeSwitch display ([e6e4771](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e6e4771))
+
+### 🏡 Chore
+
+- **agent:** Remove unused checkpoint messages and advanced model constants ([bb173a3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bb173a3))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.7
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.6...v1.9.3-beta.7)
