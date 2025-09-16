@@ -257,8 +257,10 @@ export class Agent<T extends PromptBasedToolName> {
   buildExtendedUserMessage(iteration: number, originalUserMessage: string, toolResults?: string) {
     if (iteration === 1) return `${originalUserMessage}\n\n${AGENT_INITIAL_GUIDANCE.build()}`
     const textBuilder = new TextBuilder(`${originalUserMessage}`)
-    if (toolResults) textBuilder.insertContent(toolResults)
-    textBuilder.insertContent(AGENT_TOOL_CALL_RESULT_GUIDANCE)
+    if (toolResults) {
+      textBuilder.insertContent(toolResults)
+      textBuilder.insertContent(AGENT_TOOL_CALL_RESULT_GUIDANCE)
+    }
     return textBuilder.build()
   }
 
