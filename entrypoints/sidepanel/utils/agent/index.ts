@@ -18,7 +18,7 @@ import { renderPrompt, TagBuilder, TextBuilder, UserPrompt } from '@/utils/promp
 
 import { ReactiveHistoryManager } from '../chat'
 import { streamTextInBackground } from '../llm'
-import { AGENT_CHECKPOINT_MESSAGES, AGENT_FORCE_FINAL_ANSWER, AGENT_INITIAL_GUIDANCE, AGENT_TOOL_CALL_RESULT_GUIDANCE } from './constants'
+import { AGENT_FORCE_FINAL_ANSWER, AGENT_INITIAL_GUIDANCE, AGENT_TOOL_CALL_RESULT_GUIDANCE } from './constants'
 import { AgentStorage } from './strorage'
 
 type AgentToolCallHandOffResult = {
@@ -258,8 +258,6 @@ export class Agent<T extends PromptBasedToolName> {
     if (iteration === 1) return `${originalUserMessage}\n\n${AGENT_INITIAL_GUIDANCE.build()}`
     const textBuilder = new TextBuilder(`${originalUserMessage}`)
     if (toolResults) textBuilder.insertContent(toolResults)
-    const checkPointMessageBuilder = AGENT_CHECKPOINT_MESSAGES[iteration]
-    if (checkPointMessageBuilder) textBuilder.insertContent(checkPointMessageBuilder.build())
     textBuilder.insertContent(AGENT_TOOL_CALL_RESULT_GUIDANCE)
     return textBuilder.build()
   }

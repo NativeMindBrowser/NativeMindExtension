@@ -5,7 +5,6 @@ import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
 import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
-import { ADVANCED_MODELS_FOR_AGENT } from '@/utils/constants'
 import { debounce } from '@/utils/debounce'
 import { AbortError, AppError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
@@ -558,8 +557,7 @@ export class Chat {
 
   private async runWithAgent(baseMessages: CoreMessage[]) {
     const userConfig = await getUserConfig()
-    const isAdvancedModel = ADVANCED_MODELS_FOR_AGENT.some((model) => model.test(userConfig.llm.model.get() ?? ''))
-    const maxIterations = isAdvancedModel ? userConfig.chat.agent.maxIterationsForAdvancedModels.get() : userConfig.chat.agent.maxIterations.get()
+    const maxIterations = userConfig.chat.agent.maxIterations.get()
 
     const agent = new Agent({
       historyManager: this.historyManager,

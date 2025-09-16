@@ -114,7 +114,6 @@ export async function _getUserConfig() {
     chat: {
       agent: {
         maxIterations: await new Config('chat.agent.maxIterations').default(5).build(),
-        maxIterationsForAdvancedModels: await new Config('chat.agent.maxIterationsForAdvancedModels').default(10).build(),
       },
       environmentDetails: {
         fullUpdateFrequency: await new Config('chat.environmentDetails.fullUpdateFrequency').default(10).build(), // update full environment details every 5 messages
