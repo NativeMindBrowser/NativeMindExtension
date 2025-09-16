@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v1.9.3-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.9...v1.9.3-beta.10)
+
+### 🚀 Enhancements
+
+- **draggable:** Implement draggable functionality for popups in Gmail and Writing Tools ([d2ad80d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d2ad80d))
+
+### 🩹 Fixes
+
+- **GmailTools:** Use autoThinking in GmailComposeCard generation ([a25927f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a25927f))
+- **models:** Update thinking capability checks to use options.model instead of userConfig ([c6b3655](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c6b3655))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.9
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.8...v1.9.3-beta.9)
