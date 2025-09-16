@@ -470,6 +470,7 @@ const start = async () => {
         prompt: userPrompt,
         system: systemPrompt,
         schema: 'emailCompose',
+        autoThinking: true,
         abortSignal: abortController.signal,
       })
 
