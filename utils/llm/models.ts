@@ -58,9 +58,9 @@ export async function getModel(options: {
         // Models have different thinking capabilities
         // Edge Case: Qwen3 Instruct does not support think argument even it is toggleable
         // add additional check to avoid api error
-        const currentModel = userConfig.llm.model.get()
+        const currentModel = options.model
 
-        const supportsToggleThinking = isToggleableThinkingModel(options.model)
+        const supportsToggleThinking = isToggleableThinkingModel(currentModel)
         const supportsThinking = modelList.models.find((m) => m.model === currentModel)?.supportsThinking
 
         const parsedBody = JSON.parse(body)
