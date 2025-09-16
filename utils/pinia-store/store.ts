@@ -22,19 +22,11 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
   const connectionStatus = ref<'connected' | 'error' | 'unconnected'>('unconnected')
   const updateModelList = async (): Promise<OllamaModelInfo[]> => {
     try {
-      const response = await rpc.getLocalModelList()
+      const response = await rpc.getLocalModelListWithCapabilities()
       connectionStatus.value = 'connected'
-      log.debug('Model list fetched:', response)
+      log.debug('Model list with capabilities fetched:', response)
 
-      // Check thinking support for each model
-      const modelsWithThinkingSupport = await Promise.all(
-        response.models.map(async (model) => ({
-          ...model,
-          supportsThinking: await checkModelSupportThinking(model.model),
-        })),
-      )
-
-      modelList.value = modelsWithThinkingSupport
+      modelList.value = response.models
       return modelList.value
     }
     catch (error) {
@@ -72,18 +64,6 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
     return supported
   }
 
-  const checkModelSupportThinking = async (modelId: string) => {
-    try {
-      const modelDetails = await rpc.showOllamaModelDetails(modelId)
-      logger.debug('checkModelSupportThinking', modelDetails)
-      return !!modelDetails.capabilities?.includes('thinking')
-    }
-    catch (error) {
-      log.error('Failed to check thinking support for model:', modelId, error)
-      return false
-    }
-  }
-
   const initDefaultModel = async () => {
     const userConfig = await getUserConfig()
     const endpointType = userConfig.llm.endpointType.get()
@@ -105,6 +85,5 @@ export const useOllamaStatusStore = defineStore('ollama-status', () => {
     clearModelList,
     updateConnectionStatus,
     checkCurrentModelSupportVision,
-    checkModelSupportThinking,
   }
 })

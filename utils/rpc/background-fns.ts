@@ -17,7 +17,7 @@ import { ContextMenuManager } from '../context-menu'
 import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
 import { parsePartialJson } from '../json/parser/parse-partial-json'
 import { getModel, getModelUserConfig, ModelLoadingProgressEvent } from '../llm/models'
-import { deleteModel, getLocalModelList, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
+import { deleteModel, getLocalModelList, getLocalModelListWithCapabilities, getRunningModelList, pullModel, showModelDetails, unloadModel } from '../llm/ollama'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
 import { PromptBasedTool } from '../llm/tools/prompt-based/helpers'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
@@ -1050,6 +1050,7 @@ export const backgroundFunctions = {
   streamText,
   getAllTabs,
   getLocalModelList,
+  getLocalModelListWithCapabilities,
   getRunningModelList,
   deleteOllamaModel,
   pullOllamaModel,

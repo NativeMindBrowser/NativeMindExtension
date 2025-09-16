@@ -5,7 +5,7 @@ import { getUserConfig } from '@/utils/user-config'
 import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
 import { middlewares } from './middlewares'
-import { getLocalModelList } from './ollama'
+import { getLocalModelListWithCapabilities } from './ollama'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
 import { isToggleableThinkingModel } from './thinking-models'
@@ -45,7 +45,7 @@ export async function getModel(options: {
   onLoadingModel?: (prg: ModelLoadingProgressEvent) => void
 }) {
   const userConfig = await getUserConfig()
-  const modelList = await getLocalModelList()
+  const modelList = await getLocalModelListWithCapabilities()
   let model: LanguageModelV1
   const endpointType = userConfig.llm.endpointType.get()
   if (endpointType === 'ollama') {
