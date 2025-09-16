@@ -13,7 +13,7 @@
           <div
             v-if="showReplyCard"
             ref="popupRef"
-            class="popup bg-white fixed rounded-md z-50 transition-[width,top,left] shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
+            class="popup bg-white fixed rounded-md z-50 shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
             :class="!popupPos ? 'opacity-0' : ''"
             :style="popupPos ? { top: popupPos.top + 'px', left: popupPos.left + 'px' } : {}"
           >
@@ -26,7 +26,7 @@
           <div
             v-if="showComposeCard"
             ref="composePopupRef"
-            class="popup bg-white fixed rounded-md z-50 transition-[width,top,left] shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
+            class="popup bg-white fixed rounded-md z-50 shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
             :class="!composePopupPos ? 'opacity-0' : ''"
             :style="composePopupPos ? { top: composePopupPos.top + 'px', left: composePopupPos.left + 'px' } : {}"
           >
@@ -47,6 +47,7 @@ import { useElementBounding } from '@vueuse/core'
 import { computed, onMounted, ref, shallowRef, watchEffect } from 'vue'
 import { ShadowRoot as ShadowRootComponent } from 'vue-shadow-dom'
 
+import { useDraggable } from '@/composables/useDraggable'
 import { useLogger } from '@/composables/useLogger'
 import { injectStyleSheetToDocument, loadContentScriptStyleSheet } from '@/utils/css'
 import { getUserConfig } from '@/utils/user-config'
@@ -60,10 +61,14 @@ const rootElement = useRootElement()
 const styleSheet = shallowRef<CSSStyleSheet | null>(null)
 const shadowRootRef = ref<InstanceType<typeof ShadowRoot>>()
 const containerRef = ref<HTMLDivElement>()
-const popupRef = ref<HTMLDivElement>()
-const composePopupRef = ref<HTMLDivElement>()
+const popupRef = ref<HTMLDivElement | null>(null)
+const composePopupRef = ref<HTMLDivElement | null>(null)
 const clickedReplyButtonRef = ref<HTMLElement | null>(null) // for navigating current polish button and finding its parent compose dialog
 const clickedComposeButtonRef = ref<HTMLElement | null>(null) // for navigating current compose button and finding its parent compose dialog
+
+// Drag handles for popup title bars
+const replyDragHandleRef = ref<HTMLElement | null>(null)
+const composeDragHandleRef = ref<HTMLElement | null>(null)
 
 const userConfig = await getUserConfig()
 const enabled = userConfig.emailTools.enable.toRef()
@@ -81,6 +86,15 @@ const popupBounding = useElementBounding(popupRef)
 const showComposeCard = ref(false)
 const composeButtonElement = ref<HTMLElement | null>(null)
 const composePopupBounding = useElementBounding(composePopupRef)
+
+// Initialize draggable functionality for both popups
+const replyDraggable = useDraggable(popupRef, {
+  handle: replyDragHandleRef,
+})
+
+const composeDraggable = useDraggable(composePopupRef, {
+  handle: composeDragHandleRef,
+})
 
 const popupPos = computed(() => {
   if (!replyButtonElement.value || popupBounding.height.value === 0 || popupBounding.width.value === 0) {
@@ -140,11 +154,20 @@ const onShowReplyCard = (buttonElement: HTMLElement, clickedButtonElement: HTMLE
   replyButtonElement.value = buttonElement
   clickedReplyButtonRef.value = clickedButtonElement
   showReplyCard.value = true
+
+  // Initialize dragging after popup is shown
+  setTimeout(() => {
+    if (popupRef.value) {
+      replyDragHandleRef.value = popupRef.value.querySelector('.title') as HTMLElement
+      replyDraggable.initDraggable()
+    }
+  }, 0)
 }
 
 const onCloseReplyCard = () => {
   showReplyCard.value = false
   replyButtonElement.value = null
+  replyDraggable.resetPosition()
 }
 
 const onApplyReply = (text: string) => {
@@ -157,11 +180,20 @@ const onShowComposeCard = (buttonElement: HTMLElement, clickedButtonElement: HTM
   composeButtonElement.value = buttonElement
   clickedComposeButtonRef.value = clickedButtonElement
   showComposeCard.value = true
+
+  // Initialize dragging after popup is shown
+  setTimeout(() => {
+    if (composePopupRef.value) {
+      composeDragHandleRef.value = composePopupRef.value.querySelector('.title') as HTMLElement
+      composeDraggable.initDraggable()
+    }
+  }, 0)
 }
 
 const onCloseComposeCard = () => {
   showComposeCard.value = false
   composeButtonElement.value = null
+  composeDraggable.resetPosition()
 }
 
 const onApplyCompose = (data: { subject: string, body: string }) => {
