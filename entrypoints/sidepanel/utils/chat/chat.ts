@@ -313,7 +313,7 @@ export class Chat {
           id: chatHistoryId.value,
           title: defaultTitle,
           lastInteractedAt: Date.now(),
-          reasoningEnabled: true, // Default to true for new chats
+          reasoningEnabled: undefined, // Default to undefined for new chats
         })
 
         // If this is a new chat (no existing history), set global reasoning to true
@@ -371,7 +371,7 @@ export class Chat {
             title: defaultTitle,
             lastInteractedAt: Date.now(),
             contextUpdateInfo: undefined,
-            reasoningEnabled: true, // Default to true for new chats
+            reasoningEnabled: undefined, // Default to undefined for new chats
           }
 
           // If this is a new chat (no existing history), set global reasoning to true
