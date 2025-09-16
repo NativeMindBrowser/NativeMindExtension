@@ -5,6 +5,7 @@ import { getUserConfig } from '@/utils/user-config'
 import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
 import { middlewares } from './middlewares'
+import { getLocalModelList } from './ollama'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
 import { isToggleableThinkingModel } from './thinking-models'
@@ -44,6 +45,7 @@ export async function getModel(options: {
   onLoadingModel?: (prg: ModelLoadingProgressEvent) => void
 }) {
   const userConfig = await getUserConfig()
+  const modelList = await getLocalModelList()
   let model: LanguageModelV1
   const endpointType = userConfig.llm.endpointType.get()
   if (endpointType === 'ollama') {
@@ -53,13 +55,18 @@ export async function getModel(options: {
         if (options.autoThinking) return body
         if (typeof body !== 'string') return body
 
-        // add additional check to avoid errors, eg gamma3 does not support think argument
-        const _isToggleableThinkingModel = isToggleableThinkingModel(options.model)
+        // Models have different thinking capabilities
+        // Edge Case: Qwen3 Instruct does not support think argument even it is toggleable
+        // add additional check to avoid api error
+        const currentModel = userConfig.llm.model.get()
+
+        const supportsToggleThinking = isToggleableThinkingModel(options.model)
+        const supportsThinking = modelList.models.find((m) => m.model === currentModel)?.supportsThinking
 
         const parsedBody = JSON.parse(body)
         return JSON.stringify({
           ...parsedBody,
-          think: _isToggleableThinkingModel ? options.reasoning : undefined,
+          think: supportsThinking && supportsToggleThinking ? options.reasoning : undefined,
         })
       },
     })
