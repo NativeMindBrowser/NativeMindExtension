@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.5...v1.9.3-beta.6)
+
+### 🩹 Fixes
+
+- **GmailTools:** Enhance Gmail compose with retry logic and fallback extraction ([7217288](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7217288))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.4...v1.9.3-beta.5)
