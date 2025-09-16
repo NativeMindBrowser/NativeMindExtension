@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.8...v1.9.3-beta.9)
+
+### 🩹 Fixes
+
+- **agent:** Improve event cleanup and enhance view_Image result handling in agent ([6e919c8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6e919c8))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.8
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.7...v1.9.3-beta.8)
