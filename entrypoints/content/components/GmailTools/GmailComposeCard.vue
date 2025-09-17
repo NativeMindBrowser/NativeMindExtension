@@ -484,11 +484,11 @@ const start = async () => {
     // Fallback: try to extract from raw text if structured extraction failed
     if (!optimizedSubject.value) {
       const extractSubjectMatch = extractValueOfKeyByPattern(text, 'subject')
-      if (extractSubjectMatch) optimizedSubject.value = extractSubjectMatch
+      if (extractSubjectMatch && typeof extractSubjectMatch === 'string') optimizedSubject.value = extractSubjectMatch
     }
     if (!optimizedBody.value) {
       const extractBodyMatch = extractValueOfKeyByPattern(text, 'body')
-      if (extractBodyMatch) optimizedBody.value = extractBodyMatch
+      if (extractBodyMatch && typeof extractBodyMatch === 'string') optimizedBody.value = extractBodyMatch
     }
 
     logger.debug('Gmail compose structured response:', {
