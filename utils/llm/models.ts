@@ -5,7 +5,7 @@ import { getUserConfig } from '@/utils/user-config'
 import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
 import { middlewares } from './middlewares'
-import { getLocalModelListWithCapabilities } from './ollama'
+import { checkModelSupportThinking } from './ollama'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
 import { isToggleableThinkingModel } from './thinking-models'
@@ -45,23 +45,20 @@ export async function getModel(options: {
   onLoadingModel?: (prg: ModelLoadingProgressEvent) => void
 }) {
   const userConfig = await getUserConfig()
-  const modelList = await getLocalModelListWithCapabilities()
   let model: LanguageModelV1
   const endpointType = userConfig.llm.endpointType.get()
   if (endpointType === 'ollama') {
+    // Models have different thinking capabilities
+    // Edge Case: Qwen3 Instruct does not support think argument even it is toggleable
+    // add additional check to avoid api error
+    const currentModel = options.model
+    const supportsThinking = await checkModelSupportThinking(currentModel)
+    const supportsToggleThinking = isToggleableThinkingModel(currentModel)
     const customFetch = makeCustomFetch({
       bodyTransformer: (body) => {
         // process thinking capability by ollama itself, using on translation feature
         if (options.autoThinking) return body
         if (typeof body !== 'string') return body
-
-        // Models have different thinking capabilities
-        // Edge Case: Qwen3 Instruct does not support think argument even it is toggleable
-        // add additional check to avoid api error
-        const currentModel = options.model
-
-        const supportsToggleThinking = isToggleableThinkingModel(currentModel)
-        const supportsThinking = modelList.models.find((m) => m.model === currentModel)?.supportsThinking
 
         const parsedBody = JSON.parse(body)
         return JSON.stringify({

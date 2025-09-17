@@ -110,7 +110,7 @@ export async function showModelDetails(modelId: string) {
   }
 }
 
-async function checkModelSupportThinking(modelId: string): Promise<boolean> {
+export async function checkModelSupportThinking(modelId: string): Promise<boolean> {
   try {
     const modelDetails = await showModelDetails(modelId)
     return !!modelDetails.capabilities?.includes('thinking')
