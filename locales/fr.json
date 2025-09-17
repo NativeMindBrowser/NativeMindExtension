@@ -344,7 +344,41 @@
       "server_address": "Adresse du serveur",
       "server_address_desc": "Point de terminaison de l'API du serveur LM Studio"
     },
-    "webllm_desc_lm_studio": "Vous utilisez maintenant WebLLM : qwen3:0.6b pour un essai rapide. Pour un support complet des modèles et de meilleures performances, veuillez installer LM Studio."
+    "webllm_desc_lm_studio": "Vous utilisez maintenant WebLLM : qwen3:0.6b pour un essai rapide. Pour un support complet des modèles et de meilleures performances, veuillez installer LM Studio.",
+    "gmail_tools": {
+      "title": "Outils Gmail",
+      "description": "Configurer diverses fonctionnalités d'assistance à la rédaction",
+      "basic_config": {
+        "title": "Paramètres de base",
+        "enable": "Activer les outils Gmail",
+        "enable_desc": "Afficher les fonctionnalités d'assistance IA directement dans Gmail.",
+        "output_language": "Langue de sortie",
+        "output_language_desc": "Choisissez la langue par défaut pour les e-mails générés par l'IA.",
+        "output_style": "Style de sortie",
+        "output_style_desc": "Choisissez le ton par défaut pour vos e-mails",
+        "options": {
+          "auto": "Automatique",
+          "default": "Par défaut"
+        }
+      },
+      "system_prompt": {
+        "title": "Invite système",
+        "summarize": {
+          "title": "Résumer",
+          "description": "Extrayez rapidement les points clés des longs e-mails ou des fils de discussion entiers."
+        },
+        "reply": {
+          "title": "Répondre",
+          "description": "Rédigez instantanément une réponse naturelle basée sur le contenu de l'e-mail et vos notes."
+        },
+        "compose": {
+          "title": "Composer",
+          "description": "Commencez de zéro ou peaufinez votre brouillon."
+        },
+        "reset_to_default": "Remettre par défaut",
+        "reset_to_default_confirm": "Êtes-vous sûr de vouloir réinitialiser {setting} aux valeurs par défaut ?"
+      }
+    }
   },
   "context_menu": {
     "quick_actions": {
@@ -418,5 +452,62 @@
     "chat_history": "Histoire",
     "new_chat": "Nouveau chat",
     "back": "Retour"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "Résumé IA",
+      "ai_reply": "Réponse IA",
+      "ai_polish": "Polir par IA"
+    },
+    "cards": {
+      "reply": {
+        "title": "Suggestion de réponse",
+        "processing": "Traitement...",
+        "regenerate": "Régénérer",
+        "apply": "Appliquer",
+        "language_selector": "Langue",
+        "style_selector": "Style",
+        "copy_to_clipboard": "Copier dans le presse-papiers"
+      },
+      "compose": {
+        "title": "Composition IA",
+        "subject": "Objet :",
+        "email_body": "Corps de l'e-mail :",
+        "processing": "Traitement...",
+        "regenerate": "Régénérer",
+        "apply": "Appliquer",
+        "language_selector": "Langue",
+        "style_selector": "Style",
+        "copy_subject_to_clipboard": "Copier l'objet dans le presse-papiers",
+        "copy_body_to_clipboard": "Copier le corps dans le presse-papiers",
+        "no_subject_generated": "Aucun objet généré"
+      },
+      "styles": {
+        "change_style": "Changer de style",
+        "formal": "Formel",
+        "friendly": "Amical",
+        "urgent": "Urgent"
+      },
+      "notifications": {
+        "copied_to_clipboard": "Copié dans le presse-papiers !",
+        "subject_copied": "Objet copié dans le presse-papiers !",
+        "body_copied": "Corps copié dans le presse-papiers !",
+        "reply_applied": "Réponse appliquée à la boîte de composition !",
+        "email_content_applied": "Contenu de l'e-mail appliqué aux champs de composition !",
+        "no_content_to_apply": "Aucun contenu à appliquer",
+        "no_compose_box_found": "Aucune boîte de composition trouvée",
+        "failed_to_copy": "Échec de la copie dans le presse-papiers",
+        "failed_to_apply_reply": "Échec de l'application du contenu de la réponse",
+        "failed_to_apply_compose": "Échec de l'application du contenu de composition"
+      },
+      "errors": {
+        "failed_to_summarize": "Échec du résumé de l'e-mail :",
+        "failed_to_show_reply_card": "Échec de l'affichage de la carte de réponse Gmail :",
+        "failed_to_show_compose_card": "Échec de l'affichage de la carte de composition Gmail :",
+        "failed_to_locate_reply_element": "Impossible de localiser l'élément de composition de réponse",
+        "error_generating_reply": "Erreur lors de la génération de la réponse : {error}",
+        "error_generating_compose": "Erreur lors de la génération du contenu de composition : {error}"
+      }
+    }
   }
 }

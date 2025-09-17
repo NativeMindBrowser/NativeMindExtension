@@ -344,7 +344,41 @@
       "server_address": "Serveradresse",
       "server_address_desc": "LM Studio Server-API-Endpunkt"
     },
-    "webllm_desc_lm_studio": "Sie verwenden jetzt WebLLM: qwen3:0.6b für einen schnellen Test. Für vollständige Modellunterstützung und bessere Leistung installieren Sie bitte LM Studio."
+    "webllm_desc_lm_studio": "Sie verwenden jetzt WebLLM: qwen3:0.6b für einen schnellen Test. Für vollständige Modellunterstützung und bessere Leistung installieren Sie bitte LM Studio.",
+    "gmail_tools": {
+      "title": "Gmail-Tools",
+      "description": "Verschiedene Schreibassistenz-Funktionen konfigurieren",
+      "basic_config": {
+        "title": "Grundeinstellungen",
+        "enable": "Gmail-Tools aktivieren",
+        "enable_desc": "AI-Assistenz-Funktionen direkt in Gmail anzeigen.",
+        "output_language": "Ausgabesprache",
+        "output_language_desc": "Wählen Sie die Standardsprache für AI-generierte E-Mails.",
+        "output_style": "Ausgabestil",
+        "output_style_desc": "Wählen Sie den Standardton für Ihre E-Mails",
+        "options": {
+          "auto": "Automatisch",
+          "default": "Standard"
+        }
+      },
+      "system_prompt": {
+        "title": "System-Prompt",
+        "summarize": {
+          "title": "Zusammenfassen",
+          "description": "Extrahieren Sie schnell wichtige Punkte aus langen E-Mails oder ganzen Threads."
+        },
+        "reply": {
+          "title": "Antworten",
+          "description": "Verfassen Sie sofort eine natürliche Antwort basierend auf dem E-Mail-Inhalt und Ihren Notizen."
+        },
+        "compose": {
+          "title": "Verfassen",
+          "description": "Von Grund auf neu beginnen oder Ihren Entwurf verfeinern."
+        },
+        "reset_to_default": "Auf Standard zurücksetzen",
+        "reset_to_default_confirm": "Sind Sie sicher, dass Sie {setting} auf die Standardwerte zurücksetzen möchten?"
+      }
+    }
   },
   "context_menu": {
     "quick_actions": {
@@ -418,5 +452,62 @@
     "chat_history": "Geschichte",
     "new_chat": "Neuer Chat",
     "back": "Zurück"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "AI-Zusammenfassung",
+      "ai_reply": "AI-Antwort",
+      "ai_polish": "AI-Polieren"
+    },
+    "cards": {
+      "reply": {
+        "title": "Antwortvorschlag",
+        "processing": "Verarbeitung...",
+        "regenerate": "Neu generieren",
+        "apply": "Anwenden",
+        "language_selector": "Sprache",
+        "style_selector": "Stil",
+        "copy_to_clipboard": "In Zwischenablage kopieren"
+      },
+      "compose": {
+        "title": "AI-Verfassen",
+        "subject": "Betreff:",
+        "email_body": "E-Mail-Text:",
+        "processing": "Verarbeitung...",
+        "regenerate": "Neu generieren",
+        "apply": "Anwenden",
+        "language_selector": "Sprache",
+        "style_selector": "Stil",
+        "copy_subject_to_clipboard": "Betreff in Zwischenablage kopieren",
+        "copy_body_to_clipboard": "Text in Zwischenablage kopieren",
+        "no_subject_generated": "Kein Betreff generiert"
+      },
+      "styles": {
+        "change_style": "Stil ändern",
+        "formal": "Formal",
+        "friendly": "Freundlich",
+        "urgent": "Dringend"
+      },
+      "notifications": {
+        "copied_to_clipboard": "In Zwischenablage kopiert!",
+        "subject_copied": "Betreff in Zwischenablage kopiert!",
+        "body_copied": "Text in Zwischenablage kopiert!",
+        "reply_applied": "Antwort in Verfassen-Feld eingefügt!",
+        "email_content_applied": "E-Mail-Inhalt in Verfassen-Felder eingefügt!",
+        "no_content_to_apply": "Kein Inhalt zum Anwenden",
+        "no_compose_box_found": "Kein Verfassen-Feld gefunden",
+        "failed_to_copy": "Kopieren in Zwischenablage fehlgeschlagen",
+        "failed_to_apply_reply": "Anwenden des Antwort-Inhalts fehlgeschlagen",
+        "failed_to_apply_compose": "Anwenden des Verfassen-Inhalts fehlgeschlagen"
+      },
+      "errors": {
+        "failed_to_summarize": "E-Mail-Zusammenfassung fehlgeschlagen:",
+        "failed_to_show_reply_card": "Gmail-Antwortkarte anzeigen fehlgeschlagen:",
+        "failed_to_show_compose_card": "Gmail-Verfassen-Karte anzeigen fehlgeschlagen:",
+        "failed_to_locate_reply_element": "Antwort-Verfassen-Element nicht gefunden",
+        "error_generating_reply": "Fehler beim Generieren der Antwort: {error}",
+        "error_generating_compose": "Fehler beim Generieren des Verfassen-Inhalts: {error}"
+      }
+    }
   }
 }

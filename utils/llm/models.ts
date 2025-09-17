@@ -6,6 +6,7 @@ import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
 import { loadModel as loadLMStudioModel } from './lm-studio'
 import { middlewares } from './middlewares'
+import { checkModelSupportThinking } from './ollama'
 import { LMStudioChatLanguageModel } from './providers/lm-studio/chat-language-model'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
@@ -51,19 +52,22 @@ export async function getModel(options: {
   const endpointType = options.endpointType
   let model: LanguageModelV1
   if (endpointType === 'ollama') {
+    // Models have different thinking capabilities
+    // Edge Case: Qwen3 Instruct does not support think argument even it is toggleable
+    // add additional check to avoid api error
+    const currentModel = options.model
+    const supportsThinking = await checkModelSupportThinking(currentModel)
+    const supportsToggleThinking = isToggleableThinkingModel(endpointType, currentModel)
     const customFetch = makeCustomFetch({
       bodyTransformer: (body) => {
         // process thinking capability by ollama itself, using on translation feature
         if (options.autoThinking) return body
         if (typeof body !== 'string') return body
 
-        // add additional check to avoid errors, eg gamma3 does not support think argument
-        const _isToggleableThinkingModel = isToggleableThinkingModel('ollama', options.model)
-
         const parsedBody = JSON.parse(body)
         return JSON.stringify({
           ...parsedBody,
-          think: _isToggleableThinkingModel ? options.reasoning : undefined,
+          think: supportsThinking && supportsToggleThinking ? options.reasoning : undefined,
         })
       },
     })

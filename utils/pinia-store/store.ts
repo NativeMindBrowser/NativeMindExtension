@@ -25,20 +25,11 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
   const ollamaConnectionStatus = ref<'connected' | 'error' | 'unconnected'>('unconnected')
   const updateOllamaModelList = async (): Promise<OllamaModelInfo[]> => {
     try {
-      ollamaModelListUpdating.value = true
-      const response = await rpc.getOllamaLocalModelList()
+      const response = await rpc.getOllamaLocalModelListWithCapabilities()
       ollamaConnectionStatus.value = 'connected'
-      log.debug('Model list fetched:', response)
+      log.debug('Model list with capabilities fetched:', response)
 
-      // Check thinking support for each model
-      const modelsWithThinkingSupport = await Promise.all(
-        response.models.map(async (model) => ({
-          ...model,
-          supportsThinking: await checkModelSupportThinking(model.model),
-        })),
-      )
-
-      ollamaModelList.value = modelsWithThinkingSupport
+      ollamaModelList.value = response.models
       return ollamaModelList.value
     }
     catch (error) {

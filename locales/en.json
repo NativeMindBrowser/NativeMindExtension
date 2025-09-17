@@ -201,7 +201,41 @@
       "server_address_desc": "LM Studio server API endpoint"
     },
     "delete": "Delete",
-    "webllm_desc_lm_studio": "You are now using WebLLM: qwen3:0.6b for quick tryout. For full model support and better performance, please install LM Studio."
+    "webllm_desc_lm_studio": "You are now using WebLLM: qwen3:0.6b for quick tryout. For full model support and better performance, please install LM Studio.",
+    "gmail_tools": {
+      "title": "Gmail Tools",
+      "description": "Configure various writing assistance features",
+      "basic_config": {
+        "title": "Basic Settings",
+        "enable": "Enable Gmail Tools",
+        "enable_desc": "Show AI assistance features directly inside Gmail.",
+        "output_language": "Output Language",
+        "output_language_desc": "Choose the default language for AI-generated emails.",
+        "output_style": "Output Style",
+        "output_style_desc": "Choose the default tone for your emails",
+        "options": {
+          "auto": "Auto",
+          "default": "Default"
+        }
+      },
+      "system_prompt": {
+        "title": "System Prompt",
+        "summarize": {
+          "title": "Summarize",
+          "description": "Quickly extract key points from long emails or entire threads."
+        },
+        "reply": {
+          "title": "Reply",
+          "description": "Instantly draft a natural reply based on the email content and your notes."
+        },
+        "compose": {
+          "title": "Compose",
+          "description": "Start from scratch or polish your draft."
+        },
+        "reset_to_default": "Reset to default",
+        "reset_to_default_confirm": "Are you sure you want to reset {setting} to default?"
+      }
+    }
   },
   "chat": {
     "messages": {
@@ -418,5 +452,62 @@
     "chat_history": "History",
     "new_chat": "New Chat",
     "back": "Back"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "AI Summary",
+      "ai_reply": "AI Reply",
+      "ai_polish": "AI Polish"
+    },
+    "cards": {
+      "reply": {
+        "title": "Reply Suggestion",
+        "processing": "Processing...",
+        "regenerate": "Regenerate",
+        "apply": "Apply",
+        "language_selector": "Language",
+        "style_selector": "Style",
+        "copy_to_clipboard": "Copy to clipboard"
+      },
+      "compose": {
+        "title": "AI Compose",
+        "subject": "Subject:",
+        "email_body": "Email Body:",
+        "processing": "Processing...",
+        "regenerate": "Regenerate",
+        "apply": "Apply",
+        "language_selector": "Language",
+        "style_selector": "Style",
+        "copy_subject_to_clipboard": "Copy subject to clipboard",
+        "copy_body_to_clipboard": "Copy body to clipboard",
+        "no_subject_generated": "No subject generated"
+      },
+      "styles": {
+        "change_style": "Change style",
+        "formal": "Formal",
+        "friendly": "Friendly",
+        "urgent": "Urgent"
+      },
+      "notifications": {
+        "copied_to_clipboard": "Copied to clipboard!",
+        "subject_copied": "Subject copied to clipboard!",
+        "body_copied": "Body copied to clipboard!",
+        "reply_applied": "Reply applied to compose box!",
+        "email_content_applied": "Email content applied to compose fields!",
+        "no_content_to_apply": "No content to apply",
+        "no_compose_box_found": "No compose box found",
+        "failed_to_copy": "Failed to copy to clipboard",
+        "failed_to_apply_reply": "Failed to apply reply content",
+        "failed_to_apply_compose": "Failed to apply compose content"
+      },
+      "errors": {
+        "failed_to_summarize": "Failed to summarize email:",
+        "failed_to_show_reply_card": "Failed to show Gmail reply card:",
+        "failed_to_show_compose_card": "Failed to show Gmail compose card:",
+        "failed_to_locate_reply_element": "Failed to locate reply compose element",
+        "error_generating_reply": "Error generating reply: {error}",
+        "error_generating_compose": "Error generating compose content: {error}"
+      }
+    }
   }
 }

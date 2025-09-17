@@ -21,6 +21,35 @@
 ### 🩹 Fixes
 
 - **lm-studio:** Return consistent structured response format ([24d9636](https://github.com/NativeMindBrowser/NativeMindExtension/commit/24d9636))
+## v1.9.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.12...v1.9.4)
+
+### 🚀 Enhancements
+
+- **settings:** Enhance resetting settings to default for gmail prompts ([6cee604](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6cee604))
+
+### 🩹 Fixes
+
+- **gmail-tools:** Refine popup cards text styles ([cab8ace](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cab8ace))
+
+### 🏡 Chore
+
+- **ollama:** Improve model capabilities check before generation ([d5a6310](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d5a6310))
+- **package:** Update version to 1.9.3 ([15d3323](https://github.com/NativeMindBrowser/NativeMindExtension/commit/15d3323))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.9.3-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.11...v1.9.3-beta.12)
+
+### 🩹 Fixes
+
+- **content-script:** Remove duplicate import of 'tailwindcss/index.css' ([8a5af4b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8a5af4b))
 
 ### ❤️ Contributors
 
@@ -29,6 +58,306 @@
 ## v1.10.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.2...v1.10.0-beta.1)
+## v1.9.3-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.10...v1.9.3-beta.11)
+
+### 🚀 Enhancements
+
+- **models:** Enhance model list retrieval to include capabilities support ([0c2cb71](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0c2cb71))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.9.3-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.9...v1.9.3-beta.10)
+
+### 🚀 Enhancements
+
+- **draggable:** Implement draggable functionality for popups in Gmail and Writing Tools ([d2ad80d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d2ad80d))
+
+### 🩹 Fixes
+
+- **GmailTools:** Use autoThinking in GmailComposeCard generation ([a25927f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a25927f))
+- **models:** Update thinking capability checks to use options.model instead of userConfig ([c6b3655](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c6b3655))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.8...v1.9.3-beta.9)
+
+### 🩹 Fixes
+
+- **agent:** Improve event cleanup and enhance view_Image result handling in agent ([6e919c8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6e919c8))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.7...v1.9.3-beta.8)
+
+### 🩹 Fixes
+
+- **Chat:** Change default reasoningEnabled to undefined for new chats ([d045449](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d045449))
+- **ThinkingMode:** Enhance model thinking capability checks in getModel function and ThinkingModeSwitch display ([e6e4771](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e6e4771))
+
+### 🏡 Chore
+
+- **agent:** Remove unused checkpoint messages and advanced model constants ([bb173a3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bb173a3))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.6...v1.9.3-beta.7)
+
+### 🏡 Chore
+
+- **agent:** Remove unused checkpoint messages and advanced model constants ([98ca82d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/98ca82d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.5...v1.9.3-beta.6)
+
+### 🩹 Fixes
+
+- **GmailTools:** Enhance Gmail compose with retry logic and fallback extraction ([7217288](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7217288))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.4...v1.9.3-beta.5)
+
+### 🩹 Fixes
+
+- **GmailTools:** Change summary button event listener from click to mousedown ([fa5f09a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fa5f09a))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.3...v1.9.3-beta.4)
+
+### 🩹 Fixes
+
+- **GmailTools:** Implement retry logic for Gmail compose streaming ([9aea67c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9aea67c))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.2...v1.9.3-beta.3)
+
+### 🩹 Fixes
+
+- **GmailTools:** Adjust MarkdownViewer max height styles for better responsiveness ([05910a1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/05910a1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.1...v1.9.3-beta.2)
+
+### 🚀 Enhancements
+
+- **GmailTools:** Implement streaming for Gmail compose object generation ([5374e1d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5374e1d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3...v1.9.3-beta.1)
+
+### 🏡 Chore
+
+- **package:** Update version to 1.9.3-beta.0 ([cbe79fa](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cbe79fa))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.2...v1.9.3)
+
+### 🩹 Fixes
+
+- **GmailTools:** Update selector for message body input to improve compatibility ([11d0391](https://github.com/NativeMindBrowser/NativeMindExtension/commit/11d0391))
+
+### 🏡 Chore
+
+- **prompt:** Update default chat system prompt ([a2ee1a2](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a2ee1a2))
+- **quick-actions:** Update prompt for searching similar content ([b64ce59](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b64ce59))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.1...v1.9.2)
+
+### 🩹 Fixes
+
+- **GmailTools:** Update selectors for message body and recipient extraction ([84a7c25](https://github.com/NativeMindBrowser/NativeMindExtension/commit/84a7c25))
+
+### 🏡 Chore
+
+- **browser-use:** Update browser usage settings to enable link simulation and tab closure by default ([1ac99d6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1ac99d6))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0...v1.9.1)
+
+### 🏡 Chore
+
+- **browser-use:** Update default browser usage setting to true ([17ff164](https://github.com/NativeMindBrowser/NativeMindExtension/commit/17ff164))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.10...v1.9.0)
+
+## v1.9.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.9...v1.9.0-beta.10)
+
+### 🚀 Enhancements
+
+- **GmailTools:** Implement structured response handling for email composition and update output format ([ece0e89](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ece0e89))
+
+### 🩹 Fixes
+
+- **ThinkingModeSwitch:** Refactor thinking state management to centralize setting updates ([05a3b29](https://github.com/NativeMindBrowser/NativeMindExtension/commit/05a3b29))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.9.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.7...v1.9.0-beta.9)
+
+### 🚀 Enhancements
+
+- **Assistant:** Add watch for thinking visibility changes to scroll to latest content ([c7c44f8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c7c44f8))
+- **prompts:** Enhance email closing signature logic and improve output format instructions, fix prompt params ([60ce209](https://github.com/NativeMindBrowser/NativeMindExtension/commit/60ce209))
+
+### 🩹 Fixes
+
+- **GmailTools:** Correct regex patterns for subject and body extraction in response parsing ([db81287](https://github.com/NativeMindBrowser/NativeMindExtension/commit/db81287))
+
+### 🏡 Chore
+
+- **package:** Bump version to 1.9.0-beta.8 ([62afb38](https://github.com/NativeMindBrowser/NativeMindExtension/commit/62afb38))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.9.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.6...v1.9.0-beta.7)
+
+### 🚀 Enhancements
+
+- **GmailTools:** Extract user email from compose and reply cards, update prompts to include user email ([15f65c8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/15f65c8))
+- **GmailTools:** Implement processGmailTemplate function for dynamic template processing in Gmail prompts ([5a0d434](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5a0d434))
+
+### 🩹 Fixes
+
+- **gmail-tools:** Remove min-width from summary button styles ([b7166b6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b7166b6))
+- **GmailTools:** Update placeholder text and refactor selectedStyle initialization in Compose and Reply cards ([2b5577b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2b5577b))
+- **GmailTools:** Disable regenerate button when running status is not idle in Compose and Reply cards ([809d056](https://github.com/NativeMindBrowser/NativeMindExtension/commit/809d056))
+- **GmailTools:** Adjust layout of control bar in Compose and Reply cards for better responsiveness ([d6b57e9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d6b57e9))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.9.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.5...v1.9.0-beta.6)
+
+### 🩹 Fixes
+
+- **AttachmentSelector:** Dynamically update title on same-page navigation ([91b28d3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/91b28d3))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.4...v1.9.0-beta.5)
+
+### 🚀 Enhancements
+
+- Add Gmail Tools settings and functionality ([7919850](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7919850))
+- Update SVG icons for copy and regenerate with new designs ([b4b9550](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b4b9550))
+- **gmail-tools:** Add i18n support, enhace UI. ([24f4ab8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/24f4ab8))
+- Update to use new logo in gmail tools, remove outdated svg ([21152d1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/21152d1))
+
+### 🩹 Fixes
+
+- Add comment for issue in showSidepanel function ([703c1bd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/703c1bd))
+
+### 🏡 Chore
+
+- Remove deprecated components ([591162f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/591162f))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.9.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.3...v1.9.0-beta.4)
+
+### 🩹 Fixes
+
+- **document-parser:** Refine ignored tags and classes for content filtering ([f9bbe03](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f9bbe03))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.9.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.2...v1.9.0-beta.3)
 
 ### 🚀 Enhancements
 

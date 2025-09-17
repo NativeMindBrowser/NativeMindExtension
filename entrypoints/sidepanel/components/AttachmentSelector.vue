@@ -206,7 +206,7 @@ import Text from '@/components/ui/Text.vue'
 import { useExtensionEventListener } from '@/composables/useExtensionEventListener'
 import { useLogger } from '@/composables/useLogger'
 import { useTimeoutValue } from '@/composables/useTimeoutValue'
-import { AttachmentItem, ContextAttachment, ContextAttachmentStorage, LoadingAttachment } from '@/types/chat'
+import { AttachmentItem, ContextAttachment, ContextAttachmentStorage, LoadingAttachment, TabAttachment } from '@/types/chat'
 import { TabInfo } from '@/types/tab'
 import { nonNullable } from '@/utils/array'
 import { INVALID_URLS } from '@/utils/constants'
@@ -231,6 +231,9 @@ useExtensionEventListener(browser.tabs.onUpdated, async (_tabId, changeInfo) => 
   if (changeInfo.status === 'complete') {
     await updateAllTabs()
     await updateCurrentTabAttachment()
+  }
+  else if (changeInfo.title) {
+    await updateTabInfo(_tabId, changeInfo)
   }
 })
 
@@ -502,6 +505,21 @@ const updateAllTabs = async () => {
     }
     return true // Keep other types of attachments
   })
+}
+
+const updateTabInfo = async (tabId: number, tabInfo: { title?: string }) => {
+  const tab = allTabs.value.find((t) => t.tabId === tabId)
+  if (tabInfo.title && tab) {
+    tab.title = tabInfo.title
+  }
+  const tabInAttachments = attachmentsWithCurrentTab.value.filter((attachment) => {
+    return attachment.type === 'tab' && attachment.value.tabId === tabId
+  }) as TabAttachment[]
+  if (tabInfo.title) {
+    tabInAttachments.forEach((attachment) => {
+      attachment.value.title = tabInfo.title
+    })
+  }
 }
 
 const isAllTabSelected = computed(() => {

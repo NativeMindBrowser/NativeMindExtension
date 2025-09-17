@@ -5,7 +5,6 @@ import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
 import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
-import { ADVANCED_MODELS_FOR_AGENT } from '@/utils/constants'
 import { debounce } from '@/utils/debounce'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
@@ -313,7 +312,7 @@ export class Chat {
           id: chatHistoryId.value,
           title: defaultTitle,
           lastInteractedAt: Date.now(),
-          reasoningEnabled: true, // Default to true for new chats
+          reasoningEnabled: undefined, // Default to undefined for new chats
           onlineSearchEnabled: true, // Default to true for new chats
         })
 
@@ -371,7 +370,7 @@ export class Chat {
             title: defaultTitle,
             lastInteractedAt: Date.now(),
             contextUpdateInfo: undefined,
-            reasoningEnabled: true, // Default to true for new chats
+            reasoningEnabled: undefined, // Default to undefined for new chats
             onlineSearchEnabled: true, // Default to true for new chats
           }
 
@@ -515,7 +514,7 @@ export class Chat {
     }
   }
 
-  async ask(question: string) {
+  async ask(question: string, _prompt?: { system: string, user: UserPrompt }) {
     using _s = this.statusScope('pending')
     const abortController = new AbortController()
     this.abortControllers.push(abortController)
@@ -524,11 +523,13 @@ export class Chat {
     this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
 
     const userMsg = this.historyManager.appendUserMessage()
+
     const environmentDetails = await this.generateEnvironmentDetails(userMsg.id)
-    const prompt = await chatWithEnvironment(question, environmentDetails)
+    const prompt = _prompt ?? await chatWithEnvironment(question, environmentDetails)
     // the display content on UI and the content that should be sent to the LLM are different
     userMsg.displayContent = question
     userMsg.content = prompt.user.extractText()
+
     const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
     await this.prepareModel()
     if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
@@ -537,8 +538,7 @@ export class Chat {
 
   private async runWithAgent(baseMessages: CoreMessage[]) {
     const userConfig = await getUserConfig()
-    const isAdvancedModel = ADVANCED_MODELS_FOR_AGENT.some((model) => model.test(userConfig.llm.model.get() ?? ''))
-    const maxIterations = isAdvancedModel ? userConfig.chat.agent.maxIterationsForAdvancedModels.get() : userConfig.chat.agent.maxIterations.get()
+    const maxIterations = userConfig.chat.agent.maxIterations.get()
 
     const agent = new Agent({
       historyManager: this.historyManager,

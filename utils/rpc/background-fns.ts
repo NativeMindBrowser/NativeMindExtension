@@ -11,6 +11,7 @@ import logger from '@/utils/logger'
 
 import { BackgroundCacheServiceManager } from '../../entrypoints/background/services/cache-service'
 import { BackgroundChatHistoryServiceManager } from '../../entrypoints/background/services/chat-history-service'
+import { BackgroundWindowManager } from '../../entrypoints/background/services/window-manager'
 import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
 import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, fromError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
@@ -718,7 +719,20 @@ export function registerBackgroundRpcEvent<E extends EventKey>(ev: E, fn: (...ar
 
 export async function showSidepanel() {
   if (browser.sidePanel) {
-    await browser.sidePanel.open({ windowId: browser.windows.WINDOW_ID_CURRENT })
+    // Get cached current window id (synchronous to avoid async delay before sidePanel.open)
+    // FYI: https://stackoverflow.com/questions/77213045/error-sidepanel-open-may-only-be-called-in-response-to-a-user-gesture-re
+    const cachedWindowId = BackgroundWindowManager.getCurrentWindowId()
+    logger.debug('Opening side panel with cached window ID:', cachedWindowId)
+
+    if (cachedWindowId) {
+      await browser.sidePanel.open({ windowId: cachedWindowId })
+    }
+    else {
+      // Fallback: get current window id if cache is not available
+      logger.warn('No cached window ID available, falling back to async window query')
+      const currentWindow = await browser.windows.getCurrent()
+      await browser.sidePanel.open({ windowId: currentWindow.id as number })
+    }
   }
   else if (browser.sidebarAction) {
     await browser.sidebarAction.open()
@@ -1043,6 +1057,21 @@ async function clearAllChatHistory() {
   }
 }
 
+async function forwardGmailAction(action: 'summary' | 'reply' | 'compose', data: unknown, tabInfo: TabInfo) {
+  try {
+    // FIXME: Open sidepanel first
+    // await showSidepanel()
+
+    // Forward Gmail action to sidepanel
+    b2sRpc.emit('gmailAction', { action, data, tabInfo })
+    return { success: true }
+  }
+  catch (error) {
+    logger.error('Failed to forward Gmail action to sidepanel:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
 export const backgroundFunctions = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)
@@ -1056,6 +1085,7 @@ export const backgroundFunctions = {
   getAllTabs,
   getOllamaLocalModelList: ollamaUtils.getLocalModelList,
   getOllamaRunningModelList: ollamaUtils.getRunningModelList,
+  getOllamaLocalModelListWithCapabilities: ollamaUtils.getLocalModelListWithCapabilities,
   testOllamaConnection: ollamaUtils.testConnection,
   unloadOllamaModel,
   pullLMStudioModel,
@@ -1112,5 +1142,6 @@ export const backgroundFunctions = {
   showSidepanel,
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,
+  forwardGmailAction,
 }
   ; (self as unknown as { backgroundFunctions: unknown }).backgroundFunctions = backgroundFunctions

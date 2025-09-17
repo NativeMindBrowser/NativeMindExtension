@@ -344,7 +344,41 @@
       "server_address": "Адрес сервера",
       "server_address_desc": "Конечная точка API сервера LM Studio"
     },
-    "webllm_desc_lm_studio": "Вы сейчас используете WebLLM: qwen3:0.6b для быстрого ознакомления. Для полной поддержки модели и лучшей производительности, пожалуйста, установите LM Studio."
+    "webllm_desc_lm_studio": "Вы сейчас используете WebLLM: qwen3:0.6b для быстрого ознакомления. Для полной поддержки модели и лучшей производительности, пожалуйста, установите LM Studio.",
+    "gmail_tools": {
+      "title": "Инструменты Gmail",
+      "description": "Настройка различных функций помощи в написании",
+      "basic_config": {
+        "title": "Основные настройки",
+        "enable": "Включить инструменты Gmail",
+        "enable_desc": "Показывать функции помощи ИИ прямо в Gmail.",
+        "output_language": "Язык вывода",
+        "output_language_desc": "Выберите язык по умолчанию для писем, сгенерированных ИИ.",
+        "output_style": "Стиль вывода",
+        "output_style_desc": "Выберите тон по умолчанию для ваших писем",
+        "options": {
+          "auto": "Автоматически",
+          "default": "По умолчанию"
+        }
+      },
+      "system_prompt": {
+        "title": "Системный промпт",
+        "summarize": {
+          "title": "Резюмировать",
+          "description": "Быстро извлекайте ключевые моменты из длинных писем или целых цепочек."
+        },
+        "reply": {
+          "title": "Ответить",
+          "description": "Мгновенно создавайте естественный ответ на основе содержания письма и ваших заметок."
+        },
+        "compose": {
+          "title": "Создать",
+          "description": "Начните с нуля или отполируйте свой черновик."
+        },
+        "reset_to_default": "Сбросить по умолчанию",
+        "reset_to_default_confirm": "Вы уверены, что хотите сбросить {setting} к значениям по умолчанию?"
+      }
+    }
   },
   "context_menu": {
     "quick_actions": {
@@ -418,5 +452,62 @@
     "chat_history": "История",
     "new_chat": "Новый чат",
     "back": "Назад"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "ИИ резюме",
+      "ai_reply": "ИИ ответ",
+      "ai_polish": "ИИ полировка"
+    },
+    "cards": {
+      "reply": {
+        "title": "Предложение ответа",
+        "processing": "Обработка...",
+        "regenerate": "Перегенерировать",
+        "apply": "Применить",
+        "language_selector": "Язык",
+        "style_selector": "Стиль",
+        "copy_to_clipboard": "Копировать в буфер обмена"
+      },
+      "compose": {
+        "title": "ИИ создание",
+        "subject": "Тема:",
+        "email_body": "Текст письма:",
+        "processing": "Обработка...",
+        "regenerate": "Перегенерировать",
+        "apply": "Применить",
+        "language_selector": "Язык",
+        "style_selector": "Стиль",
+        "copy_subject_to_clipboard": "Копировать тему в буфер обмена",
+        "copy_body_to_clipboard": "Копировать текст в буфер обмена",
+        "no_subject_generated": "Тема не создана"
+      },
+      "styles": {
+        "change_style": "Изменить стиль",
+        "formal": "Формальный",
+        "friendly": "Дружелюбный",
+        "urgent": "Срочный"
+      },
+      "notifications": {
+        "copied_to_clipboard": "Скопировано в буфер обмена!",
+        "subject_copied": "Тема скопирована в буфер обмена!",
+        "body_copied": "Текст скопирован в буфер обмена!",
+        "reply_applied": "Ответ применен к полю создания!",
+        "email_content_applied": "Содержимое письма применено к полям создания!",
+        "no_content_to_apply": "Нет содержимого для применения",
+        "no_compose_box_found": "Поле создания не найдено",
+        "failed_to_copy": "Не удалось скопировать в буфер обмена",
+        "failed_to_apply_reply": "Не удалось применить содержимое ответа",
+        "failed_to_apply_compose": "Не удалось применить содержимое создания"
+      },
+      "errors": {
+        "failed_to_summarize": "Не удалось резюмировать письмо:",
+        "failed_to_show_reply_card": "Не удалось показать карточку ответа Gmail:",
+        "failed_to_show_compose_card": "Не удалось показать карточку создания Gmail:",
+        "failed_to_locate_reply_element": "Не удалось найти элемент создания ответа",
+        "error_generating_reply": "Ошибка генерации ответа: {error}",
+        "error_generating_compose": "Ошибка генерации содержимого создания: {error}"
+      }
+    }
   }
 }

@@ -344,7 +344,41 @@
       "server_address": "ที่อยู่เซิร์ฟเวอร์",
       "server_address_desc": "จุดปลายทาง API ของเซิร์ฟเวอร์ LM Studio"
     },
-    "webllm_desc_lm_studio": "คุณกำลังใช้ WebLLM: qwen3:0.6b สำหรับการทดลองใช้งานอย่างรวดเร็ว สำหรับการรองรับโมเดลแบบเต็มและประสิทธิภาพที่ดีกว่า กรุณาติดตั้ง LM Studio"
+    "webllm_desc_lm_studio": "คุณกำลังใช้ WebLLM: qwen3:0.6b สำหรับการทดลองใช้งานอย่างรวดเร็ว สำหรับการรองรับโมเดลแบบเต็มและประสิทธิภาพที่ดีกว่า กรุณาติดตั้ง LM Studio",
+    "gmail_tools": {
+      "title": "เครื่องมือ Gmail",
+      "description": "กำหนดค่าฟีเจอร์ช่วยเขียนต่างๆ",
+      "basic_config": {
+        "title": "การตั้งค่าพื้นฐาน",
+        "enable": "เปิดใช้งานเครื่องมือ Gmail",
+        "enable_desc": "แสดงฟีเจอร์ช่วยเหลือ AI โดยตรงใน Gmail",
+        "output_language": "ภาษาเอาต์พุต",
+        "output_language_desc": "เลือกภาษาเริ่มต้นสำหรับอีเมลที่สร้างโดย AI",
+        "output_style": "สไตล์เอาต์พุต",
+        "output_style_desc": "เลือกโทนเสียงเริ่มต้นสำหรับอีเมลของคุณ",
+        "options": {
+          "auto": "อัตโนมัติ",
+          "default": "เริ่มต้น"
+        }
+      },
+      "system_prompt": {
+        "title": "System Prompt",
+        "summarize": {
+          "title": "สรุป",
+          "description": "แยกประเด็นสำคัญจากอีเมลยาวหรือเธรดทั้งหมดอย่างรวดเร็ว"
+        },
+        "reply": {
+          "title": "ตอบกลับ",
+          "description": "ร่างการตอบกลับแบบธรรมชาติทันทีตามเนื้อหาอีเมลและบันทึกของคุณ"
+        },
+        "compose": {
+          "title": "เขียน",
+          "description": "เริ่มต้นจากศูนย์หรือปรับปรุงร่างของคุณ"
+        },
+        "reset_to_default": "รีเซ็ตเป็นค่าเริ่มต้น",
+        "reset_to_default_confirm": "คุณแน่ใจหรือไม่ว่าต้องการรีเซ็ต {setting} กลับเป็นค่าเริ่มต้น?"
+      }
+    }
   },
   "context_menu": {
     "quick_actions": {
@@ -418,5 +452,62 @@
     "chat_history": "ประวัติศาสตร์",
     "new_chat": "แชทใหม่",
     "back": "กลับ"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "สรุป AI",
+      "ai_reply": "ตอบกลับ AI",
+      "ai_polish": "ปรับปรุงด้วย AI"
+    },
+    "cards": {
+      "reply": {
+        "title": "ข้อเสนอแนะการตอบกลับ",
+        "processing": "กำลังประมวลผล...",
+        "regenerate": "สร้างใหม่",
+        "apply": "นำไปใช้",
+        "language_selector": "ภาษา",
+        "style_selector": "สไตล์",
+        "copy_to_clipboard": "คัดลอกไปยังคลิปบอร์ด"
+      },
+      "compose": {
+        "title": "เขียนด้วย AI",
+        "subject": "หัวข้อ:",
+        "email_body": "เนื้อหาอีเมล:",
+        "processing": "กำลังประมวลผล...",
+        "regenerate": "สร้างใหม่",
+        "apply": "นำไปใช้",
+        "language_selector": "ภาษา",
+        "style_selector": "สไตล์",
+        "copy_subject_to_clipboard": "คัดลอกหัวข้อไปยังคลิปบอร์ด",
+        "copy_body_to_clipboard": "คัดลอกเนื้อหาไปยังคลิปบอร์ด",
+        "no_subject_generated": "ไม่ได้สร้างหัวข้อ"
+      },
+      "styles": {
+        "change_style": "เปลี่ยนสไตล์",
+        "formal": "เป็นทางการ",
+        "friendly": "เป็นมิตร",
+        "urgent": "เร่งด่วน"
+      },
+      "notifications": {
+        "copied_to_clipboard": "คัดลอกไปยังคลิปบอร์ดแล้ว!",
+        "subject_copied": "คัดลอกหัวข้อไปยังคลิปบอร์ดแล้ว!",
+        "body_copied": "คัดลอกเนื้อหาไปยังคลิปบอร์ดแล้ว!",
+        "reply_applied": "ใช้การตอบกลับในกล่องเขียนแล้ว!",
+        "email_content_applied": "ใช้เนื้อหาอีเมลในฟิลด์เขียนแล้ว!",
+        "no_content_to_apply": "ไม่มีเนื้อหาที่จะใช้",
+        "no_compose_box_found": "ไม่พบกล่องเขียน",
+        "failed_to_copy": "คัดลอกไปยังคลิปบอร์ดไม่สำเร็จ",
+        "failed_to_apply_reply": "ใช้เนื้อหาการตอบกลับไม่สำเร็จ",
+        "failed_to_apply_compose": "ใช้เนื้อหาการเขียนไม่สำเร็จ"
+      },
+      "errors": {
+        "failed_to_summarize": "สรุปอีเมลไม่สำเร็จ:",
+        "failed_to_show_reply_card": "แสดงการ์ดตอบกลับ Gmail ไม่สำเร็จ:",
+        "failed_to_show_compose_card": "แสดงการ์ดเขียน Gmail ไม่สำเร็จ:",
+        "failed_to_locate_reply_element": "หาองค์ประกอบเขียนตอบกลับไม่พบ",
+        "error_generating_reply": "ข้อผิดพลาดในการสร้างการตอบกลับ: {error}",
+        "error_generating_compose": "ข้อผิดพลาดในการสร้างเนื้อหาการเขียน: {error}"
+      }
+    }
   }
 }

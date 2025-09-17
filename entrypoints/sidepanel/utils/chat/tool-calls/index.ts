@@ -420,8 +420,8 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
     const result = await browserSession.buildAccessibleMarkdown({ highlightInteractiveElements, contentFilterThreshold, abortSignal })
     if (lastTabResult && result) {
       const diffs = markdownSectionDiff(lastTabResult.content, result.content)
-      log.debug(`Found diffs between old and new tab content: ${diffs}`, { lastTabResult, result })
       const shouldUseDiff = diffs.trim() && diffs.length < (result.content.length / 2) // not to use diff result if there are too many changes
+      log.debug(`Found diffs between old and new tab content: ${diffs}`, { lastTabResult, result, shouldUseDiff })
       if (shouldUseDiff) {
         taskMsg.summary = t('chat.tool_calls.page_click.redirected', { destination: normalizeInnerText(currentTabInfo?.title) || currentTabInfo?.url || '' })
         return [{

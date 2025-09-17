@@ -124,7 +124,7 @@
 
 <script setup lang="ts">
 import { motion } from 'motion-v'
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import IconArrowDown from '@/assets/icons/arrow-down-small.svg?component'
@@ -234,4 +234,14 @@ const toggleExpanded = () => {
     })
   }
 }
+
+// Watch for thinking visibility changes and scroll to latest content when switching to preview mode
+watch(thinkingVisibility, (newValue, oldValue) => {
+  // When switching from full to preview mode and message is still thinking
+  if (oldValue === 'full' && newValue === 'preview' && !message.value.done) {
+    nextTick(() => {
+      scrollContainerRef.value?.snapToBottom?.(true)
+    })
+  }
+})
 </script>

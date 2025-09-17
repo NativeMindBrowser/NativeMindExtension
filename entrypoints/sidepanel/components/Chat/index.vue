@@ -97,7 +97,7 @@
           <!-- Toolbar -->
           <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
             <div class="flex grow items-center gap-1">
-              <ThinkingModeSwitch v-if="isThinkingToggleable" />
+              <ThinkingModeSwitch />
               <OnlineSearchSwitch />
             </div>
             <div
@@ -140,9 +140,7 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
-import { isToggleableThinkingModel } from '@/utils/llm/thinking-models'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
-import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../components/MarkdownViewer.vue'
@@ -175,10 +173,7 @@ defineExpose({
 })
 
 const chat = await Chat.getInstance()
-const userConfig = await getUserConfig()
 const contextAttachmentStorage = chat.contextAttachmentStorage
-const currentModel = userConfig.llm.model.toRef()
-const endpointType = userConfig.llm.endpointType.toRef()
 
 initChatSideEffects()
 
@@ -197,11 +192,6 @@ const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
 
 const allowAsk = computed(() => {
   return !chat.isAnswering() && userInput.value.trim().length > 0
-})
-
-const isThinkingToggleable = computed(() => {
-  if (!currentModel.value) return false
-  return isToggleableThinkingModel(endpointType.value, currentModel.value)
 })
 
 const cleanUp = chat.historyManager.onMessageAdded(() => {
@@ -238,7 +228,7 @@ const ask = async () => {
   userInput.value = ''
 }
 
-onMounted(() => {
+onMounted(async () => {
   scrollContainerRef.value?.snapToBottom()
   setSidepanelStatus({ loaded: true })
 })

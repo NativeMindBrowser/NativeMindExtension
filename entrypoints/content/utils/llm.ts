@@ -1,12 +1,13 @@
 import type { InitProgressReport } from '@mlc-ai/web-llm'
-import { TextStreamPart, ToolSet } from 'ai'
+import { ObjectStreamPart, TextStreamPart, ToolSet } from 'ai'
 import type { ProgressResponse } from 'ollama/browser'
 import { browser } from 'wxt/browser'
+import { z } from 'zod'
 
 import { readPortMessageIntoIterator, toAsyncIter } from '@/utils/async'
 import { AbortError, fromError, ModelRequestTimeoutError } from '@/utils/error'
 import { BackgroundAliveKeeper } from '@/utils/keepalive'
-import { SchemaName } from '@/utils/llm/output-schema'
+import { SchemaName, Schemas } from '@/utils/llm/output-schema'
 import { WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
 import { c2bRpc } from '@/utils/rpc'
@@ -34,7 +35,7 @@ export async function* streamTextInBackground(options: Parameters<typeof c2bRpc.
   yield* iter
 }
 
-export async function* streamObjectInBackground(options: Parameters<typeof c2bRpc.streamObjectFromSchema>[0] & ExtraOptions) {
+export async function* streamObjectInBackground<S extends SchemaName>(options: Parameters<typeof c2bRpc.streamObjectFromSchema<S>>[0] & ExtraOptions) {
   const defaultFirstTokenTimeout = (await getUserConfig()).llm.defaultFirstTokenTimeout.get()
   const { abortSignal, timeout = defaultFirstTokenTimeout, ...restOptions } = options
   const { portName } = await c2bRpc.streamObjectFromSchema(restOptions)
@@ -45,7 +46,7 @@ export async function* streamObjectInBackground(options: Parameters<typeof c2bRp
     aliveKeeper.dispose()
     port.disconnect()
   })
-  const iter = readPortMessageIntoIterator<TextStreamPart<ToolSet>>(port, { abortSignal, firstDataTimeout: timeout, onTimeout: () => port.disconnect() })
+  const iter = readPortMessageIntoIterator<ObjectStreamPart<z.infer<Schemas[S]>>>(port, { abortSignal, firstDataTimeout: timeout, onTimeout: () => port.disconnect() })
   yield* iter
 }
 

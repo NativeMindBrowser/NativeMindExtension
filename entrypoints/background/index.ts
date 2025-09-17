@@ -17,6 +17,7 @@ import { registerDeclarativeNetRequestRule } from '@/utils/web-request'
 import { BackgroundDatabaseManager } from './database'
 import { BackgroundCacheServiceManager } from './services/cache-service'
 import { BackgroundChatHistoryServiceManager } from './services/chat-history-service'
+import { BackgroundWindowManager } from './services/window-manager'
 import { waitUntilSidepanelLoaded } from './utils'
 
 export default defineBackground(() => {
@@ -168,6 +169,10 @@ export default defineBackground(() => {
       // Initialize translation cache (RPC-based cache manager)
       await translationCache.initialize()
       logger.debug('Translation cache initialized successfully')
+
+      // Initialize window manager service
+      await BackgroundWindowManager.initialize()
+      logger.debug('Window manager service initialized successfully')
 
       // ================================
       // Debug Code
