@@ -1,6 +1,28 @@
 # Changelog
 
 
+## v1.9.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.12...v1.9.4)
+
+### 🚀 Enhancements
+
+- **settings:** Enhance resetting settings to default for gmail prompts ([6cee604](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6cee604))
+
+### 🩹 Fixes
+
+- **gmail-tools:** Refine popup cards text styles ([cab8ace](https://github.com/NativeMindBrowser/NativeMindExtension/commit/cab8ace))
+
+### 🏡 Chore
+
+- **ollama:** Improve model capabilities check before generation ([d5a6310](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d5a6310))
+- **package:** Update version to 1.9.3 ([15d3323](https://github.com/NativeMindBrowser/NativeMindExtension/commit/15d3323))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.9.3-beta.12
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.11...v1.9.3-beta.12)
