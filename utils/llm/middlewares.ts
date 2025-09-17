@@ -5,7 +5,6 @@ import { extractReasoningMiddleware } from 'ai'
 import { z } from 'zod'
 
 import { nonNullable } from '../array'
-import { debounce } from '../debounce'
 import { ParseFunctionCallError } from '../error'
 import { generateRandomId } from '../id'
 import Logger from '../logger'
@@ -190,15 +189,10 @@ export const normalizeToolCallsMiddleware: LanguageModelV1Middleware = {
 export const rawLoggingMiddleware: LanguageModelV1Middleware = {
   wrapStream: async ({ doStream, params }) => {
     const log = logger.child('rawLoggingMiddleware')
+    const text: string[] = []
+    const reasoning: string[] = []
 
     const { stream, ...rest } = await doStream()
-
-    log.debug('Stream started', { params })
-    let text = ''
-    let reasoning = ''
-    const printLog = debounce(() => {
-      log.debug('Stream progress', { text, reasoning })
-    }, 2000)
 
     const transformStream = new TransformStream<
       LanguageModelV1StreamPart,
@@ -206,13 +200,19 @@ export const rawLoggingMiddleware: LanguageModelV1Middleware = {
     >({
       transform(chunk, controller) {
         if (chunk.type === 'text-delta') {
-          text += chunk.textDelta
+          text.push(chunk.textDelta)
         }
         else if (chunk.type === 'reasoning') {
-          reasoning += chunk.textDelta
+          reasoning.push(chunk.textDelta)
         }
-        printLog()
         controller.enqueue(chunk)
+      },
+      flush() {
+        log.info('LLM Stream Result', {
+          params,
+          text: text.join(''),
+          reasoning: reasoning.join(''),
+        })
       },
     })
 
@@ -220,6 +220,18 @@ export const rawLoggingMiddleware: LanguageModelV1Middleware = {
       stream: stream.pipeThrough(transformStream),
       ...rest,
     }
+  },
+  wrapGenerate: async ({ doGenerate, params }) => {
+    const log = logger.child('rawLoggingMiddleware')
+
+    const result = await doGenerate()
+
+    log.info('LLM Generate Result', {
+      params,
+      result,
+    })
+
+    return result
   },
 }
 
@@ -437,9 +449,9 @@ export const lmStudioHarmonyEncodingMiddleware: LanguageModelV1Middleware = {
 }
 
 export const middlewares = [
-  // rawLoggingMiddleware,
   normalizeToolCallsMiddleware,
   extractPromptBasedToolCallsMiddleware,
   lmStudioHarmonyEncodingMiddleware,
   reasoningMiddleware,
+  rawLoggingMiddleware,
 ]
