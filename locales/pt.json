@@ -317,6 +317,40 @@
     "header": {
       "starts_on_github": "Estrelas no GitHub",
       "goto_website": "Ir para o Website"
+    },
+    "gmail_tools": {
+      "title": "Ferramentas do Gmail",
+      "description": "Configurar várias funcionalidades de assistência de escrita",
+      "basic_config": {
+        "title": "Configurações básicas",
+        "enable": "Ativar ferramentas do Gmail",
+        "enable_desc": "Mostrar recursos de assistência IA diretamente no Gmail.",
+        "output_language": "Idioma de saída",
+        "output_language_desc": "Escolha o idioma padrão para e-mails gerados por IA.",
+        "output_style": "Estilo de saída",
+        "output_style_desc": "Escolha o tom padrão para seus e-mails",
+        "options": {
+          "auto": "Automático",
+          "default": "Padrão"
+        }
+      },
+      "system_prompt": {
+        "title": "Prompt do sistema",
+        "summarize": {
+          "title": "Resumir",
+          "description": "Extraia rapidamente pontos-chave de e-mails longos ou threads inteiras."
+        },
+        "reply": {
+          "title": "Responder",
+          "description": "Redija instantaneamente uma resposta natural baseada no conteúdo do e-mail e suas anotações."
+        },
+        "compose": {
+          "title": "Redigir",
+          "description": "Comece do zero ou aperfeiçoe seu rascunho."
+        },
+        "reset_to_default": "Redefinir para padrão",
+        "reset_to_default_confirm": "Tem certeza de que deseja redefinir {setting} para os valores padrão?"
+      }
     }
   },
   "context_menu": {
@@ -391,5 +425,62 @@
     "chat_history": "História",
     "new_chat": "Novo bate -papo",
     "back": "Voltar"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "Resumo IA",
+      "ai_reply": "Resposta IA",
+      "ai_polish": "Polir com IA"
+    },
+    "cards": {
+      "reply": {
+        "title": "Sugestão de resposta",
+        "processing": "Processando...",
+        "regenerate": "Regenerar",
+        "apply": "Aplicar",
+        "language_selector": "Idioma",
+        "style_selector": "Estilo",
+        "copy_to_clipboard": "Copiar para área de transferência"
+      },
+      "compose": {
+        "title": "Redação IA",
+        "subject": "Assunto:",
+        "email_body": "Corpo do e-mail:",
+        "processing": "Processando...",
+        "regenerate": "Regenerar",
+        "apply": "Aplicar",
+        "language_selector": "Idioma",
+        "style_selector": "Estilo",
+        "copy_subject_to_clipboard": "Copiar assunto para área de transferência",
+        "copy_body_to_clipboard": "Copiar corpo para área de transferência",
+        "no_subject_generated": "Nenhum assunto gerado"
+      },
+      "styles": {
+        "change_style": "Mudar estilo",
+        "formal": "Formal",
+        "friendly": "Amigável",
+        "urgent": "Urgente"
+      },
+      "notifications": {
+        "copied_to_clipboard": "Copiado para área de transferência!",
+        "subject_copied": "Assunto copiado para área de transferência!",
+        "body_copied": "Corpo copiado para área de transferência!",
+        "reply_applied": "Resposta aplicada à caixa de redação!",
+        "email_content_applied": "Conteúdo do e-mail aplicado aos campos de redação!",
+        "no_content_to_apply": "Nenhum conteúdo para aplicar",
+        "no_compose_box_found": "Nenhuma caixa de redação encontrada",
+        "failed_to_copy": "Falha ao copiar para área de transferência",
+        "failed_to_apply_reply": "Falha ao aplicar conteúdo da resposta",
+        "failed_to_apply_compose": "Falha ao aplicar conteúdo de redação"
+      },
+      "errors": {
+        "failed_to_summarize": "Falha ao resumir e-mail:",
+        "failed_to_show_reply_card": "Falha ao mostrar cartão de resposta do Gmail:",
+        "failed_to_show_compose_card": "Falha ao mostrar cartão de redação do Gmail:",
+        "failed_to_locate_reply_element": "Falha ao localizar elemento de redação de resposta",
+        "error_generating_reply": "Erro ao gerar resposta: {error}",
+        "error_generating_compose": "Erro ao gerar conteúdo de redação: {error}"
+      }
+    }
   }
 }

@@ -19,6 +19,10 @@ const schemas = {
   chatTitle: z.object({
     title: z.string(),
   }),
+  emailCompose: z.object({
+    subject: z.string().describe('The improved or confirmed email subject line'),
+    body: z.string().describe('The polished email body text'),
+  }),
 }
 
 export type Schemas = typeof schemas

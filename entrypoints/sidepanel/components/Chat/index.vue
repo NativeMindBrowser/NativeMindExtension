@@ -95,10 +95,10 @@
               triggerStyle="ghost"
             />
             <div
-              v-if="isThinkingToggleable"
+              v-if="isThinkingToggleable && isModelSupportsThinking"
               class="h-4 w-px bg-[#E5E7EB]"
             />
-            <ThinkingModeSwitch v-if="isThinkingToggleable" />
+            <ThinkingModeSwitch v-if="isThinkingToggleable && isModelSupportsThinking" />
           </div>
           <div
             ref="sendButtonContainerRef"
@@ -128,7 +128,7 @@
 
 <script setup lang="ts">
 import { useElementBounding } from '@vueuse/core'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue'
 
 import IconSendFill from '@/assets/icons/send-fill.svg?component'
 import IconStop from '@/assets/icons/stop.svg?component'
@@ -140,6 +140,7 @@ import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
 import { isToggleableThinkingModel } from '@/utils/llm/thinking-models'
+import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
 import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
@@ -161,6 +162,8 @@ import ThinkingModeSwitch from './ThinkingModeSwitch.vue'
 const inputContainerRef = ref<HTMLDivElement>()
 const sendButtonContainerRef = ref<HTMLDivElement>()
 const { height: inputContainerHeight } = useElementBounding(inputContainerRef)
+const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
+const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
 
 const { t } = useI18n()
 const userInput = ref('')
@@ -172,10 +175,17 @@ defineExpose({
   attachmentSelectorRef,
 })
 
+const updateModelList = async () => {
+  if (endpointType.value === 'ollama') {
+    await updateOllamaModelList()
+  }
+}
+
 const chat = await Chat.getInstance()
 const userConfig = await getUserConfig()
 const contextAttachmentStorage = chat.contextAttachmentStorage
 const currentModel = userConfig.llm.model.toRef()
+const endpointType = userConfig.llm.endpointType.toRef()
 
 initChatSideEffects()
 
@@ -190,6 +200,23 @@ const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
   else {
     throw new Error(`Unknown action: ${actionEvent.action}`)
   }
+})
+
+const modelList = computed(() => {
+  if (endpointType.value === 'ollama') {
+    return ollamaModelList.value
+  }
+  return []
+})
+
+// Check if current model supports thinking
+const isModelSupportsThinking = computed(() => {
+  if (endpointType.value !== 'ollama') return false
+  if (!currentModel.value) return false
+  if (!modelList.value || !Array.isArray(modelList.value)) return false
+
+  const model = modelList.value.find((m) => m.model === currentModel.value)
+  return model?.supportsThinking ?? false
 })
 
 const allowAsk = computed(() => {
@@ -235,9 +262,15 @@ const ask = async () => {
   userInput.value = ''
 }
 
-onMounted(() => {
+// Watch for model list updates to refresh thinking capabilities (following ModelSelector pattern)
+watch([endpointType, currentModel], async () => {
+  await updateModelList()
+})
+
+onMounted(async () => {
   scrollContainerRef.value?.snapToBottom()
   setSidepanelStatus({ loaded: true })
+  updateModelList()
 })
 
 onBeforeUnmount(() => {

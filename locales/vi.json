@@ -317,6 +317,40 @@
     "header": {
       "starts_on_github": "Sao trên GitHub",
       "goto_website": "Đi đến Trang web"
+    },
+    "gmail_tools": {
+      "title": "Công cụ Gmail",
+      "description": "Cấu hình các tính năng hỗ trợ viết khác nhau",
+      "basic_config": {
+        "title": "Cài đặt cơ bản",
+        "enable": "Bật công cụ Gmail",
+        "enable_desc": "Hiển thị các tính năng hỗ trợ AI trực tiếp trong Gmail.",
+        "output_language": "Ngôn ngữ đầu ra",
+        "output_language_desc": "Chọn ngôn ngữ mặc định cho email được tạo bởi AI.",
+        "output_style": "Phong cách đầu ra",
+        "output_style_desc": "Chọn tông giọng mặc định cho email của bạn",
+        "options": {
+          "auto": "Tự động",
+          "default": "Mặc định"
+        }
+      },
+      "system_prompt": {
+        "title": "Prompt hệ thống",
+        "summarize": {
+          "title": "Tóm tắt",
+          "description": "Nhanh chóng trích xuất các điểm chính từ email dài hoặc chuỗi thảo luận."
+        },
+        "reply": {
+          "title": "Trả lời",
+          "description": "Ngay lập tức soạn thảo phản hồi tự nhiên dựa trên nội dung email và ghi chú của bạn."
+        },
+        "compose": {
+          "title": "Soạn thảo",
+          "description": "Bắt đầu từ đầu hoặc hoàn thiện bản thảo của bạn."
+        },
+        "reset_to_default": "Đặt lại về mặc định",
+        "reset_to_default_confirm": "Bạn có chắc chắn muốn đặt lại {setting} về giá trị mặc định không?"
+      }
     }
   },
   "context_menu": {
@@ -391,5 +425,62 @@
     "chat_history": "Lịch sử",
     "new_chat": "Trò chuyện mới",
     "back": "Quay lại"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "Tóm tắt AI",
+      "ai_reply": "Trả lời AI",
+      "ai_polish": "Hoàn thiện AI"
+    },
+    "cards": {
+      "reply": {
+        "title": "Gợi ý trả lời",
+        "processing": "Đang xử lý...",
+        "regenerate": "Tạo lại",
+        "apply": "Áp dụng",
+        "language_selector": "Ngôn ngữ",
+        "style_selector": "Phong cách",
+        "copy_to_clipboard": "Sao chép vào clipboard"
+      },
+      "compose": {
+        "title": "Soạn thảo AI",
+        "subject": "Chủ đề:",
+        "email_body": "Nội dung email:",
+        "processing": "Đang xử lý...",
+        "regenerate": "Tạo lại",
+        "apply": "Áp dụng",
+        "language_selector": "Ngôn ngữ",
+        "style_selector": "Phong cách",
+        "copy_subject_to_clipboard": "Sao chép chủ đề vào clipboard",
+        "copy_body_to_clipboard": "Sao chép nội dung vào clipboard",
+        "no_subject_generated": "Không có chủ đề được tạo"
+      },
+      "styles": {
+        "change_style": "Thay đổi phong cách",
+        "formal": "Trang trọng",
+        "friendly": "Thân thiện",
+        "urgent": "Khẩn cấp"
+      },
+      "notifications": {
+        "copied_to_clipboard": "Đã sao chép vào clipboard!",
+        "subject_copied": "Chủ đề đã được sao chép vào clipboard!",
+        "body_copied": "Nội dung đã được sao chép vào clipboard!",
+        "reply_applied": "Phản hồi đã được áp dụng vào hộp soạn thảo!",
+        "email_content_applied": "Nội dung email đã được áp dụng vào các trường soạn thảo!",
+        "no_content_to_apply": "Không có nội dung để áp dụng",
+        "no_compose_box_found": "Không tìm thấy hộp soạn thảo",
+        "failed_to_copy": "Sao chép vào clipboard thất bại",
+        "failed_to_apply_reply": "Áp dụng nội dung trả lời thất bại",
+        "failed_to_apply_compose": "Áp dụng nội dung soạn thảo thất bại"
+      },
+      "errors": {
+        "failed_to_summarize": "Tóm tắt email thất bại:",
+        "failed_to_show_reply_card": "Hiển thị thẻ trả lời Gmail thất bại:",
+        "failed_to_show_compose_card": "Hiển thị thẻ soạn thảo Gmail thất bại:",
+        "failed_to_locate_reply_element": "Không thể định vị phần tử soạn thảo trả lời",
+        "error_generating_reply": "Lỗi tạo phản hồi: {error}",
+        "error_generating_compose": "Lỗi tạo nội dung soạn thảo: {error}"
+      }
+    }
   }
 }

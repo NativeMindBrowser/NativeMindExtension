@@ -275,15 +275,6 @@
               />
             </div>
             <div class="flex gap-3 justify-start items-center">
-              <div>Max iterations for <span class="font-light">{{ ADVANCED_MODELS_FOR_AGENT.join(',') }}</span></div>
-              <Input
-                v-model.number="maxAgentIterationsForAdvancedModels"
-                type="number"
-                min="0"
-                class="border-b border-gray-200 h-5 w-20"
-              />
-            </div>
-            <div class="flex gap-3 justify-start items-center">
               <Block title="Full environment details update frequency">
                 <div class="font-light text-xs">
                   Every <Input
@@ -607,7 +598,7 @@ import Button from '@/components/ui/Button.vue'
 import UILanguageSelector from '@/components/UILanguageSelector.vue'
 import { BrowserSession } from '@/entrypoints/sidepanel/utils/chat/tool-calls/utils/browser-use'
 import { SettingsScrollTarget } from '@/types/scroll-targets'
-import { ADVANCED_MODELS_FOR_AGENT, INVALID_URLS } from '@/utils/constants'
+import { INVALID_URLS } from '@/utils/constants'
 import { formatSize } from '@/utils/formatter'
 import { SUPPORTED_MODELS, WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
@@ -642,7 +633,6 @@ const enableTranslationCache = userConfig.translation.cache.enabled.toRef()
 const cacheRetentionDays = userConfig.translation.cache.retentionDays.toRef()
 
 const maxAgentIterations = userConfig.chat.agent.maxIterations.toRef()
-const maxAgentIterationsForAdvancedModels = userConfig.chat.agent.maxIterationsForAdvancedModels.toRef()
 const updateEnvironmentDetailsFrequency = userConfig.chat.environmentDetails.fullUpdateFrequency.toRef()
 const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.toRef()
 

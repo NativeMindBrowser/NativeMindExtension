@@ -182,6 +182,40 @@
     "header": {
       "starts_on_github": "Stars on GitHub",
       "goto_website": "前往网站"
+    },
+    "gmail_tools": {
+      "title": "Gmail 工具",
+      "description": "配置各种写作辅助功能",
+      "basic_config": {
+        "title": "基础设置",
+        "enable": "启用 Gmail 工具",
+        "enable_desc": "在 Gmail 内直接显示 AI 辅助功能。",
+        "output_language": "输出语言",
+        "output_language_desc": "选择 AI 生成邮件的默认语言。",
+        "output_style": "输出风格",
+        "output_style_desc": "选择邮件的默认语调",
+        "options": {
+          "auto": "自动",
+          "default": "默认"
+        }
+      },
+      "system_prompt": {
+        "title": "系统提示",
+        "summarize": {
+          "title": "总结",
+          "description": "快速提取长邮件或整个邮件串的关键要点。"
+        },
+        "reply": {
+          "title": "回复",
+          "description": "基于邮件内容和您的备注即时起草自然回复。"
+        },
+        "compose": {
+          "title": "撰写",
+          "description": "从头开始或完善您的草稿。"
+        },
+        "reset_to_default": "重置为默认",
+        "reset_to_default_confirm": "您确定要将 {setting} 重置为默认值吗？"
+      }
     }
   },
   "chat": {
@@ -391,5 +425,62 @@
     "chat_history": "历史",
     "new_chat": "新聊天",
     "back": "返回"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "AI 总结",
+      "ai_reply": "AI 回复",
+      "ai_polish": "AI 润色"
+    },
+    "cards": {
+      "reply": {
+        "title": "回复建议",
+        "processing": "处理中...",
+        "regenerate": "重新生成",
+        "apply": "应用",
+        "language_selector": "语言",
+        "style_selector": "风格",
+        "copy_to_clipboard": "复制到剪贴板"
+      },
+      "compose": {
+        "title": "AI 撰写",
+        "subject": "主题：",
+        "email_body": "邮件正文：",
+        "processing": "处理中...",
+        "regenerate": "重新生成",
+        "apply": "应用",
+        "language_selector": "语言",
+        "style_selector": "风格",
+        "copy_subject_to_clipboard": "复制主题到剪贴板",
+        "copy_body_to_clipboard": "复制正文到剪贴板",
+        "no_subject_generated": "未生成主题"
+      },
+      "styles": {
+        "change_style": "更改风格",
+        "formal": "正式",
+        "friendly": "友好",
+        "urgent": "紧急"
+      },
+      "notifications": {
+        "copied_to_clipboard": "已复制到剪贴板！",
+        "subject_copied": "主题已复制到剪贴板！",
+        "body_copied": "正文已复制到剪贴板！",
+        "reply_applied": "回复已应用到撰写框！",
+        "email_content_applied": "邮件内容已应用到撰写字段！",
+        "no_content_to_apply": "没有内容可应用",
+        "no_compose_box_found": "未找到撰写框",
+        "failed_to_copy": "复制到剪贴板失败",
+        "failed_to_apply_reply": "应用回复内容失败",
+        "failed_to_apply_compose": "应用撰写内容失败"
+      },
+      "errors": {
+        "failed_to_summarize": "总结邮件失败：",
+        "failed_to_show_reply_card": "显示 Gmail 回复卡片失败：",
+        "failed_to_show_compose_card": "显示 Gmail 撰写卡片失败：",
+        "failed_to_locate_reply_element": "无法定位回复撰写元素",
+        "error_generating_reply": "生成回复出错：{error}",
+        "error_generating_compose": "生成撰写内容出错：{error}"
+      }
+    }
   }
 }

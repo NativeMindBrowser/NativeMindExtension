@@ -63,7 +63,7 @@
     <div
       v-if="writingToolType"
       ref="popupRef"
-      class="popup bg-white fixed rounded-md z-50 transition-[width,top,left] shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
+      class="popup bg-white fixed rounded-md z-50 shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
       :class="!popupPos ? 'opacity-0' : ''"
       :style="popupPos ? { top: popupPos.top + 'px', left: popupPos.left + 'px' } : {}"
     >
@@ -90,6 +90,7 @@ import IconSparkle from '@/assets/icons/writing-tools-sparkle.svg?component'
 import Button from '@/components/ui/Button.vue'
 import Text from '@/components/ui/Text.vue'
 import { useDeferredValue } from '@/composables/useDeferredValue'
+import { useDraggable } from '@/composables/useDraggable'
 import { useRefSnapshot } from '@/composables/useRefSnapshot'
 import { MIN_SELECTION_LENGTH_TO_SHOW_WRITING_TOOLS } from '@/utils/constants'
 import { useI18n } from '@/utils/i18n'
@@ -111,6 +112,13 @@ const toolBarRef = ref<HTMLDivElement | null>(null)
 const popupRef = ref<HTMLDivElement | null>(null)
 const toolBarBounding = useElementBounding(toolBarRef)
 const popupBounding = useElementBounding(popupRef)
+
+// Draggable functionality for toolbar and popup
+const toolBarDraggable = useDraggable(toolBarRef)
+const popupDragHandleRef = ref<HTMLElement | null>(null)
+const popupDraggable = useDraggable(popupRef, {
+  handle: popupDragHandleRef,
+})
 const writingToolType = ref<WritingToolType | null>(null)
 const writingToolSelectedText = ref<string>('')
 const editableElementText = ref('')
@@ -119,6 +127,20 @@ const isShowToolBar = computed(() => {
   return isEditableFocus.value && writingToolSelectedText.value.trim().length >= MIN_SELECTION_LENGTH_TO_SHOW_WRITING_TOOLS
 })
 const isShowToolBarDeferred = useDeferredValue(isShowToolBar, 200, (v) => !v)
+
+// Initialize toolbar draggable when it becomes visible
+watch(isShowToolBarDeferred, (isVisible) => {
+  if (isVisible) {
+    setTimeout(() => {
+      if (toolBarRef.value) {
+        toolBarDraggable.initDraggable()
+      }
+    }, 0)
+  }
+  else {
+    toolBarDraggable.resetPosition()
+  }
+})
 
 watch(() => props.editableElement, (newEl) => {
   isEditableFocus.value = newEl === document.activeElement || (document.hasFocus() && newEl.contains(document.activeElement))
@@ -280,16 +302,26 @@ const updateSelectedText = () => {
 const onAction = async (action?: WritingToolType) => {
   if (!action) {
     writingToolType.value = null
+    popupDraggable.resetPosition()
     return
   }
   snapshotForGeneratePopup.updateSnapshot()
   regenerateSymbol.value += 1 // Increment to trigger re-render
   writingToolType.value = action
+
+  // Initialize popup draggable after it's shown
+  setTimeout(() => {
+    if (popupRef.value) {
+      popupDragHandleRef.value = popupRef.value.querySelector('.title') as HTMLElement
+      popupDraggable.initDraggable()
+    }
+  }, 0)
 }
 
 const onClosePopup = () => {
   writingToolType.value = null
   writingToolSelectedText.value = ''
+  popupDraggable.resetPosition()
 }
 
 const onClickToClosePopup = (ev: Event) => {

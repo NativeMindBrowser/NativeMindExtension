@@ -109,3 +109,47 @@ export async function showModelDetails(modelId: string) {
     capabilities?: ModelCapability[]
   }
 }
+
+export async function checkModelSupportThinking(modelId: string): Promise<boolean> {
+  try {
+    const modelDetails = await showModelDetails(modelId)
+    return !!modelDetails.capabilities?.includes('thinking')
+  }
+  catch (error) {
+    logger.error('Failed to check thinking support for model:', modelId, error)
+    return false
+  }
+}
+
+export async function getLocalModelListWithCapabilities() {
+  try {
+    const ollama = await getOllamaClient()
+    const response = await ollama.list()
+    const usageResponse = await ollama.ps()
+
+    // Process models with thinking support check
+    const modelsWithCapabilities = await Promise.all(
+      response.models.map(async (model) => {
+        const usage = usageResponse.models.find((m) => m.model === model.model)
+        const baseInfo = formatModelInfo(model, usage)
+
+        // Add thinking support check
+        const supportsThinking = await checkModelSupportThinking(model.model)
+
+        return {
+          ...baseInfo,
+          supportsThinking,
+        }
+      }),
+    )
+
+    return { models: modelsWithCapabilities }
+  }
+  catch (error) {
+    logger.error('Error fetching local model list with capabilities:', error)
+    return {
+      models: [],
+      error: 'Failed to fetch local model list with capabilities',
+    }
+  }
+}

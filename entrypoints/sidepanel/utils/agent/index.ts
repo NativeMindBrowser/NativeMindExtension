@@ -18,7 +18,7 @@ import { renderPrompt, TagBuilder, TextBuilder, UserPrompt } from '@/utils/promp
 
 import { ReactiveHistoryManager } from '../chat'
 import { streamTextInBackground } from '../llm'
-import { AGENT_CHECKPOINT_MESSAGES, AGENT_FORCE_FINAL_ANSWER, AGENT_INITIAL_GUIDANCE, AGENT_TOOL_CALL_RESULT_GUIDANCE } from './constants'
+import { AGENT_FORCE_FINAL_ANSWER, AGENT_INITIAL_GUIDANCE, AGENT_TOOL_CALL_RESULT_GUIDANCE } from './constants'
 import { AgentStorage } from './strorage'
 
 type AgentToolCallHandOffResult = {
@@ -115,7 +115,7 @@ export class Agent<T extends PromptBasedToolName> {
   }
 
   injectImagesToLastMessage(messages: CoreMessage[], images: Base64ImageData[]) {
-    const lastMessage = messages[messages.length - 1]
+    const lastMessage = structuredClone(messages[messages.length - 1])
     if (lastMessage && lastMessage.role === 'user') {
       if (typeof lastMessage.content === 'string') {
         lastMessage.content = [
@@ -126,8 +126,9 @@ export class Agent<T extends PromptBasedToolName> {
       else {
         lastMessage.content.push(...images.map((img) => ({ type: 'image' as const, image: img.data, mimeType: img.type })))
       }
+      return [...messages.slice(0, -1), lastMessage]
     }
-    return messages
+    return [...messages]
   }
 
   overrideSystemPrompt(messages: CoreMessage[], systemPrompt?: string) {
@@ -254,14 +255,18 @@ export class Agent<T extends PromptBasedToolName> {
   }
 
   // iteration starts from 1
-  buildExtendedUserMessage(iteration: number, originalUserMessage: string, toolResults?: string) {
+  buildExtendedUserMessage(iteration: number, originalUserMessage: string, toolResults?: (AgentToolExecuteResultToolResult & { toolName: T })[]) {
     if (iteration === 1) return `${originalUserMessage}\n\n${AGENT_INITIAL_GUIDANCE.build()}`
-    const textBuilder = new TextBuilder(`${originalUserMessage}`)
-    if (toolResults) textBuilder.insertContent(toolResults)
-    const checkPointMessageBuilder = AGENT_CHECKPOINT_MESSAGES[iteration]
-    if (checkPointMessageBuilder) textBuilder.insertContent(checkPointMessageBuilder.build())
-    textBuilder.insertContent(AGENT_TOOL_CALL_RESULT_GUIDANCE)
-    return textBuilder.build()
+    if (toolResults?.length) {
+      const toolResultPart = this.toolResultsToPrompt(toolResults)
+      const hasViewImageTool = toolResults.some((t) => t.toolName === 'view_image')
+      // compatible with gemma3 model, which will loop infinitely if the view_image tool result has original user message
+      const textBuilder = new TextBuilder(!hasViewImageTool ? originalUserMessage : '')
+      textBuilder.insertContent(toolResultPart)
+      textBuilder.insertContent(AGENT_TOOL_CALL_RESULT_GUIDANCE)
+      return textBuilder.build().trim()
+    }
+    return new TextBuilder(originalUserMessage).build().trim()
   }
 
   async run(rawBaseMessages: CoreMessage[]) {
@@ -340,14 +345,12 @@ export class Agent<T extends PromptBasedToolName> {
             taskMessageModifier = this.makeTaskMessageGroupProxy(abortController.signal)
           }
           this.log.debug('Executing tool calls', currentLoopToolCalls)
-          const toolResults = await this.executeToolCalls(currentLoopToolCalls, taskScopeToolCalls, loopImages, taskMessageModifier, eventBus)
-          this.log.debug('Tool calls executed', currentLoopToolCalls, toolResults)
-          if (toolResults.length === 0) {
-            const errorResult = TagBuilder.fromStructured('error', { message: `Tool not found, available tools are: ${Object.keys(this.tools).join(', ')}` })
-            loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
-          }
-          else if (toolResults.some((result) => result.type === 'hand-off')) {
-            const handoffResult = toolResults.find((result) => result.type === 'hand-off')
+          const toolExecuteResults = await this.executeToolCalls(currentLoopToolCalls, taskScopeToolCalls, loopImages, taskMessageModifier, eventBus)
+          this.log.debug('Tool calls executed', currentLoopToolCalls, toolExecuteResults)
+          const toolResults = toolExecuteResults.filter((r) => r.type === 'tool-result')
+          const handOffResults = toolExecuteResults.filter((r) => r.type === 'hand-off')
+          if (handOffResults.length > 0) {
+            const handoffResult = handOffResults[0]
             if (handoffResult) {
               // This feature is in beta, not used yet
               this.log.debug('Hand-off detected', handoffResult)
@@ -359,9 +362,12 @@ export class Agent<T extends PromptBasedToolName> {
               if (lastMsg?.content) loopMessages.push(lastMsg)
             }
           }
+          else if (toolResults.length) {
+            loopMessages.push({ role: 'user', content: this.buildExtendedUserMessage(iteration + 1, originalUserMessageText, toolResults) })
+          }
           else {
-            const toolResultPart = this.toolResultsToPrompt(toolResults.filter((t) => t.type === 'tool-result'))
-            loopMessages.push({ role: 'user', content: this.buildExtendedUserMessage(iteration + 1, originalUserMessageText, toolResultPart) })
+            const errorResult = TagBuilder.fromStructured('error', { message: `Tool not found, available tools are: ${Object.keys(this.tools).join(', ')}` })
+            loopMessages.push({ role: 'user', content: renderPrompt`${errorResult}` })
           }
         }
       }

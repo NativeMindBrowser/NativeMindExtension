@@ -317,6 +317,40 @@
     "header": {
       "starts_on_github": "GitHubでスター",
       "goto_website": "ウェブサイトに移動"
+    },
+    "gmail_tools": {
+      "title": "Gmail ツール",
+      "description": "様々な執筆支援機能を設定",
+      "basic_config": {
+        "title": "基本設定",
+        "enable": "Gmail ツールを有効にする",
+        "enable_desc": "Gmail内でAI支援機能を直接表示します。",
+        "output_language": "出力言語",
+        "output_language_desc": "AI生成メールのデフォルト言語を選択してください。",
+        "output_style": "出力スタイル",
+        "output_style_desc": "メールのデフォルトトーンを選択してください",
+        "options": {
+          "auto": "自動",
+          "default": "デフォルト"
+        }
+      },
+      "system_prompt": {
+        "title": "システムプロンプト",
+        "summarize": {
+          "title": "要約",
+          "description": "長いメールやメールスレッド全体から重要なポイントを素早く抽出します。"
+        },
+        "reply": {
+          "title": "返信",
+          "description": "メール内容とあなたのメモに基づいて自然な返信を即座に下書きします。"
+        },
+        "compose": {
+          "title": "作成",
+          "description": "ゼロから始めるか、下書きを磨き上げます。"
+        },
+        "reset_to_default": "デフォルトにリセット",
+        "reset_to_default_confirm": "{setting}をデフォルトにリセットしてもよろしいですか？"
+      }
     }
   },
   "context_menu": {
@@ -391,5 +425,62 @@
     "chat_history": "歴史",
     "new_chat": "新しいチャット",
     "back": "戻る"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "AI要約",
+      "ai_reply": "AI返信",
+      "ai_polish": "AI添削"
+    },
+    "cards": {
+      "reply": {
+        "title": "返信提案",
+        "processing": "処理中...",
+        "regenerate": "再生成",
+        "apply": "適用",
+        "language_selector": "言語",
+        "style_selector": "スタイル",
+        "copy_to_clipboard": "クリップボードにコピー"
+      },
+      "compose": {
+        "title": "AI作成",
+        "subject": "件名：",
+        "email_body": "メール本文：",
+        "processing": "処理中...",
+        "regenerate": "再生成",
+        "apply": "適用",
+        "language_selector": "言語",
+        "style_selector": "スタイル",
+        "copy_subject_to_clipboard": "件名をクリップボードにコピー",
+        "copy_body_to_clipboard": "本文をクリップボードにコピー",
+        "no_subject_generated": "件名が生成されませんでした"
+      },
+      "styles": {
+        "change_style": "スタイルを変更",
+        "formal": "フォーマル",
+        "friendly": "フレンドリー",
+        "urgent": "緊急"
+      },
+      "notifications": {
+        "copied_to_clipboard": "クリップボードにコピーしました！",
+        "subject_copied": "件名をクリップボードにコピーしました！",
+        "body_copied": "本文をクリップボードにコピーしました！",
+        "reply_applied": "返信を作成ボックスに適用しました！",
+        "email_content_applied": "メール内容を作成フィールドに適用しました！",
+        "no_content_to_apply": "適用するコンテンツがありません",
+        "no_compose_box_found": "作成ボックスが見つかりません",
+        "failed_to_copy": "クリップボードへのコピーに失敗しました",
+        "failed_to_apply_reply": "返信内容の適用に失敗しました",
+        "failed_to_apply_compose": "作成内容の適用に失敗しました"
+      },
+      "errors": {
+        "failed_to_summarize": "メールの要約に失敗しました：",
+        "failed_to_show_reply_card": "Gmail返信カードの表示に失敗しました：",
+        "failed_to_show_compose_card": "Gmail作成カードの表示に失敗しました：",
+        "failed_to_locate_reply_element": "返信作成要素の特定に失敗しました",
+        "error_generating_reply": "返信生成エラー：{error}",
+        "error_generating_compose": "作成内容生成エラー：{error}"
+      }
+    }
   }
 }

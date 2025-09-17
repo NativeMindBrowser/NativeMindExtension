@@ -78,9 +78,7 @@ const isThinkingEnabled = computed({
     return chatSetting !== undefined ? chatSetting : userConfig.llm.reasoning.get()
   },
   set(value: boolean) {
-    // Update both chat-specific setting and global setting
-    chat.historyManager.chatHistory.value.reasoningEnabled = value
-    userConfig.llm.reasoning.set(value)
+    setThinkingEnabled(value)
   },
 })
 
@@ -112,27 +110,35 @@ const toggleThinking = () => {
   isThinkingEnabled.value = !isThinkingEnabled.value
 }
 
+const setThinkingEnabled = (value: boolean, skipStoreUpdate = false) => {
+  // Update global setting
+  userConfig.llm.reasoning.set(value)
+  if (skipStoreUpdate) return
+  // Store chat-specific setting in chat history
+  chat.historyManager.chatHistory.value.reasoningEnabled = value
+}
+
 // Handle thinking state based on model capabilities
 watch([currentModel, isModelSupportsThinking, isThinkingToggleable],
   ([newModel, supportsThinking, toggleable], [oldModel]) => {
     // If model list is not empty and model doesn't support thinking, disable it
     if (modelList.value.length > 0 && !supportsThinking && isThinkingEnabled.value) {
-      isThinkingEnabled.value = false
+      setThinkingEnabled(false, true)
     }
     else if (chat.historyManager.chatHistory.value.reasoningEnabled === undefined) {
       // Only auto-enable for chats without specific setting (new chats or legacy chats)
-      isThinkingEnabled.value = true
+      setThinkingEnabled(true, true)
     }
 
     // If model supports thinking but is not toggleable, force enable thinking
     if (supportsThinking && !toggleable && !isThinkingEnabled.value) {
-      isThinkingEnabled.value = true
+      setThinkingEnabled(true, true)
     }
 
     // If switching to a toggleable thinking model from a non-thinking model, auto-enable
     // but only for chats without specific setting
     if (oldModel && newModel !== oldModel && supportsThinking && toggleable && !isThinkingEnabled.value && chat.historyManager.chatHistory.value.reasoningEnabled === undefined) {
-      isThinkingEnabled.value = true
+      setThinkingEnabled(true, true)
     }
   },
   { immediate: true },

@@ -12,16 +12,19 @@
 
 <script setup lang="tsx">
 import mime from 'mime'
-import { useTemplateRef, watch } from 'vue'
+import { onBeforeUnmount, useTemplateRef, watch } from 'vue'
 import { browser } from 'wxt/browser'
 
 import { useZIndex } from '@/composables/useZIndex'
 import { ContextMenuId } from '@/utils/context-menu'
 import { FileGetter } from '@/utils/file'
+import logger from '@/utils/logger'
+import { UserPrompt } from '@/utils/prompts/helpers'
 import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { sleep } from '@/utils/sleep'
 import { extractFileNameFromUrl } from '@/utils/url'
-import { getUserConfig } from '@/utils/user-config'
+import { getUserConfig, processGmailTemplate } from '@/utils/user-config'
+import { DEFAULT_GMAIL_SUMMARY_USER_PROMPT } from '@/utils/user-config/defaults'
 
 import { showSettings } from '../../utils/settings'
 import Main from './components/Main.vue'
@@ -34,7 +37,43 @@ const mainRef = useTemplateRef('mainRef')
 const { index: onboardingPanelZIndex } = useZIndex('settings')
 const userConfig = await getUserConfig()
 
-registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
+const cleanupGmailActionEvent = registerSidepanelRpcEvent('gmailAction', async (e) => {
+  const { action, data } = e
+  logger.debug('Gmail action triggered:', action, data)
+  if (action === 'summary') {
+    const emailContent = (data as { emailContent?: string })?.emailContent || ''
+    const chat = await Chat.getInstance()
+
+    // only create new chat and ask when there is email content and the chat is not answering
+    if (emailContent && !chat.isAnswering()) {
+      // create new chat
+      await chat.createNewChat()
+
+      // wait for the chat component to be ready
+      await sleep(500)
+
+      const userPrompt = processGmailTemplate(DEFAULT_GMAIL_SUMMARY_USER_PROMPT, {
+        content: emailContent,
+      })
+
+      const gmailSystemPrompt = userConfig.emailTools.summary.systemPrompt.get()
+
+      try {
+        logger.debug('trying to ask Gmail summary')
+        // Use the ask method and then modify the display content
+        await chat.ask('Summarize this email', {
+          user: UserPrompt.fromText(userPrompt),
+          system: gmailSystemPrompt,
+        })
+      }
+      catch (error) {
+        logger.error('Failed to ask Gmail summary:', error)
+      }
+    }
+  }
+})
+
+const cleanupContextMenuEvent = registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
   const menuItemId = e.menuItemId as ContextMenuId
   const windowId = e.tabInfo.windowId
   if (windowId !== (await browser.windows.getCurrent()).id) return
@@ -45,6 +84,8 @@ registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
     const actionIdx = parseInt(menuItemId.replace('native-mind-quick-actions-', '')) || 0
     const action = userConfig.chat.quickActions.actions.get()[actionIdx]
     const chat = await Chat.getInstance()
+
+    // prevent asking when the chat is answering
     if (action && !chat.isAnswering()) {
       chat.ask(action.prompt)
     }
@@ -76,6 +117,11 @@ registerSidepanelRpcEvent('contextMenuClicked', async (e) => {
       sleep(0).then(() => stopWatch())
     }, { immediate: true })
   }
+})
+
+onBeforeUnmount(() => {
+  cleanupContextMenuEvent()
+  cleanupGmailActionEvent()
 })
 </script>
 

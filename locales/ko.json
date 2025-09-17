@@ -317,6 +317,40 @@
     "header": {
       "starts_on_github": "GitHub에서 별점 주기",
       "goto_website": "웹사이트로 이동"
+    },
+    "gmail_tools": {
+      "title": "Gmail 도구",
+      "description": "다양한 작성 지원 기능을 설정",
+      "basic_config": {
+        "title": "기본 설정",
+        "enable": "Gmail 도구 활성화",
+        "enable_desc": "Gmail 내에서 AI 지원 기능을 직접 표시합니다.",
+        "output_language": "출력 언어",
+        "output_language_desc": "AI 생성 이메일의 기본 언어를 선택하세요.",
+        "output_style": "출력 스타일",
+        "output_style_desc": "이메일의 기본 톤을 선택하세요",
+        "options": {
+          "auto": "자동",
+          "default": "기본값"
+        }
+      },
+      "system_prompt": {
+        "title": "시스템 프롬프트",
+        "summarize": {
+          "title": "요약",
+          "description": "긴 이메일이나 전체 스레드에서 핵심 포인트를 빠르게 추출합니다."
+        },
+        "reply": {
+          "title": "답장",
+          "description": "이메일 내용과 메모를 바탕으로 자연스러운 답장을 즉시 작성합니다."
+        },
+        "compose": {
+          "title": "작성",
+          "description": "처음부터 시작하거나 초안을 다듬습니다."
+        },
+        "reset_to_default": "기본값으로 재설정",
+        "reset_to_default_confirm": "{setting}을(를) 기본값으로 재설정하시겠습니까?"
+      }
     }
   },
   "context_menu": {
@@ -391,5 +425,62 @@
     "chat_history": "역사",
     "new_chat": "새로운 채팅",
     "back": "뒤로"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "AI 요약",
+      "ai_reply": "AI 답장",
+      "ai_polish": "AI 다듬기"
+    },
+    "cards": {
+      "reply": {
+        "title": "답장 제안",
+        "processing": "처리 중...",
+        "regenerate": "재생성",
+        "apply": "적용",
+        "language_selector": "언어",
+        "style_selector": "스타일",
+        "copy_to_clipboard": "클립보드에 복사"
+      },
+      "compose": {
+        "title": "AI 작성",
+        "subject": "제목:",
+        "email_body": "이메일 본문:",
+        "processing": "처리 중...",
+        "regenerate": "재생성",
+        "apply": "적용",
+        "language_selector": "언어",
+        "style_selector": "스타일",
+        "copy_subject_to_clipboard": "제목을 클립보드에 복사",
+        "copy_body_to_clipboard": "본문을 클립보드에 복사",
+        "no_subject_generated": "제목이 생성되지 않음"
+      },
+      "styles": {
+        "change_style": "스타일 변경",
+        "formal": "공식적",
+        "friendly": "친근한",
+        "urgent": "긴급"
+      },
+      "notifications": {
+        "copied_to_clipboard": "클립보드에 복사되었습니다!",
+        "subject_copied": "제목이 클립보드에 복사되었습니다!",
+        "body_copied": "본문이 클립보드에 복사되었습니다!",
+        "reply_applied": "답장이 작성함에 적용되었습니다!",
+        "email_content_applied": "이메일 내용이 작성 필드에 적용되었습니다!",
+        "no_content_to_apply": "적용할 내용이 없습니다",
+        "no_compose_box_found": "작성함을 찾을 수 없습니다",
+        "failed_to_copy": "클립보드 복사에 실패했습니다",
+        "failed_to_apply_reply": "답장 내용 적용에 실패했습니다",
+        "failed_to_apply_compose": "작성 내용 적용에 실패했습니다"
+      },
+      "errors": {
+        "failed_to_summarize": "이메일 요약에 실패했습니다:",
+        "failed_to_show_reply_card": "Gmail 답장 카드 표시에 실패했습니다:",
+        "failed_to_show_compose_card": "Gmail 작성 카드 표시에 실패했습니다:",
+        "failed_to_locate_reply_element": "답장 작성 요소를 찾지 못했습니다",
+        "error_generating_reply": "답장 생성 오류: {error}",
+        "error_generating_compose": "작성 내용 생성 오류: {error}"
+      }
+    }
   }
 }

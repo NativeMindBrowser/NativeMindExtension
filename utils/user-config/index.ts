@@ -6,11 +6,12 @@ import { SupportedLocaleCode } from '../i18n/constants'
 import { generateRandomId } from '../id'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
+import { chatDefaultPromptBasedTools } from '../llm/tools/prompt-based/tools'
 import logger from '../logger'
 import { lazyInitialize } from '../memo'
 import { forRuntimes } from '../runtime'
 import { ByteSize } from '../sizes'
-import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
+import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT, DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT, DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
 import { Config } from './helpers'
 
 const log = logger.child('user-config')
@@ -39,11 +40,21 @@ export const DEFAULT_QUICK_ACTIONS = [
     editedTitle: '',
     defaultTitleKey: 'chat.prompt.search_more.title' as const,
     prompt:
-      'Help me find more content similar to this topic and provide relevant search suggestions.',
+      'Please help me search for more similar content.',
     showInContextMenu: false,
     edited: false,
   },
 ]
+
+// Template replacement function for Gmail prompts
+export function processGmailTemplate(template: string, variables: Record<string, string>): string {
+  let processed = template
+  for (const [key, value] of Object.entries(variables)) {
+    const placeholder = `{{${key}}}`
+    processed = processed.replaceAll(placeholder, value || '')
+  }
+  return processed
+}
 
 export async function _getUserConfig() {
   let enableNumCtx = true
@@ -64,7 +75,7 @@ export async function _getUserConfig() {
     }
   }
 
-  const enableBrowserUse = await new Config('browserUse.enable').default(false).build()
+  const enableBrowserUse = await new Config('browserUse.enable').default(true).build()
 
   return {
     locale: {
@@ -97,20 +108,19 @@ export async function _getUserConfig() {
     },
     browserUse: {
       enable: enableBrowserUse,
-      simulateClickOnLink: await new Config('browserUse.simulateClickOnLink').default(false).build(),
-      closeTabOpenedByAgent: await new Config('browserUse.closeTabOpenedByAgent').default(false).build(),
+      simulateClickOnLink: await new Config('browserUse.simulateClickOnLink').default(true).build(),
+      closeTabOpenedByAgent: await new Config('browserUse.closeTabOpenedByAgent').default(true).build(),
     },
     chat: {
       agent: {
         maxIterations: await new Config('chat.agent.maxIterations').default(5).build(),
-        maxIterationsForAdvancedModels: await new Config('chat.agent.maxIterationsForAdvancedModels').default(10).build(),
       },
       environmentDetails: {
         fullUpdateFrequency: await new Config('chat.environmentDetails.fullUpdateFrequency').default(10).build(), // update full environment details every 5 messages
       },
       systemPrompt: await new Config('chat.systemPrompt_1')
         .migrateFrom('chat.systemPrompt', (v) => v === DEFAULT_CHAT_SYSTEM_PROMPT ? undefined : v)
-        .default(enableBrowserUse.get() ? DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE : DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
+        .default(enableBrowserUse.get() ? DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(chatDefaultPromptBasedTools) : DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
       history: {
         currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
       },
@@ -158,6 +168,20 @@ export async function _getUserConfig() {
       sparkle: {
         enable: await new Config('writingTools.sparkle.enable').default(true).build(),
         systemPrompt: await new Config('writingTools.sparkle.systemPrompt').default(DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT).build(),
+      },
+    },
+    emailTools: {
+      enable: await new Config('emailTools.enable').default(true).build(),
+      outputLanguage: await new Config('emailTools.outputLanguage').default('auto' as LanguageCode | 'auto').build(),
+      outputStyle: await new Config('emailTools.outputStyle').default('default' as 'default' | 'formal' | 'friendly' | 'urgent').build(),
+      summary: {
+        systemPrompt: await new Config('emailTools.summary.systemPrompt').default(DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT).build(),
+      },
+      reply: {
+        systemPrompt: await new Config('emailTools.reply.systemPrompt').default(DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT).build(),
+      },
+      compose: {
+        systemPrompt: await new Config('emailTools.compose.systemPrompt').default(DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT).build(),
       },
     },
   }

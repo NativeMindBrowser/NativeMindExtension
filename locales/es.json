@@ -342,6 +342,40 @@
     "header": {
       "starts_on_github": "Estrellas en GitHub",
       "goto_website": "Ir al Sitio Web"
+    },
+    "gmail_tools": {
+      "title": "Herramientas de Gmail",
+      "description": "Configurar varias funciones de asistencia de escritura",
+      "basic_config": {
+        "title": "Configuración básica",
+        "enable": "Habilitar herramientas de Gmail",
+        "enable_desc": "Mostrar funciones de asistencia IA directamente dentro de Gmail.",
+        "output_language": "Idioma de salida",
+        "output_language_desc": "Elige el idioma predeterminado para los correos generados por IA.",
+        "output_style": "Estilo de salida",
+        "output_style_desc": "Elige el tono predeterminado para tus correos",
+        "options": {
+          "auto": "Automático",
+          "default": "Predeterminado"
+        }
+      },
+      "system_prompt": {
+        "title": "Prompt del sistema",
+        "summarize": {
+          "title": "Resumir",
+          "description": "Extrae rápidamente puntos clave de correos largos o hilos completos."
+        },
+        "reply": {
+          "title": "Responder",
+          "description": "Redacta instantáneamente una respuesta natural basada en el contenido del correo y tus notas."
+        },
+        "compose": {
+          "title": "Redactar",
+          "description": "Comienza desde cero o perfecciona tu borrador."
+        },
+        "reset_to_default": "Restablecer a predeterminado",
+        "reset_to_default_confirm": "¿Estás seguro de que quieres restablecer {setting} a los valores predeterminados?"
+      }
     }
   },
   "common": {
@@ -391,5 +425,62 @@
     "chat_history": "Historia",
     "new_chat": "Nuevo chat",
     "back": "Atrás"
+  },
+  "gmail_tools": {
+    "buttons": {
+      "ai_summary": "Resumen IA",
+      "ai_reply": "Respuesta IA",
+      "ai_polish": "Pulir con IA"
+    },
+    "cards": {
+      "reply": {
+        "title": "Sugerencia de respuesta",
+        "processing": "Procesando...",
+        "regenerate": "Regenerar",
+        "apply": "Aplicar",
+        "language_selector": "Idioma",
+        "style_selector": "Estilo",
+        "copy_to_clipboard": "Copiar al portapapeles"
+      },
+      "compose": {
+        "title": "Redacción IA",
+        "subject": "Asunto:",
+        "email_body": "Cuerpo del correo:",
+        "processing": "Procesando...",
+        "regenerate": "Regenerar",
+        "apply": "Aplicar",
+        "language_selector": "Idioma",
+        "style_selector": "Estilo",
+        "copy_subject_to_clipboard": "Copiar asunto al portapapeles",
+        "copy_body_to_clipboard": "Copiar cuerpo al portapapeles",
+        "no_subject_generated": "No se generó asunto"
+      },
+      "styles": {
+        "change_style": "Cambiar estilo",
+        "formal": "Formal",
+        "friendly": "Amigable",
+        "urgent": "Urgente"
+      },
+      "notifications": {
+        "copied_to_clipboard": "¡Copiado al portapapeles!",
+        "subject_copied": "¡Asunto copiado al portapapeles!",
+        "body_copied": "¡Cuerpo copiado al portapapeles!",
+        "reply_applied": "¡Respuesta aplicada al cuadro de redacción!",
+        "email_content_applied": "¡Contenido del correo aplicado a los campos de redacción!",
+        "no_content_to_apply": "No hay contenido para aplicar",
+        "no_compose_box_found": "No se encontró cuadro de redacción",
+        "failed_to_copy": "Error al copiar al portapapeles",
+        "failed_to_apply_reply": "Error al aplicar contenido de respuesta",
+        "failed_to_apply_compose": "Error al aplicar contenido de redacción"
+      },
+      "errors": {
+        "failed_to_summarize": "Error al resumir correo:",
+        "failed_to_show_reply_card": "Error al mostrar tarjeta de respuesta de Gmail:",
+        "failed_to_show_compose_card": "Error al mostrar tarjeta de redacción de Gmail:",
+        "failed_to_locate_reply_element": "Error al localizar elemento de redacción de respuesta",
+        "error_generating_reply": "Error generando respuesta: {error}",
+        "error_generating_compose": "Error generando contenido de redacción: {error}"
+      }
+    }
   }
 }
