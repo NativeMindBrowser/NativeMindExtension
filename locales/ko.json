@@ -348,7 +348,8 @@
           "title": "작성",
           "description": "처음부터 시작하거나 초안을 다듬습니다."
         },
-        "reset_to_default": "기본값으로 재설정"
+        "reset_to_default": "기본값으로 재설정",
+        "reset_to_default_confirm": "{setting}을(를) 기본값으로 재설정하시겠습니까?"
       }
     }
   },

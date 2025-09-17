@@ -373,7 +373,8 @@
           "title": "Redactar",
           "description": "Comienza desde cero o perfecciona tu borrador."
         },
-        "reset_to_default": "Restablecer a predeterminado"
+        "reset_to_default": "Restablecer a predeterminado",
+        "reset_to_default_confirm": "¿Estás seguro de que quieres restablecer {setting} a los valores predeterminados?"
       }
     }
   },

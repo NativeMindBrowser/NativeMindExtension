@@ -348,7 +348,8 @@
           "title": "作成",
           "description": "ゼロから始めるか、下書きを磨き上げます。"
         },
-        "reset_to_default": "デフォルトにリセット"
+        "reset_to_default": "デフォルトにリセット",
+        "reset_to_default_confirm": "{setting}をデフォルトにリセットしてもよろしいですか？"
       }
     }
   },

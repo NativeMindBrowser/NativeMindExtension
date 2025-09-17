@@ -348,7 +348,8 @@
           "title": "Redigir",
           "description": "Comece do zero ou aperfeiçoe seu rascunho."
         },
-        "reset_to_default": "Redefinir para padrão"
+        "reset_to_default": "Redefinir para padrão",
+        "reset_to_default_confirm": "Tem certeza de que deseja redefinir {setting} para os valores padrão?"
       }
     }
   },

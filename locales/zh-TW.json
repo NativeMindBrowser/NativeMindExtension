@@ -348,7 +348,8 @@
           "title": "撰寫",
           "description": "從頭開始或完善您的草稿。"
         },
-        "reset_to_default": "重置為預設"
+        "reset_to_default": "重置為預設",
+        "reset_to_default_confirm": "您確定要將 {setting} 重設為預設值嗎？"
       }
     }
   },

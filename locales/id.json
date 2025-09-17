@@ -348,7 +348,8 @@
           "title": "Tulis",
           "description": "Mulai dari awal atau sempurnakan draft Anda."
         },
-        "reset_to_default": "Reset ke default"
+        "reset_to_default": "Reset ke default",
+        "reset_to_default_confirm": "Apakah Anda yakin ingin mengatur ulang {setting} ke nilai default?"
       }
     }
   },

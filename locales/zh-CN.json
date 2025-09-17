@@ -213,7 +213,8 @@
           "title": "撰写",
           "description": "从头开始或完善您的草稿。"
         },
-        "reset_to_default": "重置为默认"
+        "reset_to_default": "重置为默认",
+        "reset_to_default_confirm": "您确定要将 {setting} 重置为默认值吗？"
       }
     }
   },

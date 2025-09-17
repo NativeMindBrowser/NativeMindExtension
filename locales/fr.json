@@ -348,7 +348,8 @@
           "title": "Composer",
           "description": "Commencez de zéro ou peaufinez votre brouillon."
         },
-        "reset_to_default": "Remettre par défaut"
+        "reset_to_default": "Remettre par défaut",
+        "reset_to_default_confirm": "Êtes-vous sûr de vouloir réinitialiser {setting} aux valeurs par défaut ?"
       }
     }
   },

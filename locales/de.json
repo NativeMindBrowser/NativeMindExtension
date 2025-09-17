@@ -348,7 +348,8 @@
           "title": "Verfassen",
           "description": "Von Grund auf neu beginnen oder Ihren Entwurf verfeinern."
         },
-        "reset_to_default": "Auf Standard zurücksetzen"
+        "reset_to_default": "Auf Standard zurücksetzen",
+        "reset_to_default_confirm": "Sind Sie sicher, dass Sie {setting} auf die Standardwerte zurücksetzen möchten?"
       }
     }
   },

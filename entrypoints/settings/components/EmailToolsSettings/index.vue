@@ -114,6 +114,7 @@ import Checkbox from '@/components/Checkbox.vue'
 import Selector from '@/components/Selector.vue'
 import Textarea from '@/components/Textarea.vue'
 import Text from '@/components/ui/Text.vue'
+import { useConfirm } from '@/composables/useConfirm'
 import { useI18n } from '@/utils/i18n'
 import { getUserConfig } from '@/utils/user-config'
 import { DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT, DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT, DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT } from '@/utils/user-config/defaults'
@@ -124,6 +125,7 @@ import Section from '../Section.vue'
 
 const { t } = useI18n()
 const userConfig = await getUserConfig()
+const confirm = useConfirm()
 
 // Reactive refs for all settings
 const enabled = userConfig.emailTools.enable.toRef()
@@ -153,29 +155,33 @@ const styleOptions = [
 
 // Reset functions
 const resetSummaryPrompt = computed(() => {
-  if (summaryPrompt.value !== DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT) {
-    return () => {
-      summaryPrompt.value = DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT
-    }
+  if (summaryPrompt.value === DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT) {
+    return undefined
   }
-  return undefined
+
+  return () => confirm({
+    message: t('settings.gmail_tools.system_prompt.reset_to_default_confirm', { setting: t('settings.gmail_tools.system_prompt.summarize.title') }),
+    onConfirm() { userConfig.emailTools.summary.systemPrompt.resetDefault() },
+  })
 })
 
 const resetReplyPrompt = computed(() => {
-  if (replyPrompt.value !== DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT) {
-    return () => {
-      replyPrompt.value = DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT
-    }
+  if (replyPrompt.value === DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT) {
+    return undefined
   }
-  return undefined
+  return () => confirm({
+    message: t('settings.gmail_tools.system_prompt.reset_to_default_confirm', { setting: t('settings.gmail_tools.system_prompt.reply.title') }),
+    onConfirm() { userConfig.emailTools.reply.systemPrompt.resetDefault() },
+  })
 })
 
 const resetComposePrompt = computed(() => {
-  if (composePrompt.value !== DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT) {
-    return () => {
-      composePrompt.value = DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT
-    }
+  if (composePrompt.value === DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT) {
+    return undefined
   }
-  return undefined
+  return () => confirm({
+    message: t('settings.gmail_tools.system_prompt.reset_to_default_confirm', { setting: t('settings.gmail_tools.system_prompt.compose.title') }),
+    onConfirm() { userConfig.emailTools.compose.systemPrompt.resetDefault() },
+  })
 })
 </script>

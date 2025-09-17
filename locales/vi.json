@@ -348,7 +348,8 @@
           "title": "Soạn thảo",
           "description": "Bắt đầu từ đầu hoặc hoàn thiện bản thảo của bạn."
         },
-        "reset_to_default": "Đặt lại về mặc định"
+        "reset_to_default": "Đặt lại về mặc định",
+        "reset_to_default_confirm": "Bạn có chắc chắn muốn đặt lại {setting} về giá trị mặc định không?"
       }
     }
   },
