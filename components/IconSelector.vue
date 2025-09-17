@@ -5,7 +5,7 @@
   >
     <div
       ref="selectorRef"
-      :class="['flex items-center gap-1 cursor-pointer text-sm py-0 pl-2 pr-1 h-6', containerClass]"
+      :class="['flex items-center gap-1 cursor-pointer text-xs leading-4 font-medium py-0 pl-2 pr-1 h-6', containerClass]"
       :disabled="disabled"
       @click="toggleDropdown"
     >

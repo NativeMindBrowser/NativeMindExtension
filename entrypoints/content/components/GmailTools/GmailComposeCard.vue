@@ -2,15 +2,10 @@
   <div>
     <div class="card min-w-80 max-w-110 text-xs">
       <div class="title flex items-center justify-between h-9 px-3">
-        <Text
-          size="small"
-          display="block"
-        >
-          <div class="flex items-center gap-2">
-            <SettingsEmailIcon />
-            {{ t('gmail_tools.cards.compose.title') }}
-          </div>
-        </Text>
+        <div class="flex items-center gap-1 text-xs font-medium leading-4">
+          <SettingsEmailIcon />
+          {{ t('gmail_tools.cards.compose.title') }}
+        </div>
         <button
           class="text-[#71717A] cursor-pointer p-1 hover:bg-gray-100 rounded"
           @click="emit('close')"
