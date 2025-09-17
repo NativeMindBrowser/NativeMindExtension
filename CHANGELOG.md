@@ -1,6 +1,36 @@
 # Changelog
 
 
+## v1.10.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.4...v1.10.0-beta.4)
+
+### 🚀 Enhancements
+
+- **lm-studio:** Initial support for LM Studio ([0f318d9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f318d9))
+- **tests:** Add onboarding and settings tests, enhance mock responses ([e8793b7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e8793b7))
+- **chat:** Add toggle to enable online search and its settings ([a60f489](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a60f489))
+- **tests:** Add LLM API tests and mock responses for Ollama ([16a1f8d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/16a1f8d))
+
+### 🩹 Fixes
+
+- **lm-studio:** Return consistent structured response format ([24d9636](https://github.com/NativeMindBrowser/NativeMindExtension/commit/24d9636))
+- **pattern-extractor:** Ensure extracted values are strings and handle undefined keys ([b95e17f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b95e17f))
+
+### 🏡 Chore
+
+- **package:** Update version to 1.10.0 ([d933b93](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d933b93))
+- **release:** V1.10.0-beta.1 ([67c8c4f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/67c8c4f))
+- **release:** V1.10.0-beta.2 ([170af85](https://github.com/NativeMindBrowser/NativeMindExtension/commit/170af85))
+- **release:** V1.10.0-beta.3 ([0581a4f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0581a4f))
+- **browser-use:** Set default for browser use to true ([374a849](https://github.com/NativeMindBrowser/NativeMindExtension/commit/374a849))
+- **chat:** Improve assistant message expanded class ([4847c2c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4847c2c))
+- **logging:** Enhance rawLoggingMiddleware to log stream and generate results ([a6ee1f9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a6ee1f9))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.3
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.2...v1.10.0-beta.3)
