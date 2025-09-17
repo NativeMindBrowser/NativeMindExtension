@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.9.3-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.11...v1.9.3-beta.12)
+
+### 🩹 Fixes
+
+- **content-script:** Remove duplicate import of 'tailwindcss/index.css' ([8a5af4b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8a5af4b))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.3-beta.11
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.10...v1.9.3-beta.11)
