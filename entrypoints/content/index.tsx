@@ -2,7 +2,6 @@ import '@/styles/style.css'
 import '@/utils/polyfill'
 import '@/utils/rpc'
 import '@/utils/time'
-import 'tailwindcss/index.css'
 
 import { Suspense } from 'vue'
 import { defineContentScript } from 'wxt/utils/define-content-script'
