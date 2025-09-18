@@ -599,6 +599,7 @@ function initWebLLMEngine(model: WebLLMSupportedModel) {
         },
       })
       port.postMessage({ type: 'ready' })
+      port.disconnect()
     })
     return { portName }
   }
