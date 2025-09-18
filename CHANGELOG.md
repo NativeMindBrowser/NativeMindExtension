@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v1.9.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.4...v1.9.5)
+
+### 🩹 Fixes
+
+- **pattern-extractor:** Ensure extracted values are strings and handle undefined keys ([b95e17f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b95e17f))
+- **web-llm:** Fix infinite loading when local model cache is invalid ([66239b1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/66239b1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.12...v1.9.4)
