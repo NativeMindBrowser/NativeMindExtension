@@ -117,7 +117,10 @@
                 {{ t('onboarding.guide.setup') }}
               </button>
             </div>
-            <div class="flex gap-1">
+            <div
+              v-if="selectedEndpointType === 'ollama'"
+              class="flex gap-1"
+            >
               <span>{{ t('onboarding.guide.need_help') }}</span>
               <a
                 :href="tutorialUrl"

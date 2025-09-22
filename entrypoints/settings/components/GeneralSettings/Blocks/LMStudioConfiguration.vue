@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCountdown } from '@vueuse/core'
-import { onMounted, ref, toRef, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import IconLMStudioLogo from '@/assets/icons/logo-lm-studio.png?url'
 import Checkbox from '@/components/Checkbox.vue'
@@ -8,11 +8,12 @@ import Input from '@/components/Input.vue'
 import Loading from '@/components/Loading.vue'
 import ScrollTarget from '@/components/ScrollTarget.vue'
 import Button from '@/components/ui/Button.vue'
+import Text from '@/components/ui/Text.vue'
 import WarningMessage from '@/components/WarningMessage.vue'
 import { useLogger } from '@/composables/useLogger'
 import { useValueGuard } from '@/composables/useValueGuard'
 import { SettingsScrollTarget } from '@/types/scroll-targets'
-import { LM_STUDIO_HOMEPAGE_URL, LM_STUDIO_SEARCH_URL, LM_STUDIO_TUTORIAL_URL, MIN_CONTEXT_WINDOW_SIZE } from '@/utils/constants'
+import { LM_STUDIO_HOMEPAGE_URL, LM_STUDIO_SEARCH_URL, MIN_CONTEXT_WINDOW_SIZE } from '@/utils/constants'
 import { useI18n } from '@/utils/i18n'
 import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { settings2bRpc } from '@/utils/rpc'
@@ -35,7 +36,6 @@ const baseUrl = userConfig.llm.backends.lmStudio.baseUrl.toRef()
 const endpointType = userConfig.llm.endpointType.toRef()
 const open = userConfig.settings.blocks.lmStudioConfig.open.toRef()
 const loading = ref(false)
-const lmStudioConnectionStatus = toRef(llmBackendStatusStore, 'lmStudioConnectionStatus')
 
 const { value: numCtx, guardedValue: guardedNumCtx, errorMessage: numCtxError } = useValueGuard(userConfig.llm.backends.lmStudio.numCtx.toRef(), (value) => {
   return {
@@ -247,36 +247,25 @@ onMounted(async () => {
             </div>
           </Section>
           <ModelManagement v-if="endpointType !== 'web-llm'" />
-          <div v-if="lmStudioConnectionStatus !== 'connected'">
-            <Text
-              color="secondary"
-              size="xs"
-              class="font-normal leading-4"
+          <Text
+            v-if="endpointType === 'web-llm'"
+            display="block"
+            color="secondary"
+            size="xs"
+            class="font-normal leading-4"
+          >
+            <div
+              class="flex gap-1"
             >
-              <div
-                v-if="endpointType === 'web-llm'"
-                class="flex gap-1"
+              <span>{{ t('settings.providers.lm_studio.already_installed') }}</span>
+              <button
+                class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
+                @click="setupLMStudio"
               >
-                <span>{{ t('settings.providers.lm_studio.already_installed') }}</span>
-                <button
-                  class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
-                  @click="setupLMStudio"
-                >
-                  {{ t('settings.ollama.setup') }}
-                </button>
-              </div>
-              <div class="flex gap-1">
-                <span>{{ t('settings.ollama.need_help') }}</span>
-                <a
-                  :href="LM_STUDIO_TUTORIAL_URL"
-                  target="_blank"
-                  class="underline whitespace-nowrap hover:text-gray-800 cursor-pointer"
-                >
-                  {{ t('settings.ollama.follow_guide') }}
-                </a>
-              </div>
-            </Text>
-          </div>
+                {{ t('settings.ollama.setup') }}
+              </button>
+            </div>
+          </Text>
           <div>
             <div class="flex items-center justify-center flex-wrap gap-2 w-full font-medium">
               <Button
