@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v1.10.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.4...v1.10.0-beta.5)
+
+### 🩹 Fixes
+
+- **web-llm:** Fix infinite loading when local model cache is invalid ([3b6a8e0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3b6a8e0))
+- **settings:** Update connection message for LM Studio in multiple language files ([130bdd7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/130bdd7))
+
+### 🏡 Chore
+
+- **onboarding:** Adjust help section visibility based on selected endpoint type ([72515e8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/72515e8))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.4...v1.10.0-beta.4)
