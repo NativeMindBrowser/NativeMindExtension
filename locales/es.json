@@ -203,7 +203,7 @@
         "no_active_models": "Ollama conectado, pero no hay modelos activos",
         "not_connected_to_ollama": "No conectado a Ollama",
         "lm_studio_no_active_models": "LM Studio conectado, pero no hay modelos activos",
-        "not_connected_to_lm_studio": "No conectado a Ollama"
+        "not_connected_to_lm_studio": "No conectado a LM Studio"
       },
       "delete_model_confirm": "¿Estás seguro de que quieres eliminar el modelo \"{model}\"?"
     },

@@ -244,7 +244,7 @@
         "no_active_models": "Ollama подключен, но нет активных моделей",
         "not_connected_to_ollama": "Не подключено к Ollama",
         "lm_studio_no_active_models": "LM Studio подключена, но нет активных моделей",
-        "not_connected_to_lm_studio": "Не подключен к Ollama"
+        "not_connected_to_lm_studio": "Не подключено к LM Studio"
       },
       "delete_model_confirm": "Вы уверены, что хотите удалить модель \"{model}\"?"
     },

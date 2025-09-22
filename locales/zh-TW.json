@@ -244,7 +244,7 @@
         "no_active_models": "Ollama 已連接，但沒有啟用的模型",
         "not_connected_to_ollama": "未連接到 Ollama",
         "lm_studio_no_active_models": "LM Studio 已連接，但沒有啟用的模型",
-        "not_connected_to_lm_studio": "未連接到 Ollama"
+        "not_connected_to_lm_studio": "未連接到 LM Studio"
       },
       "delete_model_confirm": "您確定要刪除模型「{model}」嗎？"
     },

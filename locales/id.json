@@ -244,7 +244,7 @@
         "no_active_models": "Ollama terhubung, tetapi tidak ada model yang aktif",
         "not_connected_to_ollama": "Tidak terhubung ke Ollama",
         "lm_studio_no_active_models": "LM Studio terhubung, tetapi tidak ada model yang aktif",
-        "not_connected_to_lm_studio": "Tidak terhubung ke Ollama"
+        "not_connected_to_lm_studio": "Tidak terhubung ke LM Studio"
       },
       "delete_model_confirm": "Apakah Anda yakin ingin menghapus model \"{model}\"?"
     },

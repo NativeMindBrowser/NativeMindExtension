@@ -244,7 +244,7 @@
         "no_active_models": "Ollama đã kết nối, nhưng không có mô hình nào đang hoạt động",
         "not_connected_to_ollama": "Không kết nối với Ollama",
         "lm_studio_no_active_models": "LM Studio đã kết nối, nhưng không có mô hình nào đang hoạt động",
-        "not_connected_to_lm_studio": "Không kết nối với Ollama"
+        "not_connected_to_lm_studio": "Không kết nối với LM Studio"
       },
       "delete_model_confirm": "Bạn có chắc chắn muốn xóa mô hình \"{model}\" không?"
     },

@@ -244,7 +244,7 @@
         "no_active_models": "Ollamaに接続されていますが、アクティブなモデルがありません",
         "not_connected_to_ollama": "Ollamaに接続されていません",
         "lm_studio_no_active_models": "LM Studio に接続されましたが、アクティブなモデルがありません",
-        "not_connected_to_lm_studio": "Ollamaに接続されていません"
+        "not_connected_to_lm_studio": "LM Studioに接続されていません"
       },
       "delete_model_confirm": "モデル「{model}」を削除してもよろしいですか？"
     },
