@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.5...v1.10.0-beta.6)
+
+### 🏡 Chore
+
+- **chat:** Simplify error messages by removing endpoint type references ([3e1f5d1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e1f5d1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.4...v1.10.0-beta.5)
