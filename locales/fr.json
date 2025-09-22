@@ -397,11 +397,11 @@
     }
   },
   "errors": {
-    "model_not_found": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier votre connexion {endpointType} dans les paramètres et réessayer.",
-    "model_request_error": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier votre connexion {endpointType} dans les paramètres et réessayer.",
+    "model_not_found": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier votre connexion dans les paramètres et réessayer.",
+    "model_request_error": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier votre connexion dans les paramètres et réessayer.",
     "timeout_error": "Opération expirée : {message}",
     "unknown_error": "Une erreur inattendue s'est produite : {message}",
-    "model_request_timeout": "Délai d'attente de la demande dépassé, veuillez vérifier votre connexion {endpointType} ou envisager de démarrer une nouvelle session car les contextes longs peuvent affecter les temps de réponse.",
+    "model_request_timeout": "Délai d'attente de la requête dépassé, veuillez vérifier votre connexion ou envisager de démarrer une nouvelle session car les contextes longs peuvent affecter les temps de réponse.",
     "webllm_not_supported": "WebLLM n'est pas pris en charge sur votre appareil.",
     "max_characters_error": "Maximum {count} caractères autorisés"
   },

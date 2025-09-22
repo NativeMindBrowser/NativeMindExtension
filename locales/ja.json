@@ -397,11 +397,11 @@
     }
   },
   "errors": {
-    "model_not_found": "おっと！何かが間違いました。設定で{endpointType}接続を確認して、もう一度お試しください。",
+    "model_not_found": "おっと！何かが間違いました。設定で接続を確認してもう一度お試しください。",
     "timeout_error": "操作がタイムアウトしました：{message}",
     "unknown_error": "予期しないエラーが発生しました：{message}",
-    "model_request_error": "おっと！何かが間違いました。設定で{endpointType}接続を確認して、もう一度お試しください。",
-    "model_request_timeout": "リクエストタイムアウトです。{endpointType}接続を確認するか、長いコンテキストが応答時間に影響する可能性があるため、新しいセッションを開始することを検討してください。",
+    "model_request_error": "おっと！何かが間違いました。設定で接続を確認してもう一度お試しください。",
+    "model_request_timeout": "リクエストがタイムアウトしました。接続を確認するか、長いコンテキストが応答時間に影響する可能性があるため、新しいセッションを開始することを検討してください。",
     "webllm_not_supported": "WebLLMはお使いのデバイスではサポートされていません。",
     "max_characters_error": "最大 {count} 文字まで入力可能です"
   },

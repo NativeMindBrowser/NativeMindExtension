@@ -397,9 +397,9 @@
     }
   },
   "errors": {
-    "model_not_found": "糟糕！發生錯誤。請檢查設定中的 {endpointType} 連線並重試。",
-    "model_request_error": "糟糕！發生錯誤。請檢查設定中的 {endpointType} 連線並重試。",
-    "model_request_timeout": "請求逾時，請檢查您的 {endpointType} 連線或考慮開始新的會話，因為長上下文可能會影響回應時間。",
+    "model_not_found": "糟糕！發生錯誤。請檢查設定中的連線並重試。",
+    "model_request_error": "糟糕！發生錯誤。請檢查設定中的連線並重試。",
+    "model_request_timeout": "請求逾時，請檢查您的連線或考慮開始新的會話，因為長內容可能會影響回應時間。",
     "timeout_error": "操作計時：{message}",
     "unknown_error": "發生意外錯誤：{message}",
     "webllm_not_supported": "WebLLM 在您的裝置上不受支援。",

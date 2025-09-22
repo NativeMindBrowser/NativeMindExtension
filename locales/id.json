@@ -397,9 +397,9 @@
     }
   },
   "errors": {
-    "model_not_found": "Ups! Ada yang salah. Silakan periksa koneksi {endpointType} Anda di pengaturan dan coba lagi.",
-    "model_request_error": "Ups! Ada yang salah. Silakan periksa koneksi {endpointType} Anda di pengaturan dan coba lagi.",
-    "model_request_timeout": "Waktu permintaan habis, silakan periksa koneksi {endpointType} Anda atau pertimbangkan untuk memulai sesi baru karena konteks yang panjang dapat mempengaruhi waktu respons.",
+    "model_not_found": "Ups! Ada yang salah. Silakan periksa koneksi Anda di pengaturan dan coba lagi.",
+    "model_request_error": "Ups! Ada yang salah. Silakan periksa koneksi Anda di pengaturan dan coba lagi.",
+    "model_request_timeout": "Waktu permintaan habis, silakan periksa koneksi Anda atau pertimbangkan untuk memulai sesi baru karena konteks yang panjang dapat mempengaruhi waktu respons.",
     "timeout_error": "Operasi waktu habis: {message}",
     "unknown_error": "Terjadi kesalahan yang tidak terduga: {message}",
     "webllm_not_supported": "WebLLM tidak didukung pada perangkat Anda.",

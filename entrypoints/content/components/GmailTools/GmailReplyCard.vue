@@ -291,15 +291,14 @@ function applyReply() {
 async function checkLLMBackendStatus() {
   if (userConfig.llm.endpointType.get() === 'web-llm') return true
   const { status, endpointType } = await llmBackendStatusStore.checkCurrentBackendStatus()
-  const endpointName = endpointType === 'ollama' ? 'Ollama' : 'LM Studio'
   if (status === 'no-model') {
-    toast(t('errors.model_not_found', { endpointType: endpointName }), { duration: 2000 })
+    toast(t('errors.model_not_found'), { duration: 2000 })
     showSettings({ scrollTarget: 'model-download-section' })
     emit('close')
     return false
   }
   else if (status === 'backend-unavailable') {
-    toast(t('errors.model_request_error', { endpointType: endpointName }), { duration: 2000 })
+    toast(t('errors.model_request_error'), { duration: 2000 })
     endpointType === 'ollama' ? showSettings({ scrollTarget: 'ollama-server-address-section' }) : showSettings({ scrollTarget: 'lm-studio-server-address-section' })
     emit('close')
     return false

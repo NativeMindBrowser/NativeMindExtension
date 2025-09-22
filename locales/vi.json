@@ -397,9 +397,9 @@
     }
   },
   "errors": {
-    "model_not_found": "Rất tiếc! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối {endpointType} trong cài đặt và thử lại.",
-    "model_request_error": "Rất tiếc! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối {endpointType} trong cài đặt và thử lại.",
-    "model_request_timeout": "Hết thời gian chờ yêu cầu, vui lòng kiểm tra kết nối {endpointType} của bạn hoặc cân nhắc bắt đầu phiên mới vì ngữ cảnh dài có thể ảnh hưởng đến thời gian phản hồi.",
+    "model_not_found": "Ôi! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối trong cài đặt và thử lại.",
+    "model_request_error": "Ôi! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối trong cài đặt và thử lại.",
+    "model_request_timeout": "Hết thời gian chờ yêu cầu, vui lòng kiểm tra kết nối của bạn hoặc cân nhắc bắt đầu phiên mới vì ngữ cảnh dài có thể ảnh hưởng đến thời gian phản hồi.",
     "timeout_error": "Thao tác đã hết thời gian: {message}",
     "unknown_error": "Đã xảy ra lỗi không xác định: {message}",
     "webllm_not_supported": "WebLLM không được hỗ trợ trên thiết bị của bạn.",

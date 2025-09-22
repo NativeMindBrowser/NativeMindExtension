@@ -116,9 +116,9 @@
     }
   },
   "errors": {
-    "model_not_found": "¡Ups! Algo salió mal. Por favor verifica tu conexión de {endpointType} en la configuración e inténtalo de nuevo.",
-    "model_request_error": "¡Ups! Algo salió mal. Por favor verifica tu conexión de {endpointType} en la configuración e inténtalo de nuevo.",
-    "model_request_timeout": "Tiempo de espera agotado, por favor verifica tu conexión {endpointType} o considera iniciar una nueva sesión ya que los contextos largos pueden afectar los tiempos de respuesta.",
+    "model_not_found": "¡Ups! Algo salió mal. Por favor revisa tu conexión en configuración e inténtalo de nuevo.",
+    "model_request_error": "¡Ups! Algo salió mal. Por favor revisa tu conexión en configuración e inténtalo de nuevo.",
+    "model_request_timeout": "Tiempo de espera agotado, por favor verifica tu conexión o considera iniciar una nueva sesión ya que los contextos largos pueden afectar los tiempos de respuesta.",
     "timeout_error": "La operación agotó el tiempo de espera: {message}",
     "unknown_error": "Se produjo un error inesperado: {message}",
     "webllm_not_supported": "WebLLM no es compatible con tu dispositivo.",

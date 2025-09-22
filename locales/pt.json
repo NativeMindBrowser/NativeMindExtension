@@ -397,9 +397,9 @@
     }
   },
   "errors": {
-    "model_not_found": "Ops! Algo deu errado. Por favor, verifique sua conexão {endpointType} nas configurações e tente novamente.",
-    "model_request_error": "Ops! Algo deu errado. Por favor, verifique sua conexão {endpointType} nas configurações e tente novamente.",
-    "model_request_timeout": "Tempo limite da solicitação esgotado, verifique sua conexão {endpointType} ou considere iniciar uma nova sessão, pois contextos longos podem afetar os tempos de resposta.",
+    "model_not_found": "Ops! Algo deu errado. Por favor, verifique sua conexão nas configurações e tente novamente.",
+    "model_request_error": "Ops! Algo deu errado. Por favor, verifique sua conexão nas configurações e tente novamente.",
+    "model_request_timeout": "Tempo limite da solicitação esgotado, verifique sua conexão ou considere iniciar uma nova sessão, pois contextos longos podem afetar os tempos de resposta.",
     "timeout_error": "Operação expirou: {message}",
     "unknown_error": "Ocorreu um erro inesperado: {message}",
     "webllm_not_supported": "WebLLM não é suportado no seu dispositivo.",

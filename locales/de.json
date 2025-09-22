@@ -397,9 +397,9 @@
     }
   },
   "errors": {
-    "model_not_found": "Hoppla! Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre {endpointType}-Verbindung in den Einstellungen und versuchen Sie es erneut.",
-    "model_request_error": "Hoppla! Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre {endpointType}-Verbindung in den Einstellungen und versuchen Sie es erneut.",
-    "model_request_timeout": "Anfrage-Timeout, bitte überprüfen Sie Ihre {endpointType}-Verbindung oder erwägen Sie, eine neue Sitzung zu starten, da lange Kontexte die Antwortzeiten beeinträchtigen können.",
+    "model_not_found": "Hoppla! Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Verbindung in den Einstellungen und versuchen Sie es erneut.",
+    "model_request_error": "Hoppla! Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Verbindung in den Einstellungen und versuchen Sie es erneut.",
+    "model_request_timeout": "Anfrage-Timeout, bitte überprüfen Sie Ihre Verbindung oder erwägen Sie, eine neue Sitzung zu starten, da lange Kontexte die Antwortzeiten beeinträchtigen können.",
     "timeout_error": "Zeitüberschreitung bei der Operation: {message}",
     "unknown_error": "Ein unerwarteter Fehler ist aufgetreten: {message}",
     "webllm_not_supported": "WebLLM wird auf Ihrem Gerät nicht unterstützt.",
