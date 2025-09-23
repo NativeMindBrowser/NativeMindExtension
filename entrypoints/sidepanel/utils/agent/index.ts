@@ -429,7 +429,9 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      errorMsg.content = t('errors.unknown_error', { message: error.message.split('\n')[0].slice(0, 50) })
+      const msg = error.message.split('\n')[0]
+      const trimmedMsg = msg.length > 300 ? msg.slice(0, 300) + '...' : msg
+      errorMsg.content = t('errors.unknown_error', { message: trimmedMsg })
       return false
     }
     else if (error instanceof AppError) {
