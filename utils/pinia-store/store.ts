@@ -113,11 +113,23 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     const userConfig = await getUserConfig()
     const endpointType = userConfig.llm.endpointType.get()
     const currentModel = userConfig.llm.model.get()
-    if (endpointType !== 'ollama') return false
     if (!currentModel) return false
-    const modelDetails = await rpc.showOllamaModelDetails(currentModel)
-    const supported = !!modelDetails.capabilities?.includes('vision')
-    return supported
+    if (endpointType === 'ollama') {
+      const modelDetails = await rpc.showOllamaModelDetails(currentModel)
+      const supported = !!modelDetails.capabilities?.includes('vision')
+      return supported
+    }
+    else if (endpointType === 'lm-studio') {
+      let modelInfo = lmStudioModelList.value.find((m) => m.modelKey === currentModel)
+      if (!modelInfo) {
+        const list = await updateLMStudioModelList()
+        modelInfo = list.find((m) => m.modelKey === currentModel)
+      }
+      return !!modelInfo?.vision
+    }
+    else {
+      return false
+    }
   }
 
   const checkModelSupportThinking = async (modelId: string) => {
