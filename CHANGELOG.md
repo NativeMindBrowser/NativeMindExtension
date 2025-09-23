@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v1.10.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.6...v1.10.0-beta.7)
+
+### 🩹 Fixes
+
+- **chat:** Trim m studio error message length to improve readability ([57967fe](https://github.com/NativeMindBrowser/NativeMindExtension/commit/57967fe))
+- **AttachmentSelector:** Enhance model support checks for vision capabilities based on endpoint type ([e6d9954](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e6d9954))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.6
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.5...v1.10.0-beta.6)
