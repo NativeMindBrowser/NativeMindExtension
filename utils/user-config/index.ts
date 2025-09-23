@@ -13,6 +13,8 @@ import { lazyInitialize } from '../memo'
 import { forRuntimes } from '../runtime'
 import { ByteSize } from '../sizes'
 import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT, DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT, DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
+
+export type ThemeMode = 'light' | 'dark' | 'system'
 import { Config } from './helpers'
 
 const log = logger.child('user-config')
@@ -166,6 +168,9 @@ export async function _getUserConfig() {
       },
     },
     ui: {
+      theme: {
+        mode: await new Config('ui.theme.mode').default('system' as ThemeMode).build(),
+      },
       pinSidebar: await new Config('ui.pinSidebar').default(false).build(),
       onboarding: {
         version: await new Config('ui.onboarding.version').default(0).build(),

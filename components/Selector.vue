@@ -86,7 +86,7 @@
         v-if="isOpen"
         ref="dropdownRef"
         data-nativemind-selector-dropdown
-        class="fixed overflow-hidden z-10 bg-bg-component rounded-lg shadow-01"
+        class="fixed overflow-hidden z-10 bg-bg-primary rounded-lg shadow-01"
         :style="{ top: `${dropdownPos.y}px`, left: `${dropdownPos.x}px`, width: dropdownPos.width ? `${dropdownPos.width}px` : undefined, zIndex: String(zIndex) }"
         :class="dropdownClass"
       >
@@ -100,8 +100,8 @@
           <div
             v-for="(option, index) in options"
             :key="index"
-            class="p-2 transition-colors flex items-center rounded-sm"
-            :class="{ 'bg-[#DFE1E5]': isSelected(option), 'opacity-50 pointer-events-none': option.disabled, 'hover:bg-[#EAECEF] cursor-pointer': option.selectable !== false }"
+            class="p-2 cursor-pointer transition-colors flex items-center rounded-sm"
+            :class="{ 'bg-bg-selection': isSelected(option), 'opacity-50 pointer-events-none': option.disabled,'hover:bg-bg-hover cursor-pointer': option.selectable !== false }"
             @click="option.selectable !== false && selectOption(option)"
           >
             <slot
@@ -113,7 +113,7 @@
           </div>
           <div
             v-if="options.length === 0"
-            class="p-2 text-gray-500"
+            class="p-2 text-text-tertiary"
           >
             {{ props.emptyPlaceholder }}
           </div>

@@ -1,28 +1,28 @@
 <template>
   <div>
-    <div class="card min-w-80 max-w-110 text-xs">
+    <div class="card min-w-80 max-w-110 text-xs bg-bg-component text-text-primary rounded-md shadow-01 border border-border-light">
       <div class="title flex items-center justify-between h-9 px-3">
         <div class="flex items-center gap-1 text-xs font-medium leading-4">
           <ReplySuggestionIcon />
           {{ t('gmail_tools.cards.reply.title') }}
         </div>
         <button
-          class="text-[#71717A] cursor-pointer p-1 hover:bg-gray-100 rounded"
+          class="text-text-tertiary cursor-pointer p-1 hover:bg-bg-hover rounded"
           @click="emit('close')"
         >
           <IconClose
-            class="text-[#71717A] cursor-pointer"
+            class="text-text-tertiary cursor-pointer"
           />
         </button>
       </div>
       <Divider />
       <div class="output p-3 rounded-md">
-        <div class="bg-[#DCFFEA] rounded-sm p-2 flex gap-2">
+        <div class="bg-bg-success-subtle rounded-sm p-2 flex gap-2">
           <div class="shrink-0 h-[18px] flex items-center">
             <Loading
               :done="runningStatus === 'idle'"
               :size="12"
-              strokeColor="#000000"
+              strokeColor="var(--color-foreground-base)"
             />
           </div>
           <div class="min-w-0 flex-1">
@@ -36,17 +36,17 @@
               class="relative"
             >
               <MarkdownViewer
-                class="text-[#03943D] mr-5 pr-5 max-h-[max(calc(100vh-250px),100px)] overflow-y-auto"
+                class="text-text-success-strong mr-5 pr-5 max-h-[max(calc(100vh-250px),100px)] overflow-y-auto"
                 :text="output"
               />
               <!-- Copy Button -->
               <button
                 v-if="output.trim()"
-                class="absolute top-0 right-1 rounded hover:bg-white/30 transition cursor-pointer"
+                class="absolute top-0 right-1 rounded hover:bg-[color:var(--color-bg-primary)]/30 transition cursor-pointer"
                 :title="t('gmail_tools.cards.reply.copy_to_clipboard')"
                 @click="copyToClipboard"
               >
-                <CopyIcon class="w-4 h-4 text-[#03943D]" />
+                <CopyIcon class="w-4 h-4 text-text-success-strong" />
               </button>
             </div>
           </div>

@@ -3,7 +3,7 @@
     ref="textareaRef"
     v-model="inputValue"
     rows="1"
-    :class="classNames(props.class, 'field-sizing-content scrollbar-hide wrap-anywhere')"
+    :class="classNames(props.class, 'field-sizing-content scrollbar-hide wrap-anywhere text-text-primary')"
     @input="onInput"
     @paste="emit('paste', $event)"
   />

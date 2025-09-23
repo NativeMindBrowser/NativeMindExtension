@@ -6,7 +6,7 @@
     <Button
       v-if="isShowToolBarDeferred"
       variant="secondary"
-      class="toolbar bg-white fixed rounded-md overflow-hidden text-xs transition-[width,top,left]"
+      class="toolbar bg-bg-primary fixed rounded-md overflow-hidden text-xs transition-[width,top,left]"
       :style="toolBarPos ? { top: toolBarPos.top + 'px', left: toolBarPos.left + 'px' } : {}"
       @mouseenter="onMouseEnterToolBar"
     >
@@ -17,7 +17,7 @@
         <Text size="small">
           <button
             v-if="props.tools.includes('rewrite')"
-            class="bg-white border-0 cursor-pointer hover:bg-[#E4E4E7] h-7 flex items-center px-2 gap-[6px]"
+            class="bg-bg-primary border-0 cursor-pointer hover:bg-bg-hover h-7 flex items-center px-2 gap-[6px]"
             :class="{'opacity-50': !writingToolSelectedText}"
             @click.stop="onAction('rewrite')"
           >
@@ -26,7 +26,7 @@
           </button>
           <button
             v-if="props.tools.includes('proofread')"
-            class="bg-white border-0 cursor-pointer hover:bg-[#E4E4E7] h-7 flex items-center px-2 gap-[6px]"
+            class="bg-bg-primary border-0 cursor-pointer hover:bg-bg-hover h-7 flex items-center px-2 gap-[6px]"
             :class="{'opacity-50': !writingToolSelectedText}"
             @click.stop="onAction('proofread')"
           >
@@ -35,7 +35,7 @@
           </button>
           <button
             v-if="props.tools.includes('list')"
-            class="bg-white border-0 cursor-pointer hover:bg-[#E4E4E7] h-7 flex items-center px-2 gap-[6px]"
+            class="bg-bg-primary border-0 cursor-pointer hover:bg-bg-hover h-7 flex items-center px-2 gap-[6px]"
             :class="{'opacity-50': !writingToolSelectedText}"
             @click.stop="onAction('list')"
           >
@@ -44,7 +44,7 @@
           </button>
           <button
             v-if="props.tools.includes('sparkle')"
-            class="bg-white border-0 cursor-pointer hover:bg-[#E4E4E7] h-7 flex items-center px-2 gap-[6px]"
+            class="bg-bg-primary border-0 cursor-pointer hover:bg-bg-hover h-7 flex items-center px-2 gap-[6px]"
             :class="{'opacity-50': !writingToolSelectedText}"
             @click.stop="onAction('sparkle')"
           >
@@ -52,7 +52,7 @@
             {{ t('writing_tools.sparkle') }}
           </button>
           <!-- <button
-            class="mr-1 text-gray-700 bg-gray-50 hover:bg-gray-100 border-0 cursor-pointer p-1 rounded-full"
+            class="mr-1 text-text-secondary bg-bg-neutral-subtle hover:bg-bg-hover border-0 cursor-pointer p-1 rounded-full"
             @click="onCloseToolBar"
           >
             <IconClose class="w-3 h-3" />
@@ -63,7 +63,7 @@
     <div
       v-if="writingToolType"
       ref="popupRef"
-      class="popup bg-white fixed rounded-md z-50 shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
+      class="popup bg-bg-primary fixed rounded-md z-50 shadow-[0px_8px_16px_0px_var(--color-shadow-medium),0px_4px_8px_0px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)]"
       :class="!popupPos ? 'opacity-0' : ''"
       :style="popupPos ? { top: popupPos.top + 'px', left: popupPos.left + 'px' } : {}"
     >

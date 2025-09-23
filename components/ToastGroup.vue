@@ -7,14 +7,15 @@
     <div
       v-for="toast in toasts"
       :key="toast.id"
-      class="max-w-80 bg-white text-black shadow-md rounded-md p-3 transition-all duration-300 text-xs flex items-center gap-2 justify-between"
+      class="max-w-80 bg-bg-primary text-text-primary shadow-02 rounded-md p-3 transition-all duration-300 text-xs flex items-center gap-2 justify-between font-sans"
     >
       <div class="flex items-center gap-2">
         <div>
           <IconWarning
             v-if="toast.options.type === 'error'"
-            class="w-4 h-4 text-red-500"
+            class="w-4 h-4 text-text-critical"
           />
+          <Logo v-else />
         </div>
         <span v-if="!toast.options.isHTML">{{ toast.message }}</span>
         <div
@@ -26,7 +27,7 @@
         class="cursor-pointer"
         @click="toasts = toasts.filter(t => t.id !== toast.id)"
       >
-        <IconClose class="w-5 h-5 rounded-full hover:bg-gray-100 p-1 text-gray-700" />
+        <IconClose class="w-5 h-5 rounded-full hover:bg-bg-hover p-1 text-text-secondary" />
       </button>
     </div>
   </div>
@@ -37,6 +38,8 @@ import { ref } from 'vue'
 
 import IconClose from '@/assets/icons/close.svg?component'
 import IconWarning from '@/assets/icons/warning.svg?component'
+
+import Logo from './Logo.vue'
 
 export type ToastOptions = {
   duration?: number

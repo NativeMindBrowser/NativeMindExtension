@@ -322,7 +322,10 @@
     "interface": {
       "title": "Antarmuka",
       "interface_language": "Bahasa Antarmuka",
-      "interface_language_desc": "Pilih bahasa tampilan untuk antarmuka NativeMind"
+      "theme": "Tema",
+      "theme_light": "Terang",
+      "theme_dark": "Gelap",
+      "theme_system": "Sistem"
     },
     "header": {
       "starts_on_github": "Bintang di GitHub",

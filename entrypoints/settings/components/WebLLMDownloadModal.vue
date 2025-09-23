@@ -1,18 +1,18 @@
 <template>
-  <div class="bg-white text-black py-4 px-6 rounded-md max-w-full flex flex-col w-[340px] text-xs">
+  <div class="bg-bg-primary text-text-primary py-4 px-6 rounded-md max-w-full flex flex-col w-[340px] text-xs">
     <div class="font-bold text-base">
       {{ webLLMInitializeProgress.started ? t('settings.model_downloader.downloading_model', {model: DEFAULT_MODEL.name}) :t('settings.model_downloader.download_model', {model: DEFAULT_MODEL.name}) }}
       ({{ formatSize(DEFAULT_MODEL.weightsBinSize) }})
     </div>
     <div
       v-if="!webLLMInitializeProgress.started"
-      class="text-gray-600 text-sm"
+      class="text-text-secondary text-sm"
     >
       {{ t('settings.webllm_downloader.description', {model: DEFAULT_MODEL.name, size: formatSize(DEFAULT_MODEL.weightsBinSize)}) }}
     </div>
     <div
       v-else
-      class="text-gray-600 text-sm"
+      class="text-text-secondary text-sm"
     >
       {{ t('settings.model_downloader.downloading') }}
     </div>
@@ -22,7 +22,7 @@
     >
       <ProgressBar :progress="webLLMInitializeProgress.downloaded / (webLLMInitializeProgress.total || 1)" />
       <div class="flex gap-2 items-stretch flex-col">
-        <div class="text-[10px] text-gray-500 flex justify-between items-center">
+        <div class="text-[10px] text-text-tertiary flex justify-between items-center">
           <div>{{ formatSize(webLLMInitializeProgress.downloaded) }}</div>
           <div>{{ formatSize(webLLMInitializeProgress.total) }}</div>
         </div>
@@ -49,7 +49,7 @@
     </div>
     <div
       v-if="!supportedWebLLM.supported"
-      class="text-red-500 text-[10px] flex items-center gap-2 justify-start"
+      class="text-text-critical text-[10px] flex items-center gap-2 justify-start"
     >
       <IconWarning class="w-3 h-3" />
       {{ t('errors.webllm_not_supported') }}

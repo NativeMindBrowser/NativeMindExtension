@@ -65,15 +65,15 @@ export const initConfirmModal: (rootEl: HTMLElement) => Plugin = (rootEl) => {
             modelValue
             closeByMask
             noCloseButton
-            maskClass="bg-[#00000017]"
+            maskClass="bg-[var(--color-overlay-muted)]"
             onClose={cancel}
           >
             <div class="p-1">
-              <div class="p-8 bg-white rounded-2xl flex flex-col gap-8 w-[520px] max-w-full shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014]">
+              <div class="p-8 bg-bg-primary rounded-2xl flex flex-col gap-8 w-[520px] max-w-full shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)]">
                 <div class="absolute right-4 top-4" onClick={cancel}>
-                  <IconClose class="text-[#9EA3A8] w-5 h-5" />
+                  <IconClose class="text-text-quaternary w-5 h-5" />
                 </div>
-                <div class="text-sm">{message}</div>
+                <div class="text-sm text-text-primary">{message}</div>
                 <div class="flex justify-end gap-2 flex-wrap">
                   <Button
                     disabled={loading.value}

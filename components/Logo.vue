@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-1 text-[#1F2326]">
+  <div class="flex items-center gap-1 text-text-primary">
     <svg
       width="513"
       height="513"

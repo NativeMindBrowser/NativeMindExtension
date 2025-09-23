@@ -322,7 +322,10 @@
     "interface": {
       "title": "Interface",
       "interface_language": "Idioma da Interface",
-      "interface_language_desc": "Escolha o idioma de exibição para a interface do NativeMind"
+      "theme": "Tema",
+      "theme_light": "Claro",
+      "theme_dark": "Escuro",
+      "theme_system": "Sistema"
     },
     "header": {
       "starts_on_github": "Estrelas no GitHub",

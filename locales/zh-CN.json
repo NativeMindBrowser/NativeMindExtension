@@ -179,7 +179,10 @@
     "interface": {
       "title": "界面",
       "interface_language": "界面语言",
-      "interface_language_desc": "选择 NativeMind 界面的显示语言"
+      "theme": "主题",
+      "theme_light": "浅色",
+      "theme_dark": "深色",
+      "theme_system": "系统"
     },
     "header": {
       "starts_on_github": "Stars on GitHub",

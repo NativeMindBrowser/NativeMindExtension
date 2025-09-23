@@ -35,7 +35,7 @@
         v-else
         class="shrink-0 grow-0 self-start mt-[3px] size-5 p-0.5"
       >
-        <IconTickCircle class="w-4 text-success" />
+        <IconTickCircle class="w-4 text-accent-success" />
       </div>
       <div :class="classNames('grow min-w-0 flex', task.details?.expanded ? 'flex-col' : 'flex-row')">
         <div class="flex grow gap-1 w-full justify-between items-center text-text-secondary">
@@ -55,7 +55,7 @@
         </div>
         <div
           v-if="task.details?.expanded"
-          class="bg-white text-[#596066] rounded-md py-2 px-3 mt-[6px]"
+          class="bg-bg-primary text-text-secondary rounded-md py-2 px-3 mt-[6px]"
         >
           <MarkdownViewer
             :fadeInAnimation="!task.done"

@@ -30,7 +30,7 @@ export function register() {
       }
 
       .task-action{
-        color: #596066;
+        color: var(--color-text-secondary, #596066);
         white-space: nowrap;
       }
 
@@ -39,7 +39,7 @@ export function register() {
         flex-direction: row;
         align-items: center;
         padding: 2px 6px;
-        background: white;
+        background: var(--color-bg-clickable, #ffffff);
         border-radius: 4px;
         flex: 1;
         overflow: hidden;
@@ -51,13 +51,13 @@ export function register() {
         flex-direction: row;
         align-items: center;
         padding: 2px 6px;
-        background: white;
+        background: var(--color-bg-primary, #ffffff);
         border-radius: 4px;
         flex: 1;
         overflow: hidden;
         gap: 4px;
         cursor: pointer;
-        color: #24B960;
+        color: var(--color-accent-primary, #24B960);
         text-decoration: none;
         white-space: nowrap;
       }
@@ -121,7 +121,7 @@ export function register() {
         const partB = this.content.slice(-12)
 
         return html`
-        <div class="task-root" style="color: #9EA3A8;">
+        <div class="task-root" style="color: var(--color-text-quaternary, #9EA3A8);">
           <div class="task-action">
             <slot></slot>
           </div>
@@ -138,7 +138,7 @@ export function register() {
 
       if (this.type === 'tab' && this.content) {
         return html`
-          <div class="task-root" style="color: #9EA3A8;">
+          <div class="task-root" style="color: var(--color-text-quaternary, #9EA3A8);">
             <div class="task-action">
               <slot></slot>
             </div>
@@ -153,7 +153,7 @@ export function register() {
 
       if (this.type === 'page') {
         return html`
-          <div class="task-root" style="color: #24B960;">
+          <div class="task-root" style="color: var(--color-accent-primary, #24B960);">
             <div class="task-action">
               <slot></slot>
             </div>
@@ -169,7 +169,7 @@ export function register() {
       }
 
       return html`
-        <div class="task-root" style="color: #596066;">
+        <div class="task-root" style="color: var(--color-text-secondary, #596066);">
           <div class="task-action">
             <slot></slot>
           </div>

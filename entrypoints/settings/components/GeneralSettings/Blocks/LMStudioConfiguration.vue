@@ -119,7 +119,7 @@ onMounted(async () => {
   >
     <template #title>
       <div class="flex items-center gap-3">
-        <div class="size-6 rounded-md flex items-center justify-center overflow-hidden shadow-[0px_0px_0px_1px_#00000014,0px_1px_2px_0px_#0000001F]">
+        <div class="size-6 rounded-md flex items-center justify-center overflow-hidden shadow-02">
           <img
             :src="IconLMStudioLogo"
             class="size-6"
@@ -259,7 +259,7 @@ onMounted(async () => {
             >
               <span>{{ t('settings.providers.lm_studio.already_installed') }}</span>
               <button
-                class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
+                class="whitespace-nowrap hover:text-text-primary text-icon-link cursor-pointer"
                 @click="setupLMStudio"
               >
                 {{ t('settings.ollama.setup') }}

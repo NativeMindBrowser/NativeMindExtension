@@ -27,7 +27,7 @@
         role="tooltip"
         :aria-hidden="!isVisible"
         :class="classNames(
-          'absolute z-50 rounded-[8px] border border-black/5 bg-white px-3 py-2 text-xs leading-[14px] text-balance text-black shadow-[0_0_2px_0_rgba(0,0,0,0.08),0_2px_16px_0_rgba(0,0,0,0.08)] whitespace-nowrap',
+          'absolute z-50 rounded-[8px] border border-[color:var(--color-border-hairline)] bg-bg-primary px-3 py-2 text-xs leading-[14px] text-balance text-text-primary shadow-[0_0_2px_0_var(--color-shadow-medium),0_2px_16px_0_var(--color-shadow-medium)] whitespace-nowrap',
           props.class
         )"
         :style="{
@@ -41,11 +41,13 @@
         <template v-if="props.showArrow">
           <div
             v-if="actualPosition === 'top'"
-            class="absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-2 h-2 rotate-45 border-l border-b border-black/5 bg-white"
+            class="absolute left-1/2 -translate-x-1/2 bottom-[-4px] w-2 h-2 rotate-45 border-l border-b bg-bg-primary"
+            style="border-color: var(--color-border-hairline)"
           />
           <div
             v-else-if="actualPosition === 'bottom'"
-            class="absolute left-1/2 -translate-x-1/2 top-[-4px] w-2 h-2 rotate-45 border-l border-t border-black/5 bg-white"
+            class="absolute left-1/2 -translate-x-1/2 top-[-4px] w-2 h-2 rotate-45 border-l border-t bg-bg-primary"
+            style="border-color: var(--color-border-hairline)"
           />
         </template>
       </div>

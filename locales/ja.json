@@ -322,7 +322,10 @@
     "interface": {
       "title": "インターフェース",
       "interface_language": "インターフェース言語",
-      "interface_language_desc": "NativeMindインターフェースの表示言語を選択してください"
+      "theme": "テーマ",
+      "theme_light": "ライト",
+      "theme_dark": "ダーク",
+      "theme_system": "システム"
     },
     "header": {
       "starts_on_github": "GitHubでスター",

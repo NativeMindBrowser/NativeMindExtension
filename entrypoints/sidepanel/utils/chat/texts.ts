@@ -8,6 +8,6 @@ export const welcomeMessage = (t: ComposerTranslation) => {
   return `
 ${makeParagraph(t('onboarding.welcome_msg.title'), { class: 'text-base font-normal' })}
 
-${makeContainer(t('onboarding.welcome_msg.body'), { class: 'text-xs text-[#596066]' })}
+${makeContainer(t('onboarding.welcome_msg.body'), { class: 'text-xs text-text-secondary' })}
 `.trim()
 }

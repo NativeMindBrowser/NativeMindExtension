@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="isShow"
-    class="bg-[#F5F6FB]"
+    class="bg-bg-app"
   >
     <div ref="topRef">
       <div class="h-11 px-3 flex items-center justify-start">
         <div class="text-center" />
         <div class="absolute right-4 h-full flex items-center gap-4">
           <IconClose
-            class="w-4 h-4 cursor-pointer hover:text-gray-500"
+            class="w-4 h-4 cursor-pointer hover:text-text-tertiary"
             @click="onModelDownloaderFinished"
           />
         </div>
@@ -30,7 +30,7 @@
         <SloganCard />
         <div
           v-if="panel === 'tutorial'"
-          class="bg-white rounded-lg overflow-hidden grow flex flex-col justify-between font"
+          class="bg-bg-primary rounded-lg overflow-hidden grow flex flex-col justify-between font"
         >
           <BackendSelectionTutorialCard
             @installed="onBackendInstalled"

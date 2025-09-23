@@ -3,8 +3,8 @@
     :class="[
       'flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors group',
       isCurrent
-        ? 'bg-white hover:bg-white/80'
-        : 'bg-transparent hover:bg-white/80'
+        ? 'bg-bg-clickable hover:bg-bg-hover'
+        : 'bg-transparent hover:bg-bg-hover'
     ]"
     @click="handleClick"
   >
@@ -14,14 +14,14 @@
         v-if="isPinned && !isEditing"
         class="flex-shrink-0"
       >
-        <IconStarFilled class="w-4 h-4 text-[#F7C103] fill-current" />
+        <IconStarFilled class="w-4 h-4 text-text-warning fill-current" />
       </div>
 
       <!-- Chat Title -->
       <div class="flex-1 min-w-0 px-1 py-0.5">
         <div
           v-if="!isEditing"
-          class="text-[13px] font-medium text-black truncate"
+          class="text-[13px] font-medium text-text-primary truncate"
         >
           {{ chat.title || t('chat_history.untitled_chat') }}
         </div>
@@ -34,7 +34,7 @@
             v-model="editTitle"
             :maxlength="MAX_TITLE_LENGTH"
             wrapperClass="w-full"
-            class="w-full rounded-md px-2 py-1.5 text-[13px]"
+            class="w-full rounded-md px-2 py-1.5 text-[13px] text-text-primary"
             @blur="handleSave"
             @keydown.enter="handleSave"
             @keydown.escape="handleCancel"
@@ -80,31 +80,31 @@
         <!-- Dropdown Menu -->
         <div
           v-if="props.isMenuOpen"
-          class="absolute right-0 mt-3 p-1 bg-white border border-gray-200 rounded-lg shadow-lg z-30"
+          class="absolute right-0 mt-3 p-1 bg-bg-primary border border-border-light rounded-lg shadow-01 z-30"
         >
           <button
-            class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
+            class="w-full px-2 py-1.5 text-left text-[13px] text-text-primary hover:bg-bg-hover flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
             @click.stop="handleRename"
           >
             <IconEditPencil class="w-4 h-4" />
             {{ t('chat_history.rename') }}
           </button>
           <button
-            class="w-full px-2 py-1.5 text-left text-[13px] text-foreground-base hover:bg-gray-100 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
+            class="w-full px-2 py-1.5 text-left text-[13px] text-text-primary hover:bg-bg-hover flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
             @click.stop="handleToggleStar"
           >
             <IconStarFilled
               v-if="!isPinned"
-              class="w-4 h-4 text-[#F7C103] fill-current"
+              class="w-4 h-4 text-text-warning fill-current"
             />
             <IconStarOutline
               v-else
-              class="w-4 h-4 text-[#F7C103]"
+              class="w-4 h-4 text-text-warning"
             />
             {{ isPinned ? t('chat_history.unpin') : t('chat_history.pin') }}
           </button>
           <button
-            class="w-full px-2 py-1.5 text-left text-[13px] text-[#992121] hover:bg-red-50 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
+            class="w-full px-2 py-1.5 text-left text-[13px] text-text-critical hover:bg-[color:var(--color-danger)]/10 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
             @click.stop="handleDelete"
           >
             <IconTrash class="w-4 h-4" />

@@ -3,7 +3,7 @@
     v-model="locale"
     class="grow"
     containerClass="w-full"
-    dropdownClass="text-xs text-black w-52"
+    dropdownClass="text-xs text-text-primary w-52"
     dropdownAlign="left"
     :options="options"
   />

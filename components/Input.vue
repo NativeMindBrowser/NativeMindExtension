@@ -7,16 +7,20 @@
       :type="type"
       :placeholder="placeholder"
       :class="classNames(
-        'relative focus:shadow-[0px_0px_0px_1px_#24B960] rounded-[6px] shadow-[0px_0px_0px_1px_rgba(0,0,0,0.08),0px_1px_2px_0px_rgba(0,0,0,0.12)] p-2 outline-none w-full',
+        'relative rounded-[6px] shadow-02 p-2 outline-none w-full focus:shadow-[0px_0px_0px_1px_var(--color-border-accent)] bg-bg-component',
         props.class,
         props.disabled ? 'opacity-50' : '',
-        props.error ? 'shadow-[0px_0px_0px_3px_#E11D4826,0px_0px_0px_1px_#E11D48] focus:shadow-[0px_0px_0px_3px_#E11D4826,0px_0px_0px_1px_#E11D48]' : '',
-        isOverLimit ? 'shadow-[0px_0px_0px_1px_#E53232] focus:shadow-[0px_0px_0px_1px_#E53232]' : '',
+        props.error
+          ? 'shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)] focus:shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)]'
+          : '',
+        isOverLimit
+          ? 'shadow-[0px_0px_0px_1px_var(--color-border-warning)] focus:shadow-[0px_0px_0px_1px_var(--color-border-warning)]'
+          : '',
       )"
     >
     <div
       v-if="isOverLimit"
-      class="mt-2 text-xs leading-4 text-[#E53232] self-start"
+      class="mt-2 text-xs leading-4 text-[var(--color-border-warning)] self-start"
     >
       {{ $t('errors.max_characters_error', { count: maxlength }) }}
     </div>

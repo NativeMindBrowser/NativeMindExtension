@@ -62,8 +62,14 @@ export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async 
   taskMsg.details = {
     content: filteredLinks.map((link) => {
       const faviconUrl = link.favicon?.startsWith('data:') ? link.favicon : undefined
-      const faviconPart = faviconUrl ? makeRawHtmlTag('img', '', { src: faviconUrl, style: 'width: 16px; height: 16px;' }) : makeIcon('web', { color: '#596066' })
-      const linkPart = makeRawHtmlTag('a', link.title || link.url, { href: link.url, target: '_blank', style: 'color: #596066; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' })
+      const faviconPart = faviconUrl
+        ? makeRawHtmlTag('img', '', { src: faviconUrl, style: 'width: 16px; height: 16px;' })
+        : makeIcon('web', { color: 'var(--color-text-secondary, #596066)' })
+      const linkPart = makeRawHtmlTag('a', link.title || link.url, {
+        href: link.url,
+        target: '_blank',
+        style: 'color: var(--color-text-secondary, #596066); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;',
+      })
       return makeRawHtmlTag('div', `${faviconPart} ${linkPart}`, { style: 'display: flex; align-items: center; gap: 8px;' })
     }).join('\n'),
     expanded: true,

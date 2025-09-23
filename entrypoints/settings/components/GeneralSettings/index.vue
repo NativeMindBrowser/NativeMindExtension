@@ -37,13 +37,14 @@
               <div class="w-52">
                 <UILanguageSelector />
               </div>
-              <div>
-                <Text
-                  color="secondary"
-                  size="xs"
-                >
-                  {{ t('settings.interface.interface_language_desc') }}
-                </Text>
+            </div>
+          </Section>
+          <Section
+            :title="t('settings.interface.theme')"
+          >
+            <div class="flex flex-col gap-1">
+              <div class="w-52">
+                <ThemeSelector />
               </div>
             </div>
           </Section>
@@ -54,13 +55,14 @@
 </template>
 
 <script setup lang="tsx">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import Modal from '@/components/Modal.vue'
-import Text from '@/components/ui/Text.vue'
+import ThemeSelector from '@/components/ThemeSelector.vue'
 import UILanguageSelector from '@/components/UILanguageSelector.vue'
 import { useI18n } from '@/utils/i18n/index'
 import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
+import { useTheme } from '@/utils/theme'
 import { getUserConfig } from '@/utils/user-config'
 
 import { useSettingsInitialQuery } from '../../composables/useQuery'
@@ -74,6 +76,7 @@ import OllamaConfiguration from './Blocks/OllamaConfiguration.vue'
 
 const { t } = useI18n()
 const llmBackendStatusStore = useLLMBackendStatusStore()
+const { initializeTheme } = useTheme()
 
 const settingsQuery = useSettingsInitialQuery()
 const settingsRef = ref<HTMLElement | null>(null)
@@ -108,5 +111,9 @@ watch(translationSystemPrompt, (newValue) => {
   else {
     translationSystemPromptError.value = ''
   }
+})
+
+onMounted(async () => {
+  await initializeTheme()
 })
 </script>

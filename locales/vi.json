@@ -322,7 +322,10 @@
     "interface": {
       "title": "Giao diện",
       "interface_language": "Ngôn ngữ giao diện",
-      "interface_language_desc": "Chọn ngôn ngữ hiển thị cho giao diện NativeMind"
+      "theme": "Giao diện",
+      "theme_light": "Sáng",
+      "theme_dark": "Tối",
+      "theme_system": "Hệ thống"
     },
     "header": {
       "starts_on_github": "Sao trên GitHub",

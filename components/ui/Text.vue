@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
 const colorMapping: Record<Color, string> = {
   primary: 'text-text-primary',
   secondary: 'text-text-secondary',
-  disabled: 'text-[#AEB5BD]',
+  disabled: 'text-text-disabled',
   tertiary: 'text-text-tertiary',
   placeholder: 'text-text-placeholder',
 }

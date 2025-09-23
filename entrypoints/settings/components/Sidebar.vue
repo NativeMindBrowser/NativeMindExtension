@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col">
+  <div class="h-full flex flex-col text-text-primary">
     <div
       class="font-bold text-[21px] cursor-default px-6 py-5 leading-[26px]"
     >
@@ -11,7 +11,7 @@
         v-for="menuItem of menu"
         :key="menuItem.to"
         class="rounded-md py-[6px] px-[10px] min-h-8 transition-all text-xs font-medium flex gap-2 items-center"
-        activeClass="bg-[#F5F6FB]"
+        activeClass="bg-bg-selection"
         :to="menuItem.to"
       >
         <div class="flex items-center w-4">

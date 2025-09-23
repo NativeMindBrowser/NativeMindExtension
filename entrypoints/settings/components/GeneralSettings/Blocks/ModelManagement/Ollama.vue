@@ -11,7 +11,7 @@
       >
         <div
           v-if="runningModels.length"
-          class="flex flex-col gap-2"
+          class="flex flex-col gap-3"
         >
           <Card
             v-for="model in runningModels"
@@ -29,14 +29,14 @@
         </div>
         <div
           v-else-if="ollamaConnectionStatus === 'connected'"
-          class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014] p-3 flex gap-2 text-[#6E757C] font-medium text-xs"
+          class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)] p-3 flex gap-2 text-text-tertiary font-medium text-xs"
         >
           <IconNoActiveModels class="h-4" />
           {{ t('settings.general.running_models.no_active_models') }}
         </div>
         <div
           v-else
-          class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014] p-3 flex gap-2 text-[#6E757C] font-medium text-xs"
+          class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)] p-3 flex gap-2 text-text-tertiary font-medium text-xs"
         >
           <IconUnconnected class="h-4" />
           {{ t('settings.general.running_models.not_connected_to_ollama') }}
@@ -49,7 +49,7 @@
       >
         <div
           v-if="ollamaModelList.length"
-          class="flex flex-col gap-2"
+          class="flex flex-col gap-3"
         >
           <Card
             v-for="model in ollamaModelList"
@@ -62,14 +62,14 @@
         </div>
         <div
           v-else-if="ollamaConnectionStatus === 'connected'"
-          class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014] p-3 flex gap-2 text-[#6E757C] font-medium text-xs"
+          class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)] p-3 flex gap-2 text-text-tertiary font-medium text-xs"
         >
           <IconNoActiveModels class="h-4" />
           {{ t('settings.general.running_models.no_active_models') }}
         </div>
         <div
           v-else
-          class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014] p-3 flex gap-2 text-[#6E757C] font-medium text-xs"
+          class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)] p-3 flex gap-2 text-text-tertiary font-medium text-xs"
         >
           <IconUnconnected class="h-4" />
           {{ t('settings.general.running_models.not_connected_to_ollama') }}

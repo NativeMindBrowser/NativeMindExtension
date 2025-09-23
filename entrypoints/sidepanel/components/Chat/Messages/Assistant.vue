@@ -12,7 +12,7 @@
         v-if="message.isError"
         class="grow-0 shrink-0"
       >
-        <IconWarning class="w-4 text-[#FDA58F]" />
+        <IconWarning class="w-4 text-text-caution" />
       </div>
       <div class="max-w-full flex-1 flex flex-col gap-1">
         <div
@@ -31,7 +31,7 @@
               class="flex items-center gap-1.5 overflow-hidden whitespace-nowrap"
             >
               <div class="shrink-0 grow-0 size-5 p-0.5">
-                <IconTickCircle class="w-4 text-success shrink-0" />
+                <IconTickCircle class="w-4 text-accent-success shrink-0" />
               </div>
               <Text color="primary">
                 {{ t('chat.messages.thought_for_seconds', Math.ceil(message.reasoningTime / 1000), { named: { second: Math.ceil(message.reasoningTime / 1000) } }) }}
@@ -78,8 +78,8 @@
           ref="scrollContainerRef"
           :containerClass="classNames('overscroll-auto overflow-auto transition-height duration-200 [interpolate-size:allow-keywords] wrap-anywhere pl-6', showClampedReasoning ? 'h-[3.3em] leading-[1.5em]' : 'h-auto')"
           :arrivalShadow="{
-            top: { color: '#F5F6FB', size: 12, offset: 8 },
-            bottom: { color: '#F5F6FB', size: 12, offset: 8 }
+            top: { color: 'var(--color-bg-app)', size: 12, offset: 8 },
+            bottom: { color: 'var(--color-bg-app)', size: 12, offset: 8 }
           }"
           :autoSnap="{bottom: (showClampedReasoning && !message.done) ? true : false}"
         >

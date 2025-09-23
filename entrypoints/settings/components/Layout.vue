@@ -38,8 +38,8 @@ const onClickTitle = () => {
 
 <template>
   <div>
-    <div class="items-center h-15 box-border border-b border-gray-200">
-      <div class="px-6 flex justify-between items-center h-full">
+    <div class="items-center h-15 box-border border-b border-border-light">
+      <div class="px-6 flex justify-between items-center h-full bg-bg-app">
         <div
           class="text-base"
           @click="onClickTitle"
@@ -78,17 +78,17 @@ const onClickTitle = () => {
       </div>
     </div>
     <div class="flex h-[calc(100vh-60px)] overflow-hidden">
-      <div class="w-60 shrink-0 grow-0">
+      <div class="w-60 shrink-0 grow-0 bg-bg-app">
         <Sidebar :debug="enabledDebug" />
       </div>
-      <div class="flex-1 flex justify-center bg-[#F5F6FB] overflow-auto h-full min-w-80 px-4">
+      <div class="flex-1 flex justify-center bg-bg-secondary overflow-auto h-full min-w-80 px-4 text-text-primary">
         <div class="max-w-[640px] min-w-0 grow-1 shrink-1">
           <RouterView v-slot="{ Component }">
             <Suspense>
               <component :is="Component" />
             </Suspense>
           </RouterView>
-          <div class="font-light text-xs text-gray-500 flex flex-col gap-1 py-4">
+          <div class="font-light text-xs text-text-tertiary flex flex-col gap-1 py-4">
             <i18n-t
               keypath="settings.feedback.contact_msg"
               tag="div"

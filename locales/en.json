@@ -189,7 +189,10 @@
     "interface": {
       "title": "Interface",
       "interface_language": "Interface Language",
-      "interface_language_desc": "Choose the display language for NativeMind interface"
+      "theme": "Theme",
+      "theme_light": "Light",
+      "theme_dark": "Dark",
+      "theme_system": "System"
     },
     "header": {
       "starts_on_github": "Stars on GitHub",

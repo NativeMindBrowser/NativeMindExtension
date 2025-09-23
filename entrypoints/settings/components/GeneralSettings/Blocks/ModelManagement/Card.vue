@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014] p-3 flex flex-col gap-[6px]">
+  <div class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)] p-3 flex flex-col gap-[6px]">
     <div class="flex justify-between items-start gap-1">
       <div class="flex flex-col">
         <div class="flex gap-2 items-center">
@@ -14,7 +14,7 @@
               </div>
               <div v-if="sizeTag">
                 <Tag
-                  class="rounded-full bg-[#F4F4F5] border border-[#E4E4E7] text-[#52525B] flex items-center gap-[3px] px-2 py-0 min-h-6 box-border"
+                  class="rounded-full bg-bg-tag border border-border-strong text-text-secondary flex items-center gap-[3px] px-2 py-0 min-h-6 box-border"
                 >
                   <template #icon>
                     <IconVRam />
@@ -64,7 +64,7 @@
       <Tag
         v-for="tag of tags"
         :key="tag.key"
-        class="rounded-full bg-[#F4F4F5] border border-[#E4E4E7] text-[#52525B] flex items-center gap-[3px] px-2 py-0 min-h-6 box-border"
+        class="rounded-full bg-bg-tag border border-border text-text-secondary flex items-center gap-[3px] px-2 py-0 min-h-6 box-border"
       >
         <template #icon>
           <component :is="tag.icon" />

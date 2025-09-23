@@ -61,8 +61,8 @@
           <div
             v-for="(option, index) in options"
             :key="index"
-            class="p-2 cursor-pointer hover:bg-[#EAECEF] transition-colors flex items-center gap-2 rounded-sm"
-            :class="{ 'bg-[#DFE1E5]': isSelected(option), 'opacity-50 pointer-events-none': option.disabled }"
+            class="p-2 cursor-pointer hover:bg-bg-hover transition-colors flex items-center gap-2 rounded-sm"
+            :class="{ 'bg-bg-selection': isSelected(option), 'opacity-50 pointer-events-none': option.disabled }"
             @click="selectOption(option)"
           >
             <!-- Option Icon -->
@@ -81,7 +81,7 @@
           </div>
           <div
             v-if="options.length === 0"
-            class="p-2 text-gray-500"
+            class="p-2 text-text-tertiary"
           >
             {{ props.emptyPlaceholder }}
           </div>

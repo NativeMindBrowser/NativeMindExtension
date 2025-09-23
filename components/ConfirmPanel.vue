@@ -13,7 +13,7 @@ const emit = defineEmits(['cancel', 'ok'])
 </script>
 
 <template>
-  <div class="bg-white py-4 px-6 rounded-md w-[340px] max-w-full flex flex-col gap-2 text-black text-xs">
+  <div class="bg-bg-primary py-4 px-6 rounded-md w-[340px] max-w-full flex flex-col gap-2 text-text-primary text-xs">
     <div class="font-bold text-base">
       <slot name="title">
         {{ title }}

@@ -322,7 +322,10 @@
     "interface": {
       "title": "介面",
       "interface_language": "介面語言",
-      "interface_language_desc": "選擇 NativeMind 介面的顯示語言"
+      "theme": "主題",
+      "theme_light": "淺色",
+      "theme_dark": "深色",
+      "theme_system": "系統"
     },
     "header": {
       "starts_on_github": "Stars on GitHub",

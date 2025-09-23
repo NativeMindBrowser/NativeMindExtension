@@ -10,6 +10,7 @@ import Input from '@/components/Input.vue'
 import Loading from '@/components/Loading.vue'
 import ScrollTarget from '@/components/ScrollTarget.vue'
 import Button from '@/components/ui/Button.vue'
+import Text from '@/components/ui/Text.vue'
 import WarningMessage from '@/components/WarningMessage.vue'
 import { useLogger } from '@/composables/useLogger'
 import { useValueGuard } from '@/composables/useValueGuard'
@@ -121,7 +122,7 @@ onMounted(async () => {
   >
     <template #title>
       <div class="flex items-center gap-3">
-        <div class="size-6 rounded-md flex items-center justify-center overflow-hidden shadow-[0px_0px_0px_1px_#00000014,0px_1px_2px_0px_#0000001F]">
+        <div class="size-6 rounded-md flex items-center justify-center overflow-hidden shadow-02 text-text-primary">
           <IconOllamaLogo class="size-5" />
         </div>
         <span class="font-medium text-base">
@@ -248,7 +249,7 @@ onMounted(async () => {
           <ModelManagement v-if="endpointType !== 'web-llm' && ollamaConnectionStatus === 'connected'" />
           <div
             v-if="endpointType !== 'web-llm' && ollamaConnectionStatus !== 'connected'"
-            class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014] p-3 flex gap-2 text-[#6E757C] font-medium text-xs"
+            class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)] p-3 flex gap-2 text-text-tertiary font-medium text-xs"
           >
             <IconUnconnected class="h-4" />
             {{ t('settings.general.running_models.not_connected_to_ollama') }}
@@ -265,7 +266,7 @@ onMounted(async () => {
               >
                 <span>{{ t('settings.ollama.already_installed') }}</span>
                 <button
-                  class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
+                  class="whitespace-nowrap hover:text-text-primary text-icon-link cursor-pointer"
                   @click="setupOllama"
                 >
                   {{ t('settings.ollama.setup') }}
@@ -276,7 +277,7 @@ onMounted(async () => {
                 <a
                   :href="OLLAMA_TUTORIAL_URL"
                   target="_blank"
-                  class="underline whitespace-nowrap hover:text-gray-800 cursor-pointer"
+                  class="underline whitespace-nowrap hover:text-text-primary cursor-pointer text-icon-link"
                 >
                   {{ t('settings.ollama.follow_guide') }}
                 </a>
