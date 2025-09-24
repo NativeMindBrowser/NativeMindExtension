@@ -50,10 +50,10 @@ import { useElementBounding } from '@vueuse/core'
 import { computed, onMounted, ref, shallowRef, watchEffect } from 'vue'
 import { ShadowRoot as ShadowRootComponent } from 'vue-shadow-dom'
 
+import { useTheme } from '@/composables/theme'
 import { useDraggable } from '@/composables/useDraggable'
 import { useLogger } from '@/composables/useLogger'
 import { injectStyleSheetToDocument, loadContentScriptStyleSheet } from '@/utils/css'
-import { useTheme } from '@/utils/theme'
 import { getUserConfig } from '@/utils/user-config'
 
 import { useRootElement } from '../../composables/useRootElement'

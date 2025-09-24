@@ -29,11 +29,11 @@
 import { computed, onMounted, ref, shallowRef, watch, watchEffect } from 'vue'
 import { ShadowRoot as ShadowRootComponent } from 'vue-shadow-dom'
 
+import { useTheme } from '@/composables/theme'
 import { useLogger } from '@/composables/useLogger'
 import { useFocusedElements } from '@/composables/useObserverElements'
 import { injectStyleSheetToDocument, loadContentScriptStyleSheet } from '@/utils/css'
 import { isContentEditableElement, isEditorFrameworkElement, shouldExcludeEditableElement } from '@/utils/selection'
-import { useTheme } from '@/utils/theme'
 import { getUserConfig } from '@/utils/user-config'
 
 import { useRootElement } from '../../composables/useRootElement'

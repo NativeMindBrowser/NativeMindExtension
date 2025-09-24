@@ -3,11 +3,12 @@ import { useI18n } from 'vue-i18n'
 
 import LogoSvg from '@/assets/icons/logo-custom-color.svg?raw'
 import { useDocumentLoaded } from '@/composables/useDocumentLoaded'
+import { ThemeType } from '@/types/theme'
 import Logger from '@/utils/logger'
 import { c2bRpc } from '@/utils/rpc'
 import { toggleContainer } from '@/utils/rpc/content-main-world-fns'
 import { sleep } from '@/utils/sleep'
-import { getDocumentTheme, GmailTheme } from '@/utils/theme'
+import { getDocumentTheme } from '@/utils/theme'
 import { getUserConfig } from '@/utils/user-config'
 
 import { useGmailDetector } from '../../composables/useGmailDetector'
@@ -32,7 +33,7 @@ type GmailButtonThemeColors = {
   spinnerShadow: string
 }
 
-const GMAIL_BUTTON_THEME_COLORS: Record<GmailTheme, GmailButtonThemeColors> = {
+const GMAIL_BUTTON_THEME_COLORS: Record<ThemeType, GmailButtonThemeColors> = {
   light: {
     background: '#FBF8F4',
     text: '#596066',

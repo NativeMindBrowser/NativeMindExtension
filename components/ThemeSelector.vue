@@ -13,8 +13,8 @@
 
 import { computed } from 'vue'
 
+import { useTheme } from '@/composables/theme'
 import { useI18n } from '@/utils/i18n/index'
-import { useTheme } from '@/utils/theme'
 
 import Selector from './Selector.vue'
 

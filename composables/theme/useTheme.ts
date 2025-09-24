@@ -1,8 +1,8 @@
 import { computed, ref, watch } from 'vue'
 
-import { getUserConfig, type ThemeMode } from '../user-config'
+import { ThemeModeType } from '@/types/theme'
 
-export type GmailTheme = 'light' | 'dark'
+import { getUserConfig } from '../../utils/user-config'
 
 const themeStore = ref<Awaited<ReturnType<typeof getUserConfig>>['ui']['theme'] | null>(null)
 const isInitialized = ref(false)
@@ -14,13 +14,6 @@ async function initializeTheme() {
     isInitialized.value = true
   }
   return themeStore.value
-}
-
-export const getDocumentTheme = (): GmailTheme => {
-  if (typeof document !== 'undefined' && document.documentElement.classList.contains('dark')) {
-    return 'dark'
-  }
-  return 'light'
 }
 
 export function useTheme() {
@@ -41,7 +34,7 @@ export function useTheme() {
 
   const themeMode = computed({
     get: () => themeStore.value?.mode.get() ?? 'system',
-    set: (mode: ThemeMode) => {
+    set: (mode: ThemeModeType) => {
       if (themeStore.value) {
         themeStore.value.mode.set(mode)
       }
@@ -58,7 +51,7 @@ export function useTheme() {
 
   const isDark = computed(() => currentTheme.value === 'dark')
 
-  const setTheme = (mode: ThemeMode) => {
+  const setTheme = (mode: ThemeModeType) => {
     themeMode.value = mode
   }
 

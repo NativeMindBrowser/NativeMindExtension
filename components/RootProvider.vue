@@ -5,8 +5,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
+import { useTheme } from '@/composables/theme'
 import { useInjectContext } from '@/composables/useInjectContext'
-import { useTheme } from '@/utils/theme'
 
 const props = defineProps<{
   rootElement: HTMLElement
