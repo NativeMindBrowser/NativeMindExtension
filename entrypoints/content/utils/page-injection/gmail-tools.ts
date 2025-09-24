@@ -105,23 +105,23 @@ function buildGmailButtonStyles(className: string, options: GmailButtonStyleOpti
 }
 
 /* Dark mode styles */
-.${className}.dark {
+.${className}[data-nm-theme="dark"] {
   background: ${darkColors.background};
   color: ${darkColors.text};
   box-shadow: ${darkColors.baseShadow};
 }
 
-.${className}.dark:hover:not(:disabled) {
+.${className}[data-nm-theme="dark"]:hover:not(:disabled) {
   background: ${darkColors.hoverBackground};
   box-shadow: ${darkColors.hoverShadow};
 }
 
-.${className}.dark:disabled {
+.${className}[data-nm-theme="dark"]:disabled {
   background: ${darkColors.disabledBackground};
   color: ${darkColors.disabledText};
 }
 
-.${className}.dark svg {
+.${className}[data-nm-theme="dark"] svg {
   color: ${darkColors.text};
 }
 `
@@ -158,7 +158,7 @@ ${baseRules}
   animation-delay: calc(var(--delay) * var(--bar-number));
 }
 
-.${className}.dark .nativemind-loading-spinner .bar {
+.${className}[data-nm-theme="dark"] .nativemind-loading-spinner .bar {
   background: ${darkColors.spinnerBar};
   box-shadow: 0 0 1px ${darkColors.spinnerShadow};
 }
@@ -196,9 +196,8 @@ function makeSummaryButton(threadElement: HTMLElement, buttonText: string, exter
   }
 
   const currentTheme = getDocumentTheme()
-  button.className = currentTheme === 'dark'
-    ? `${NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS} dark`
-    : NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS
+  button.className = NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS
+  button.setAttribute('data-nm-theme', currentTheme)
 
   button.addEventListener('mousedown', async (ev) => {
     // Return early if button is disabled
@@ -271,9 +270,8 @@ function makeReplyButton(buttonText: string) {
   })
 
   const currentTheme = getDocumentTheme()
-  button.className = currentTheme === 'dark'
-    ? `${NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS} dark`
-    : NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS
+  button.className = NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS
+  button.setAttribute('data-nm-theme', currentTheme)
 
   button.addEventListener('click', async (ev) => {
     ev.stopImmediatePropagation()
@@ -317,9 +315,8 @@ function makeComposeButton(buttonText: string) {
   })
 
   const currentTheme = getDocumentTheme()
-  button.className = currentTheme === 'dark'
-    ? `${NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS} dark`
-    : NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS
+  button.className = NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS
+  button.setAttribute('data-nm-theme', currentTheme)
 
   button.addEventListener('click', async (ev) => {
     ev.stopImmediatePropagation()

@@ -11,7 +11,7 @@
       >
         <div
           class="container bg-bg-primary text-text-primary font-inter"
-          :class="{ 'dark': currentTheme === 'dark' }"
+          :data-nm-theme="currentTheme"
         >
           <div
             v-if="showReplyCard"

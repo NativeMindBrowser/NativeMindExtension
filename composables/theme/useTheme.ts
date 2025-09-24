@@ -1,3 +1,4 @@
+import { useEventListener } from '@vueuse/core'
 import { computed, ref, watch } from 'vue'
 
 import { ThemeModeType } from '@/types/theme'
@@ -29,7 +30,7 @@ export function useTheme() {
     const handleChange = (e: MediaQueryListEvent) => {
       systemTheme.value = e.matches ? 'dark' : 'light'
     }
-    mediaQuery.addEventListener('change', handleChange)
+    useEventListener(mediaQuery, 'change', handleChange)
   }
 
   const themeMode = computed({
@@ -65,16 +66,11 @@ export function useTheme() {
     }
   }
 
-  // Apply theme class to document and shadow roots
+  // Apply theme data attribute to document
   watch(currentTheme, (theme) => {
     if (typeof document !== 'undefined') {
       const root = document.documentElement
-      if (theme === 'dark') {
-        root.classList.add('dark')
-      }
-      else {
-        root.classList.remove('dark')
-      }
+      root.setAttribute('data-nm-theme', theme)
     }
   }, { immediate: true })
 

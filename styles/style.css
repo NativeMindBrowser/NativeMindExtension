@@ -180,7 +180,7 @@
 }
 
 /* Dark mode colors */
-.dark {
+[data-nm-theme="dark"] {
   --color-text-primary: #f8f9fa;
   --color-text-secondary: #eaecef;
   --color-text-tertiary: #8b949e;
