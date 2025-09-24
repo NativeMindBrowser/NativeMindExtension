@@ -11,7 +11,7 @@
         props.class,
         props.disabled ? 'opacity-50' : '',
         props.error
-          ? 'shadow-[0px_0px_0px_3px_var(--color-border-c),0px_0px_0px_1px_var(--color-border-critical)] focus:shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)]'
+          ? 'shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)] focus:shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)]'
           : '',
         isOverLimit
           ? 'shadow-[0px_0px_0px_1px_var(--color-warning)] focus:shadow-[0px_0px_0px_1px_var(--color-warning)]'
