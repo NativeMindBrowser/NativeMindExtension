@@ -173,7 +173,7 @@ renderer.link = ({ href, title, text }) => {
   anchor.textContent = text
   anchor.target = '_blank'
   anchor.rel = 'noopener noreferrer'
-  anchor.className = 'text-text-link hover:text-text-link-hover underline'
+  anchor.className = 'text-text-primary hover:text-text-primary/80 underline'
   return anchor.outerHTML
 }
 

@@ -24,7 +24,7 @@ export function register() {
         display: flex;
         flex-direction: row;
         align-items: center;
-        text-size: 14px;
+        font-size: 14px;
         line-height: 20px;
         gap: 6px;
       }
@@ -50,8 +50,8 @@ export function register() {
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding: 2px 6px;
-        background: var(--color-bg-primary, #ffffff);
+        padding: 0px 4px;
+        background: var(--color-bg-accent-green, #dcffea);
         border-radius: 4px;
         flex: 1;
         overflow: hidden;
@@ -67,6 +67,7 @@ export function register() {
         width: 16px;
         height: 16px;
         flex-shrink: 0;
+        display: flex;
       }
 
       .task-content {
@@ -102,7 +103,7 @@ export function register() {
     private getIconForType(type: string) {
       const iconMappings = {
         search: 'web',
-        page: 'taskFetchPage',
+        page: 'web',
         tab: 'link',
         pdf: 'pdf',
         image: 'taskReadFile',
