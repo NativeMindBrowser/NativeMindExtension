@@ -22,7 +22,7 @@
       <!-- Reset to default button -->
       <button
         v-if="showResetButton"
-        class="text-[11px] leading-[16px] text-icon-link hover:text-[var(--color-text-link-hover)] font-normal cursor-pointer flex items-center gap-1"
+        class="text-[11px] leading-[16px] text-text-link hover:text-text-link-hover font-normal cursor-pointer flex items-center gap-1"
         @click="resetToDefault"
       >
         {{ t('textarea.reset_to_default') }}

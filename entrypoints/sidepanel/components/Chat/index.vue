@@ -68,7 +68,7 @@
             triggerStyle="ghost"
           />
         </div>
-        <div class="gap-1 flex relative bg-bg-chat-input rounded-md px-3 pt-2 pb-9 max-h-36">
+        <div class="gap-1 flex relative border border-border-chat-input bg-bg-chat-input rounded-md px-3 pt-2 pb-9 max-h-36">
           <ScrollContainer
             class="overflow-hidden w-full"
             :arrivalShadow="{
@@ -106,7 +106,7 @@
               <Button
                 v-if="chat.isAnswering()"
                 variant="secondary"
-                class="size-6 rounded-md flex items-center justify-center hover:bg-[color:var(--color-border-strong)]/80 bg-[var(--color-border-strong)] cursor-pointer shadow-none"
+                class="size-6 rounded-md flex items-center justify-center hover:bg-border-strong/80 bg-border-strong cursor-pointer shadow-none"
                 @click="onStop"
               >
                 <IconStop class="size-[15px] text-white" />

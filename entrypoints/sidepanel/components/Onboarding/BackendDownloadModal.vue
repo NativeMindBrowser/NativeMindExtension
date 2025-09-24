@@ -40,7 +40,7 @@
           </div>
         </div>
         <div v-if="pulling?.error">
-          <div class="text-text-critical text-xs flex items-center gap-1">
+          <div class="text-danger text-xs flex items-center gap-1">
             <IconWarning class="w-3 h-3 shrink-0" />
             <span class="wrap-anywhere">{{ pulling.error }}</span>
           </div>

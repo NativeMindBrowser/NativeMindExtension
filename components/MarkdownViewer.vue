@@ -50,7 +50,7 @@ const inlineDirective: DirectiveConfig = {
       const url = token.attrs?.url
       const icon = token.attrs?.icon
       const iconHtml = icon ? `<span class="inline-block mr-1" style="vertical-align: -3px;">${IconMDLink}</span>` : ''
-      return `<a target="_blank" href="${url}" title="${text}" rel="noopener" class="text-icon-link hover:text-[var(--color-text-link-hover)]">${iconHtml}${text}</a>`
+      return `<a target="_blank" href="${url}" title="${text}" rel="noopener" class="text-text-link hover:text-link-hover">${iconHtml}${text}</a>`
     }
     else if (token.meta.name === 'icon') {
       const iconName = token.text as IconName
@@ -173,7 +173,7 @@ renderer.link = ({ href, title, text }) => {
   anchor.textContent = text
   anchor.target = '_blank'
   anchor.rel = 'noopener noreferrer'
-  anchor.className = 'text-icon-link hover:text-[var(--color-text-link-hover)] underline'
+  anchor.className = 'text-text-link hover:text-text-link-hover underline'
   return anchor.outerHTML
 }
 

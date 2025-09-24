@@ -78,17 +78,15 @@
   --color-text-placeholder: #aeb5bd;
   --color-text-disabled: #aeb5bd;
   --color-text-quaternary: #9ea3a8;
-  --color-text-info: #1565c0;
-  --color-text-success-strong: #03943d;
-  --color-text-critical: #992121;
-  --color-text-warning: #f7c103;
+  --color-text-critical: #BF2A2A;
   --color-text-caution: #fda58f;
+
+  --color-text-link: #0d80f2;
   --color-text-link-hover: #0b6bbf;
 
-  --color-icon-link: #0d80f2;
-  --color-icon-muted: #71717a;
-  --color-icon-warning: #f7c103;
-  --color-icon-caution: #fda58f;
+  --color-text-accent: #03943d;
+  --color-text-blue: #0082FB;
+
   --color-icon-quick-action: #596066;
 
   --color-bg-app: #f5f6fb;
@@ -111,6 +109,8 @@
   --color-bg-clickable: #ffffff;
   --color-bg-quick-action: #f5f6f7;
   --color-bg-chat-input: #ffffff;
+
+  --color-bg-accent-green: #dcffea;
 
   --color-foreground-base: #18181b;
   --color-foreground-contrast: #000000;
@@ -150,11 +150,12 @@
   --color-accent-primary-hover: #089641;
   --color-accent-primary-shadow: #0e6b33;
   --color-accent-primary-disabled: #8a8a8a;
-  --color-accent-success: #60c959;
 
   --color-success: #60c959;
+  --color-warning: #f7c103;
   --color-danger: #bf2a2a;
   --color-quaternary: #bdc2c7;
+  --color-danger-soft: #e11d4826;
 
   --color-gradient-onboarding-start: #d5f4e1;
   --color-gradient-onboarding-end: #ffffff;
@@ -187,17 +188,16 @@
   --color-text-placeholder: #6e7681;
   --color-text-disabled: #6e7681;
   --color-text-quaternary: #7d8590;
-  --color-text-info: #8ab4ff;
-  --color-text-success-strong: #56d364;
-  --color-text-critical: #f85149;
-  --color-text-warning: #ffb900;
-  --color-text-caution: #f7c103;
+  --color-text-success: #24b960;
+  --color-text-critical: #BF2A2A;
+  --color-text-caution: #fda58f;
+
+  --color-text-link: #58a6ff;
   --color-text-link-hover: #78a6ff;
 
-  --color-icon-link: #58a6ff;
-  --color-icon-muted: #8b949e;
-  --color-icon-warning: #ffb900;
-  --color-icon-caution: #f7c103;
+  --color-text-accent: #56d364;
+  --color-text-blue: #1565c0;
+
   --color-icon-quick-action: #878c92;
 
   --color-bg-app: #121212;
@@ -219,14 +219,16 @@
   /* Specific colors */
   --color-bg-clickable: #212124;
   --color-bg-quick-action: #212124;
-  --color-bg-chat-input: #18181b;
+  --color-bg-chat-input: #212124;
+
+  --color-bg-accent-green: #1b3c2a;
 
   --color-foreground-base: #f0f6fc;
   --color-foreground-contrast: #ffffff;
 
   --color-border: #2a2a2a;
   --color-border-light: #212124;
-  --color-border-strong: #3c434d;
+  --color-border-strong: #2a2a2a;
   --color-border-selection: #24b96080;
   --color-border-accent: #24b960;
   --color-border-critical: #f85149;
@@ -236,7 +238,7 @@
   --color-border-hairline: #262a31;
   --color-border-overlay: #f8f9fa33;
   --color-border-quick-action: #ffffff1f;
-  --color-border-chat-input: #232326;
+  --color-border-chat-input: #2A2A2A;
   --color-divider: #212124;
 
   --color-surface-disabled: #2f363d;
@@ -259,11 +261,12 @@
   --color-accent-primary-hover: #089641;
   --color-accent-primary-shadow: #0e6b33;
   --color-accent-primary-disabled: #3c434d;
-  --color-accent-success: #56d364;
 
   --color-success: #56d364;
-  --color-danger: #f85149;
+  --color-warning: #ffb900;
+  --color-danger: #bf2a2a;
   --color-quaternary: #30363d;
+  --color-danger-soft: #f8514926;
 
   --color-gradient-onboarding-start: #1b3125;
   --color-gradient-onboarding-end: #161b22;

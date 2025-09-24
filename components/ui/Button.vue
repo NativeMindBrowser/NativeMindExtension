@@ -40,8 +40,8 @@ const classMapping = {
 }
 
 const disableClassMapping = {
-  primary: `shadow-[0px_0px_0px_1px_var(--color-border-disabled),0px_1px_2px_0px_var(--color-shadow-contrast),0px_0.75px_0px_0px_var(--color-shadow-inset-highlight)_inset] pointer-event-none bg-[var(--color-accent-primary-disabled)] text-text-disabled`,
-  secondary: `shadow-[0px_0px_0px_1px_var(--color-border-disabled),0px_1px_2px_0px_var(--color-shadow-contrast),0px_0.75px_0px_0px_var(--color-shadow-inset-highlight)_inset] pointer-event-none bg-[var(--color-surface-disabled)] text-text-disabled`,
+  primary: `shadow-[0px_0px_0px_1px_var(--color-border-disabled),0px_1px_2px_0px_var(--color-shadow-contrast),0px_0.75px_0px_0px_var(--color-shadow-inset-highlight)_inset] pointer-event-none bg-accent-primary-disabled text-text-disabled`,
+  secondary: `shadow-[0px_0px_0px_1px_var(--color-border-disabled),0px_1px_2px_0px_var(--color-shadow-contrast),0px_0.75px_0px_0px_var(--color-shadow-inset-highlight)_inset] pointer-event-none bg-color-surface-disabled text-text-disabled`,
 }
 
 const buttonClass = computed(() => `rounded-md cursor-pointer ${classMapping[props.variant]} ${props.disabled ? disableClassMapping[props.variant] : ''}`)

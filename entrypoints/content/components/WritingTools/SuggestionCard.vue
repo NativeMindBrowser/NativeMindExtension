@@ -44,7 +44,7 @@
       </div>
       <Divider />
       <div class="output p-3 rounded-md">
-        <div class="bg-bg-success-subtle rounded-sm p-2 flex gap-2">
+        <div class="bg-bg-accent-green rounded-sm p-2 flex gap-2">
           <div class="shrink-0 h-[18px] flex items-center">
             <Loading
               :done="runningStatus === 'idle'"
@@ -63,7 +63,7 @@
               class="max-h-[min(90vh,500px)] overflow-y-auto"
             >
               <MarkdownViewer
-                class="text-text-success-strong"
+                class="text-text-accent"
                 :text="output"
               />
             </div>

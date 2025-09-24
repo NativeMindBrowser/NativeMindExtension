@@ -1,5 +1,5 @@
 <template>
-  <div :class="classNames('flex items-center justify-center w-4 h-4 rounded-full border border-[var(--color-border-hairline)] bg-white', props.class)">
+  <div :class="classNames('flex items-center justify-center w-4 h-4 rounded-full border border-border-hairline bg-white', props.class)">
     <component
       :is="iconComponent"
       class="max-w-3/4 max-h-3/4 w-3/4"

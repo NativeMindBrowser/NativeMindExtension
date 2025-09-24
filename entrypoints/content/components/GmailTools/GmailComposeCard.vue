@@ -46,17 +46,17 @@
               v-else
               class="relative"
             >
-              <div class="text-text-info text-sm mr-10">
+              <div class="text-text-blue text-sm mr-10">
                 {{ optimizedSubject }}
               </div>
               <!-- Copy Button for Subject -->
               <button
                 v-if="optimizedSubject.trim()"
-                class="absolute top-0 right-1 rounded hover:bg-[color:var(--color-bg-primary)]/30 transition cursor-pointer"
+                class="absolute top-0 right-1 rounded hover:bg-bg-primary/30 transition cursor-pointer"
                 :title="t('gmail_tools.cards.compose.copy_subject_to_clipboard')"
                 @click="copySubjectToClipboard"
               >
-                <CopyIcon class="w-4 h-4 text-text-info" />
+                <CopyIcon class="w-4 h-4 text-text-blue" />
               </button>
             </div>
           </div>
@@ -65,7 +65,7 @@
 
       <!-- Email Body Section -->
       <div class="body-section p-3">
-        <div class="bg-bg-success-subtle rounded-sm p-2 flex gap-2">
+        <div class="bg-bg-accent-green rounded-sm p-2 flex gap-2">
           <div class="shrink-0 h-[18px] flex items-center">
             <Loading
               :done="runningStatus !== 'pending' && runningStatus !== 'streaming'"
@@ -93,17 +93,17 @@
               class="relative"
             >
               <MarkdownViewer
-                class="text-text-success-strong mr-5 pr-5 max-h-[max(calc(100vh-350px),100px)] overflow-y-auto"
+                class="text-text-accent mr-5 pr-5 max-h-[max(calc(100vh-350px),100px)] overflow-y-auto"
                 :text="optimizedBody"
               />
               <!-- Copy Button for Body -->
               <button
                 v-if="optimizedBody.trim()"
-                class="absolute top-0 right-1 rounded hover:bg-[color:var(--color-bg-primary)]/30 transition cursor-pointer"
+                class="absolute top-0 right-1 rounded hover:bg-bg-primary/30 transition cursor-pointer"
                 :title="t('gmail_tools.cards.compose.copy_body_to_clipboard')"
                 @click="copyBodyToClipboard"
               >
-                <CopyIcon class="w-4 h-4 text-text-success-strong" />
+                <CopyIcon class="w-4 h-4 text-text-accent" />
               </button>
             </div>
           </div>

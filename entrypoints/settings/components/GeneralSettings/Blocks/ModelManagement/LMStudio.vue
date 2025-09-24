@@ -34,7 +34,7 @@
         <IconUnconnected class="h-4" />
         {{ t('settings.general.running_models.not_connected_to_lm_studio') }}
       </div>
-      <div class="rounded-md border border-border-strong bg-bg-elevated px-2 py-[3px]">
+      <div class="rounded-md border border-border-strong bg-bg-component px-2 py-[3px]">
         <Text
           color="secondary"
           size="xs"

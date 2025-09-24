@@ -4,9 +4,9 @@
       <div
         class="w-2 h-2 rounded-xs border"
         :class="{
-          'bg-accent-success border-[var(--color-border-overlay)]': status === 'success',
-          'bg-[var(--color-text-warning)] border-[var(--color-border-overlay)]': status === 'warning',
-          'bg-[var(--color-danger)] border-[var(--color-border-overlay)]': status === 'error',
+          'bg-success border-border-overlay': status === 'success',
+          'bg-warning border-border-overlay': status === 'warning',
+          'bg-danger border-border-overlay': status === 'error',
         }"
       />
       <Text

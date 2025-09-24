@@ -266,7 +266,7 @@ onMounted(async () => {
               >
                 <span>{{ t('settings.ollama.already_installed') }}</span>
                 <button
-                  class="whitespace-nowrap hover:text-text-primary text-icon-link cursor-pointer"
+                  class="whitespace-nowrap hover:text-text-primary text-text-link cursor-pointer"
                   @click="setupOllama"
                 >
                   {{ t('settings.ollama.setup') }}
@@ -277,7 +277,7 @@ onMounted(async () => {
                 <a
                   :href="OLLAMA_TUTORIAL_URL"
                   target="_blank"
-                  class="underline whitespace-nowrap hover:text-text-primary cursor-pointer text-icon-link"
+                  class="underline whitespace-nowrap hover:text-text-primary cursor-pointer text-text-link"
                 >
                   {{ t('settings.ollama.follow_guide') }}
                 </a>

@@ -65,7 +65,7 @@ export const initConfirmModal: (rootEl: HTMLElement) => Plugin = (rootEl) => {
             modelValue
             closeByMask
             noCloseButton
-            maskClass="bg-[var(--color-overlay-muted)]"
+            maskClass="bg-overlay-muted"
             onClose={cancel}
           >
             <div class="p-1">

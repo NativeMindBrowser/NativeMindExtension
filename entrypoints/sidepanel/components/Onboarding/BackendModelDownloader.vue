@@ -96,7 +96,7 @@
           <a
             :href="tutorialUrl"
             target="_blank"
-            class="whitespace-nowrap hover:text-text-primary text-icon-link cursor-pointer"
+            class="whitespace-nowrap hover:text-text-primary text-text-link cursor-pointer"
           >
             {{ t('onboarding.guide.learn_about_models') }}
           </a>
@@ -106,7 +106,7 @@
           <a
             :href="searchUrl"
             target="_blank"
-            class="whitespace-nowrap hover:text-text-primary text-icon-link cursor-pointer"
+            class="whitespace-nowrap hover:text-text-primary text-text-link cursor-pointer"
           >
             {{ t('onboarding.guide.browse_more_models') }}
           </a>

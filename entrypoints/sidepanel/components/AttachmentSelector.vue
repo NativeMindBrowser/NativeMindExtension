@@ -48,7 +48,7 @@
                     <ExternalImage
                       :src="tab.faviconUrl"
                       alt=""
-                      class="w-4 h-4 rounded-full grow-0 shrink-0 bg-[var(--color-border-light)]"
+                      class="w-4 h-4 rounded-full grow-0 shrink-0 bg-border-light"
                       fallbackClass="bg-transparent"
                     >
                       <template #fallback>
@@ -91,7 +91,7 @@
         :key="index"
         class="p-2 rounded-lg bg-bg-overlay-contrast flex items-center gap-2 max-w-11/12"
       >
-        <IconWarningSolid class="w-5 h-5 shrink-0 text-text-warning" />
+        <IconWarningSolid class="w-5 h-5 shrink-0 text-warning" />
         <Text
           size="small"
           class="font-medium text-white min-w-0 wrap-anywhere"
@@ -106,7 +106,7 @@
         class="shrink-0 grow-0 h-6 w-6 grid place-items-center"
         @click="showSelector"
       >
-        <IconAdd class="cursor-pointer text-[var(--color-foreground-base)]" />
+        <IconAdd class="cursor-pointer text-foreground-base" />
       </Button>
       <ScrollContainer
         ref="tabsContainerRef"
@@ -129,7 +129,7 @@
                 <ExternalImage
                   :src="attachment.value.faviconUrl"
                   alt=""
-                  class="w-3 h-3 rounded-full bg-[var(--color-border-light)]"
+                  class="w-3 h-3 rounded-full bg-border-light"
                   fallbackClass="bg-transparent"
                 >
                   <template #fallback>

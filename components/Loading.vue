@@ -16,7 +16,7 @@
     class="shrink-0 grow-0"
   >
     <IconLoadingDone
-      class="text-accent-success"
+      class="text-success"
       :style="{ width: size + 'px', height: size + 'px' }"
     />
   </div>

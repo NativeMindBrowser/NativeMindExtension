@@ -14,7 +14,7 @@
         v-if="isPinned && !isEditing"
         class="flex-shrink-0"
       >
-        <IconStarFilled class="w-4 h-4 text-text-warning fill-current" />
+        <IconStarFilled class="w-4 h-4 text-warning fill-current" />
       </div>
 
       <!-- Chat Title -->
@@ -95,16 +95,16 @@
           >
             <IconStarFilled
               v-if="!isPinned"
-              class="w-4 h-4 text-text-warning fill-current"
+              class="w-4 h-4 text-warning fill-current"
             />
             <IconStarOutline
               v-else
-              class="w-4 h-4 text-text-warning"
+              class="w-4 h-4 text-warning"
             />
             {{ isPinned ? t('chat_history.unpin') : t('chat_history.pin') }}
           </button>
           <button
-            class="w-full px-2 py-1.5 text-left text-[13px] text-text-critical hover:bg-[color:var(--color-danger)]/10 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
+            class="w-full px-2 py-1.5 text-left text-[13px] text-text-critical hover:bg-danger/10 flex items-center gap-2 rounded cursor-pointer flex-nowrap whitespace-nowrap"
             @click.stop="handleDelete"
           >
             <IconTrash class="w-4 h-4" />

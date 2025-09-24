@@ -17,7 +17,7 @@
       </div>
       <Divider />
       <div class="output p-3 rounded-md">
-        <div class="bg-bg-success-subtle rounded-sm p-2 flex gap-2">
+        <div class="bg-bg-accent-green rounded-sm p-2 flex gap-2">
           <div class="shrink-0 h-[18px] flex items-center">
             <Loading
               :done="runningStatus === 'idle'"
@@ -36,17 +36,17 @@
               class="relative"
             >
               <MarkdownViewer
-                class="text-text-success-strong mr-5 pr-5 max-h-[max(calc(100vh-250px),100px)] overflow-y-auto"
+                class="text-text-accent mr-5 pr-5 max-h-[max(calc(100vh-250px),100px)] overflow-y-auto"
                 :text="output"
               />
               <!-- Copy Button -->
               <button
                 v-if="output.trim()"
-                class="absolute top-0 right-1 rounded hover:bg-[color:var(--color-bg-primary)]/30 transition cursor-pointer"
+                class="absolute top-0 right-1 rounded hover:bg-bg-primary/30 transition cursor-pointer"
                 :title="t('gmail_tools.cards.reply.copy_to_clipboard')"
                 @click="copyToClipboard"
               >
-                <CopyIcon class="w-4 h-4 text-text-success-strong" />
+                <CopyIcon class="w-4 h-4 text-text-accent" />
               </button>
             </div>
           </div>

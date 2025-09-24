@@ -259,7 +259,7 @@ onMounted(async () => {
             >
               <span>{{ t('settings.providers.lm_studio.already_installed') }}</span>
               <button
-                class="whitespace-nowrap hover:text-text-primary text-icon-link cursor-pointer"
+                class="whitespace-nowrap hover:text-text-primary text-text-link cursor-pointer"
                 @click="setupLMStudio"
               >
                 {{ t('settings.ollama.setup') }}

@@ -131,7 +131,7 @@
                   </span>
                   <span class="font-light"> ({{ pullingModel.status }}) </span>
                   <button
-                    class="text-icon-link hover:text-text-info font-normal text-xs ml-2 cursor-pointer"
+                    class="text-text-link hover:text-text-link-hover font-normal text-xs ml-2 cursor-pointer"
                     @click="pullingModel.abort"
                   >
                     {{ pullingModel.status !== 'success' ? 'stop' : 'clear' }}
@@ -139,7 +139,7 @@
                 </div>
                 <div
                   v-if="pullingModel.error"
-                  class="font-light text-[8px] text-text-critical"
+                  class="font-light text-[8px] text-danger"
                 >
                   {{ pullingModel.error }}
                 </div>
@@ -165,7 +165,7 @@
                 <div>translator system prompt</div>
                 <div
                   v-if="translationSystemPromptError"
-                  class="text-text-critical text-[8px]"
+                  class="text-danger text-[8px]"
                 >
                   ({{ translationSystemPromptError }})
                 </div>
@@ -538,7 +538,7 @@
               <div
                 v-if="clearChatHistoryResult"
                 class="text-xs"
-                :class="clearChatHistoryResult.success ? 'text-text-success-strong' : 'text-text-critical'"
+                :class="clearChatHistoryResult.success ? 'text-success' : 'text-danger'"
               >
                 {{ clearChatHistoryResult.success
                   ? `Successfully deleted ${clearChatHistoryResult.deletedCount} chat${clearChatHistoryResult.deletedCount !== 1 ? 's' : ''}`

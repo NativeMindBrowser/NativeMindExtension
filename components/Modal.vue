@@ -13,8 +13,8 @@
       <slot name="mask">
         <div
           v-if="!noMask"
-          class="mask absolute inset-0"
-          :class="classNames('bg-[var(--color-overlay-scrim)]', maskClass, fadeInOpacityAnimation)"
+          class="mask absolute inset-0 bg-overlay-scrim"
+          :class="classNames(maskClass, fadeInOpacityAnimation)"
         />
       </slot>
       <div

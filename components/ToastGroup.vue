@@ -13,7 +13,7 @@
         <div>
           <IconWarning
             v-if="toast.options.type === 'error'"
-            class="w-4 h-4 text-text-critical"
+            class="w-4 h-4 text-danger"
           />
           <Logo v-else />
         </div>

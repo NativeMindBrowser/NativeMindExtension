@@ -49,7 +49,7 @@
     </div>
     <div
       v-if="!supportedWebLLM.supported"
-      class="text-text-critical text-[10px] flex items-center gap-2 justify-start"
+      class="text-danger text-[10px] flex items-center gap-2 justify-start"
     >
       <IconWarning class="w-3 h-3" />
       {{ t('errors.webllm_not_supported') }}

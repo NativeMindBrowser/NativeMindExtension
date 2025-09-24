@@ -35,7 +35,7 @@
         v-else
         class="shrink-0 grow-0 self-start mt-[3px] size-5 p-0.5"
       >
-        <IconTickCircle class="w-4 text-accent-success" />
+        <IconTickCircle class="w-4 text-success" />
       </div>
       <div :class="classNames('grow min-w-0 flex', task.details?.expanded ? 'flex-col' : 'flex-row')">
         <div class="flex grow gap-1 w-full justify-between items-center text-text-secondary">

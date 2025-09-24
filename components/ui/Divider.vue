@@ -1,5 +1,5 @@
 <template>
-  <div :class="classNames('w-full h-px bg-[var(--color-divider)]', props.class)" />
+  <div :class="classNames('w-full h-px bg-divider', props.class)" />
 </template>
 
 <script setup lang="ts">

@@ -3,7 +3,7 @@
     <div
       class="flex items-center gap-1 px-1 py-1 min-h-6 rounded-sm cursor-pointer"
       :class="[
-        isOnlineSearchEnabled ? 'bg-bg-success-subtle text-text-secondary' : 'text-text-placeholder',
+        isOnlineSearchEnabled ? 'bg-bg-accent-green text-text-secondary' : 'text-text-placeholder',
       ]"
       @click="toggleOnlineSearch"
     >

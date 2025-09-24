@@ -2,7 +2,7 @@
   <div
     class="px-4 py-4 flex flex-col gap-3 items-stretch"
   >
-    <div class="text-text-success-strong font-medium text-xs">
+    <div class="text-text-accent font-medium text-xs">
       {{ t('onboarding.guide.step1') }}
     </div>
     <div class="shrink-0 grow-0 text-[15px] font-semibold flex flex-col gap-4">
@@ -11,7 +11,7 @@
       </div>
       <div
         class="flex items-center justify-between gap-3 min-h-13 py-1 px-4 rounded-lg cursor-pointer border-2 text-[15px]"
-        :class="[selectedEndpointType === 'ollama' ? 'border-[color:var(--color-border-accent)]' : 'border-border-strong']"
+        :class="[selectedEndpointType === 'ollama' ? 'border-border-accent' : 'border-border-strong']"
         @click="selectedEndpointType = 'ollama'"
       >
         <div class="whitespace-nowrap flex items-center gap-2">
@@ -28,7 +28,7 @@
       </div>
       <div
         class="flex items-center justify-between gap-3 min-h-13 py-1 px-4 rounded-lg cursor-pointer border-2 text-[15px]"
-        :class="[selectedEndpointType === 'lm-studio' ? 'border-[color:var(--color-border-accent)]' : 'border-border-strong']"
+        :class="[selectedEndpointType === 'lm-studio' ? 'border-border-accent' : 'border-border-strong']"
         @click="selectedEndpointType = 'lm-studio'"
       >
         <div class="whitespace-nowrap flex items-center gap-2">
@@ -111,7 +111,7 @@
             <div class="flex gap-1">
               <span>{{ t('onboarding.guide.already_installed', { endpointType: selectedEndpointName }) }}</span>
               <button
-                class="whitespace-nowrap hover:text-text-primary text-icon-link cursor-pointer"
+                class="whitespace-nowrap hover:text-text-primary text-text-link cursor-pointer"
                 @click="onClickOpenSettings"
               >
                 {{ t('onboarding.guide.setup') }}
@@ -125,7 +125,7 @@
               <a
                 :href="tutorialUrl"
                 target="_blank"
-                class="underline whitespace-nowrap hover:text-text-primary cursor-pointer text-icon-link"
+                class="underline whitespace-nowrap hover:text-text-primary cursor-pointer text-text-link"
               >
                 {{ t('onboarding.guide.follow_our_tutorial') }}
               </a>

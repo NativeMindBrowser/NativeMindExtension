@@ -31,7 +31,7 @@
               class="flex items-center gap-1.5 overflow-hidden whitespace-nowrap"
             >
               <div class="shrink-0 grow-0 size-5 p-0.5">
-                <IconTickCircle class="w-4 text-accent-success shrink-0" />
+                <IconTickCircle class="w-4 text-success shrink-0" />
               </div>
               <Text color="primary">
                 {{ t('chat.messages.thought_for_seconds', Math.ceil(message.reasoningTime / 1000), { named: { second: Math.ceil(message.reasoningTime / 1000) } }) }}

@@ -11,16 +11,16 @@
         props.class,
         props.disabled ? 'opacity-50' : '',
         props.error
-          ? 'shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)] focus:shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)]'
+          ? 'shadow-[0px_0px_0px_3px_var(--color-border-c),0px_0px_0px_1px_var(--color-border-critical)] focus:shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)]'
           : '',
         isOverLimit
-          ? 'shadow-[0px_0px_0px_1px_var(--color-border-warning)] focus:shadow-[0px_0px_0px_1px_var(--color-border-warning)]'
+          ? 'shadow-[0px_0px_0px_1px_var(--color-warning)] focus:shadow-[0px_0px_0px_1px_var(--color-warning)]'
           : '',
       )"
     >
     <div
       v-if="isOverLimit"
-      class="mt-2 text-xs leading-4 text-[var(--color-border-warning)] self-start"
+      class="mt-2 text-xs leading-4 text-danger self-start"
     >
       {{ $t('errors.max_characters_error', { count: maxlength }) }}
     </div>
