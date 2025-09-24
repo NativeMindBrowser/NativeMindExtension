@@ -17,7 +17,7 @@
             <Selector
               v-model="targetLocale"
               :options="translationLanguageOptions"
-              dropdownClass="text-xs text-black w-52"
+              dropdownClass="text-xs text-text-primary w-52"
               dropdownAlign="left"
             />
           </Section>

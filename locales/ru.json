@@ -322,7 +322,10 @@
     "interface": {
       "title": "Интерфейс",
       "interface_language": "Язык интерфейса",
-      "interface_language_desc": "Выберите язык отображения для интерфейса NativeMind"
+      "theme": "Тема",
+      "theme_light": "Светлая",
+      "theme_dark": "Темная",
+      "theme_system": "Системная"
     },
     "header": {
       "starts_on_github": "Звезды на GitHub",

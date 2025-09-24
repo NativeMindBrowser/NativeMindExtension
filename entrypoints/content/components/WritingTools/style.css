@@ -39,7 +39,7 @@
 }
 
 .circle-transition {
-  stroke: #000;
+  stroke: var(--color-foreground-base);
   animation: color-transition 0.6s ease-out forwards;
 }
 
@@ -64,8 +64,8 @@
     font-weight: 600;
   }
   :deep(pre) {
-    color: var(--color-gray-300);
-    background-color: black;
+    color: var(--color-text-tertiary);
+    background-color: var(--color-bg-component);
     margin-bottom: 8px;
     margin-top: 8px;
     padding: 8px;
@@ -101,7 +101,7 @@
   }
   :deep(hr) {
     margin: 8px 0;
-    border-color: #a7a7a7;
+    border-color: var(--color-border-strong);
   }
   :deep(strong) {
     font-weight: 600;
@@ -136,7 +136,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #9e9e9e;
+      background: var(--color-scroll-thumb);
       border-radius: 5px;
     }
 
@@ -150,7 +150,7 @@
   :deep(table) {
     td {
       padding: 4px;
-      border: 1px solid var(--color-gray-300);
+      border: 1px solid var(--color-border-strong);
     }
   }
 }

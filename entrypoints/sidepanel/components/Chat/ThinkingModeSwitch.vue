@@ -7,7 +7,7 @@
           'cursor-not-allowed opacity-50': !isModelSupportsThinking || !isThinkingToggleable,
           'cursor-pointer': isModelSupportsThinking && isThinkingToggleable,
         },
-        isThinkingEnabled ? 'bg-[#DEFFEB] text-[#5B5B5B]' : 'text-[#AEB5BD]',
+        isThinkingEnabled ? 'bg-bg-accent-green text-text-secondary' : 'text-text-placeholder',
       ]"
       @click="toggleThinking"
     >

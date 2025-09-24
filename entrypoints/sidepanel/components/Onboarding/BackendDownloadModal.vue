@@ -19,13 +19,13 @@
       <template #body>
         <div
           v-if="!pulling"
-          class="text-gray-600 text-sm"
+          class="text-text-secondary text-sm"
         >
           {{ t('settings.model_downloader.description') }}
         </div>
         <div
           v-else
-          class="text-gray-600 text-sm"
+          class="text-text-secondary text-sm"
         >
           {{ t('settings.model_downloader.downloading') }}
         </div>
@@ -34,13 +34,13 @@
           class="flex gap-2 items-stretch flex-col mt-1"
         >
           <ProgressBar :progress="pulling.completed / (pulling.total || 1)" />
-          <div class="text-xs text-gray-500 flex justify-between items-center">
+          <div class="text-xs text-text-tertiary flex justify-between items-center">
             <div>{{ formatSize(pulling.completed) }}</div>
             <div>{{ pulling.total ? formatSize(pulling.total) : '-' }}</div>
           </div>
         </div>
         <div v-if="pulling?.error">
-          <div class="text-red-500 text-xs flex items-center gap-1">
+          <div class="text-danger text-xs flex items-center gap-1">
             <IconWarning class="w-3 h-3 shrink-0" />
             <span class="wrap-anywhere">{{ pulling.error }}</span>
           </div>

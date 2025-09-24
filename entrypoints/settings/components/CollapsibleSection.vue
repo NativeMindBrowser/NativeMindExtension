@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white rounded-lg relative">
+  <div class="bg-transparent rounded-lg relative">
     <div
-      class="flex justify-between items-center cursor-pointer text-text-primary hover:text-[#1f2326c2]"
+      class="flex justify-between items-center cursor-pointer text-text-primary hover:text-text-secondary"
       @click="open = !open"
     >
       <div>

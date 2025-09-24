@@ -60,7 +60,7 @@ type ArrivalShadowInfo = Color | boolean | {
 }
 
 const DEFAULT_SHADOW_SIZE = 16
-const DEFAULT_ARRIVAL_SHADOW_COLOR = '#92929225'
+const DEFAULT_ARRIVAL_SHADOW_COLOR = 'var(--color-arrival-shadow)'
 
 const props = withDefaults(
   defineProps<{

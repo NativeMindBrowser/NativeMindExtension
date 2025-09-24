@@ -2,7 +2,7 @@
   <div
     class="px-4 py-4 flex flex-col gap-3 items-stretch"
   >
-    <div class="text-[#24B960] font-medium text-xs">
+    <div class="text-text-accent-green font-medium text-xs">
       {{ t('onboarding.guide.step1') }}
     </div>
     <div class="shrink-0 grow-0 text-[15px] font-semibold flex flex-col gap-4">
@@ -11,11 +11,11 @@
       </div>
       <div
         class="flex items-center justify-between gap-3 min-h-13 py-1 px-4 rounded-lg cursor-pointer border-2 text-[15px]"
-        :class="[selectedEndpointType === 'ollama' ? 'border-[#24B960]' : 'border-[#E4E4E7]']"
+        :class="[selectedEndpointType === 'ollama' ? 'border-border-accent' : 'border-border-strong']"
         @click="selectedEndpointType = 'ollama'"
       >
         <div class="whitespace-nowrap flex items-center gap-2">
-          <div class="size-5 rounded-md flex items-center justify-center overflow-hidden shadow-[0px_0px_0px_1px_#00000014,0px_1px_2px_0px_#0000001F]">
+          <div class="size-5 rounded-md flex items-center justify-center overflow-hidden shadow-02 text-text-primary">
             <IconOllamaLogo class="size-4" />
           </div>
           <span class="font-medium text-base">
@@ -28,11 +28,11 @@
       </div>
       <div
         class="flex items-center justify-between gap-3 min-h-13 py-1 px-4 rounded-lg cursor-pointer border-2 text-[15px]"
-        :class="[selectedEndpointType === 'lm-studio' ? 'border-[#24B960]' : 'border-[#E4E4E7]']"
+        :class="[selectedEndpointType === 'lm-studio' ? 'border-border-accent' : 'border-border-strong']"
         @click="selectedEndpointType = 'lm-studio'"
       >
         <div class="whitespace-nowrap flex items-center gap-2">
-          <div class="size-5 rounded-md flex items-center justify-center overflow-hidden shadow-[0px_0px_0px_1px_#00000014,0px_1px_2px_0px_#0000001F]">
+          <div class="size-5 rounded-md flex items-center justify-center overflow-hidden shadow-02">
             <img
               :src="IconLMStudioLogo"
               class="size-5"
@@ -111,7 +111,7 @@
             <div class="flex gap-1">
               <span>{{ t('onboarding.guide.already_installed', { endpointType: selectedEndpointName }) }}</span>
               <button
-                class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
+                class="whitespace-nowrap hover:text-text-primary text-text-link cursor-pointer"
                 @click="onClickOpenSettings"
               >
                 {{ t('onboarding.guide.setup') }}
@@ -125,7 +125,7 @@
               <a
                 :href="tutorialUrl"
                 target="_blank"
-                class="underline whitespace-nowrap hover:text-gray-800 cursor-pointer"
+                class="underline whitespace-nowrap hover:text-text-primary cursor-pointer text-text-link"
               >
                 {{ t('onboarding.guide.follow_our_tutorial') }}
               </a>

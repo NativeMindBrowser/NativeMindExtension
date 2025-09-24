@@ -1,8 +1,10 @@
 <template>
   <div
     :class="classNames(
-      'overflow-hidden relative focus-within:shadow-[0px_0px_0px_1px_#24B960] rounded-[6px] shadow-[0px_0px_0px_1px_rgba(0,0,0,0.08),0px_1px_2px_0px_rgba(0,0,0,0.12)]',
-      props.error ? 'shadow-[0px_0px_0px_3px_#E11D4826,0px_0px_0px_1px_#E11D48] focus-within:shadow-[0px_0px_0px_3px_#E11D4826,0px_0px_0px_1px_#E11D48]' : '',
+      'overflow-hidden relative rounded-[6px] shadow-02 focus-within:shadow-[0px_0px_0px_1px_var(--color-border-accent)] bg-bg-component',
+      props.error
+        ? 'shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)] focus-within:shadow-[0px_0px_0px_3px_var(--color-border-critical-soft),0px_0px_0px_1px_var(--color-border-critical)]'
+        : '',
       props.outerClass,
     )"
   >
@@ -11,16 +13,16 @@
       v-model="inputValue"
       :maxlength="maxLength"
       :style="{ height: textareaHeight + 'px' }"
-      class="w-full text-xs leading-4 px-2 pt-1.5 pb-[28px] text-[#6E757C] focus:text-black resize-none"
+      class="w-full text-xs leading-4 px-2 pt-1.5 pb-[28px] text-text-tertiary focus:text-text-primary resize-none"
       :class="classNames('outline-none', props.class)"
     />
 
     <!-- Bottom controls -->
-    <div class="absolute bottom-0 left-0 right-0 px-2 py-1.5 flex items-center justify-end gap-1.5 bg-white">
+    <div class="absolute bottom-0 left-0 right-0 px-2 py-1.5 flex items-center justify-end gap-1.5">
       <!-- Reset to default button -->
       <button
         v-if="showResetButton"
-        class="text-[11px] leading-[16px] text-[#0D80F2] hover:text-[#0B6BBF] font-normal cursor-pointer flex items-center gap-1"
+        class="text-[11px] leading-[16px] text-text-link hover:text-text-link-hover font-normal cursor-pointer flex items-center gap-1"
         @click="resetToDefault"
       >
         {{ t('textarea.reset_to_default') }}

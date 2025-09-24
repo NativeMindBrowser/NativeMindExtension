@@ -25,7 +25,7 @@
       :placeholder="t('settings.models.no_model')"
       class="text-xs max-w-full"
       :disabled="modelList.length === 0"
-      :dropdownClass="classNames('text-xs text-black w-52', dropdownClass)"
+      :dropdownClass="classNames('text-xs text-text-primary w-52', dropdownClass)"
       :containerClass="classNames('max-w-full', containerClass)"
       :dropdownAlign="dropdownAlign"
       :triggerStyle="props.triggerStyle"
@@ -53,7 +53,7 @@
         </div>
         <div v-else>
           <div
-            class="cursor-pointer text-[13px] text-[#5B5B5B] font-medium px-1 leading-5 flex flex-row gap-1 items-center justify-center"
+            class="cursor-pointer text-[13px] text-text-secondary font-medium px-1 leading-5 flex flex-row gap-1 items-center justify-center"
           >
             <div v-if="modelListUpdating">
               <Loading :size="12" />
@@ -100,13 +100,13 @@
         v-if="showDiscoverMore"
         #bottom
       >
-        <div class="text-gray-500 text-xs">
+        <div class="text-text-tertiary text-xs">
           <Divider />
           <a
             :href="OLLAMA_SEARCH_URL"
             target="_blank"
             rel="noopener noreferrer"
-            class="px-3 flex items-center gap-2 cursor-pointer text-black hover:bg-[#EAECEF] leading-4 py-1 min-h-8"
+            class="px-3 flex items-center gap-2 cursor-pointer text-text-primary hover:bg-bg-hover leading-4 py-1 min-h-8"
           >
             <IconRedirect class="shrink-0" />
             <Text

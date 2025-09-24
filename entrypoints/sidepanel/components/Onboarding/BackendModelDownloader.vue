@@ -1,6 +1,6 @@
 <template>
   <div
-    class="px-3 py-3 flex flex-col gap-3 items-stretch rounded-lg bg-white"
+    class="px-3 py-3 flex flex-col gap-3 items-stretch rounded-lg bg-bg-primary"
   >
     <div class="text-xs font-bold flex items-center justify-center">
       <StatusBadge
@@ -27,7 +27,7 @@
         v-model="selectedModel"
         class="mt-2"
         containerClass="h-8 py-2"
-        dropdownClass="text-xs text-black w-60"
+        dropdownClass="text-xs text-text-primary w-60"
         dropdownAlign="left"
         :options="options"
       >
@@ -62,7 +62,7 @@
               </div>
               <span
                 v-if="option.value?.size"
-                class="text-gray-500 font-light whitespace-nowrap"
+                class="text-text-tertiary font-light whitespace-nowrap"
               >
                 ({{ formatSize(option.value.size) }})
               </span>
@@ -96,7 +96,7 @@
           <a
             :href="tutorialUrl"
             target="_blank"
-            class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
+            class="whitespace-nowrap hover:text-text-primary text-text-link cursor-pointer"
           >
             {{ t('onboarding.guide.learn_about_models') }}
           </a>
@@ -106,7 +106,7 @@
           <a
             :href="searchUrl"
             target="_blank"
-            class="whitespace-nowrap hover:text-gray-800 text-blue-500 cursor-pointer"
+            class="whitespace-nowrap hover:text-text-primary text-text-link cursor-pointer"
           >
             {{ t('onboarding.guide.browse_more_models') }}
           </a>

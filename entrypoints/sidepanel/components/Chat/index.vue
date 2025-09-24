@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-[#F5F6FB]"
+    class="bg-bg-app"
     @messageAction="actionEventHandler"
   >
     <ScrollContainer
@@ -8,8 +8,8 @@
       :autoSnap="{ bottom: true }"
       :style="{ height: `calc(100% - ${inputContainerHeight}px)` }"
       :arrivalShadow="{
-        top: { color: '#F5F6FB', size: 36 },
-        bottom: { color: '#F5F6FB', size: 36 }
+        top: { color: 'var(--color-bg-app)', size: 36 },
+        bottom: { color: 'var(--color-bg-app)', size: 36 }
       }"
     >
       <div class="flex flex-col gap-2 px-4 py-4 pt-2">
@@ -23,7 +23,7 @@
             v-if="item.role === 'user'"
             class="flex flex-col items-end"
           >
-            <div class="text-sm inline-block bg-[#24B960] rounded-md p-3 max-w-full">
+            <div class="text-sm inline-block bg-accent-primary rounded-md p-3 max-w-full">
               <div class="wrap-anywhere text-white">
                 <MarkdownViewer :text="item.displayContent ?? item.content" />
               </div>
@@ -59,7 +59,7 @@
           v-model:attachmentStorage="contextAttachmentStorage"
         />
       </div>
-      <div class="border-[#E4E4E7] border rounded-md bg-[#E9E9EC]">
+      <div class="border-border-chat-input border rounded-md bg-bg-secondary">
         <div>
           <ModelSelector
             containerClass="h-[30px] pl-3"
@@ -68,12 +68,12 @@
             triggerStyle="ghost"
           />
         </div>
-        <div class="gap-1 flex relative border-[#E4E4E7] border rounded-md bg-white px-3 pt-2 pb-9 -m-px max-h-36">
+        <div class="gap-1 flex relative border border-border-chat-input bg-bg-chat-input rounded-md px-3 pt-2 pb-9 max-h-36">
           <ScrollContainer
             class="overflow-hidden w-full"
             :arrivalShadow="{
-              top: { color: '#FFFFFF', size: 12, offset: 8 },
-              bottom: { color: '#FFFFFF', size: 12, offset: 8 }
+              top: { color: 'var(--color-bg-primary', size: 12, offset: 8 },
+              bottom: { color: 'var(--color-bg-primary', size: 12, offset: 8 }
             }"
           >
             <div class="h-max min-h-[48px] place-items-center">
@@ -106,18 +106,18 @@
               <Button
                 v-if="chat.isAnswering()"
                 variant="secondary"
-                class="size-6 rounded-md flex items-center justify-center hover:bg-[#E4E7EB]/80 bg-[#E4E7EB] cursor-pointer shadow-none"
+                class="size-6 rounded-md flex items-center justify-center hover:bg-border-strong/80 bg-border-strong cursor-pointer shadow-none"
                 @click="onStop"
               >
                 <IconStop class="size-[15px] text-white" />
               </Button>
               <button
                 v-else
-                :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-[#24B960]/80 bg-[#24B960] cursor-pointer' : 'cursor-not-allowed')"
+                :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-accent-primary-hover bg-accent-primary cursor-pointer' : 'cursor-not-allowed')"
                 :disabled="!allowAsk"
                 @click="onSubmit"
               >
-                <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-[#9EA3A8]')" />
+                <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-text-quaternary')" />
               </button>
             </div>
           </div>

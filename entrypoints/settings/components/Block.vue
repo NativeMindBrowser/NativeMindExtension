@@ -1,8 +1,8 @@
 <template>
-  <div class="p-4 bg-white rounded-lg relative overflow-hidden">
+  <div class="p-4 bg-bg-primary rounded-lg relative overflow-hidden">
     <div
       v-if="disabled"
-      class="disable mask z-10 absolute inset-0 bg-[#ffffffaf]"
+      class="disable mask z-10 absolute inset-0 bg-mask-disabled"
     />
     <div
       class="flex justify-between items-center"

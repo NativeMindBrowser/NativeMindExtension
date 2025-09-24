@@ -22,19 +22,19 @@
       </div>
       <div
         v-else-if="lmStudioConnectionStatus === 'connected'"
-        class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014] p-3 flex gap-2 text-[#6E757C] font-medium text-xs"
+        class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)] p-3 flex gap-2 text-text-tertiary font-medium text-xs"
       >
         <IconNoActiveModels class="h-4" />
         {{ t('settings.general.running_models.lm_studio_no_active_models') }}
       </div>
       <div
         v-else
-        class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_#0000000A,0px_1px_2px_-1px_#00000014,0px_0px_0px_1px_#00000014] p-3 flex gap-2 text-[#6E757C] font-medium text-xs"
+        class="bg-bg-component rounded-xl shadow-[0px_2px_4px_0px_var(--color-shadow-soft),0px_1px_2px_-1px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)] p-3 flex gap-2 text-text-tertiary font-medium text-xs"
       >
         <IconUnconnected class="h-4" />
         {{ t('settings.general.running_models.not_connected_to_lm_studio') }}
       </div>
-      <div class="rounded-md border border-[#E4E4E7] bg-[#FAFAFA] px-2 py-[3px]">
+      <div class="rounded-md border border-border-strong bg-bg-component px-2 py-[3px]">
         <Text
           color="secondary"
           size="xs"

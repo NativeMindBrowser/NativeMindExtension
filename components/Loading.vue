@@ -16,7 +16,7 @@
     class="shrink-0 grow-0"
   >
     <IconLoadingDone
-      class="text-[#60C959]"
+      class="text-success"
       :style="{ width: size + 'px', height: size + 'px' }"
     />
   </div>
@@ -56,13 +56,13 @@ div.spinner div {
   --rotate: calc(360deg / 8 * -1);
   width: 10%;
   height: 26%;
-  background: var(--bar-color, #222);
+  background: var(--bar-color, var(--color-loading-track));
   position: absolute;
   left: 48%;
   top: 36%;
   opacity: 0;
   border-radius: 50px;
-  box-shadow: 0 0 1px rgba(0,0,0,0.2);
+  box-shadow: 0 0 1px var(--color-shadow-ambient);
   animation: fade var(--duration) linear infinite;
 }
 

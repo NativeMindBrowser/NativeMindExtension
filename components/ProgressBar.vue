@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full h-2 bg-gray-200 rounded-md">
+  <div class="w-full h-2 bg-border-light rounded-md">
     <div
-      class="h-full bg-[#24B960] rounded-md transition-all"
+      class="h-full bg-accent-primary rounded-md transition-all"
       :style="{ width: `${(progress) * 100}%` }"
     />
   </div>

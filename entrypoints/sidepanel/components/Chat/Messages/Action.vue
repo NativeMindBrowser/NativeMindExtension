@@ -18,7 +18,7 @@
     >
       <Text
         size="medium"
-        class="wrap-anywhere"
+        class="wrap-anywhere text-text-primary"
       >
         {{ message.titleAction.content }}
       </Text>
@@ -33,7 +33,7 @@
       <div
         v-for="(action, idx) in message.actions"
         :key="idx"
-        class="mt-1 text-sm rounded-lg relative inline-block max-w-full bg-white p-2 text-text-primary cursor-pointer hover:bg-gray-100 transition-all"
+        class="mt-1 text-sm rounded-lg relative inline-block max-w-full bg-bg-clickable p-2 text-text-primary cursor-pointer hover:bg-bg-hover transition-all"
         :class="disabled ? 'opacity-50 pointer-events-none' : ''"
         @click="
           (ev) =>
@@ -45,7 +45,10 @@
             v-if="action.icon"
             class="shrink-0 grow-0"
           >
-            <div v-html="getIconSvg(action.icon)" />
+            <div
+              class="p-1 border border-border-quick-action bg-bg-quick-action rounded-[4px] text-icon-quick-action"
+              v-html="getIconSvg(action.icon)"
+            />
           </div>
           <MarkdownViewer
             class="shrink grow"

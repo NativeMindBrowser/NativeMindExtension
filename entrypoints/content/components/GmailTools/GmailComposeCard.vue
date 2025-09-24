@@ -1,30 +1,30 @@
 <template>
   <div>
-    <div class="card min-w-80 max-w-110 text-xs">
+    <div class="card min-w-80 max-w-110 text-xs bg-bg-component text-text-primary rounded-md shadow-01 border border-border-light">
       <div class="title flex items-center justify-between h-9 px-3">
         <div class="flex items-center gap-1 text-xs font-medium leading-4">
           <SettingsEmailIcon />
           {{ t('gmail_tools.cards.compose.title') }}
         </div>
         <button
-          class="text-[#71717A] cursor-pointer p-1 hover:bg-gray-100 rounded"
+          class="text-text-tertiary cursor-pointer p-1 hover:bg-bg-hover rounded"
           @click="emit('close')"
         >
           <IconClose
-            class="text-[#71717A] cursor-pointer"
+            class="text-text-tertiary cursor-pointer"
           />
         </button>
       </div>
       <Divider />
 
       <!-- Subject Section -->
-      <div class="subject-section p-3 border-b border-gray-100">
-        <div class="bg-[#E8F4FD] rounded-sm p-2 flex gap-2">
+      <div class="subject-section p-3 border-b border-border-light">
+        <div class="bg-bg-info-subtle rounded-sm p-2 flex gap-2">
           <div class="shrink-0 h-[18px] flex items-center">
             <Loading
               :done="runningStatus !== 'pending' && runningStatus !== 'streaming'"
               :size="12"
-              strokeColor="#000000"
+              strokeColor="var(--color-foreground-base)"
             />
           </div>
           <div class="min-w-0 flex-1">
@@ -46,17 +46,17 @@
               v-else
               class="relative"
             >
-              <div class="text-[#1565C0] text-sm mr-10">
+              <div class="text-text-accent-blue text-sm mr-10">
                 {{ optimizedSubject }}
               </div>
               <!-- Copy Button for Subject -->
               <button
                 v-if="optimizedSubject.trim()"
-                class="absolute top-0 right-1 rounded hover:bg-white/30 transition cursor-pointer"
+                class="absolute top-0 right-1 rounded hover:bg-bg-primary/30 transition cursor-pointer"
                 :title="t('gmail_tools.cards.compose.copy_subject_to_clipboard')"
                 @click="copySubjectToClipboard"
               >
-                <CopyIcon class="w-4 h-4 text-[#1565C0]" />
+                <CopyIcon class="w-4 h-4 text-text-accent-blue" />
               </button>
             </div>
           </div>
@@ -65,12 +65,12 @@
 
       <!-- Email Body Section -->
       <div class="body-section p-3">
-        <div class="bg-[#DCFFEA] rounded-sm p-2 flex gap-2">
+        <div class="bg-bg-accent-green rounded-sm p-2 flex gap-2">
           <div class="shrink-0 h-[18px] flex items-center">
             <Loading
               :done="runningStatus !== 'pending' && runningStatus !== 'streaming'"
               :size="12"
-              strokeColor="#000000"
+              strokeColor="var(--color-foreground-base)"
             />
           </div>
           <div class="min-w-0 flex-1">
@@ -93,17 +93,17 @@
               class="relative"
             >
               <MarkdownViewer
-                class="text-[#03943D] mr-5 pr-5 max-h-[max(calc(100vh-350px),100px)] overflow-y-auto"
+                class="text-text-accent-green mr-5 pr-5 max-h-[max(calc(100vh-350px),100px)] overflow-y-auto"
                 :text="optimizedBody"
               />
               <!-- Copy Button for Body -->
               <button
                 v-if="optimizedBody.trim()"
-                class="absolute top-0 right-1 rounded hover:bg-white/30 transition cursor-pointer"
+                class="absolute top-0 right-1 rounded hover:bg-bg-primary/30 transition cursor-pointer"
                 :title="t('gmail_tools.cards.compose.copy_body_to_clipboard')"
                 @click="copyBodyToClipboard"
               >
-                <CopyIcon class="w-4 h-4 text-[#03943D]" />
+                <CopyIcon class="w-4 h-4 text-text-accent-green" />
               </button>
             </div>
           </div>

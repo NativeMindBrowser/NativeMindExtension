@@ -322,7 +322,10 @@
     "interface": {
       "title": "Schnittstelle",
       "interface_language": "Schnittstellensprache",
-      "interface_language_desc": "Wählen Sie die Anzeigesprache für die NativeMind-Benutzeroberfläche"
+      "theme": "Design",
+      "theme_light": "Hell",
+      "theme_dark": "Dunkel",
+      "theme_system": "System"
     },
     "header": {
       "starts_on_github": "Sterne auf GitHub",

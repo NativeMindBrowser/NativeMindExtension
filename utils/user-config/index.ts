@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { browser } from 'wxt/browser'
 
+import { ThemeModeType } from '@/types/theme'
 import { c2bRpc } from '@/utils/rpc'
 
 import { SupportedLocaleCode } from '../i18n/constants'
@@ -166,6 +167,9 @@ export async function _getUserConfig() {
       },
     },
     ui: {
+      theme: {
+        mode: await new Config('ui.theme.mode').default('system' as ThemeModeType).build(),
+      },
       pinSidebar: await new Config('ui.pinSidebar').default(false).build(),
       onboarding: {
         version: await new Config('ui.onboarding.version').default(0).build(),

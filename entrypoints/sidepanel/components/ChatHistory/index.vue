@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-[#F5F6FB] relative">
+  <div class="h-full flex flex-col bg-bg-app relative">
     <!-- Transparent overlay when menu is open -->
     <div
       v-if="openMenuChatId"
@@ -11,8 +11,8 @@
     <ScrollContainer
       class="w-full h-full overflow-hidden"
       :arrivalShadow="{
-        top: { color: '#F5F6FB', size: 48 },
-        bottom: { color: '#F5F6FB', size: 48 }
+        top: { color: 'var(--color-bg-app)', size: 48 },
+        bottom: { color: 'var(--color-bg-app)', size: 48 }
       }"
     >
       <div class="px-4 py-2 space-y-2">
@@ -72,7 +72,7 @@
       <!-- Empty State -->
       <div
         v-if="recentChats.length === 0 && pinnedChats.length === 0"
-        class="text-center text-[#9EA3A8] mt-[30vh]"
+        class="text-center text-text-quaternary mt-[30vh]"
       >
         <div class="flex flex-col items-center h-full justify-center">
           <IconChatEmpty class="w-10 mb-6" />

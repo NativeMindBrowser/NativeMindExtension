@@ -13,12 +13,12 @@
         ref="selectorListContainer"
         class="absolute top-0 h-0 w-full z-50"
       >
-        <div class="translate-y-[calc(-100%-16px)] bg-bg-component rounded-lg shadow-01 p-1 w-full">
+        <div class="translate-y-[calc(-100%-16px)] bg-bg-component rounded-lg shadow-01 p-1 w-full text-text-primary">
           <div class="flex flex-col">
             <div class="w-full mb-px">
               <div
                 class="w-full flex items-center gap-1 px-1 py-2 cursor-pointer rounded-sm"
-                :class="[isAllTabSelected ? 'bg-[#DFE1E5]' : 'hover:bg-[#EAECEF]']"
+                :class="[isAllTabSelected ? 'bg-bg-selection' : 'hover:bg-bg-hover']"
                 @click="selectAllTabs"
               >
                 <IconTab class="w-4 h-4" />
@@ -39,7 +39,7 @@
                   v-for="tab in allTabs"
                   :key="tab.tabId"
                   class="flex flex-col px-1 py-2 cursor-pointer rounded-sm"
-                  :class="[isTabSelected(tab) ? 'bg-[#DFE1E5]' : 'hover:bg-[#EAECEF]']"
+                  :class="[isTabSelected(tab) ? 'bg-bg-selection' : 'hover:bg-bg-hover']"
                   @click="toggleSelectTab(tab)"
                 >
                   <div
@@ -48,11 +48,11 @@
                     <ExternalImage
                       :src="tab.faviconUrl"
                       alt=""
-                      class="w-4 h-4 rounded-full grow-0 shrink-0 bg-gray-300"
+                      class="w-4 h-4 rounded-full grow-0 shrink-0 bg-border-light"
                       fallbackClass="bg-transparent"
                     >
                       <template #fallback>
-                        <IconWeb class="w-4 h-4 rounded-full grow-0 shrink-0 text-[#6E757C]" />
+                        <IconWeb class="w-4 h-4 rounded-full grow-0 shrink-0 text-text-tertiary" />
                       </template>
                     </ExternalImage>
                     <div
@@ -68,7 +68,7 @@
             <Divider class="w-auto -mx-1 my-1" />
             <div class="w-full mb-px">
               <div
-                class="w-full flex items-center gap-1 px-1 py-1 min-h-7 cursor-pointer rounded-sm hover:bg-[#EAECEF]"
+                class="w-full flex items-center gap-1 px-1 py-1 min-h-7 cursor-pointer rounded-sm hover:bg-bg-hover"
                 @click="selectFile()"
               >
                 <IconAttachmentUpload class="w-4 h-4" />
@@ -89,9 +89,9 @@
       <div
         v-for="(message, index) in errorMessages"
         :key="index"
-        class="p-2 rounded-lg bg-[#27272A] flex items-center gap-2 max-w-11/12"
+        class="p-2 rounded-lg bg-bg-overlay-contrast flex items-center gap-2 max-w-11/12"
       >
-        <IconWarningSolid class="w-5 h-5 shrink-0" />
+        <IconWarningSolid class="w-5 h-5 shrink-0 text-warning" />
         <Text
           size="small"
           class="font-medium text-white min-w-0 wrap-anywhere"
@@ -106,21 +106,21 @@
         class="shrink-0 grow-0 h-6 w-6 grid place-items-center"
         @click="showSelector"
       >
-        <IconAdd class="cursor-pointer text-black" />
+        <IconAdd class="cursor-pointer text-foreground-base" />
       </Button>
       <ScrollContainer
         ref="tabsContainerRef"
         class="shrink grow min-w-0"
         itemContainerClass="flex gap-2 w-max items-center"
         :redirect="{ vertical: 'horizontal', horizontal: 'horizontal' }"
-        :arrivalShadow="{ left: { color: '#F5F6FB', size: 60 }, right: { color: '#F5F6FB', size: 60 } }"
+        :arrivalShadow="{ left: { color: 'var(--color-bg-app)', size: 60 }, right: { color: 'var(--color-bg-app)', size: 60 } }"
       >
         <div
           v-for="(attachment, index) in attachmentsToShow"
           :key="index"
           class="items-center gap-2 grow-0 text-xs shrink-0"
         >
-          <Tag class="inline-flex bg-[#F4F4F5] border border-[#E4E4E7]">
+          <Tag class="inline-flex bg-bg-tertiary border border-border">
             <template #icon>
               <div
                 v-if="attachment.type === 'tab'"
@@ -129,11 +129,11 @@
                 <ExternalImage
                   :src="attachment.value.faviconUrl"
                   alt=""
-                  class="w-3 h-3 rounded-full bg-gray-300"
+                  class="w-3 h-3 rounded-full bg-border-light"
                   fallbackClass="bg-transparent"
                 >
                   <template #fallback>
-                    <IconWeb class="rounded-full text-[#6E757C]" />
+                    <IconWeb class="rounded-full text-text-tertiary" />
                   </template>
                 </ExternalImage>
               </div>
@@ -141,13 +141,13 @@
                 v-else-if="attachment.type === 'image'"
                 class="flex items-center justify-center w-3 h-4 shrink-0 grow-0 ml-[2px]"
               >
-                <IconAttachmentImage class="w-3 h-3 text-[#52525B]" />
+                <IconAttachmentImage class="w-3 h-3 text-text-secondary" />
               </div>
               <div
                 v-else-if="attachment.type === 'pdf'"
                 class="flex items-center justify-center w-3 h-4 shrink-0 grow-0 ml-[2px]"
               >
-                <IconAttachmentPDF class="w-3 h-3 text-[#52525B]" />
+                <IconAttachmentPDF class="w-3 h-3 text-text-secondary" />
               </div>
               <div
                 v-else-if="attachment.type === 'loading'"
@@ -155,7 +155,7 @@
               >
                 <Loading
                   :size="12"
-                  strokeColor="#52525B]"
+                  strokeColor="var(--color-text-secondary)"
                 />
               </div>
               <ExhaustiveError v-else />
@@ -163,14 +163,14 @@
             <template #text>
               <span
                 :title="attachment.type === 'tab' ? attachment.value.title : attachment.value.name"
-                class="text-xs text-[#52525B] whitespace-nowrap max-w-28 overflow-hidden text-ellipsis"
+                class="text-xs text-text-secondary whitespace-nowrap max-w-28 overflow-hidden text-ellipsis"
               >
                 {{ attachment.type === 'tab' ? attachment.value.title : attachment.value.name }}
               </span>
             </template>
             <template #button>
               <button
-                class="cursor-pointer hover:text-[#71717A] text-gray-400 shrink-0"
+                class="cursor-pointer hover:text-text-tertiary text-text-quaternary shrink-0"
                 @click="removeAttachment(attachment)"
               >
                 <IconClose class="w-4" />

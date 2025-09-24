@@ -322,7 +322,10 @@
     "interface": {
       "title": "อินเทอร์เฟซ",
       "interface_language": "ภาษาของอินเทอร์เฟซ",
-      "interface_language_desc": "เลือกภาษาที่แสดงสำหรับส่วนติดต่อผู้ใช้ NativeMind"
+      "theme": "ธีม",
+      "theme_light": "สว่าง",
+      "theme_dark": "มืด",
+      "theme_system": "ระบบ"
     },
     "header": {
       "starts_on_github": "ให้ดาวบน GitHub",

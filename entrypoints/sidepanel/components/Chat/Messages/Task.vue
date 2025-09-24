@@ -1,5 +1,5 @@
 <template>
-  <div :class="classNames('text-sm rounded-md relative inline-block max-w-full bg-white p-2', props.class, level === 0 ? 'p-3' : 'p-0')">
+  <div :class="classNames('text-sm rounded-md relative inline-block max-w-full bg-bg-primary p-2', props.class, level === 0 ? 'p-3' : 'p-0')">
     <Text :color="level === 0 ? 'placeholder' : 'primary'">
       <div
         v-if="message.content"

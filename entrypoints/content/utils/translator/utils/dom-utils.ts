@@ -374,18 +374,24 @@ export function updateTranslationTextStyle(element: HTMLElement, style: Translat
       break
     }
     case TranslationDisplayStyle.tintedHighlight: {
-      element.style.color = isBGDark ? '#A8B4FF' : '#2724D8'
+      element.style.color = isBGDark
+        ? 'var(--color-translation-highlight-contrast, #A8B4FF)'
+        : 'var(--color-translation-highlight, #2724D8)'
       break
     }
     case TranslationDisplayStyle.overlay: {
-      element.style.backgroundColor = isBGDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0,0,0,0.08)'
+      element.style.backgroundColor = isBGDark
+        ? 'var(--color-overlay-subtle-on-dark, rgba(255, 255, 255, 0.16))'
+        : 'var(--color-overlay-subtle-on-light, rgba(0, 0, 0, 0.08))'
       element.style.borderRadius = '8px'
       element.style.padding = '8px 12px'
       break
     }
     case TranslationDisplayStyle.tintedOverlay: {
       const innerElement = document.createElement('span')
-      innerElement.style.backgroundColor = isBGDark ? 'rgba(200, 200, 200, 0.3)' : 'rgba(74, 101, 243, 0.1)'
+      innerElement.style.backgroundColor = isBGDark
+        ? 'var(--color-translation-overlay-dark, rgba(200, 200, 200, 0.3))'
+        : 'var(--color-translation-overlay-light, rgba(74, 101, 243, 0.1))'
       innerElement.innerHTML = element.innerHTML
       innerElement.classList.add(translationTargetInnerClass)
       element.innerHTML = ''
@@ -393,11 +399,15 @@ export function updateTranslationTextStyle(element: HTMLElement, style: Translat
       break
     }
     case TranslationDisplayStyle.wavyLine: {
-      applyUnderlineStyle(element, 'wavy', isBGDark ? '#A8B4FF' : '#322EE5')
+      applyUnderlineStyle(element, 'wavy', isBGDark
+        ? 'var(--color-translation-highlight-contrast, #A8B4FF)'
+        : 'var(--color-translation-highlight, #322EE5)')
       break
     }
     case TranslationDisplayStyle.dashedLine: {
-      applyUnderlineStyle(element, 'dashed', isBGDark ? 'rgba(255, 255, 255, 0.56)' : 'rgba(0,0,0,0.32)')
+      applyUnderlineStyle(element, 'dashed', isBGDark
+        ? 'var(--color-translation-underline-dark, rgba(255, 255, 255, 0.56))'
+        : 'var(--color-translation-underline-light, rgba(0,0,0,0.32))')
       break
     }
     case TranslationDisplayStyle.divider: {
@@ -406,7 +416,9 @@ export function updateTranslationTextStyle(element: HTMLElement, style: Translat
       divider.classList.add(translationTargetDividerClass)
       divider.style.width = '48px'
       divider.style.marginTop = '8px'
-      divider.style.borderBottom = isBGDark ? '1px dashed rgba(255, 255, 255, 0.56)' : '1px dashed rgba(0, 0, 0, 0.32)'
+      divider.style.borderBottom = isBGDark
+        ? '1px dashed var(--color-translation-underline-dark, rgba(255, 255, 255, 0.56))'
+        : '1px dashed var(--color-translation-underline-light, rgba(0, 0, 0, 0.32))'
 
       element.before(divider)
       break

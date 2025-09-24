@@ -6,7 +6,7 @@
       title="Debug"
       description="Debug settings"
     />
-    <div class="p-4 flex flex-col gap-4 bg-white rounded-lg">
+    <div class="p-4 flex flex-col gap-4 bg-bg-primary rounded-lg">
       <div class="flex flex-col gap-4">
         <Block title="UI Language">
           <div class="flex gap-2 flex-col justify-start items-start">
@@ -20,7 +20,7 @@
             </Button>
             <div>Local value: {{ localeInConfig ?? 'not set' }}</div>
             <div
-              class="text-[10px] text-gray-400 font-light"
+              class="text-[10px] text-text-tertiary font-light"
             >
               clear locale setting will reset the UI language to automatically detected language in next page load
               (if local value is set, it will override the auto-detected language)
@@ -31,7 +31,7 @@
           <div class="flex gap-2 flex-col justify-start items-start">
             <div>Reset onboarding</div>
             <button
-              class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+              class="bg-accent-primary hover:bg-accent-primary-hover text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
               @click="resetOnboarding"
             >
               Reset
@@ -43,7 +43,7 @@
             <div>WebLLM model cache status</div>
             <div class="text-xs font-normal">
               <button
-                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+                class="bg-accent-primary hover:bg-accent-primary-hover text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
                 @click="checkWebLLMCacheStatus"
               >
                 Refresh
@@ -55,7 +55,7 @@
               >
                 <div>{{ s.modelId }}</div>
                 <button
-                  class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+                  class="bg-accent-primary hover:bg-accent-primary-hover text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
                   @click="deleteWebLLMModelCache(s.modelId)"
                 >
                   <IconDelete class="w-3 h-3" />
@@ -71,7 +71,7 @@
               <Selector
                 v-model="endpointType"
                 :options="modelProviderOptions"
-                dropdownClass="text-xs text-black w-52"
+                dropdownClass="text-xs text-text-primary w-52"
                 containerClass="py-0"
                 dropdownAlign="left"
               />
@@ -82,16 +82,16 @@
                 v-model.number="defaultFirstTokenTimeout"
                 type="number"
                 min="0"
-                class="border-b border-gray-200 py-1 disabled:opacity-50"
+                class="border-b border-border py-1 disabled:opacity-50"
               />
             </div>
             <div class="flex gap-3 justify-start items-center">
               Reasoning
               <Switch
                 v-model="enableReasoning"
-                slotClass="rounded-lg border-gray-200 border bg-white"
+                slotClass="rounded-lg border border-border bg-bg-primary"
                 itemClass="h-6 flex items-center justify-center text-xs px-2"
-                thumbClass="bg-blue-500 rounded-md"
+                thumbClass="bg-accent-primary rounded-md"
                 activeItemClass="text-white"
                 :items="[
                   {
@@ -101,7 +101,7 @@
                   {
                     label: 'Disable',
                     key: false,
-                    activeThumbClass: 'bg-gray-200',
+                    activeThumbClass: 'bg-border-light',
                   }
                 ]"
               />
@@ -113,7 +113,7 @@
                 class="font-light py-1"
               />
               <button
-                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-1 px-3"
+                class="bg-accent-primary hover:bg-accent-primary-hover text-white rounded-md cursor-pointer text-xs py-1 px-3"
                 :class="!newModelId.trim() && 'opacity-50 pointer-events-none'"
                 @click="onPullModel"
               >
@@ -131,7 +131,7 @@
                   </span>
                   <span class="font-light"> ({{ pullingModel.status }}) </span>
                   <button
-                    class="text-blue-400 hover:text-blue-600 font-normal text-xs ml-2 cursor-pointer"
+                    class="text-text-link hover:text-text-link-hover font-normal text-xs ml-2 cursor-pointer"
                     @click="pullingModel.abort"
                   >
                     {{ pullingModel.status !== 'success' ? 'stop' : 'clear' }}
@@ -139,7 +139,7 @@
                 </div>
                 <div
                   v-if="pullingModel.error"
-                  class="font-light text-[8px] text-red-500"
+                  class="font-light text-[8px] text-danger"
                 >
                   {{ pullingModel.error }}
                 </div>
@@ -165,7 +165,7 @@
                 <div>translator system prompt</div>
                 <div
                   v-if="translationSystemPromptError"
-                  class="text-red-500 text-[8px]"
+                  class="text-danger text-[8px]"
                 >
                   ({{ translationSystemPromptError }})
                 </div>
@@ -240,7 +240,7 @@
                 v-model.number="maxAgentIterations"
                 type="number"
                 min="0"
-                class="border-b border-gray-200 h-5 w-20"
+                class="border-b border-border h-5 w-20"
               />
             </div>
             <div class="flex gap-3 justify-start items-center">
@@ -250,7 +250,7 @@
                     v-model.number="updateEnvironmentDetailsFrequency"
                     type="number"
                     min="0"
-                    class="border-b border-gray-200 w-12 h-5"
+                    class="border-b border-border w-12 h-5"
                   /> messages (including user and assistant messages)
                 </div>
               </Block>
@@ -258,14 +258,14 @@
           </div>
         </Block>
         <Block title="Chrome AI Polyfill">
-          <div class="text-[8px] text-gray-400 mb-1">
+          <div class="text-[8px] text-text-tertiary mb-1">
             needs to refresh the page to take effect
           </div>
           <div class="flex gap-3 justify-start items-stretch">
             <Switch
               v-model="enabledChromeAIPolyfill"
-              slotClass="rounded-lg border-gray-200 border bg-white"
-              thumbClass="bg-blue-500 w-4 h-4 rounded-md"
+              slotClass="rounded-lg border-border border bg-bg-primary"
+              thumbClass="bg-accent-primary w-4 h-4 rounded-md"
               activeItemClass="text-white"
               :items="[
                 {
@@ -275,7 +275,7 @@
                 {
                   label: 'Disable',
                   key: false,
-                  activeThumbClass: 'bg-gray-200',
+                  activeThumbClass: 'bg-border-light',
                 },
               ]"
             >
@@ -296,9 +296,9 @@
               </div>
               <Switch
                 v-model="enableBrowserUse"
-                slotClass="rounded-lg border-gray-200 border bg-white"
+                slotClass="rounded-lg border-border border bg-bg-primary"
                 itemClass="h-5 flex items-center justify-center text-xs px-2"
-                thumbClass="bg-blue-500 rounded-md"
+                thumbClass="bg-accent-primary rounded-md"
                 activeItemClass="text-white"
                 :items="[{label: 'Enable',key: true},{label: 'Disable',key: false}]"
               />
@@ -310,9 +310,9 @@
               </div>
               <Switch
                 v-model="highlightInteractiveElements"
-                slotClass="rounded-lg border-gray-200 border bg-white"
+                slotClass="rounded-lg border-border border bg-bg-primary"
                 itemClass="h-5 flex items-center justify-center text-xs px-2"
-                thumbClass="bg-blue-500 rounded-md"
+                thumbClass="bg-accent-primary rounded-md"
                 activeItemClass="text-white"
                 :items="[{label: 'True',key: true},{label: 'False',key: false}]"
               />
@@ -324,9 +324,9 @@
               </div>
               <Switch
                 v-model="simulateClickOnLink"
-                slotClass="rounded-lg border-gray-200 border bg-white"
+                slotClass="rounded-lg border-border border bg-bg-primary"
                 itemClass="h-5 flex items-center justify-center text-xs px-2"
-                thumbClass="bg-blue-500 rounded-md"
+                thumbClass="bg-accent-primary rounded-md"
                 activeItemClass="text-white"
                 :items="[{label: 'True',key: true},{label: 'False',key: false}]"
               />
@@ -338,9 +338,9 @@
               </div>
               <Switch
                 v-model="closeTabOpenedByAgent"
-                slotClass="rounded-lg border-gray-200 border bg-white"
+                slotClass="rounded-lg border-border border bg-bg-primary"
                 itemClass="h-5 flex items-center justify-center text-xs px-2"
-                thumbClass="bg-blue-500 rounded-md"
+                thumbClass="bg-accent-primary rounded-md"
                 activeItemClass="text-white"
                 :items="[{label: 'True',key: true},{label: 'False',key: false}]"
               />
@@ -353,24 +353,24 @@
               <Input
                 v-model.number="contentFilterThreshold"
                 type="number"
-                class="border-b border-gray-200 w-20 h-6"
+                class="border-b border-border w-20 h-6"
               />
             </div>
             <div class="flex gap-3 items-center">
               <Input
                 v-model="browserUseOpenUrl"
                 placeholder="Enter URL"
-                class="border-b border-gray-200 py-1 disabled:opacity-50 w-80"
+                class="border-b border-border py-1 disabled:opacity-50 w-80"
               />
               <button
-                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-1 px-3 whitespace-nowrap"
+                class="bg-accent-primary hover:bg-accent-primary-hover text-white rounded-md cursor-pointer text-xs py-1 px-3 whitespace-nowrap"
                 @click="getAccessibleContent"
               >
                 Get accessible content
               </button>
               <button
                 v-if="browserUseParsedResults.length > 0"
-                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-1 px-3 whitespace-nowrap"
+                class="bg-accent-primary hover:bg-accent-primary-hover text-white rounded-md cursor-pointer text-xs py-1 px-3 whitespace-nowrap"
                 @click="downloadBrowserUseParsedResults"
               >
                 Download
@@ -381,7 +381,7 @@
               :key="idx"
               class="mt-2 text-[8px] overflow-auto max-w-full max-h-96 font-light"
             >
-              <pre class="border border-gray-200 p-2 whitespace-pre-wrap">
+              <pre class="border border-border p-2 whitespace-pre-wrap">
                   {{ item?.content ?? 'N/A' }}
                 </pre>
             </div>
@@ -393,7 +393,7 @@
               <div class="flex gap-3 justify-start items-center">
                 document parser
                 <button
-                  class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-1 px-3"
+                  class="bg-accent-primary hover:bg-accent-primary-hover text-white rounded-md cursor-pointer text-xs py-1 px-3"
                   @click="parseAllDocuments"
                 >
                   parse
@@ -403,7 +403,7 @@
             <details
               v-for="(article, idx) of articles"
               :key="idx"
-              class="border border-gray-200 rounded-md p-2 &[open]:bg-gray-50 hover:bg-gray-100 open:hover:bg-transparent transition-all"
+              class="border border-border rounded-md p-2 &[open]:bg-bg-neutral-subtle hover:bg-bg-hover open:hover:bg-transparent transition-all"
             >
               <summary
                 class="flex justify-start items-stretch text-xs cursor-pointer wrap-anywhere"
@@ -413,17 +413,17 @@
               </summary>
               <div class="flex flex-col gap-3 mt-2">
                 <div class="flex flex-col gap-3 justify-start items-stretch">
-                  <pre class="text-[8px] font-light border border-gray-200 min-h-4 p-2 whitespace-pre-wrap">{{ article?.title ?? 'N/A' }}</pre>
+                  <pre class="text-[8px] font-light border border-border min-h-4 p-2 whitespace-pre-wrap">{{ article?.title ?? 'N/A' }}</pre>
                   <div class="text-[10px]">
                     URL
                   </div>
-                  <pre class="text-[8px] font-light border border-gray-200 min-h-4 p-2 whitespace-pre-wrap">{{ article?.url ?? 'N/A' }}</pre>
+                  <pre class="text-[8px] font-light border border-border min-h-4 p-2 whitespace-pre-wrap">{{ article?.url ?? 'N/A' }}</pre>
                 </div>
                 <div class="flex flex-col gap-3 justify-start items-stretch">
                   <div class="text-[10px]">
                     Text
                   </div>
-                  <pre class="text-[8px] font-light border border-gray-200 min-h-4 p-2 whitespace-pre-wrap max-h-72 overflow-auto">{{
+                  <pre class="text-[8px] font-light border border-border min-h-4 p-2 whitespace-pre-wrap max-h-72 overflow-auto">{{
                     article?.content ?? 'N/A'
                   }}</pre>
                 </div>
@@ -434,7 +434,7 @@
                   <div class="text-[10px]">
                     HTML
                   </div>
-                  <div class="text-[8px] font-light border border-gray-200 min-h-4 p-2 max-h-72 overflow-auto [&_img]:max-w-14! [&_svg]:max-w-14!">
+                  <div class="text-[8px] font-light border border-border min-h-4 p-2 max-h-72 overflow-auto [&_img]:max-w-14! [&_svg]:max-w-14!">
                     <div v-html="article?.html ?? 'N/A'" />
                   </div>
                 </div>
@@ -451,9 +451,9 @@
               Enable
               <Switch
                 v-model="enableTranslationCache"
-                slotClass="rounded-lg border-gray-200 border bg-white"
+                slotClass="rounded-lg border-border border bg-bg-primary"
                 itemClass="h-6 flex items-center justify-center text-xs px-2"
-                thumbClass="bg-blue-500 rounded-md"
+                thumbClass="bg-accent-primary rounded-md"
                 activeItemClass="text-white"
                 :items="[
                   {
@@ -463,7 +463,7 @@
                   {
                     label: 'Disable',
                     key: false,
-                    activeThumbClass: 'bg-gray-200',
+                    activeThumbClass: 'bg-border-light',
                   }
                 ]"
               />
@@ -475,7 +475,7 @@
                   v-model.number="cacheRetentionDays"
                   type="number"
                   min="1"
-                  class="border-b border-gray-200 py-1 disabled:opacity-50 w-20"
+                  class="border-b border-border py-1 disabled:opacity-50 w-20"
                 />
               </div>
             </div>
@@ -490,7 +490,7 @@
               <div>
                 Total Entries
               </div>
-              <div class="font-normal text-gray-600">
+              <div class="font-normal text-text-secondary">
                 {{ cacheStats?.totalEntries ?? 'N/A' }}
               </div>
             </div>
@@ -498,7 +498,7 @@
               <div>
                 Total Size (MB)
               </div>
-              <div class="font-normal text-gray-600">
+              <div class="font-normal text-text-secondary">
                 {{ cacheStats?.totalSizeMB.toFixed(2) ?? 'N/A' }}
               </div>
             </div>
@@ -506,14 +506,14 @@
               <div>
                 Model Namespaces
               </div>
-              <div class="font-normal text-gray-600">
+              <div class="font-normal text-text-secondary">
                 {{ cacheStats?.modelNamespaces.join(', ') ?? 'N/A' }}
               </div>
             </div>
             <div class="flex flex-col gap-2 justify-start items-start">
               <span class="text-xs">Clear Cache</span>
               <button
-                class="bg-blue-400 hover:bg-blue-500 text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
+                class="bg-accent-primary hover:bg-accent-primary-hover text-white rounded-md cursor-pointer text-xs py-[2px] px-2"
                 @click="handleClearCache"
               >
                 Clear
@@ -538,13 +538,13 @@
               <div
                 v-if="clearChatHistoryResult"
                 class="text-xs"
-                :class="clearChatHistoryResult.success ? 'text-green-600' : 'text-red-500'"
+                :class="clearChatHistoryResult.success ? 'text-success' : 'text-danger'"
               >
                 {{ clearChatHistoryResult.success
                   ? `Successfully deleted ${clearChatHistoryResult.deletedCount} chat${clearChatHistoryResult.deletedCount !== 1 ? 's' : ''}`
                   : `Error: ${clearChatHistoryResult.error}` }}
               </div>
-              <div class="text-[10px] text-gray-400 font-light">
+              <div class="text-[10px] text-text-tertiary font-light">
                 This will permanently delete all chat history, context attachments, and metadata. This action cannot be undone.
               </div>
             </div>

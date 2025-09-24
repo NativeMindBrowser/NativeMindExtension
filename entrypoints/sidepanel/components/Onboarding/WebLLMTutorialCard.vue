@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-6 flex flex-col gap-[10px] items-stretch bg-[#F2F2F2] rounded-lg m-[11px]"
+    class="p-6 flex flex-col gap-[10px] items-stretch bg-bg-neutral-subtle rounded-lg m-[11px]"
   >
     <div class="text-[15px] font-semibold flex items-center gap-1">
       {{ t('onboarding.webllm_tutorial.title') }}
@@ -36,7 +36,7 @@
     </Button>
     <div
       v-if="!supportWebLLM.supported"
-      class="text-red-500 text-[10px] flex items-center gap-2 justify-start"
+      class="text-danger text-[10px] flex items-center gap-2 justify-start"
     >
       <IconWarning class="w-3 h-3" />
       {{ t('onboarding.webllm_tutorial.not_support_webllm') }}

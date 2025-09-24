@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card w-80 max-w-screen text-xs">
+    <div class="card w-80 max-w-screen text-xs bg-bg-component text-text-primary rounded-md shadow-01 border border-border-light">
       <div class="title flex items-center justify-between h-9 px-3">
         <Text
           size="small"
@@ -38,18 +38,18 @@
           <ExhaustiveError v-else />
         </Text>
         <IconClose
-          class="text-[#71717A] cursor-pointer"
+          class="text-text-tertiary cursor-pointer"
           @click="emit('close')"
         />
       </div>
       <Divider />
       <div class="output p-3 rounded-md">
-        <div class="bg-[#DCFFEA] rounded-sm p-2 flex gap-2">
+        <div class="bg-bg-accent-green rounded-sm p-2 flex gap-2">
           <div class="shrink-0 h-[18px] flex items-center">
             <Loading
               :done="runningStatus === 'idle'"
               :size="12"
-              strokeColor="#000000"
+              strokeColor="var(--color-foreground-base)"
             />
           </div>
           <div class="min-w-0 flex-1">
@@ -63,7 +63,7 @@
               class="max-h-[min(90vh,500px)] overflow-y-auto"
             >
               <MarkdownViewer
-                class="text-[#03943D]"
+                class="text-text-accent-green"
                 :text="output"
               />
             </div>
