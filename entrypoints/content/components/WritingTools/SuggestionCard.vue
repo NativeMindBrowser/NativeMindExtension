@@ -63,7 +63,7 @@
               class="max-h-[min(90vh,500px)] overflow-y-auto"
             >
               <MarkdownViewer
-                class="text-text-accent"
+                class="text-text-accent-green"
                 :text="output"
               />
             </div>

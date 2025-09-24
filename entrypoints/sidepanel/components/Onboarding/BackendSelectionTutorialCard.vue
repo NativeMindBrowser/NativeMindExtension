@@ -2,7 +2,7 @@
   <div
     class="px-4 py-4 flex flex-col gap-3 items-stretch"
   >
-    <div class="text-text-accent font-medium text-xs">
+    <div class="text-text-accent-green font-medium text-xs">
       {{ t('onboarding.guide.step1') }}
     </div>
     <div class="shrink-0 grow-0 text-[15px] font-semibold flex flex-col gap-4">

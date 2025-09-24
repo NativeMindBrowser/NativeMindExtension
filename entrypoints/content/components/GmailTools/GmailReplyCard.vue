@@ -36,7 +36,7 @@
               class="relative"
             >
               <MarkdownViewer
-                class="text-text-accent mr-5 pr-5 max-h-[max(calc(100vh-250px),100px)] overflow-y-auto"
+                class="text-text-accent-green mr-5 pr-5 max-h-[max(calc(100vh-250px),100px)] overflow-y-auto"
                 :text="output"
               />
               <!-- Copy Button -->
@@ -46,7 +46,7 @@
                 :title="t('gmail_tools.cards.reply.copy_to_clipboard')"
                 @click="copyToClipboard"
               >
-                <CopyIcon class="w-4 h-4 text-text-accent" />
+                <CopyIcon class="w-4 h-4 text-text-accent-green" />
               </button>
             </div>
           </div>
