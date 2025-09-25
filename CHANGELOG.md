@@ -1,6 +1,34 @@
 # Changelog
 
 
+## v1.10.0-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.7...v1.10.0-beta.8)
+
+### 🚀 Enhancements
+
+- **Darkmode:** Introduce darkmode theme with color variables ([c0150fd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c0150fd))
+- **theme:** Refactor theme management to use composables and improve type definitions ([097d35c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/097d35c))
+- **theme:** Refactor&fix styles and class names across components for consistency and clarity ([5c34142](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5c34142))
+
+### 🩹 Fixes
+
+- Revert unnecessary darkmode changes ([6034697](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6034697))
+- **theme:** Update theme handling to use data attributes instead of directly adding a class to the document to avoid affecting the original page, and use useEventListener to handle event listener unmounting. ([0a4dc45](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0a4dc45))
+- **Input:** Correct shadow styles for error state in input component ([54ab5a1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/54ab5a1))
+- **ui:** Improve agent-task ui style on fetching pages ([eaa6f1d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/eaa6f1d))
+- **theme:** Consolidate color variables and remove unused colors. ([e64b99d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e64b99d))
+
+### 🏡 Chore
+
+- **cross-env:** Update package.json to use cross-env for better environment variable management ([43c3e2e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/43c3e2e))
+
+### ❤️ Contributors
+
+- Neko Liu ([@NekoWings](http://github.com/NekoWings))
+- Nekowings ([@NekoWings](http://github.com/NekoWings))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.0-beta.7
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.6...v1.10.0-beta.7)
