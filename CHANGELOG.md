@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.8...v1.10.0-beta.9)
+
+### 🩹 Fixes
+
+- **settings:** Update connection error messages for Ollama across multiple languages ([15e4706](https://github.com/NativeMindBrowser/NativeMindExtension/commit/15e4706))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.8
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.7...v1.10.0-beta.8)
