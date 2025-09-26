@@ -1,7 +1,7 @@
 import { computed, onScopeDispose, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import LogoSvg from '@/assets/icons/logo-custom-color.svg?raw'
+import LogoSvg from '@/assets/icons/logo-for-gmail-tools.svg?raw'
 import { useDocumentLoaded } from '@/composables/useDocumentLoaded'
 import { ThemeType } from '@/types/theme'
 import Logger from '@/utils/logger'
@@ -36,7 +36,7 @@ type GmailButtonThemeColors = {
 const GMAIL_BUTTON_THEME_COLORS: Record<ThemeType, GmailButtonThemeColors> = {
   light: {
     background: '#FBF8F4',
-    text: '#596066',
+    text: '#1f2326',
     hoverBackground: '#EAECEF',
     disabledBackground: '#F2F2F2',
     disabledText: '#9EA3A8',
