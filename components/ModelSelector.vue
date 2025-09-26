@@ -12,7 +12,7 @@
     >
       <Button
         variant="secondary"
-        class="flex justify-between gap-[6px] items-center cursor-pointer text-[13px] font-medium py-1 px-[10px] text-left leading-4 min-h-8"
+        class="flex justify-between gap-[6px] items-center cursor-pointer text-[13px] font-medium py-1 px-[10px] text-left leading-4 min-h-8 text-text-primary"
       >
         <IconOllamaRedirect class="w-4 h-4 shrink-0" />
         {{ t('settings.models.add_model_to_start') }}

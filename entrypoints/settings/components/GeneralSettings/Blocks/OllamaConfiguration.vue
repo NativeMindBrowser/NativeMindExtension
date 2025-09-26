@@ -3,8 +3,8 @@ import { useCountdown } from '@vueuse/core'
 import { onMounted, ref, toRef, watch } from 'vue'
 
 import IconOllamaLogo from '@/assets/icons/logo-ollama.svg?component'
+import IconOllamaRedirect from '@/assets/icons/ollama-redirect.svg?component'
 import IconUnconnected from '@/assets/icons/ollama-unconnected.svg?component'
-import IconRedirectToOllama from '@/assets/icons/redirect-to-ollama.svg?component'
 import Checkbox from '@/components/Checkbox.vue'
 import Input from '@/components/Input.vue'
 import Loading from '@/components/Loading.vue'
@@ -303,8 +303,8 @@ onMounted(async () => {
                 :href="OLLAMA_SEARCH_URL"
                 target="_blank"
               >
-                <Button class="flex items-center gap-[2px] justify-center min-h-8 min-w-40 py-1">
-                  <IconRedirectToOllama />
+                <Button class="flex items-center gap-[2px] justify-center min-h-8 min-w-40 py-1 text-text-primary">
+                  <IconOllamaRedirect />
                   {{ t('settings.general.discover_more_models') }}
                 </Button>
               </a>
