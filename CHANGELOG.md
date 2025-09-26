@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v1.10.0-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.10...v1.10.0-beta.11)
+
+### 🚀 Enhancements
+
+- **gmail-tools:** Replace logo SVG with new design and update text color ([57626ba](https://github.com/NativeMindBrowser/NativeMindExtension/commit/57626ba))
+
+### 🩹 Fixes
+
+- Remove duplicated ollama redirect svg and update color schema. ([3f159b0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3f159b0))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.0-beta.10
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.9...v1.10.0-beta.10)
