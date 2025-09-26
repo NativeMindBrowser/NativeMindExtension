@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.9...v1.10.0-beta.10)
+
+### 🩹 Fixes
+
+- **settings:** Update connection status handling for Ollama model list retrieval ([7c0dc5a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7c0dc5a))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.9
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.8...v1.10.0-beta.9)
