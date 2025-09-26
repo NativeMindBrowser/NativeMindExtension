@@ -26,7 +26,12 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
   const updateOllamaModelList = async (): Promise<OllamaModelInfo[]> => {
     try {
       const response = await rpc.getOllamaLocalModelListWithCapabilities()
-      ollamaConnectionStatus.value = 'connected'
+      if (!response.error) {
+        ollamaConnectionStatus.value = 'connected'
+      }
+      else {
+        ollamaConnectionStatus.value = 'error'
+      }
       log.debug('Model list with capabilities fetched:', response)
 
       ollamaModelList.value = response.models
