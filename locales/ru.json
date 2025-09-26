@@ -257,7 +257,6 @@
       "download": "Скачать",
       "retry": "Повторить",
       "unable_to_download": "Невозможно начать загрузку",
-      "could_not_connect_ollama": "Не удалось подключиться к Ollama. Пожалуйста, убедитесь, что Ollama запущена, и попробуйте снова.",
       "could_not_connect": "Не удалось подключиться к {endpointType}. Убедитесь, что {endpointType} запущен, и повторите попытку."
     },
     "webllm_downloader": {

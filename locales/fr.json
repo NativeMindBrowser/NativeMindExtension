@@ -257,7 +257,6 @@
       "download": "Télécharger",
       "retry": "Réessayer",
       "unable_to_download": "Impossible de démarrer le téléchargement",
-      "could_not_connect_ollama": "Nous n'avons pas pu nous connecter à Ollama. Veuillez vous assurer qu'Ollama est en cours d'exécution et réessayer.",
       "could_not_connect": "Nous n'avons pas pu nous connecter à {endpointType}. Veuillez vous assurer que {endpointType} est en cours d'exécution et réessayer."
     },
     "webllm_downloader": {

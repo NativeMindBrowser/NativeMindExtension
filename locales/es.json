@@ -282,7 +282,6 @@
       "download": "Descargar",
       "retry": "Reintentar",
       "unable_to_download": "No se puede iniciar la descarga",
-      "could_not_connect_ollama": "No pudimos conectar con Ollama. Por favor, asegúrate de que Ollama esté ejecutándose e inténtalo de nuevo.",
       "could_not_connect": "No pudimos conectar con {endpointType}. Por favor, asegúrate de que {endpointType} esté ejecutándose e inténtalo de nuevo."
     },
     "webllm_downloader": {

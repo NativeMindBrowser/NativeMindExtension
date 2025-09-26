@@ -114,7 +114,6 @@
       "download": "下载",
       "retry": "重试",
       "unable_to_download": "无法开始下载",
-      "could_not_connect_ollama": "我们无法连接到 {endpointType}。请确保 {endpointType} 正在运行，然后重试。",
       "could_not_connect": "我们无法连接到 {endpointType}。请确保 {endpointType} 正在运行，然后重试。"
     },
     "webllm_downloader": {

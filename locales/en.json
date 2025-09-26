@@ -124,7 +124,6 @@
       "download_model": "Download “{model}“\t",
       "unable_to_download": "Unable to Start Download",
       "retry": "Retry",
-      "could_not_connect_ollama": "We couldn’t connect to {endpointType}. Please make sure {endpointType} is running and try again.",
       "could_not_connect": "We couldn’t connect to {endpointType}. Please make sure {endpointType} is running and try again."
     },
     "webllm_downloader": {

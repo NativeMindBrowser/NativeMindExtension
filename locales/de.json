@@ -250,7 +250,6 @@
     },
     "title": "Einstellungen",
     "model_downloader": {
-      "could_not_connect_ollama": "Wir konnten keine Verbindung zu Ollama herstellen. Bitte stellen Sie sicher, dass Ollama läuft und versuchen Sie es erneut.",
       "description": "Dieses Modell muss vor der Verwendung heruntergeladen werden. Der Download kann einige Minuten dauern.",
       "download": "Herunterladen",
       "download_model": "Lade \"{model}\" herunter",

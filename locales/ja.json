@@ -257,7 +257,6 @@
       "download": "ダウンロード",
       "retry": "リトライ",
       "unable_to_download": "ダウンロードを開始できません",
-      "could_not_connect_ollama": "Ollamaに接続できませんでした。Ollamaが実行されていることを確認して、もう一度お試しください。",
       "could_not_connect": "{endpointType}に接続できませんでした。{endpointType}が実行されていることを確認して、もう一度お試しください。"
     },
     "webllm_downloader": {

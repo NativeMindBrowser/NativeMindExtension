@@ -257,7 +257,6 @@
       "download": "Tải xuống",
       "retry": "Thử lại",
       "unable_to_download": "Không thể bắt đầu tải xuống",
-      "could_not_connect_ollama": "Chúng tôi không thể kết nối với Ollama. Vui lòng đảm bảo Ollama đang chạy và thử lại.",
       "could_not_connect": "Chúng tôi không thể kết nối tới {endpointType}. Vui lòng đảm bảo {endpointType} đang chạy và thử lại."
     },
     "webllm_downloader": {

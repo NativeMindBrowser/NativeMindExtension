@@ -257,7 +257,6 @@
       "download": "Unduh",
       "retry": "Coba lagi",
       "unable_to_download": "Tidak Dapat Memulai Unduhan",
-      "could_not_connect_ollama": "Kami tidak dapat terhubung ke Ollama. Pastikan Ollama sedang berjalan dan coba lagi.",
       "could_not_connect": "Kami tidak dapat terhubung ke {endpointType}. Pastikan {endpointType} sedang berjalan dan coba lagi."
     },
     "webllm_downloader": {

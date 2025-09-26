@@ -58,7 +58,7 @@
         {{ t('settings.model_downloader.unable_to_download') }}
       </template>
       <template #body>
-        {{ t('settings.model_downloader.could_not_connect_ollama') }}
+        {{ t('settings.model_downloader.could_not_connect', { endpointType: 'Ollama' }) }}
       </template>
     </ConfirmPanel>
   </Modal>

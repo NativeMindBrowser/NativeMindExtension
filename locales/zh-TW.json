@@ -257,7 +257,6 @@
       "download": "下載",
       "retry": "重試",
       "unable_to_download": "無法開始下載",
-      "could_not_connect_ollama": "我們無法連接到 Ollama。請確保 Ollama 正在運行，然後再試一次。",
       "could_not_connect": "我們無法連接到 {endpointType}。請確保 {endpointType} 正在運行，然後再試一次。"
     },
     "webllm_downloader": {
