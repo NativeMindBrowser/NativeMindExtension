@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v1.10.0-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.11...v1.10.0-beta.12)
+
+### 🩹 Fixes
+
+- **selector:** Update dropdown class to include text color ([a9c60c0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a9c60c0))
+- **style:** Fix text-accent-blue for darkmode ([dc2e4fd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/dc2e4fd))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.0-beta.11
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.10...v1.10.0-beta.11)
