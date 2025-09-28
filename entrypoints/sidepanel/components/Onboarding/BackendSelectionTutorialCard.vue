@@ -5,7 +5,7 @@
     <div class="text-text-accent-green font-medium text-xs">
       {{ t('onboarding.guide.step1') }}
     </div>
-    <div class="shrink-0 grow-0 text-[15px] font-semibold flex flex-col gap-4">
+    <div class="shrink-0 grow-0 text-[15px] font-semibold flex flex-col gap-4 text-text-primary">
       <div>
         {{ t('onboarding.guide.install_desc') }}
       </div>
@@ -15,7 +15,7 @@
         @click="selectedEndpointType = 'ollama'"
       >
         <div class="whitespace-nowrap flex items-center gap-2">
-          <div class="size-5 rounded-md flex items-center justify-center overflow-hidden shadow-02 text-text-primary">
+          <div class="size-5 rounded-md flex items-center justify-center overflow-hidden shadow-02 text-black bg-white">
             <IconOllamaLogo class="size-4" />
           </div>
           <span class="font-medium text-base">
@@ -49,7 +49,7 @@
       <div>
         <Text
           color="secondary"
-          class="text-[13px] font-semibold"
+          class="text-[13px] font-semibold text-text-primary"
         >
           {{ t('onboarding.guide.unlock_full_power_with', { endpointType: selectedEndpointName }) }}
         </Text>
@@ -125,7 +125,7 @@
               <a
                 :href="tutorialUrl"
                 target="_blank"
-                class="underline whitespace-nowrap hover:text-text-primary cursor-pointer text-text-link"
+                class="underline whitespace-nowrap hover:text-text-primary cursor-pointer"
               >
                 {{ t('onboarding.guide.follow_our_tutorial') }}
               </a>

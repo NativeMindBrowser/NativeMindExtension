@@ -5,7 +5,6 @@ import IconFind from '@/assets/icons/md-find.svg?raw'
 import IconHighlightAction from '@/assets/icons/md-highlight-action.svg?raw'
 import IconHighlightBoxed from '@/assets/icons/md-highlight-boxed.svg?raw'
 import IconLink from '@/assets/icons/md-link.svg?raw'
-import IconQuickModified from '@/assets/icons/md-quick-action-modified.svg?raw'
 import IconSearch from '@/assets/icons/md-search.svg?raw'
 import IconSearchAction from '@/assets/icons/md-search-action.svg?raw'
 import IconSearchBoxed from '@/assets/icons/md-search-boxed.svg?raw'
@@ -19,6 +18,7 @@ import IconTranslationBoxed from '@/assets/icons/md-translation-boxed.svg?raw'
 import IconWarning from '@/assets/icons/md-warning.svg?raw'
 import IconWarningColored from '@/assets/icons/md-warning-colored.svg?raw'
 import IconWritingBoxed from '@/assets/icons/md-writing-boxed.svg?raw'
+import IconQuickModified from '@/assets/icons/quick-action-modified.svg?raw'
 
 const iconMap = {
   tick: IconTick,

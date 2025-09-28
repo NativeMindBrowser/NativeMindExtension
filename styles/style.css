@@ -73,8 +73,8 @@
 
   /* Light mode colors */
   --color-text-primary: #1f2326;
-  --color-text-secondary: #596066;
-  --color-text-tertiary: #71717a;
+  --color-text-secondary: #52525b;
+  --color-text-tertiary: #747a80;
   --color-text-placeholder: #aeb5bd;
   --color-text-disabled: #aeb5bd;
   --color-text-quaternary: #9ea3a8;
@@ -176,7 +176,7 @@
 [data-nm-theme="dark"] {
   --color-text-primary: #f8f9fa;
   --color-text-secondary: #eaecef;
-  --color-text-tertiary: #8b949e;
+  --color-text-tertiary: #878c92;
   --color-text-placeholder: #6e7681;
   --color-text-disabled: #6e7681;
   --color-text-quaternary: #7d8590;
@@ -253,8 +253,8 @@
   --color-danger: #bf2a2a;
   --color-quaternary: #30363d;
 
-  --color-gradient-onboarding-start: #1b3125;
-  --color-gradient-onboarding-end: #161b22;
+  --color-gradient-onboarding-start: #344a3d;
+  --color-gradient-onboarding-end: #212124;
 
   --color-translation-highlight: #a8b4ff;
   --color-translation-highlight-contrast: #2724d8;

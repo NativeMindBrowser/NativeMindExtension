@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-6 flex flex-col gap-[10px] items-stretch bg-bg-neutral-subtle rounded-lg m-[11px]"
+    class="p-6 flex flex-col gap-[10px] items-stretch bg-bg-neutral-subtle rounded-lg m-[11px] text-text-primary"
   >
     <div class="text-[15px] font-semibold flex items-center gap-1">
       {{ t('onboarding.webllm_tutorial.title') }}
@@ -23,7 +23,7 @@
     </Modal>
     <Button
       variant="secondary"
-      class="shrink-0 grow-0 flex mt-1 items-center justify-center rounded-md gap-2 font-bold cursor-pointer min-h-7"
+      class="shrink-0 grow-0 flex mt-1 items-center justify-center rounded-md gap-2 font-bold cursor-pointer min-h-7 bg-bg-component"
       :disabled="!supportWebLLM.supported"
       @click="initWebLLM"
     >
