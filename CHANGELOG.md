@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.0-beta.14
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.13...v1.10.0-beta.14)
+
+### 🩹 Fixes
+
+- **darkmode:** Update icon dimensions and color adjustments across components for onboarding page ([fff91dd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fff91dd))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.0-beta.13
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.12...v1.10.0-beta.13)
