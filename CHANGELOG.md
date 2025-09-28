@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.0-beta.13
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.12...v1.10.0-beta.13)
+
+### 🩹 Fixes
+
+- **config:** Enhance reactive default value handling and storage synchronization ([e9ca17d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e9ca17d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.0-beta.12
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.11...v1.10.0-beta.12)
