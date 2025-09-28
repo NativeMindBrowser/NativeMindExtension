@@ -7,6 +7,7 @@ import { storage } from 'wxt/utils/storage'
 import { resetFakeBrowser, resetFakeEntrypoint } from '@/tests/utils/fake-browser'
 
 import { ByteSize } from '../sizes'
+import { sleep } from '../sleep'
 import { Config } from './helpers'
 
 describe('user config', () => {
@@ -148,12 +149,61 @@ describe('user config', () => {
     resetFakeBrowser()
 
     const enabled = ref(false)
-    const reactiveDefault = computed(() => (enabled.value ? 'on' : 'off'))
+    const reactiveDefault = computed(() => (enabled.value ? true : false))
     const config = await new Config('testKey').default(reactiveDefault).build()
     const reactiveConfig = config.toRef()
 
-    expect(reactiveConfig.value).toBe('off')
+    expect(reactiveConfig.value).toBe(false)
     enabled.value = true
-    expect(reactiveConfig.value).toBe('on')
+    await sleep(0)
+    expect(reactiveConfig.value).toBe(true)
+  })
+
+  it('reactive default value(nested)', async () => {
+    resetFakeBrowser()
+
+    const reactiveDefault = ref({ enabled: false })
+    const config = await new Config('testKey1').default(reactiveDefault).build()
+    const reactiveConfig = config.toRef()
+
+    expect(reactiveConfig.value.enabled).toBe(false)
+    reactiveDefault.value.enabled = true
+    await sleep(0)
+    expect(reactiveConfig.value.enabled).toBe(false) // not reactive currently TODO: make it reactive
+    reactiveDefault.value = { enabled: true }
+    await sleep(0)
+    expect(reactiveConfig.value.enabled).toBe(true)
+  })
+
+  it('reactive default value changes from user should be saved to storage', async () => {
+    resetFakeBrowser()
+
+    const reactiveDefault = ref({ enabled: false })
+    const config = await new Config('testKey2').default(reactiveDefault).build()
+    const reactiveConfig = config.toRef()
+    reactiveConfig.value.enabled = true
+    await sleep(0)
+    expect((await storage.getItem(config.areaKey) as { enabled: boolean }).enabled).toBe(true)
+
+    config.resetDefault()
+    expect((await storage.getItem(config.areaKey) as { enabled: boolean })).toBe(null)
+    expect(reactiveConfig.value.enabled).toBe(false)
+  })
+
+  it('default value changes from source should not be saved to storage', async () => {
+    resetFakeBrowser()
+
+    const reactiveDefault = ref({ enabled: false })
+    const config = await new Config('testKey2').default(reactiveDefault).build()
+    const reactiveConfig = config.toRef()
+    reactiveDefault.value = { enabled: true }
+    await sleep(100)
+    expect((await storage.getItem(config.areaKey) as { enabled: boolean })).toBe(null)
+    expect(reactiveConfig.value.enabled).toBe(true)
+
+    config.resetDefault()
+    await sleep(0)
+    expect((await storage.getItem(config.areaKey) as { enabled: boolean })).toBe(null)
+    expect(reactiveConfig.value.enabled).toBe(true)
   })
 })

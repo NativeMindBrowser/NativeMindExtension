@@ -1,4 +1,4 @@
-import { customRef, isRef, MaybeRef, Ref, ref, toRaw, unref, UnwrapRef, watch } from 'vue'
+import { customRef, isRef, MaybeRef, Ref, ref, toRaw, unref, UnwrapRef, watch, watchEffect } from 'vue'
 import { storage, StorageItemKey } from 'wxt/utils/storage'
 
 const getItem = async <T>(key: StorageItemKey) => {
@@ -78,17 +78,28 @@ export class Config<Value, DefaultValue extends MaybeRef<Value | undefined>> {
     const v = migratedValue ?? localValue
     const boundStorageValue = ref(v)
     let ignoreSetLocalStorage = false
+    const clonedDefaultValue = ref<DefaultValue>()
+    watchEffect(() => {
+      ignoreSetLocalStorage = true
+      clonedDefaultValue.value = this.getClonedDefaultValue()
+      ignoreSetLocalStorage = false
+    })
     watch(boundStorageValue, async (newValue) => {
       if (ignoreSetLocalStorage) return
       this.setItem(toRaw(newValue))
+    }, { deep: true, flush: 'sync' })
+    watch(clonedDefaultValue, async (newValue) => {
+      // if default value is changed, it should be saved to storage when there is no user value
+      if (boundStorageValue.value || ignoreSetLocalStorage) return
+      boundStorageValue.value = newValue
     }, { deep: true, flush: 'sync' })
     const r = customRef<UnwrapRef<Value | DefaultValue>>((track, trigger) => {
       return {
         get: () => {
           track()
-          const clonedDefaultValue = this.getClonedDefaultValue()
-          const r = boundStorageValue.value ?? clonedDefaultValue
-          return r
+          const defaultValue = clonedDefaultValue.value
+          const storageValue = boundStorageValue.value
+          return storageValue ?? defaultValue
         },
         set: (value) => {
           boundStorageValue.value = value
@@ -118,11 +129,14 @@ export class Config<Value, DefaultValue extends MaybeRef<Value | undefined>> {
         return this.getClonedDefaultValue()
       },
       resetDefault: () => {
-        r.value = this.getClonedDefaultValue()
+        clonedDefaultValue.value = this.getClonedDefaultValue()
+        boundStorageValue.value = undefined
         removeItem()
       },
       toRef: () => r,
-      get: () => r.value,
+      get: () => {
+        return r.value
+      },
       set: (value: Value | DefaultValue) => {
         r.value = value
       },
