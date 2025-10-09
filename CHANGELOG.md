@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.0-beta.15
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.14...v1.10.0-beta.15)
+
+### 🩹 Fixes
+
+- **chat:** Refactor autoGenerateChatTitleIfNeeded to use createRetryWrapper for improved error handling ([8db739d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8db739d))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.0-beta.14
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.13...v1.10.0-beta.14)
