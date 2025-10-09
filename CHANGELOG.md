@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.0-beta.16
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.15...v1.10.0-beta.16)
+
+### 🩹 Fixes
+
+- **loading:** Update loading track color to improve visibility in dark mode ([567b4c3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/567b4c3))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.0-beta.15
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.14...v1.10.0-beta.15)
