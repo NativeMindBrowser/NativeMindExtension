@@ -38,9 +38,11 @@ type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean, autoThinkin
 type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
 
+const MAX_RETRIES = 3
+
 // TODO
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const createRetryWrapper = <T extends (...args: any[]) => Promise<any>>(fn: T, maxRetries: number = 3, delays: number[] = [200, 500, 1000]): T => {
+const createRetryWrapper = <T extends (...args: any[]) => Promise<any>>(fn: T, maxRetries: number = MAX_RETRIES, delays: number[] = [200, 500, 1000]): T => {
   return (async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
     let lastError: unknown
 
@@ -986,7 +988,7 @@ async function updateChatTitle(chatId: string, newTitle: string) {
   }
 }
 
-async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1, currentChatId?: string) {
+const autoGenerateChatTitleIfNeeded = createRetryWrapper(async (chatHistory: ChatHistoryV1, currentChatId?: string) => {
   try {
     const shouldAutoGenerate = await shouldGenerateChatTitle(chatHistory)
 
@@ -1031,7 +1033,7 @@ async function autoGenerateChatTitleIfNeeded(chatHistory: ChatHistoryV1, current
     logger.error('Chat history RPC autoGenerateChatTitle failed:', error)
     return { success: false, error: String(error) }
   }
-}
+})
 
 const getPinnedChats = createRetryWrapper(async () => {
   try {
