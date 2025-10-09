@@ -417,7 +417,8 @@
       "years": "{year} năm | {year} năm",
       "months": "{month} tháng | {month} tháng"
     },
-    "confirm": "Xác nhận"
+    "confirm": "Xác nhận",
+    "send": "Gửi"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "Đóng",
     "chat_history": "Lịch sử",
     "new_chat": "Trò chuyện mới",
-    "back": "Quay lại"
+    "back": "Quay lại",
+    "copy_message": "Sao chép tin nhắn",
+    "edit_message": "Chỉnh sửa tin nhắn"
   },
   "gmail_tools": {
     "buttons": {

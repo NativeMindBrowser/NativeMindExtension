@@ -536,6 +536,48 @@ export class Chat {
     await this.runWithAgent(baseMessages)
   }
 
+  async editUserMessage(messageId: string, question: string) {
+    const trimmedQuestion = question.trim()
+    if (!trimmedQuestion) throw new Error('Question cannot be empty.')
+
+    const messageIndex = this.historyManager.history.value.findIndex((item) => item.id === messageId)
+    if (messageIndex === -1) throw new Error(`Message with id ${messageId} not found.`)
+    const message = this.historyManager.history.value[messageIndex]
+    if (message.role !== 'user') throw new Error(`Message with id ${messageId} is not a user message.`)
+
+    this.stop()
+    using _s = this.statusScope('pending')
+    const abortController = new AbortController()
+    this.abortControllers.push(abortController)
+
+    this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
+
+    if (messageIndex < this.historyManager.history.value.length - 1) {
+      this.historyManager.history.value.splice(messageIndex + 1)
+    }
+
+    const contextInfo = this.historyManager.chatHistory.value.contextUpdateInfo
+    if (contextInfo?.lastFullUpdateMessageId) {
+      const exists = this.historyManager.history.value.some((item) => item.id === contextInfo.lastFullUpdateMessageId)
+      if (!exists) {
+        contextInfo.lastFullUpdateMessageId = undefined
+      }
+    }
+
+    const environmentDetails = await this.generateEnvironmentDetails(message.id)
+    const prompt = await chatWithEnvironment(trimmedQuestion, environmentDetails)
+
+    message.displayContent = trimmedQuestion
+    message.content = prompt.user.extractText()
+    message.timestamp = Date.now()
+    message.done = true
+
+    const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
+    await this.prepareModel()
+    if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
+    await this.runWithAgent(baseMessages)
+  }
+
   private async runWithAgent(baseMessages: CoreMessage[]) {
     const userConfig = await getUserConfig()
     const maxIterations = userConfig.chat.agent.maxIterations.get()

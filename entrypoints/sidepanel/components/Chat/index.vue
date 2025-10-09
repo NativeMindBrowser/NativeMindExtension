@@ -19,16 +19,15 @@
           :class="[item.role === 'user' ? 'self-end' : 'self-start', { 'w-full': ['agent-task-group', 'assistant', 'agent'].includes(item.role) ,'mt-2': ['agent-task-group', 'assistant', 'agent'].includes(item.role) }]"
           class="max-w-full relative flex"
         >
-          <div
+          <MessageUser
             v-if="item.role === 'user'"
-            class="flex flex-col items-end"
-          >
-            <div class="text-sm inline-block bg-accent-primary rounded-md p-3 max-w-full">
-              <div class="wrap-anywhere text-white">
-                <MarkdownViewer :text="item.displayContent ?? item.content" />
-              </div>
-            </div>
-          </div>
+            :message="item"
+            :isEditing="editingMessageId === item.id"
+            :disabled="chat.isAnswering() || editingInFlight"
+            @startEdit="onStartEdit(item.id)"
+            @cancelEdit="() => onCancelEdit(item.id)"
+            @submitEdit="(value) => onSubmitEdit(item.id, value)"
+          />
           <MessageAssistant
             v-else-if="item.role === 'assistant' || item.role === 'agent'"
             :message="item"
@@ -140,10 +139,10 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
+import logger from '@/utils/logger'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
 import { classNames } from '@/utils/vue/utils'
 
-import MarkdownViewer from '../../../../components/MarkdownViewer.vue'
 import { showSettings } from '../../../../utils/settings'
 import {
   ActionEvent,
@@ -155,6 +154,7 @@ import MessageAction from './Messages/Action.vue'
 import MessageTaskGroup from './Messages/AgentTaskGroup.vue'
 import MessageAssistant from './Messages/Assistant.vue'
 import MessageTask from './Messages/Task.vue'
+import MessageUser from './Messages/User.vue'
 import OnlineSearchSwitch from './OnlineSearchSwitch.vue'
 import ThinkingModeSwitch from './ThinkingModeSwitch.vue'
 
@@ -167,6 +167,9 @@ const userInput = ref('')
 const isComposing = ref(false)
 const attachmentSelectorRef = ref<InstanceType<typeof AttachmentSelector>>()
 const scrollContainerRef = ref<InstanceType<typeof ScrollContainer>>()
+const editingMessageId = ref<string | null>(null)
+const editingInFlight = ref(false)
+const log = logger.child('chat-sidepanel')
 
 defineExpose({
   attachmentSelectorRef,
@@ -193,6 +196,32 @@ const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
 const allowAsk = computed(() => {
   return !chat.isAnswering() && userInput.value.trim().length > 0
 })
+
+const onStartEdit = (messageId: string) => {
+  if (chat.isAnswering() || editingInFlight.value) return
+  editingMessageId.value = messageId
+}
+
+const onCancelEdit = (messageId: string) => {
+  if (editingMessageId.value === messageId) {
+    editingMessageId.value = null
+  }
+}
+
+const onSubmitEdit = async (messageId: string, value: string) => {
+  if (editingInFlight.value) return
+  editingMessageId.value = null
+  editingInFlight.value = true
+  try {
+    await chat.editUserMessage(messageId, value)
+  }
+  catch (error) {
+    log.error('Failed to re-send edited message', error)
+  }
+  finally {
+    editingInFlight.value = false
+  }
+}
 
 const cleanUp = chat.historyManager.onMessageAdded(() => {
   scrollContainerRef.value?.snapToBottom()

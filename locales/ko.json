@@ -417,7 +417,8 @@
       "years": "{year}년 | {year}년",
       "months": "{month}개월 | {month}개월"
     },
-    "confirm": "확인"
+    "confirm": "확인",
+    "send": "보내기"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "닫기",
     "chat_history": "역사",
     "new_chat": "새로운 채팅",
-    "back": "뒤로"
+    "back": "뒤로",
+    "copy_message": "메시지 복사",
+    "edit_message": "메시지 수정"
   },
   "gmail_tools": {
     "buttons": {

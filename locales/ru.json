@@ -417,7 +417,8 @@
       "years": "{year} год | {year} лет",
       "months": "{month} месяц | {month} месяца | {month} месяцев"
     },
-    "confirm": "Подтвердить"
+    "confirm": "Подтвердить",
+    "send": "Отправить"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "Закрыть",
     "chat_history": "История",
     "new_chat": "Новый чат",
-    "back": "Назад"
+    "back": "Назад",
+    "copy_message": "Скопировать сообщение",
+    "edit_message": "Редактировать сообщение"
   },
   "gmail_tools": {
     "buttons": {
