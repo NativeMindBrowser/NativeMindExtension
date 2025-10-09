@@ -417,7 +417,8 @@
       "years": "{year}年 | {year}年",
       "months": "{month}ヶ月 | {month}ヶ月"
     },
-    "confirm": "確認"
+    "confirm": "確認",
+    "send": "送信"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "閉じる",
     "chat_history": "歴史",
     "new_chat": "新しいチャット",
-    "back": "戻る"
+    "back": "戻る",
+    "copy_message": "メッセージをコピー",
+    "edit_message": "メッセージを編集"
   },
   "gmail_tools": {
     "buttons": {

@@ -417,7 +417,8 @@
       "years": "{year} 年 | {year} 年",
       "months": "{month} 个月 | {month} 个月"
     },
-    "confirm": "确认"
+    "confirm": "确认",
+    "send": "发送"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "关闭",
     "chat_history": "历史",
     "new_chat": "新聊天",
-    "back": "返回"
+    "back": "返回",
+    "copy_message": "复制消息",
+    "edit_message": "编辑消息"
   },
   "gmail_tools": {
     "buttons": {

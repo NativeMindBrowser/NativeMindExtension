@@ -417,7 +417,8 @@
       "years": "{year} tahun | {year} tahun",
       "months": "{month} bulan | {month} bulan"
     },
-    "confirm": "Konfirmasi"
+    "confirm": "Konfirmasi",
+    "send": "Kirim"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "Tutup",
     "chat_history": "Sejarah",
     "new_chat": "Obrolan baru",
-    "back": "Kembali"
+    "back": "Kembali",
+    "copy_message": "Salin pesan",
+    "edit_message": "Edit pesan"
   },
   "gmail_tools": {
     "buttons": {

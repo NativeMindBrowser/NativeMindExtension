@@ -417,7 +417,8 @@
       "years": "{year} ปี | {year} ปี",
       "months": "{month} เดือน | {month} เดือน"
     },
-    "confirm": "ยืนยัน"
+    "confirm": "ยืนยัน",
+    "send": "ส่ง"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "ปิด",
     "chat_history": "ประวัติศาสตร์",
     "new_chat": "แชทใหม่",
-    "back": "กลับ"
+    "back": "กลับ",
+    "copy_message": "คัดลอกข้อความ",
+    "edit_message": "แก้ไขข้อความ"
   },
   "gmail_tools": {
     "buttons": {

@@ -438,7 +438,8 @@
       "years": "{year} Jahr | {year} Jahre",
       "months": "{month} Monat | {month} Monate"
     },
-    "confirm": "Bestätigen"
+    "confirm": "Bestätigen",
+    "send": "Senden"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "Schließen",
     "chat_history": "Geschichte",
     "new_chat": "Neuer Chat",
-    "back": "Zurück"
+    "back": "Zurück",
+    "copy_message": "Nachricht kopieren",
+    "edit_message": "Nachricht bearbeiten"
   },
   "gmail_tools": {
     "buttons": {

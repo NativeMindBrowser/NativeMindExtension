@@ -417,7 +417,8 @@
       "years": "{year} ano | {year} anos",
       "months": "{month} mês | {month} meses"
     },
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "send": "Enviar"
   },
   "ollama": {
     "sites": {
@@ -453,7 +454,9 @@
     "close": "Fechar",
     "chat_history": "História",
     "new_chat": "Novo bate -papo",
-    "back": "Voltar"
+    "back": "Voltar",
+    "copy_message": "Copiar mensagem",
+    "edit_message": "Editar mensagem"
   },
   "gmail_tools": {
     "buttons": {
