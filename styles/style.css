@@ -266,7 +266,7 @@
   --color-scroll-thumb: #30363d;
   --color-mask-disabled: rgba(13, 17, 23, 0.7);
   --color-arrival-shadow: rgba(0, 0, 0, 0.32);
-  --color-loading-track: #30363d;
+  --color-loading-track: #fff;
 
   --shadow-01: 0px 8px 16px 0px var(--color-shadow-medium),
     0px 4px 8px 0px var(--color-shadow-medium),
