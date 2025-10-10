@@ -25,6 +25,7 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
   const ollamaConnectionStatus = ref<'connected' | 'error' | 'unconnected'>('unconnected')
   const updateOllamaModelList = async (): Promise<OllamaModelInfo[]> => {
     try {
+      ollamaModelListUpdating.value = true
       const response = await rpc.getOllamaLocalModelListWithCapabilities()
       if (!response.error) {
         ollamaConnectionStatus.value = 'connected'
@@ -206,7 +207,30 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
   }
 
   const updateModelList = async () => {
-    await Promise.allSettled([updateOllamaModelList(), updateLMStudioModelList()])
+    logger.debug('Updating model list...')
+    const userConfig = await getUserConfig()
+    const endpointType = userConfig.llm.endpointType.get()
+
+    // Skip backend requests for web-llm as it uses static models
+    if (endpointType === 'web-llm') {
+      logger.debug('Skipping model list update for web-llm')
+      return modelList.value
+    }
+
+    // Only update the backend that is currently in use
+    const updates = []
+    if (endpointType === 'ollama') {
+      updates.push(updateOllamaModelList())
+    }
+    else if (endpointType === 'lm-studio') {
+      updates.push(updateLMStudioModelList())
+    }
+    else {
+      // Fallback: update both if endpoint type is unknown
+      updates.push(updateOllamaModelList(), updateLMStudioModelList())
+    }
+
+    await Promise.allSettled(updates)
     return modelList.value
   }
 

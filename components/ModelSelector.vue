@@ -160,7 +160,7 @@ const props = withDefaults(defineProps<{
 })
 
 const { t } = useI18n()
-const { modelList: composedModelList, modelListUpdating } = toRefs(useLLMBackendStatusStore())
+const { modelList: composedModelList, modelListUpdating: storeModelListUpdating } = toRefs(useLLMBackendStatusStore())
 const { updateModelList } = useLLMBackendStatusStore()
 
 only(['sidepanel'], () => {
@@ -192,6 +192,14 @@ const modelList = computed(() => {
       backend: 'web-llm' as LLMEndpointType,
     }))
   }
+})
+
+const modelListUpdating = computed(() => {
+  // Never show loading for web-llm as it uses static models
+  if (endpointType.value === 'web-llm') {
+    return false
+  }
+  return storeModelListUpdating.value
 })
 
 const modelOptions = computed(() => {
@@ -269,13 +277,18 @@ watch([modelList, modelListUpdating], ([modelList, updating]) => {
   }
 })
 
-watch([endpointType, selectedModel], async () => {
+watch([endpointType, selectedModel], async (newVal) => {
+  // Skip update for web-llm as it uses static SUPPORTED_MODELS
+  if (newVal[0] === 'web-llm') return
   updateModelList()
 })
 
 watch([ollamaBaseUrl, lmStudioBaseUrl], async () => updateModelList())
 
 onMounted(async () => {
-  updateModelList()
+  // Skip update for web-llm as it uses static SUPPORTED_MODELS
+  if (endpointType.value !== 'web-llm') {
+    updateModelList()
+  }
 })
 </script>
