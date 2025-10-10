@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.1-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0...v1.10.1-beta.0)
+
+### 🩹 Fixes
+
+- **model-list:** Improve model list update logic for web-llm endpoint, prevent extension crash ([a85bf9a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a85bf9a))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.16...v1.10.0)
