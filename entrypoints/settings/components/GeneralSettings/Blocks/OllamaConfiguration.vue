@@ -303,7 +303,7 @@ onMounted(async () => {
                 :href="OLLAMA_SEARCH_URL"
                 target="_blank"
               >
-                <Button class="flex items-center gap-[2px] justify-center min-h-8 min-w-40 py-1 text-text-primary">
+                <Button class="flex items-center gap-[2px] justify-center min-h-8 min-w-40 py-1">
                   <IconOllamaRedirect />
                   {{ t('settings.general.discover_more_models') }}
                 </Button>
