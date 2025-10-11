@@ -265,15 +265,23 @@ watch([modelList, modelListUpdating], ([modelList, updating]) => {
     translationModel.value = undefined
     return
   }
-  const newTranslationModel = modelList.find((m) => m.model === translationModel.value) ?? modelList[0] ?? undefined
-  const newCommonModel = modelList.find((m) => m.model === commonModel.value) ?? modelList[0] ?? undefined
-  if (newTranslationModel) {
+
+  // Only update models if current selection is not in the list
+  // Don't override endpointType to prevent infinite loops
+  const currentCommonModel = modelList.find((m) => m.model === commonModel.value)
+  const currentTranslationModel = modelList.find((m) => m.model === translationModel.value)
+
+  if (!currentTranslationModel && modelList.length > 0) {
+    const newTranslationModel = modelList[0]
     translationModel.value = newTranslationModel.model
     translationEndpointType.value = newTranslationModel.backend
   }
-  if (newCommonModel) {
+
+  if (!currentCommonModel && modelList.length > 0) {
+    const newCommonModel = modelList[0]
     commonModel.value = newCommonModel.model
-    endpointType.value = newCommonModel.backend
+    // Don't set endpointType here - it should be set explicitly by user actions
+    // Setting it here can cause infinite loops when switching between backends
   }
 })
 
