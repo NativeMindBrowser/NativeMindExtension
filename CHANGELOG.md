@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v1.10.1-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.0...v1.10.1-beta.1)
+
+### 🩹 Fixes
+
+- **model-selector:** Prevent infinite loops by refining model selection logic ([20697cc](https://github.com/NativeMindBrowser/NativeMindExtension/commit/20697cc))
+- **darkmode:** Use correct text color for ollama configuration btn ([2017524](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2017524))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.1-beta.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0...v1.10.1-beta.0)
