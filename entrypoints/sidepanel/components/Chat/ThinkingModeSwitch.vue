@@ -29,6 +29,7 @@
 import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue'
 
 import IconThinking from '@/assets/icons/thinking-capability.svg?component'
+import { mergeReasoningPreference, normalizeReasoningPreference } from '@/types/reasoning'
 import { useI18n } from '@/utils/i18n'
 import { isToggleableThinkingModel } from '@/utils/llm/thinking-models'
 import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
@@ -64,7 +65,8 @@ const isThinkingEnabled = computed({
   get() {
     // If chat has a specific setting, use it; otherwise use global setting
     const chatSetting = chat.historyManager.chatHistory.value.reasoningEnabled
-    return chatSetting !== undefined ? chatSetting : userConfig.llm.reasoning.get()
+    const source = chatSetting !== undefined ? chatSetting : userConfig.llm.reasoning.get()
+    return normalizeReasoningPreference(source).enabled
   },
   set(value: boolean) {
     setThinkingEnabled(value)
@@ -101,10 +103,12 @@ const toggleThinking = () => {
 
 const setThinkingEnabled = (value: boolean, skipStoreUpdate = false) => {
   // Update global setting
-  userConfig.llm.reasoning.set(value)
+  const updatedGlobal = mergeReasoningPreference(userConfig.llm.reasoning.get(), { enabled: value })
+  userConfig.llm.reasoning.set(updatedGlobal)
   if (skipStoreUpdate) return
   // Store chat-specific setting in chat history
-  chat.historyManager.chatHistory.value.reasoningEnabled = value
+  const chatPreference = chat.historyManager.chatHistory.value.reasoningEnabled ?? updatedGlobal
+  chat.historyManager.chatHistory.value.reasoningEnabled = mergeReasoningPreference(chatPreference, { enabled: value })
 }
 
 // Handle thinking state based on model capabilities

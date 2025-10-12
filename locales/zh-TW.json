@@ -10,7 +10,10 @@
       "title": "快捷操作"
     },
     "thinking_mode": {
-      "label": "推理"
+      "label": "推理",
+      "low": "低",
+      "medium": "中",
+      "high": "高"
     },
     "input": {
       "placeholder": {

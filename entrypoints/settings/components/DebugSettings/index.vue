@@ -556,7 +556,7 @@
 </template>
 
 <script setup lang="tsx">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 import IconDelete from '@/assets/icons/delete.svg?component'
 import Input from '@/components/Input.vue'
@@ -566,6 +566,7 @@ import Switch from '@/components/Switch.vue'
 import Button from '@/components/ui/Button.vue'
 import UILanguageSelector from '@/components/UILanguageSelector.vue'
 import { BrowserSession } from '@/entrypoints/sidepanel/utils/chat/tool-calls/utils/browser-use'
+import { mergeReasoningPreference, normalizeReasoningPreference } from '@/types/reasoning'
 import { SettingsScrollTarget } from '@/types/scroll-targets'
 import { INVALID_URLS } from '@/utils/constants'
 import { formatSize } from '@/utils/formatter'
@@ -586,7 +587,15 @@ defineProps<{
 const userConfig = await getUserConfig()
 const translationSystemPrompt = userConfig.translation.systemPrompt.toRef()
 const chatSystemPrompt = userConfig.chat.systemPrompt.toRef()
-const enableReasoning = userConfig.llm.reasoning.toRef()
+const reasoningPreference = userConfig.llm.reasoning.toRef()
+const enableReasoning = computed({
+  get() {
+    return normalizeReasoningPreference(reasoningPreference.value).enabled
+  },
+  set(value: boolean) {
+    reasoningPreference.value = mergeReasoningPreference(reasoningPreference.value, { enabled: value })
+  },
+})
 const onboardingVersion = userConfig.ui.onboarding.version.toRef()
 const enabledChromeAIPolyfill = userConfig.browserAI.polyfill.enable.toRef()
 const writingToolsRewritePrompt = userConfig.writingTools.rewrite.systemPrompt.toRef()

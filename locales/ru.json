@@ -10,7 +10,10 @@
       "title": "Быстрые действия"
     },
     "thinking_mode": {
-      "label": "Мышление"
+      "label": "Мышление",
+      "low": "Низкий",
+      "medium": "Средний",
+      "high": "Высокий"
     },
     "input": {
       "placeholder": {

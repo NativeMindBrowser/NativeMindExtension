@@ -250,7 +250,10 @@
       "title": "快捷操作"
     },
     "thinking_mode": {
-      "label": "思考"
+      "label": "思考",
+      "low": "低",
+      "medium": "中",
+      "high": "高"
     },
     "input": {
       "placeholder": {

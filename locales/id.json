@@ -10,7 +10,10 @@
       "title": "Tindakan cepat"
     },
     "thinking_mode": {
-      "label": "Berpikir"
+      "label": "Berpikir",
+      "low": "Rendah",
+      "medium": "Sedang",
+      "high": "Tinggi"
     },
     "input": {
       "placeholder": {

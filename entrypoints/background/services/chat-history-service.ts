@@ -6,6 +6,7 @@
  */
 
 import { ChatHistoryV1, ChatList, ContextAttachment, ContextAttachmentStorage, HistoryItemV1 } from '@/types/chat'
+import { normalizeReasoningPreference } from '@/types/reasoning'
 import { useGlobalI18n } from '@/utils/i18n'
 import { getLocaleName } from '@/utils/i18n/constants'
 import logger from '@/utils/logger'
@@ -65,12 +66,16 @@ export class BackgroundChatHistoryService {
   }
 
   migrateFromOldHistoryRecord(record: ChatHistoryRecord): ChatHistoryV1 {
+    const reasoningPreference = record.reasoningEnabled === undefined
+      ? undefined
+      : normalizeReasoningPreference(record.reasoningEnabled)
+
     return {
       id: record.id,
       title: record.title,
       lastInteractedAt: record.lastInteractedAt,
       contextUpdateInfo: record.contextUpdateInfo ? JSON.parse(record.contextUpdateInfo) : undefined,
-      reasoningEnabled: record.reasoningEnabled,
+      reasoningEnabled: reasoningPreference,
       onlineSearchEnabled: record.onlineSearchEnabled ?? true, // default to true if undefined for backward compatibility
       history: JSON.parse(record.history) as HistoryItemV1[],
     }

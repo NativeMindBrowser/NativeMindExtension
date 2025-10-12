@@ -8,6 +8,7 @@ import { readPortMessageIntoIterator, toAsyncIter } from '@/utils/async'
 import { AbortError, fromError, ModelRequestTimeoutError } from '@/utils/error'
 import { BackgroundAliveKeeper } from '@/utils/keepalive'
 import { SchemaName, Schemas } from '@/utils/llm/output-schema'
+import { getReasoningOptionForModel } from '@/utils/llm/reasoning'
 import { WebLLMSupportedModel } from '@/utils/llm/web-llm'
 import logger from '@/utils/logger'
 import { c2bRpc } from '@/utils/rpc'
@@ -22,9 +23,19 @@ interface ExtraOptions {
 }
 
 export async function* streamTextInBackground(options: Parameters<typeof c2bRpc.streamText>[0] & ExtraOptions) {
-  const defaultFirstTokenTimeout = (await getUserConfig()).llm.defaultFirstTokenTimeout.get()
+  const userConfig = await getUserConfig()
+  const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.get()
   const { abortSignal, timeout = defaultFirstTokenTimeout, ...restOptions } = options
-  const { portName } = await c2bRpc.streamText(restOptions)
+  const modelId = userConfig.llm.model.get()
+  const reasoningPreference = userConfig.llm.reasoning.get()
+  const computedReasoning = restOptions.autoThinking
+    ? restOptions.reasoning
+    : (restOptions.reasoning ?? getReasoningOptionForModel(reasoningPreference, modelId))
+  const requestOptions = {
+    ...restOptions,
+    ...(computedReasoning !== undefined ? { reasoning: computedReasoning } : {}),
+  }
+  const { portName } = await c2bRpc.streamText(requestOptions)
   const aliveKeeper = new BackgroundAliveKeeper()
   const port = browser.runtime.connect({ name: portName })
   abortSignal?.addEventListener('abort', () => {
@@ -36,9 +47,19 @@ export async function* streamTextInBackground(options: Parameters<typeof c2bRpc.
 }
 
 export async function* streamObjectInBackground<S extends SchemaName>(options: Parameters<typeof c2bRpc.streamObjectFromSchema<S>>[0] & ExtraOptions) {
-  const defaultFirstTokenTimeout = (await getUserConfig()).llm.defaultFirstTokenTimeout.get()
+  const userConfig = await getUserConfig()
+  const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.get()
   const { abortSignal, timeout = defaultFirstTokenTimeout, ...restOptions } = options
-  const { portName } = await c2bRpc.streamObjectFromSchema(restOptions)
+  const modelId = userConfig.llm.model.get()
+  const reasoningPreference = userConfig.llm.reasoning.get()
+  const computedReasoning = restOptions.autoThinking
+    ? restOptions.reasoning
+    : (restOptions.reasoning ?? getReasoningOptionForModel(reasoningPreference, modelId))
+  const requestOptions = {
+    ...restOptions,
+    ...(computedReasoning !== undefined ? { reasoning: computedReasoning } : {}),
+  }
+  const { portName } = await c2bRpc.streamObjectFromSchema(requestOptions)
   const aliveKeeper = new BackgroundAliveKeeper()
   const port = browser.runtime.connect({ name: portName })
   port.onDisconnect.addListener(() => aliveKeeper.dispose())
@@ -51,9 +72,19 @@ export async function* streamObjectInBackground<S extends SchemaName>(options: P
 }
 
 export async function generateObjectInBackground<S extends SchemaName>(options: Parameters<typeof c2bRpc.generateObjectFromSchema<S>>[0] & ExtraOptions) {
-  const defaultFirstTokenTimeout = (await getUserConfig()).llm.defaultFirstTokenTimeout.get()
+  const userConfig = await getUserConfig()
+  const defaultFirstTokenTimeout = userConfig.llm.defaultFirstTokenTimeout.get()
   const { promise: abortPromise, resolve, reject } = Promise.withResolvers<Awaited<ReturnType<typeof c2bRpc.generateObjectFromSchema<S>>>>()
   const { abortSignal, timeout = defaultFirstTokenTimeout, ...restOptions } = options
+  const modelId = userConfig.llm.model.get()
+  const reasoningPreference = userConfig.llm.reasoning.get()
+  const computedReasoning = restOptions.autoThinking
+    ? restOptions.reasoning
+    : (restOptions.reasoning ?? getReasoningOptionForModel(reasoningPreference, modelId))
+  const requestOptions = {
+    ...restOptions,
+    ...(computedReasoning !== undefined ? { reasoning: computedReasoning } : {}),
+  }
   const aliveKeeper = new BackgroundAliveKeeper()
   abortSignal?.addEventListener('abort', () => {
     log.debug('generate object request aborted')
@@ -61,12 +92,12 @@ export async function generateObjectInBackground<S extends SchemaName>(options: 
     reject(new AbortError('Aborted'))
   })
   const timeoutTimer = setTimeout(() => {
-    log.warn('generate object request timeout', restOptions)
+    log.warn('generate object request timeout', requestOptions)
     reject(new ModelRequestTimeoutError())
   }, timeout)
   const promise = await c2bRpc
     .generateObjectFromSchema({
-      ...restOptions,
+      ...requestOptions,
     })
     .then((result) => {
       clearTimeout(timeoutTimer)
