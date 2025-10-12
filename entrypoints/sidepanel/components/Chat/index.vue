@@ -96,7 +96,8 @@
           <!-- Toolbar -->
           <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
             <div class="flex grow items-center gap-1">
-              <ThinkingModeSwitch />
+              <ThinkingEffortSelector v-if="showReasoningEffortSelector" />
+              <ThinkingModeSwitch v-else />
               <OnlineSearchSwitch />
             </div>
             <div class="flex gap-2 flex-row">
@@ -145,8 +146,10 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
+import { isGptOssModel } from '@/utils/llm/reasoning'
 import logger from '@/utils/logger'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
+import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
 import { showSettings } from '../../../../utils/settings'
@@ -163,6 +166,7 @@ import MessageAssistant from './Messages/Assistant.vue'
 import MessageTask from './Messages/Task.vue'
 import MessageUser from './Messages/User.vue'
 import OnlineSearchSwitch from './OnlineSearchSwitch.vue'
+import ThinkingEffortSelector from './ThinkingEffortSelector.vue'
 import ThinkingModeSwitch from './ThinkingModeSwitch.vue'
 
 const inputContainerRef = ref<HTMLDivElement>()
@@ -181,6 +185,10 @@ const log = logger.child('chat-sidepanel')
 defineExpose({
   attachmentSelectorRef,
 })
+
+const userConfig = await getUserConfig()
+const currentModel = userConfig.llm.model.toRef()
+const showReasoningEffortSelector = computed(() => isGptOssModel(currentModel.value))
 
 const chat = await Chat.getInstance()
 const contextAttachmentStorage = chat.contextAttachmentStorage

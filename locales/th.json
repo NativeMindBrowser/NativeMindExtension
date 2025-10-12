@@ -10,7 +10,10 @@
       "title": "การกระทำที่รวดเร็ว"
     },
     "thinking_mode": {
-      "label": "กำลังคิด"
+      "label": "กำลังคิด",
+      "low": "ต่ำ",
+      "medium": "ปานกลาง",
+      "high": "สูง"
     },
     "input": {
       "placeholder": {

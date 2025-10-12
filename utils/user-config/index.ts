@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { browser } from 'wxt/browser'
 
+import { DEFAULT_REASONING_PREFERENCE, normalizeReasoningPreference } from '@/types/reasoning'
 import { ThemeModeType } from '@/types/theme'
 import { c2bRpc } from '@/utils/rpc'
 
@@ -92,6 +93,10 @@ export async function _getUserConfig() {
     }
   })
 
+  const reasoning = await new Config('llm.reasoning').default(DEFAULT_REASONING_PREFERENCE).build()
+  const normalizedReasoning = normalizeReasoningPreference(reasoning.get())
+  reasoning.set(normalizedReasoning)
+
   return {
     locale: {
       current: await new Config<SupportedLocaleCode, undefined>('locale.current').build(),
@@ -101,7 +106,7 @@ export async function _getUserConfig() {
       endpointType: await new Config('llm.endpointType').default('ollama' as LLMEndpointType).build(),
       model: await new Config<string, undefined>('llm.model').build(),
       apiKey: await new Config('llm.apiKey').default('ollama').build(),
-      reasoning: await new Config('llm.reasoning').default(true).build(),
+      reasoning,
       titleGenerationSystemPrompt: await new Config('llm.titleGenerationSystemPrompt').default(DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT).build(),
       backends: {
         ollama: {

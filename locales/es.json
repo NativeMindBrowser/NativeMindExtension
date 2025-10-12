@@ -31,7 +31,10 @@
       "title": "Acciones Rápidas"
     },
     "thinking_mode": {
-      "label": "Pensando"
+      "label": "Pensando",
+      "low": "Bajo",
+      "medium": "Medio",
+      "high": "Alto"
     },
     "prompt": {
       "highlight_key_insights": {

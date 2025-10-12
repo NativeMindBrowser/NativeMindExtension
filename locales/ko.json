@@ -10,7 +10,10 @@
       "title": "빠른 액션"
     },
     "thinking_mode": {
-      "label": "사고"
+      "label": "사고",
+      "low": "낮음",
+      "medium": "중간",
+      "high": "높음"
     },
     "input": {
       "placeholder": {

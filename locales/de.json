@@ -10,7 +10,10 @@
       "title": "Schnelle Aktionen"
     },
     "thinking_mode": {
-      "label": "Denken"
+      "label": "Denken",
+      "low": "Niedrig",
+      "medium": "Mittel",
+      "high": "Hoch"
     },
     "input": {
       "placeholder": {

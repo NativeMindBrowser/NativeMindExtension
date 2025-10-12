@@ -10,7 +10,10 @@
       "title": "Thao tác nhanh"
     },
     "thinking_mode": {
-      "label": "Suy nghĩ"
+      "label": "Suy nghĩ",
+      "low": "Thấp",
+      "medium": "Trung bình",
+      "high": "Cao"
     },
     "input": {
       "placeholder": {

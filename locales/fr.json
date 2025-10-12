@@ -10,7 +10,10 @@
       "title": "Actions rapides"
     },
     "thinking_mode": {
-      "label": "Réflexion"
+      "label": "Réflexion",
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé"
     },
     "input": {
       "placeholder": {

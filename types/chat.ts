@@ -4,6 +4,7 @@ import { IconName } from '@/utils/icon'
 
 import { PromiseOr } from './common'
 import { Base64ImageData } from './image'
+import { StoredReasoningPreference } from './reasoning'
 import { SettingsScrollTarget } from './scroll-targets'
 import { TabInfo } from './tab'
 
@@ -197,7 +198,7 @@ export type ChatHistoryV1 = {
     lastFullUpdateMessageId?: string // last message id that was fully updated with context info
     lastAttachmentIds: string[]
   }
-  reasoningEnabled?: boolean // reasoning setting for this chat
+  reasoningEnabled?: StoredReasoningPreference // reasoning setting for this chat
   onlineSearchEnabled: boolean // online search setting for this chat, default is true
   history: HistoryItemV1[]
 }

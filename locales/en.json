@@ -250,7 +250,10 @@
       "title": "Quick Actions"
     },
     "thinking_mode": {
-      "label": "Thinking"
+      "label": "Thinking",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
     },
     "input": {
       "placeholder": {

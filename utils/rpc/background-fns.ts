@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 
 import { ChatHistoryV1, ContextAttachmentStorage } from '@/types/chat'
+import type { ReasoningOption } from '@/types/reasoning'
 import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
@@ -34,7 +35,7 @@ import { preparePortConnection, shouldGenerateChatTitle } from './utils'
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
 type GenerateObjectOptions = Omit<Parameters<typeof originalGenerateObject>[0], 'tools'>
-type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean, autoThinking?: boolean }
+type ExtraGenerateOptions = { modelId?: string, reasoning?: ReasoningOption, autoThinking?: boolean }
 type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
 
@@ -79,7 +80,7 @@ const parseSchema = <S extends SchemaName>(options: SchemaOptions<S>) => {
 const generateExtraModelOptions = (options: ExtraGenerateOptions) => {
   return {
     ...(options.modelId !== undefined ? { model: options.modelId } : {}),
-    ...(options.reasoning !== undefined ? { reasoningEffort: options.reasoning } : {}),
+    ...(options.reasoning !== undefined ? { reasoning: options.reasoning } : {}),
     ...(options.autoThinking !== undefined ? { autoThinking: options.autoThinking } : {}),
   }
 }

@@ -4,6 +4,7 @@ import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 
 import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
 import { ContextAttachmentStorage } from '@/types/chat'
+import { normalizeReasoningPreference, StoredReasoningPreference } from '@/types/reasoning'
 import { nonNullable } from '@/utils/array'
 import { debounce } from '@/utils/debounce'
 import { useGlobalI18n } from '@/utils/i18n'
@@ -316,7 +317,18 @@ export class Chat {
           onlineSearchEnabled: true, // Default to true for new chats
         })
 
-        userConfig.llm.reasoning.set(chatHistory.value.reasoningEnabled ?? true)
+        const applyReasoningPreference = (preference?: StoredReasoningPreference) => {
+          if (preference === undefined) {
+            const normalized = normalizeReasoningPreference(userConfig.llm.reasoning.get())
+            userConfig.llm.reasoning.set(normalized)
+            return
+          }
+          const normalized = normalizeReasoningPreference(preference)
+          chatHistory.value.reasoningEnabled = normalized
+          userConfig.llm.reasoning.set(normalized)
+        }
+
+        applyReasoningPreference(chatHistory.value.reasoningEnabled)
         userConfig.chat.onlineSearch.enable.set(chatHistory.value.onlineSearchEnabled ?? true)
         const contextAttachments = ref<ContextAttachmentStorage>(await s2bRpc.getContextAttachments(chatHistoryId.value) ?? { attachments: [], id: chatHistoryId.value, lastInteractedAt: Date.now() })
         const chatList = ref<ChatList>([])
@@ -384,7 +396,7 @@ export class Chat {
           Object.assign(chatHistory.value, newChatHistory)
           Object.assign(contextAttachments.value, newContextAttachments)
 
-          userConfig.llm.reasoning.set(newChatHistory.reasoningEnabled ?? true)
+          applyReasoningPreference(newChatHistory.reasoningEnabled)
           userConfig.chat.onlineSearch.enable.set(newChatHistory.onlineSearchEnabled ?? true)
 
           // Clean up any loading messages
