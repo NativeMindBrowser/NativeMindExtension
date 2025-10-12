@@ -293,10 +293,7 @@ watch([endpointType, selectedModel], async (newVal) => {
 
 watch([ollamaBaseUrl, lmStudioBaseUrl], async () => updateModelList())
 
-onMounted(async () => {
-  // Skip update for web-llm as it uses static SUPPORTED_MODELS
-  if (endpointType.value !== 'web-llm') {
-    updateModelList()
-  }
+onMounted(() => {
+  updateModelList()
 })
 </script>
