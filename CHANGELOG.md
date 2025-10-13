@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.10.1-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.1...v1.10.1-beta.2)
+
+### 🩹 Fixes
+
+- **model-selector:** Always update model list for Ollama and LMStudio backends ([4fcf092](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4fcf092))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.10.1-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.0...v1.10.1-beta.1)
