@@ -1,17 +1,19 @@
+import { computed } from 'vue'
 import { browser } from 'wxt/browser'
 
+import { ThemeModeType } from '@/types/theme'
 import { c2bRpc } from '@/utils/rpc'
 
 import { SupportedLocaleCode } from '../i18n/constants'
 import { generateRandomId } from '../id'
 import { LanguageCode } from '../language/detect'
 import { LLMEndpointType } from '../llm/models'
-import { chatDefaultPromptBasedTools } from '../llm/tools/prompt-based/tools'
+import { promptBasedToolCollections } from '../llm/tools/prompt-based/tools'
 import logger from '../logger'
 import { lazyInitialize } from '../memo'
 import { forRuntimes } from '../runtime'
 import { ByteSize } from '../sizes'
-import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT, DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT, DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
+import { DEFAULT_CHAT_SYSTEM_PROMPT, DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE, DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT, DEFAULT_GMAIL_COMPOSE_SYSTEM_PROMPT, DEFAULT_GMAIL_REPLY_SYSTEM_PROMPT, DEFAULT_GMAIL_SUMMARY_SYSTEM_PROMPT, DEFAULT_TRANSLATOR_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_LIST_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_PROOFREAD_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_REWRITE_SYSTEM_PROMPT, DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT } from './defaults'
 import { Config } from './helpers'
 
 const log = logger.child('user-config')
@@ -76,23 +78,43 @@ export async function _getUserConfig() {
   }
 
   const enableBrowserUse = await new Config('browserUse.enable').default(true).build()
+  const enableOnlineSearch = await new Config('chat.onlineSearch.enable').default(true).build()
+  const defaultChatSystemPrompt = computed(() => {
+    const enableBrowserUseStatus = enableBrowserUse.get()
+    const enableOnlineSearchStatus = enableOnlineSearch.get()
+    if (enableBrowserUseStatus) {
+      if (enableOnlineSearchStatus) return DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(promptBasedToolCollections.browserUse.onlineSearch)
+      else return DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(promptBasedToolCollections.browserUse.nonOnlineSearch)
+    }
+    else {
+      if (enableOnlineSearchStatus) return DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(promptBasedToolCollections.nonBrowserUse.onlineSearch)
+      else return DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(promptBasedToolCollections.nonBrowserUse.nonOnlineSearch)
+    }
+  })
 
   return {
     locale: {
-      current: await new Config<SupportedLocaleCode, undefined>(
-        'locale.current',
-      ).build(),
+      current: await new Config<SupportedLocaleCode, undefined>('locale.current').build(),
     },
     llm: {
       defaultFirstTokenTimeout: await new Config('llm.firstTokenTimeout').default(60 * 1000).build(), // 60 seconds
       endpointType: await new Config('llm.endpointType').default('ollama' as LLMEndpointType).build(),
-      baseUrl: await new Config('llm.baseUrl').default('http://localhost:11434/api').build(),
       model: await new Config<string, undefined>('llm.model').build(),
       apiKey: await new Config('llm.apiKey').default('ollama').build(),
-      numCtx: await new Config('llm.numCtx').default(1024 * 8).build(),
-      enableNumCtx: await new Config('llm.enableNumCtx').default(enableNumCtx).build(),
       reasoning: await new Config('llm.reasoning').default(true).build(),
       titleGenerationSystemPrompt: await new Config('llm.titleGenerationSystemPrompt').default(DEFAULT_CHAT_TITLE_GENERATION_SYSTEM_PROMPT).build(),
+      backends: {
+        ollama: {
+          numCtx: await new Config('llm.backends.ollama.numCtx').default(1024 * 8).build(),
+          enableNumCtx: await new Config('llm.backends.ollama.enableNumCtx').default(enableNumCtx).build(),
+          baseUrl: await new Config('llm.backends.ollama.baseUrl').default('http://localhost:11434/api').migrateFrom('llm.baseUrl', (v) => v).build(),
+        },
+        lmStudio: {
+          numCtx: await new Config('llm.backends.lmStudio.numCtx').default(1024 * 8).build(),
+          enableNumCtx: await new Config('llm.backends.lmStudio.enableNumCtx').default(enableNumCtx).build(),
+          baseUrl: await new Config('llm.backends.lmStudio.baseUrl').default('http://localhost:1234/api').build(),
+        },
+      },
     },
     browserAI: {
       polyfill: {
@@ -120,11 +142,12 @@ export async function _getUserConfig() {
       },
       systemPrompt: await new Config('chat.systemPrompt_1')
         .migrateFrom('chat.systemPrompt', (v) => v === DEFAULT_CHAT_SYSTEM_PROMPT ? undefined : v)
-        .default(enableBrowserUse.get() ? DEFAULT_CHAT_SYSTEM_PROMPT_WITH_BROWSER_USE(chatDefaultPromptBasedTools) : DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS).build(),
+        .default(defaultChatSystemPrompt).build(),
       history: {
         currentChatId: await new Config('chat.history.currentChatId').default(generateRandomId()).build(),
       },
       onlineSearch: {
+        enable: enableOnlineSearch,
         pageReadCount: await new Config('chat.onlineSearch.pageReadCount').default(5).build(), // how many pages to read when online search is enabled
       },
       quickActions: {
@@ -133,6 +156,7 @@ export async function _getUserConfig() {
       thinkingVisibility: await new Config('chat.thinkingVisibility').default('preview' as 'hide' | 'preview' | 'full').build(),
     },
     translation: {
+      endpointType: await new Config('translation.endpointType').default('ollama' as LLMEndpointType).build(),
       model: await new Config<string, undefined>('translation.model').build(),
       targetLocale: await new Config('translation.targetLocale').default('zh' as LanguageCode).build(),
       systemPrompt: await new Config('translation.systemPrompt').default(DEFAULT_TRANSLATOR_SYSTEM_PROMPT).build(),
@@ -143,6 +167,9 @@ export async function _getUserConfig() {
       },
     },
     ui: {
+      theme: {
+        mode: await new Config('ui.theme.mode').default('system' as ThemeModeType).build(),
+      },
       pinSidebar: await new Config('ui.pinSidebar').default(false).build(),
       onboarding: {
         version: await new Config('ui.onboarding.version').default(0).build(),
@@ -168,6 +195,16 @@ export async function _getUserConfig() {
       sparkle: {
         enable: await new Config('writingTools.sparkle.enable').default(true).build(),
         systemPrompt: await new Config('writingTools.sparkle.systemPrompt').default(DEFAULT_WRITING_TOOLS_SPARKLE_SYSTEM_PROMPT).build(),
+      },
+    },
+    settings: {
+      blocks: {
+        ollamaConfig: {
+          open: await new Config('settings.blocks.ollamaConfig.open').default(true).build(),
+        },
+        lmStudioConfig: {
+          open: await new Config('settings.blocks.lmStudioConfig.open').default(true).build(),
+        },
       },
     },
     emailTools: {

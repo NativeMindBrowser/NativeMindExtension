@@ -12,7 +12,7 @@
         v-if="message.isError"
         class="grow-0 shrink-0"
       >
-        <IconWarning class="w-4 text-[#FDA58F]" />
+        <IconWarning class="w-4 text-text-caution" />
       </div>
       <div class="max-w-full flex-1 flex flex-col gap-1">
         <div
@@ -76,11 +76,10 @@
         <ScrollContainer
           v-if="showReasoning"
           ref="scrollContainerRef"
-          containerClass="overscroll-auto"
-          :class="['wrap-anywhere pl-6 border-[#AEB5BD] overflow-auto', showClampedReasoning ? 'h-[3.3em] leading-[1.5em]' : '']"
+          :containerClass="classNames('overscroll-auto overflow-auto transition-height duration-200 [interpolate-size:allow-keywords] wrap-anywhere pl-6', showClampedReasoning ? 'h-[3.3em] leading-[1.5em]' : 'h-auto')"
           :arrivalShadow="{
-            top: { color: '#F5F6FB', size: 12, offset: 8 },
-            bottom: { color: '#F5F6FB', size: 12, offset: 8 }
+            top: { color: 'var(--color-bg-app)', size: 12, offset: 8 },
+            bottom: { color: 'var(--color-bg-app)', size: 12, offset: 8 }
           }"
           :autoSnap="{bottom: (showClampedReasoning && !message.done) ? true : false}"
         >
@@ -137,6 +136,7 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Text from '@/components/ui/Text.vue'
 import { AgentMessageV1, AssistantMessageV1 } from '@/types/chat'
 import { getUserConfig } from '@/utils/user-config'
+import { classNames } from '@/utils/vue/utils'
 const props = defineProps<{
   message: AssistantMessageV1 | AgentMessageV1
 }>()
@@ -153,7 +153,7 @@ const { t } = useI18n()
 const userConfig = await getUserConfig()
 const thinkingVisibility = userConfig.chat.thinkingVisibility.toRef()
 const expanded = ref(false)
-const scrollContainerRef = ref()
+const scrollContainerRef = ref<InstanceType<typeof ScrollContainer>>()
 
 // Helper computed properties for cleaner logic
 const isThinking = computed(() => !message.value.content && !message.value.done)

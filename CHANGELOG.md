@@ -1,5 +1,275 @@
 # Changelog
 
+## v1.10.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.2...v1.10.1)
+
+## v1.10.1-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.1...v1.10.1-beta.2)
+
+### 🩹 Fixes
+
+- **model-selector:** Always update model list for Ollama and LMStudio backends ([4fcf092](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4fcf092))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.1-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.0...v1.10.1-beta.1)
+
+### 🩹 Fixes
+
+- **model-selector:** Prevent infinite loops by refining model selection logic ([20697cc](https://github.com/NativeMindBrowser/NativeMindExtension/commit/20697cc))
+- **darkmode:** Use correct text color for ollama configuration btn ([2017524](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2017524))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.1-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0...v1.10.1-beta.0)
+
+### 🩹 Fixes
+
+- **model-list:** Improve model list update logic for web-llm endpoint, prevent extension crash ([a85bf9a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a85bf9a))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.16...v1.10.0)
+
+## v1.10.0-beta.16
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.15...v1.10.0-beta.16)
+
+### 🩹 Fixes
+
+- **loading:** Update loading track color to improve visibility in dark mode ([567b4c3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/567b4c3))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.0-beta.15
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.14...v1.10.0-beta.15)
+
+### 🩹 Fixes
+
+- **chat:** Refactor autoGenerateChatTitleIfNeeded to use createRetryWrapper for improved error handling ([8db739d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8db739d))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.0-beta.14
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.13...v1.10.0-beta.14)
+
+### 🩹 Fixes
+
+- **darkmode:** Update icon dimensions and color adjustments across components for onboarding page ([fff91dd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fff91dd))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.0-beta.13
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.12...v1.10.0-beta.13)
+
+### 🩹 Fixes
+
+- **config:** Enhance reactive default value handling and storage synchronization ([e9ca17d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e9ca17d))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.10.0-beta.12
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.11...v1.10.0-beta.12)
+
+### 🩹 Fixes
+
+- **selector:** Update dropdown class to include text color ([a9c60c0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a9c60c0))
+- **style:** Fix text-accent-blue for darkmode ([dc2e4fd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/dc2e4fd))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.0-beta.11
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.10...v1.10.0-beta.11)
+
+### 🚀 Enhancements
+
+- **gmail-tools:** Replace logo SVG with new design and update text color ([57626ba](https://github.com/NativeMindBrowser/NativeMindExtension/commit/57626ba))
+
+### 🩹 Fixes
+
+- Remove duplicated ollama redirect svg and update color schema. ([3f159b0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3f159b0))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.0-beta.10
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.9...v1.10.0-beta.10)
+
+### 🩹 Fixes
+
+- **settings:** Update connection status handling for Ollama model list retrieval ([7c0dc5a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7c0dc5a))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.10.0-beta.9
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.8...v1.10.0-beta.9)
+
+### 🩹 Fixes
+
+- **settings:** Update connection error messages for Ollama across multiple languages ([15e4706](https://github.com/NativeMindBrowser/NativeMindExtension/commit/15e4706))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.10.0-beta.8
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.7...v1.10.0-beta.8)
+
+### 🚀 Enhancements
+
+- **Darkmode:** Introduce darkmode theme with color variables ([c0150fd](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c0150fd))
+- **theme:** Refactor theme management to use composables and improve type definitions ([097d35c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/097d35c))
+- **theme:** Refactor&fix styles and class names across components for consistency and clarity ([5c34142](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5c34142))
+
+### 🩹 Fixes
+
+- Revert unnecessary darkmode changes ([6034697](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6034697))
+- **theme:** Update theme handling to use data attributes instead of directly adding a class to the document to avoid affecting the original page, and use useEventListener to handle event listener unmounting. ([0a4dc45](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0a4dc45))
+- **Input:** Correct shadow styles for error state in input component ([54ab5a1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/54ab5a1))
+- **ui:** Improve agent-task ui style on fetching pages ([eaa6f1d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/eaa6f1d))
+- **theme:** Consolidate color variables and remove unused colors. ([e64b99d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e64b99d))
+
+### 🏡 Chore
+
+- **cross-env:** Update package.json to use cross-env for better environment variable management ([43c3e2e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/43c3e2e))
+
+### ❤️ Contributors
+
+- Neko Liu ([@NekoWings](http://github.com/NekoWings))
+- Nekowings ([@NekoWings](http://github.com/NekoWings))
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.10.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.6...v1.10.0-beta.7)
+
+### 🩹 Fixes
+
+- **chat:** Trim m studio error message length to improve readability ([57967fe](https://github.com/NativeMindBrowser/NativeMindExtension/commit/57967fe))
+- **AttachmentSelector:** Enhance model support checks for vision capabilities based on endpoint type ([e6d9954](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e6d9954))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.10.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.5...v1.10.0-beta.6)
+
+### 🏡 Chore
+
+- **chat:** Simplify error messages by removing endpoint type references ([3e1f5d1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3e1f5d1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.10.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.4...v1.10.0-beta.5)
+
+### 🩹 Fixes
+
+- **web-llm:** Fix infinite loading when local model cache is invalid ([3b6a8e0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/3b6a8e0))
+- **settings:** Update connection message for LM Studio in multiple language files ([130bdd7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/130bdd7))
+
+### 🏡 Chore
+
+- **onboarding:** Adjust help section visibility based on selected endpoint type ([72515e8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/72515e8))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.10.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.4...v1.10.0-beta.4)
+
+### 🚀 Enhancements
+
+- **lm-studio:** Initial support for LM Studio ([0f318d9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f318d9))
+- **tests:** Add onboarding and settings tests, enhance mock responses ([e8793b7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e8793b7))
+- **chat:** Add toggle to enable online search and its settings ([a60f489](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a60f489))
+- **tests:** Add LLM API tests and mock responses for Ollama ([16a1f8d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/16a1f8d))
+
+### 🩹 Fixes
+
+- **lm-studio:** Return consistent structured response format ([24d9636](https://github.com/NativeMindBrowser/NativeMindExtension/commit/24d9636))
+- **pattern-extractor:** Ensure extracted values are strings and handle undefined keys ([b95e17f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b95e17f))
+
+### 🏡 Chore
+
+- **package:** Update version to 1.10.0 ([d933b93](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d933b93))
+- **release:** V1.10.0-beta.1 ([67c8c4f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/67c8c4f))
+- **release:** V1.10.0-beta.2 ([170af85](https://github.com/NativeMindBrowser/NativeMindExtension/commit/170af85))
+- **release:** V1.10.0-beta.3 ([0581a4f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0581a4f))
+- **browser-use:** Set default for browser use to true ([374a849](https://github.com/NativeMindBrowser/NativeMindExtension/commit/374a849))
+- **chat:** Improve assistant message expanded class ([4847c2c](https://github.com/NativeMindBrowser/NativeMindExtension/commit/4847c2c))
+- **logging:** Enhance rawLoggingMiddleware to log stream and generate results ([a6ee1f9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a6ee1f9))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.10.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.2...v1.10.0-beta.3)
+
+### 🚀 Enhancements
+
+- **tests:** Add onboarding and settings tests, enhance mock responses ([e8793b7](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e8793b7))
+- **chat:** Add toggle to enable online search and its settings ([a60f489](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a60f489))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.10.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.0-beta.1...v1.10.0-beta.2)
+
+### 🩹 Fixes
+
+- **lm-studio:** Return consistent structured response format ([24d9636](https://github.com/NativeMindBrowser/NativeMindExtension/commit/24d9636))
+
+## v1.10.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.2...v1.10.0-beta.1)
 
 ## v1.9.5
 
@@ -352,10 +622,12 @@
 ### 🚀 Enhancements
 
 - **agent:** Add task-click-page icon and update related references ([fef0052](https://github.com/NativeMindBrowser/NativeMindExtension/commit/fef0052))
+- **lm-studio:** Initial support for LM Studio ([0f318d9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0f318d9))
 
 ### 🏡 Chore
 
 - **logo:** Update extension logo in toolbar ([7335374](https://github.com/NativeMindBrowser/NativeMindExtension/commit/7335374))
+- **package:** Update version to 1.10.0 ([d933b93](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d933b93))
 
 ### ❤️ Contributors
 
@@ -1020,6 +1292,7 @@
 ### 🚀 Enhancements
 
 - **agent:** Add methods to persist and check current tab in AgentStorage ([510c90a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/510c90a))
+
 ## v1.6.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.4...v1.6.5)
@@ -1135,6 +1408,7 @@
 ### 🏡 Chore
 
 - **package:** Update version to 1.7.0-beta.0 ([1947b6b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1947b6b))
+
 ## v1.6.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0...v1.6.1)
@@ -1302,6 +1576,7 @@
 ### 🩹 Fixes
 
 - **pdf:** Implement PDF file parsing from URL and enhance file handling for Firefox ([bc9ebf6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bc9ebf6))
+
 ## v1.6.0-beta.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.1...v1.6.0-beta.2)
@@ -1321,6 +1596,7 @@
 ### 🩹 Fixes
 
 - **pdf:** Add Firefox support for PDF text extraction and page count ([a621ca8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a621ca8))
+
 ## v1.6.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.0...v1.6.0-beta.1)
@@ -1344,6 +1620,7 @@
 ### 📖 Documentation
 
 - **browser-llm-api:** Add feature detection section for API availability check ([716657e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/716657e))
+
 ## v1.6.0-beta.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.5.0...v1.6.0-beta.0)
@@ -2157,7 +2434,6 @@
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.2.0-beta.1...v1.2.0-beta.2)
 
 ## v1.2.0-beta.1
-
 
 ### 🚀 Enhancements
 

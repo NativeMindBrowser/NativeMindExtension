@@ -2,7 +2,11 @@ import { z } from 'zod'
 
 import { InferredParams, PromptBasedTool } from './helpers'
 
-export const viewTabTool = new PromptBasedTool('view_tab', 'View complete content of a specific tab with interactive elements as clickable IDs', {
+export const viewTabTool = new PromptBasedTool('view_tab', 'View complete content of a specific tab', {
+  tab_id: z.string().min(1).describe(''),
+})
+
+export const viewTabForWithInteractiveElementsTool = new PromptBasedTool('view_tab', 'View complete content of a specific tab with interactive elements as clickable IDs', {
   tab_id: z.string().min(1).describe(''),
 })
 
@@ -19,7 +23,11 @@ export const searchOnlineTool = new PromptBasedTool('search_online', 'Search for
   max_results: z.coerce.number().min(1).max(20).default(5).describe('5'),
 })
 
-export const fetchPageTool = new PromptBasedTool('fetch_page', 'Get complete content from a specific web page with interactive elements as clickable IDs', {
+export const fetchPageTool = new PromptBasedTool('fetch_page', 'Get detailed content from specific web pages', {
+  url: z.string().url().describe(''),
+})
+
+export const fetchPageWithInteractiveElementsTool = new PromptBasedTool('fetch_page', 'Get complete content from a specific web page with interactive elements as clickable IDs', {
   url: z.string().url().describe(''),
 })
 
@@ -40,14 +48,16 @@ export const promptBasedTools = [
   pageClickTool,
 ]
 
-export const chatDefaultPromptBasedTools = [
-  viewTabTool,
-  viewPdfTool,
-  viewImageTool,
-  searchOnlineTool,
-  fetchPageTool,
-  pageClickTool,
-]
+export const promptBasedToolCollections = {
+  browserUse: {
+    onlineSearch: [viewTabForWithInteractiveElementsTool, viewPdfTool, viewImageTool, searchOnlineTool, fetchPageWithInteractiveElementsTool, pageClickTool],
+    nonOnlineSearch: [viewTabForWithInteractiveElementsTool, viewPdfTool, viewImageTool, fetchPageWithInteractiveElementsTool, pageClickTool],
+  },
+  nonBrowserUse: {
+    onlineSearch: [viewTabTool, viewPdfTool, viewImageTool, searchOnlineTool, fetchPageTool],
+    nonOnlineSearch: [viewTabTool, viewPdfTool, viewImageTool, fetchPageTool],
+  },
+}
 
 export type PromptBasedToolType = typeof promptBasedTools[number]
 export type ExtractToolWithParams<T extends PromptBasedToolType> = {

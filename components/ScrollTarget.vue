@@ -2,7 +2,7 @@
   <div
     ref="targetRef"
     :class="{
-      'outline-2 outline-gray-600 outline-offset-4 outline-dashed rounded-md': highlighting,
+      'outline-2 outline-border-strong outline-offset-4 outline-dashed rounded-md': highlighting,
     }"
   >
     <slot />

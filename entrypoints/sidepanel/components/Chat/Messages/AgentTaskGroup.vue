@@ -55,7 +55,7 @@
         </div>
         <div
           v-if="task.details?.expanded"
-          class="bg-white text-[#596066] rounded-md py-2 px-3 mt-[6px]"
+          class="bg-bg-primary text-text-secondary rounded-md py-2 px-3 mt-[6px]"
         >
           <MarkdownViewer
             :fadeInAnimation="!task.done"

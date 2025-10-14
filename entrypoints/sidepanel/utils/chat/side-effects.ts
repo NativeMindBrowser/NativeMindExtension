@@ -12,7 +12,7 @@ async function appendOrUpdateQuickActionsIfNeeded(chat: Chat) {
   const { t } = await useGlobalI18n()
   const userConfig = await getUserConfig()
   const actionsRef = userConfig.chat.quickActions.actions.toRef()
-  const icons = ['summarizeBoxed', 'highlightBoxed', 'searchBoxed'] as const
+  const icons = ['summarizeAction', 'highlightAction', 'searchAction'] as const
   const actions: ActionMessageV1['actions'] = actionsRef.value.map((action, index) => {
     const defaultTitle = t(actionsRef.defaultValue[index]?.defaultTitleKey)
     return {

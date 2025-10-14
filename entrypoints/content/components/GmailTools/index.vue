@@ -9,11 +9,14 @@
         class="nativemind-gmail-tools nativemind-style-boundary"
         :style="{'all': 'initial', position: 'fixed', top: '0', left: '0', width: '0px', height: '0px'}"
       >
-        <div class="container bg-white text-black font-inter">
+        <div
+          class="container bg-bg-primary text-text-primary font-inter"
+          :data-nm-theme="currentTheme"
+        >
           <div
             v-if="showReplyCard"
             ref="popupRef"
-            class="popup bg-white fixed rounded-md z-50 shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
+            class="popup bg-bg-primary fixed rounded-md z-50 shadow-[0px_8px_16px_0px_var(--color-shadow-medium),0px_4px_8px_0px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)]"
             :class="!popupPos ? 'opacity-0' : ''"
             :style="popupPos ? { top: popupPos.top + 'px', left: popupPos.left + 'px' } : {}"
           >
@@ -26,7 +29,7 @@
           <div
             v-if="showComposeCard"
             ref="composePopupRef"
-            class="popup bg-white fixed rounded-md z-50 shadow-[0px_8px_16px_0px_#00000014,0px_4px_8px_0px_#00000014,0px_0px_0px_1px_#00000014]"
+            class="popup bg-bg-primary fixed rounded-md z-50 shadow-[0px_8px_16px_0px_var(--color-shadow-medium),0px_4px_8px_0px_var(--color-shadow-medium),0px_0px_0px_1px_var(--color-shadow-medium)]"
             :class="!composePopupPos ? 'opacity-0' : ''"
             :style="composePopupPos ? { top: composePopupPos.top + 'px', left: composePopupPos.left + 'px' } : {}"
           >
@@ -47,6 +50,7 @@ import { useElementBounding } from '@vueuse/core'
 import { computed, onMounted, ref, shallowRef, watchEffect } from 'vue'
 import { ShadowRoot as ShadowRootComponent } from 'vue-shadow-dom'
 
+import { useTheme } from '@/composables/theme'
 import { useDraggable } from '@/composables/useDraggable'
 import { useLogger } from '@/composables/useLogger'
 import { injectStyleSheetToDocument, loadContentScriptStyleSheet } from '@/utils/css'
@@ -61,6 +65,10 @@ const rootElement = useRootElement()
 const styleSheet = shallowRef<CSSStyleSheet | null>(null)
 const shadowRootRef = ref<InstanceType<typeof ShadowRoot>>()
 const containerRef = ref<HTMLDivElement>()
+
+// Initialize theme
+const { initializeTheme, currentTheme } = useTheme()
+initializeTheme()
 const popupRef = ref<HTMLDivElement | null>(null)
 const composePopupRef = ref<HTMLDivElement | null>(null)
 const clickedReplyButtonRef = ref<HTMLElement | null>(null) // for navigating current polish button and finding its parent compose dialog

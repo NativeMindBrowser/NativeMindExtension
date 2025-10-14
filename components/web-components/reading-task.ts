@@ -24,13 +24,13 @@ export function register() {
         display: flex;
         flex-direction: row;
         align-items: center;
-        text-size: 14px;
+        font-size: 14px;
         line-height: 20px;
         gap: 6px;
       }
 
       .task-action{
-        color: #596066;
+        color: var(--color-text-secondary, #596066);
         white-space: nowrap;
       }
 
@@ -39,7 +39,7 @@ export function register() {
         flex-direction: row;
         align-items: center;
         padding: 2px 6px;
-        background: white;
+        background: var(--color-bg-clickable, #ffffff);
         border-radius: 4px;
         flex: 1;
         overflow: hidden;
@@ -50,14 +50,14 @@ export function register() {
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding: 2px 6px;
-        background: white;
+        padding: 0px 4px;
+        background: var(--color-bg-accent-green, #dcffea);
         border-radius: 4px;
         flex: 1;
         overflow: hidden;
         gap: 4px;
         cursor: pointer;
-        color: #24B960;
+        color: var(--color-accent-primary, #24B960);
         text-decoration: none;
         white-space: nowrap;
       }
@@ -67,6 +67,7 @@ export function register() {
         width: 16px;
         height: 16px;
         flex-shrink: 0;
+        display: flex;
       }
 
       .task-content {
@@ -102,7 +103,7 @@ export function register() {
     private getIconForType(type: string) {
       const iconMappings = {
         search: 'web',
-        page: 'taskFetchPage',
+        page: 'web',
         tab: 'link',
         pdf: 'pdf',
         image: 'taskReadFile',
@@ -121,7 +122,7 @@ export function register() {
         const partB = this.content.slice(-12)
 
         return html`
-        <div class="task-root" style="color: #9EA3A8;">
+        <div class="task-root" style="color: var(--color-text-quaternary, #9EA3A8);">
           <div class="task-action">
             <slot></slot>
           </div>
@@ -138,7 +139,7 @@ export function register() {
 
       if (this.type === 'tab' && this.content) {
         return html`
-          <div class="task-root" style="color: #9EA3A8;">
+          <div class="task-root" style="color: var(--color-text-quaternary, #9EA3A8);">
             <div class="task-action">
               <slot></slot>
             </div>
@@ -153,7 +154,7 @@ export function register() {
 
       if (this.type === 'page') {
         return html`
-          <div class="task-root" style="color: #24B960;">
+          <div class="task-root" style="color: var(--color-accent-primary, #24B960);">
             <div class="task-action">
               <slot></slot>
             </div>
@@ -169,7 +170,7 @@ export function register() {
       }
 
       return html`
-        <div class="task-root" style="color: #596066;">
+        <div class="task-root" style="color: var(--color-text-secondary, #596066);">
           <div class="task-action">
             <slot></slot>
           </div>

@@ -2,10 +2,10 @@
   <div>
     <div
       ref="topRef"
-      class="bg-[#F5F6FB]"
+      class="bg-bg-app"
     >
       <div class="h-12 px-4 flex items-center justify-between w-full">
-        <div class="flex items-center gap-2 grow overflow-hidden max-w-[70%]">
+        <div class="flex items-center gap-2 grow overflow-hidden max-w-[70%] text-text-primary">
           <div class="size-6 flex items-center justify-center">
             <Logo
               class="font-bold text-base"
@@ -15,7 +15,7 @@
           <!-- Show chat history button -->
           <Tooltip :content="t('tooltips.chat_history')">
             <div
-              class="p-1 cursor-pointer hover:text-gray-500"
+              class="p-1 cursor-pointer hover:text-text-tertiary"
               @click="onOpenChatHistory"
             >
               <IconChatHistory
@@ -27,7 +27,7 @@
           <!-- Show new chat button -->
           <Tooltip :content="t('tooltips.new_chat')">
             <div
-              class="p-1 cursor-pointer hover:text-gray-500"
+              class="p-1 cursor-pointer hover:text-text-tertiary"
               @click="onNewChat"
             >
               <IconNewChat
@@ -36,10 +36,10 @@
             </div>
           </Tooltip>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-2 shrink-0 text-text-primary">
           <Tooltip :content="t('tooltips.settings')">
             <div
-              class="p-1 cursor-pointer hover:text-gray-500"
+              class="p-1 cursor-pointer hover:text-text-tertiary"
               @click="onClickSetting"
             >
               <IconSetting
@@ -77,10 +77,10 @@
       >
         <!-- Drawer content with header -->
         <Motion
-          class="absolute right-0 top-0 bottom-0 w-full bg-white shadow-xl"
+          class="absolute right-0 top-0 bottom-0 w-full bg-bg-primary shadow-01"
         >
           <!-- Header -->
-          <div class="bg-[#F5F6FB]">
+          <div class="bg-bg-app text-text-primary">
             <div class="h-12 px-4 flex items-center justify-between w-full">
               <div class="flex items-center gap-2 grow overflow-hidden">
                 <div
@@ -93,7 +93,7 @@
                   </div>
                   <Tooltip :content="t('tooltips.back')">
                     <div
-                      class="p-1 cursor-pointer hover:text-gray-500"
+                      class="p-1 cursor-pointer hover:text-text-tertiary"
                       @click="onCloseChatHistory"
                     >
                       <IconBack class="size-4 shrink-0" />
@@ -102,7 +102,7 @@
                   <!-- Show new chat button -->
                   <Tooltip :content="t('tooltips.new_chat')">
                     <div
-                      class="p-1 cursor-pointer hover:text-gray-500"
+                      class="p-1 cursor-pointer hover:text-text-tertiary"
                       @click="() => {
                         onNewChat()
                         onCloseChatHistory()

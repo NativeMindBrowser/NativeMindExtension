@@ -6,7 +6,7 @@
     <div
       v-if="isGhostBtn"
       ref="selectorRef"
-      :class="['flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 h-8', containerClass]"
+      :class="classNames('flex justify-between items-center cursor-pointer text-[13px] font-medium py-0 h-8', containerClass)"
       :disabled="disabled"
       @click="toggleDropdown"
     >
@@ -86,7 +86,7 @@
         v-if="isOpen"
         ref="dropdownRef"
         data-nativemind-selector-dropdown
-        class="fixed overflow-hidden z-10 bg-bg-component rounded-lg shadow-01"
+        class="fixed overflow-hidden z-10 bg-bg-primary text-text-primary rounded-lg shadow-01"
         :style="{ top: `${dropdownPos.y}px`, left: `${dropdownPos.x}px`, width: dropdownPos.width ? `${dropdownPos.width}px` : undefined, zIndex: String(zIndex) }"
         :class="dropdownClass"
       >
@@ -100,9 +100,9 @@
           <div
             v-for="(option, index) in options"
             :key="index"
-            class="p-2 cursor-pointer hover:bg-[#EAECEF] transition-colors flex items-center rounded-sm"
-            :class="{ 'bg-[#DFE1E5]': isSelected(option), 'opacity-50 pointer-events-none': option.disabled }"
-            @click="selectOption(option)"
+            class="p-2 cursor-pointer transition-colors flex items-center rounded-sm"
+            :class="{ 'bg-bg-selection': isSelected(option), 'opacity-50 pointer-events-none': option.disabled,'hover:bg-bg-hover cursor-pointer': option.selectable !== false }"
+            @click="option.selectable !== false && selectOption(option)"
           >
             <slot
               name="option"
@@ -113,7 +113,7 @@
           </div>
           <div
             v-if="options.length === 0"
-            class="p-2 text-gray-500"
+            class="p-2 text-text-tertiary"
           >
             {{ props.emptyPlaceholder }}
           </div>
@@ -126,12 +126,13 @@
   </div>
 </template>
 
-<script setup lang="tsx" generic="Id extends string, OptionValue, Option extends { id: Id; value?: OptionValue; label: string | Component, textLabel?: string, disabled?: boolean }">
+<script setup lang="tsx" generic="Id extends string, OptionValue, Option extends { id: Id; value?: OptionValue; label: string | Component, textLabel?: string, disabled?: boolean, selectable?: boolean | undefined }">
 import { useElementBounding, useEventListener, useVModel } from '@vueuse/core'
 import { Component, computed, FunctionalComponent, Ref, ref, watch, watchEffect } from 'vue'
 
 import { useInjectContext } from '@/composables/useInjectContext'
 import { useZIndex } from '@/composables/useZIndex'
+import { classNames } from '@/utils/vue/utils'
 
 import ScrollContainer from './ScrollContainer.vue'
 import Button from './ui/Button.vue'

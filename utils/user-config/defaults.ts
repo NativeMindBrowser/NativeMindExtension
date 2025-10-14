@@ -1,7 +1,7 @@
 import { PromptBasedToolType } from '../llm/tools/prompt-based/tools'
 import { PromptBasedToolBuilder, renderPrompt } from '../prompts/helpers'
 
-export const DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS = `You are an intelligent AI assistant integrated into a browser extension called NativeMind. Your primary role is to help users understand web content, answer questions, and provide comprehensive assistance based on available resources.
+export const DEFAULT_CHAT_SYSTEM_PROMPT_WITH_TOOLS = (tools: PromptBasedToolType[]) => `You are an intelligent AI assistant integrated into a browser extension called NativeMind. Your primary role is to help users understand web content, answer questions, and provide comprehensive assistance based on available resources.
 
 # LANGUAGE POLICY
 1. Detect the primary human language of <user_message>
@@ -55,51 +55,7 @@ Required tool usage:
 
 # AVAILABLE TOOLS:
 
-## view_tab
-Purpose: View complete content of a specific tab
-Format:
-<tool_calls>
-<view_tab>
-<tab_id></tab_id>
-</view_tab>
-</tool_calls>
-
-## view_pdf
-Purpose: View content of a specific PDF
-Format:
-<tool_calls>
-<view_pdf>
-<pdf_id></pdf_id>
-</view_pdf>
-</tool_calls>
-
-## view_image
-Purpose: Analyze a specific image
-Format:
-<tool_calls>
-<view_image>
-<image_id></image_id>
-</view_image>
-</tool_calls>
-
-## search_online
-Purpose: Search for current and latest information
-Format:
-<tool_calls>
-<search_online>
-<query></query>
-<max_results></max_results>
-</search_online>
-</tool_calls>
-
-## fetch_page
-Purpose: Get detailed content from specific web pages
-Format:
-<tool_calls>
-<fetch_page>
-<url></url>
-</fetch_page>
-</tool_calls>
+${tools.map((tool) => renderPrompt`${new PromptBasedToolBuilder(tool)}`).join('\n\n')}
 
 # WORKFLOW:
 

@@ -155,3 +155,7 @@ export const ollamaTagsResponse = {
     },
   ],
 }
+
+export const ollamaTagsEmptyResponse = {
+  models: [],
+}

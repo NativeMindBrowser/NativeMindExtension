@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-[#F5F6FB]"
+    class="bg-bg-app"
     @messageAction="actionEventHandler"
   >
     <ScrollContainer
@@ -8,8 +8,8 @@
       :autoSnap="{ bottom: true }"
       :style="{ height: `calc(100% - ${inputContainerHeight}px)` }"
       :arrivalShadow="{
-        top: { color: '#F5F6FB', size: 36 },
-        bottom: { color: '#F5F6FB', size: 36 }
+        top: { color: 'var(--color-bg-app)', size: 36 },
+        bottom: { color: 'var(--color-bg-app)', size: 36 }
       }"
     >
       <div class="flex flex-col gap-2 px-4 py-4 pt-2">
@@ -23,7 +23,7 @@
             v-if="item.role === 'user'"
             class="flex flex-col items-end"
           >
-            <div class="text-sm inline-block bg-[#24B960] rounded-md p-3 max-w-full">
+            <div class="text-sm inline-block bg-accent-primary rounded-md p-3 max-w-full">
               <div class="wrap-anywhere text-white">
                 <MarkdownViewer :text="item.displayContent ?? item.content" />
               </div>
@@ -59,66 +59,67 @@
           v-model:attachmentStorage="contextAttachmentStorage"
         />
       </div>
-      <div class="gap-1 flex relative shadow-02 bg-white rounded-md px-3 pt-2 pb-9 max-h-36">
-        <ScrollContainer
-          class="overflow-hidden w-full"
-          :arrivalShadow="{
-            top: { color: '#FFFFFF', size: 12, offset: 8 },
-            bottom: { color: '#FFFFFF', size: 12, offset: 8 }
-          }"
-        >
-          <div class="h-max min-h-[48px] place-items-center">
-            <AutoExpandTextArea
-              v-model="userInput"
-              maxlength="2000"
-              type="text"
-              :placeholder="chat.historyManager.onlyHasDefaultMessages() ||
-                chat.historyManager.isEmpty()
-                ? t('chat.input.placeholder.ask_anything')
-                : t('chat.input.placeholder.ask_follow_up')
-              "
-              class="w-full block outline-none border-none resize-none field-sizing-content leading-5 text-sm wrap-anywhere grow h-full"
-              @paste="onPaste"
-              @keydown="onKeydown"
-              @compositionstart="isComposing = true"
-              @compositionend="isComposing = false"
-            />
-          </div>
-        </ScrollContainer>
-        <!-- Toolbar -->
-        <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
-          <div class="flex grow items-center gap-2">
-            <ModelSelector
-              containerClass="h-7"
-              :class="classNames(isThinkingToggleable ? 'max-w-[33vw]' : 'max-w-[50vw]')"
-              dropdownAlign="left"
-              triggerStyle="ghost"
-            />
-            <div
-              v-if="isThinkingToggleable && isModelSupportsThinking"
-              class="h-4 w-px bg-[#E5E7EB]"
-            />
-            <ThinkingModeSwitch v-if="isThinkingToggleable && isModelSupportsThinking" />
-          </div>
-          <div
-            ref="sendButtonContainerRef"
+      <div class="border-border-chat-input border rounded-md bg-bg-secondary">
+        <div>
+          <ModelSelector
+            containerClass="h-[30px] pl-3"
+            class="max-w-[50vw]"
+            dropdownAlign="left"
+            triggerStyle="ghost"
+          />
+        </div>
+        <div class="gap-1 flex relative border border-border-chat-input bg-bg-chat-input rounded-md px-3 pt-2 pb-9 max-h-36">
+          <ScrollContainer
+            class="overflow-hidden w-full"
+            :arrivalShadow="{
+              top: { color: 'var(--color-bg-primary', size: 12, offset: 8 },
+              bottom: { color: 'var(--color-bg-primary', size: 12, offset: 8 }
+            }"
           >
-            <Button
-              v-if="chat.isAnswering()"
-              variant="secondary"
-              class="size-6 rounded-md flex items-center justify-center hover:bg-[#E4E7EB]/80 bg-[#E4E7EB] cursor-pointer shadow-none"
-              @click="onStop"
+            <div class="h-max min-h-[48px] place-items-center">
+              <AutoExpandTextArea
+                v-model="userInput"
+                maxlength="2000"
+                type="text"
+                :placeholder="chat.historyManager.onlyHasDefaultMessages() ||
+                  chat.historyManager.isEmpty()
+                  ? t('chat.input.placeholder.ask_anything')
+                  : t('chat.input.placeholder.ask_follow_up')
+                "
+                class="w-full block outline-none border-none resize-none field-sizing-content leading-5 text-sm wrap-anywhere grow h-full"
+                @paste="onPaste"
+                @keydown="onKeydown"
+                @compositionstart="isComposing = true"
+                @compositionend="isComposing = false"
+              />
+            </div>
+          </ScrollContainer>
+          <!-- Toolbar -->
+          <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
+            <div class="flex grow items-center gap-1">
+              <ThinkingModeSwitch />
+              <OnlineSearchSwitch />
+            </div>
+            <div
+              ref="sendButtonContainerRef"
             >
-              <IconStop class="size-[15px] text-white" />
-            </Button>
-            <button
-              v-else
-              :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-[#24B960]/80 bg-[#24B960] cursor-pointer' : 'cursor-not-allowed')"
-              :disabled="!allowAsk"
-              @click="onSubmit"
-            >
-              <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-[#9EA3A8]')" />
-            </button>
+              <Button
+                v-if="chat.isAnswering()"
+                variant="secondary"
+                class="size-6 rounded-md flex items-center justify-center hover:bg-border-strong/80 bg-border-strong cursor-pointer shadow-none"
+                @click="onStop"
+              >
+                <IconStop class="size-[15px] text-white" />
+              </Button>
+              <button
+                v-else
+                :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-accent-primary-hover bg-accent-primary cursor-pointer' : 'cursor-not-allowed')"
+                :disabled="!allowAsk"
+                @click="onSubmit"
+              >
+                <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-text-quaternary')" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -128,7 +129,7 @@
 
 <script setup lang="ts">
 import { useElementBounding } from '@vueuse/core'
-import { computed, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 import IconSendFill from '@/assets/icons/send-fill.svg?component'
 import IconStop from '@/assets/icons/stop.svg?component'
@@ -139,10 +140,7 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
-import { isToggleableThinkingModel } from '@/utils/llm/thinking-models'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
-import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
 import MarkdownViewer from '../../../../components/MarkdownViewer.vue'
@@ -157,13 +155,12 @@ import MessageAction from './Messages/Action.vue'
 import MessageTaskGroup from './Messages/AgentTaskGroup.vue'
 import MessageAssistant from './Messages/Assistant.vue'
 import MessageTask from './Messages/Task.vue'
+import OnlineSearchSwitch from './OnlineSearchSwitch.vue'
 import ThinkingModeSwitch from './ThinkingModeSwitch.vue'
 
 const inputContainerRef = ref<HTMLDivElement>()
 const sendButtonContainerRef = ref<HTMLDivElement>()
 const { height: inputContainerHeight } = useElementBounding(inputContainerRef)
-const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
-const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
 
 const { t } = useI18n()
 const userInput = ref('')
@@ -175,17 +172,8 @@ defineExpose({
   attachmentSelectorRef,
 })
 
-const updateModelList = async () => {
-  if (endpointType.value === 'ollama') {
-    await updateOllamaModelList()
-  }
-}
-
 const chat = await Chat.getInstance()
-const userConfig = await getUserConfig()
 const contextAttachmentStorage = chat.contextAttachmentStorage
-const currentModel = userConfig.llm.model.toRef()
-const endpointType = userConfig.llm.endpointType.toRef()
 
 initChatSideEffects()
 
@@ -202,30 +190,8 @@ const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
   }
 })
 
-const modelList = computed(() => {
-  if (endpointType.value === 'ollama') {
-    return ollamaModelList.value
-  }
-  return []
-})
-
-// Check if current model supports thinking
-const isModelSupportsThinking = computed(() => {
-  if (endpointType.value !== 'ollama') return false
-  if (!currentModel.value) return false
-  if (!modelList.value || !Array.isArray(modelList.value)) return false
-
-  const model = modelList.value.find((m) => m.model === currentModel.value)
-  return model?.supportsThinking ?? false
-})
-
 const allowAsk = computed(() => {
   return !chat.isAnswering() && userInput.value.trim().length > 0
-})
-
-const isThinkingToggleable = computed(() => {
-  if (!currentModel.value) return false
-  return isToggleableThinkingModel(currentModel.value)
 })
 
 const cleanUp = chat.historyManager.onMessageAdded(() => {
@@ -262,15 +228,9 @@ const ask = async () => {
   userInput.value = ''
 }
 
-// Watch for model list updates to refresh thinking capabilities (following ModelSelector pattern)
-watch([endpointType, currentModel], async () => {
-  await updateModelList()
-})
-
 onMounted(async () => {
   scrollContainerRef.value?.snapToBottom()
   setSidepanelStatus({ loaded: true })
-  updateModelList()
 })
 
 onBeforeUnmount(() => {

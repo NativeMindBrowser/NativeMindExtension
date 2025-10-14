@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col items-center justify-start bg-gradient-to-b from-[#D5F4E1] to-[#FFFFFF] to-40% rounded-lg overflow-hidden pb-4">
+  <div class="flex flex-col items-center justify-start bg-gradient-to-b from-gradient-onboarding-start to-gradient-onboarding-end to-40% rounded-lg overflow-hidden pb-4">
     <div class="text-center max-w-full">
       <ImageElements class="max-w-full h-auto" />
-      <div class="font-semibold text-sm mt-5">
+      <div class="font-semibold text-sm mt-5 text-text-primary">
         {{ t('onboarding.banner.title') }}
       </div>
       <div class="max-w-64 mt-1">

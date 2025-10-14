@@ -50,7 +50,7 @@ const inlineDirective: DirectiveConfig = {
       const url = token.attrs?.url
       const icon = token.attrs?.icon
       const iconHtml = icon ? `<span class="inline-block mr-1" style="vertical-align: -3px;">${IconMDLink}</span>` : ''
-      return `<a target="_blank" href="${url}" title="${text}" rel="noopener" class="text-blue-600 hover:text-blue-500">${iconHtml}${text}</a>`
+      return `<a target="_blank" href="${url}" title="${text}" rel="noopener" class="text-text-link hover:text-link-hover">${iconHtml}${text}</a>`
     }
     else if (token.meta.name === 'icon') {
       const iconName = token.text as IconName
@@ -173,7 +173,7 @@ renderer.link = ({ href, title, text }) => {
   anchor.textContent = text
   anchor.target = '_blank'
   anchor.rel = 'noopener noreferrer'
-  anchor.className = 'text-black hover:text-gray-700 underline'
+  anchor.className = 'text-text-primary hover:text-text-primary/80 underline'
   return anchor.outerHTML
 }
 
@@ -246,7 +246,7 @@ watch(() => props.text, async () => {
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #e4e4e7;
+      background: var(--color-scroll-thumb);
       border-radius: 3px;
     }
   }
@@ -259,8 +259,8 @@ watch(() => props.text, async () => {
     font-weight: 600;
   }
   pre {
-    color: var(--color-gray-300);
-    background-color: black;
+    color: var(--color-text-tertiary);
+    background-color: var(--color-bg-overlay-contrast);
     margin-bottom: 8px;
     margin-top: 8px;
     padding: 8px;
@@ -296,7 +296,7 @@ watch(() => props.text, async () => {
   }
   hr {
     margin: 8px 0;
-    border-color: #a7a7a7;
+    border-color: var(--color-border-strong);
   }
   strong {
     font-weight: 600;
@@ -336,7 +336,7 @@ watch(() => props.text, async () => {
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #9e9e9e;
+      background: var(--color-scroll-thumb);
       border-radius: 5px;
     }
 
@@ -350,7 +350,7 @@ watch(() => props.text, async () => {
   table {
     td {
       padding: 4px;
-      border: 1px solid var(--color-gray-300);
+      border: 1px solid var(--color-border-strong);
     }
   }
 }

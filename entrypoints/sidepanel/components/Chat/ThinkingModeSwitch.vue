@@ -1,38 +1,27 @@
 <template>
-  <div class="flex items-center gap-1">
-    <IconThinking
-      class="w-4 h-4 text-[#5B5B5B]"
-      :class="{ 'opacity-50': !isModelSupportsThinking }"
-    />
-    <span
-      class="text-xs text-[#5B5B5B] font-medium select-none"
-      :class="{ 'opacity-50': !isModelSupportsThinking }"
-    >
-      {{ t('chat.thinking_mode.label') }}
-    </span>
-    <button
-      :disabled="!isModelSupportsThinking || !isThinkingToggleable"
+  <div v-if="isModelSupportsThinking && isThinkingToggleable">
+    <div
+      class="flex items-center gap-1 px-1 py-1 min-h-6 rounded-sm"
       :class="[
-        'relative inline-flex h-4 w-7 items-center rounded-full transition-colors',
         {
-          'bg-[#24B960]': isThinkingEnabled && isModelSupportsThinking,
-          'bg-gray-300': !isThinkingEnabled || !isModelSupportsThinking,
           'cursor-not-allowed opacity-50': !isModelSupportsThinking || !isThinkingToggleable,
-          'cursor-pointer': isModelSupportsThinking && isThinkingToggleable
-        }
+          'cursor-pointer': isModelSupportsThinking && isThinkingToggleable,
+        },
+        isThinkingEnabled ? 'bg-bg-accent-green text-text-secondary' : 'text-text-placeholder',
       ]"
       @click="toggleThinking"
     >
-      <span
-        :class="[
-          'inline-block h-3 w-3 transform rounded-full bg-white transition-transform',
-          {
-            'translate-x-3.5': isThinkingEnabled && isModelSupportsThinking,
-            'translate-x-0.5': !isThinkingEnabled || !isModelSupportsThinking
-          }
-        ]"
+      <IconThinking
+        class="w-4 h-4"
+        :class="{ 'opacity-50': !isModelSupportsThinking }"
       />
-    </button>
+      <span
+        class="text-xs font-medium select-none"
+        :class="{ 'opacity-50': !isModelSupportsThinking }"
+      >
+        {{ t('chat.thinking_mode.label') }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -42,7 +31,7 @@ import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue'
 import IconThinking from '@/assets/icons/thinking-capability.svg?component'
 import { useI18n } from '@/utils/i18n'
 import { isToggleableThinkingModel } from '@/utils/llm/thinking-models'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { only } from '@/utils/runtime'
 import { getUserConfig } from '@/utils/user-config'
@@ -50,8 +39,8 @@ import { getUserConfig } from '@/utils/user-config'
 import { Chat } from '../../utils/chat'
 
 const { t } = useI18n()
-const { modelList: ollamaModelList } = toRefs(useOllamaStatusStore())
-const { updateModelList: updateOllamaModelList } = useOllamaStatusStore()
+const { ollamaModelList } = toRefs(useLLMBackendStatusStore())
+const { updateOllamaModelList } = useLLMBackendStatusStore()
 
 // Register RPC event listener for model list updates (following ModelSelector pattern)
 only(['sidepanel'], () => {
@@ -102,7 +91,7 @@ const isModelSupportsThinking = computed(() => {
 // Check if model can toggle thinking on/off
 const isThinkingToggleable = computed(() => {
   if (!currentModel.value) return false
-  return isToggleableThinkingModel(currentModel.value)
+  return isToggleableThinkingModel(endpointType.value, currentModel.value)
 })
 
 const toggleThinking = () => {
@@ -153,18 +142,4 @@ watch([endpointType, currentModel], async () => {
 onMounted(async () => {
   await updateModelList()
 })
-
-// Debug logging for development, temporarily keep
-// watch([currentModel, endpointType, isModelSupportsThinking, isThinkingToggleable, isThinkingEnabled],
-//   ([model, endpoint, supportsThinking, toggleable, enabled]) => {
-//     logger.debug('ThinkingModeSwitch state:', {
-//       currentModel: model,
-//       endpointType: endpoint,
-//       isModelSupportsThinking: supportsThinking,
-//       isThinkingToggleable: toggleable,
-//       isThinkingEnabled: enabled,
-//     })
-//   },
-//   { immediate: true },
-// )
 </script>

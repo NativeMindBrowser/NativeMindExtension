@@ -6,7 +6,6 @@ import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AgentTask
 import { ContextAttachmentStorage } from '@/types/chat'
 import { nonNullable } from '@/utils/array'
 import { debounce } from '@/utils/debounce'
-import { AbortError, AppError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { PromptBasedToolName } from '@/utils/llm/tools/prompt-based/tools'
@@ -314,12 +313,11 @@ export class Chat {
           title: defaultTitle,
           lastInteractedAt: Date.now(),
           reasoningEnabled: undefined, // Default to undefined for new chats
+          onlineSearchEnabled: true, // Default to true for new chats
         })
 
-        // If this is a new chat (no existing history), set global reasoning to true
-        if (!existingChatHistory) {
-          userConfig.llm.reasoning.set(true)
-        }
+        userConfig.llm.reasoning.set(chatHistory.value.reasoningEnabled ?? true)
+        userConfig.chat.onlineSearch.enable.set(chatHistory.value.onlineSearchEnabled ?? true)
         const contextAttachments = ref<ContextAttachmentStorage>(await s2bRpc.getContextAttachments(chatHistoryId.value) ?? { attachments: [], id: chatHistoryId.value, lastInteractedAt: Date.now() })
         const chatList = ref<ChatList>([])
         const updateChatList = async () => {
@@ -360,11 +358,12 @@ export class Chat {
         watch(chatHistoryId, async (newId, oldId) => {
           if (newId === oldId) return
 
-          log.debug('[Chat] Switching to chat:', newId)
+          log.debug('Switching to chat:', newId)
           instance.stop()
 
           // Load the new chat data
           const existingNewChatHistory = await s2bRpc.getChatHistory(newId)
+          log.debug('Loaded chat history for new chat ID:', newId, existingNewChatHistory)
           const newChatHistory: ChatHistoryV1 = existingNewChatHistory ?? {
             history: [],
             id: newId,
@@ -372,12 +371,9 @@ export class Chat {
             lastInteractedAt: Date.now(),
             contextUpdateInfo: undefined,
             reasoningEnabled: undefined, // Default to undefined for new chats
+            onlineSearchEnabled: true, // Default to true for new chats
           }
 
-          // If this is a new chat (no existing history), set global reasoning to true
-          if (!existingNewChatHistory) {
-            userConfig.llm.reasoning.set(true)
-          }
           const newContextAttachments: ContextAttachmentStorage = await s2bRpc.getContextAttachments(newId) ?? {
             attachments: [],
             id: newId,
@@ -388,10 +384,8 @@ export class Chat {
           Object.assign(chatHistory.value, newChatHistory)
           Object.assign(contextAttachments.value, newContextAttachments)
 
-          // Restore the reasoning setting for this chat
-          if (newChatHistory.reasoningEnabled !== undefined) {
-            userConfig.llm.reasoning.set(newChatHistory.reasoningEnabled)
-          }
+          userConfig.llm.reasoning.set(newChatHistory.reasoningEnabled ?? true)
+          userConfig.chat.onlineSearch.enable.set(newChatHistory.onlineSearchEnabled ?? true)
 
           // Clean up any loading messages
           instance.historyManager.cleanupLoadingMessages()
@@ -420,7 +414,7 @@ export class Chat {
   static createActionEventDispatcher<ActionType extends ActionTypeV1>(action: ActionType) {
     return function actionEvent(data: ActionV1[ActionType], el?: HTMLElement | EventTarget | null) {
       log.debug('Creating action event', action, data)
-      ;(el ?? window).dispatchEvent(new ActionEvent<ActionType>(action, data))
+      ; (el ?? window).dispatchEvent(new ActionEvent<ActionType>(action, data))
     }
   }
 
@@ -461,19 +455,6 @@ export class Chat {
 
   isAnswering() {
     return this.status.value === 'pending' || this.status.value === 'streaming'
-  }
-
-  private async errorHandler(e: unknown, msg?: AssistantMessageV1) {
-    log.error('Error in chat', e)
-    if (!(e instanceof AbortError)) {
-      const errorMsg = msg || this.historyManager.appendAssistantMessage()
-      errorMsg.isError = true
-      errorMsg.done = true
-      errorMsg.content = e instanceof AppError ? await e.toLocaleMessage() : 'Unexpected error occurred'
-    }
-    else if (msg) {
-      this.historyManager.deleteMessage(msg)
-    }
   }
 
   statusScope(status: Exclude<ChatStatus, 'idle'>) {

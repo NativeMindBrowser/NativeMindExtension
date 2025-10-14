@@ -1,3 +1,4 @@
+import { get as getValueOfPath } from 'es-toolkit/compat'
 import { watch } from 'vue'
 import type { ComposerTranslation as OriginComposerTranslation } from 'vue-i18n'
 import { createI18n, useI18n as _useI18n } from 'vue-i18n'
@@ -26,6 +27,7 @@ import { SUPPORTED_LOCALES, SupportedLocaleCode } from './constants'
 // Type-define 'en-US' as the master schema for the resource
 type MessageSchema = typeof en
 export type TranslationKey = JsonPaths<MessageSchema>
+export type ComposerTranslation = OriginComposerTranslation<MessageSchema, SupportedLocaleCode>
 
 const messages = {
   en,
@@ -97,6 +99,7 @@ export const useI18n = only(['content', 'popup', 'sidepanel', 'settings'], () =>
     return {
       ...i18n,
       formatDuration: (seconds: number) => formatDuration(i18n.t, seconds),
+      getAllLocaleValues: (key: TranslationKey) => getAllLocaleValues(i18n, key),
     }
   }
 })
@@ -104,27 +107,25 @@ export const useI18n = only(['content', 'popup', 'sidepanel', 'settings'], () =>
 // this i18n function can be used in any context, including outside Vue components and background scripts, but it's a async function
 export async function useGlobalI18n() {
   const i18n = await createI18nInstance()
-  const composer = i18n.global as unknown as ReturnType<typeof useI18n>
+  const composer = i18n.global as unknown as ReturnType<typeof _useI18n<MessageSchema, SupportedLocaleCode>>
   return {
     ...composer,
     formatDuration: (seconds: number) => formatDuration(composer.t, seconds),
+    getAllLocaleValues: (key: TranslationKey) => getAllLocaleValues(composer, key),
   }
 }
 
-export type ComposerTranslation = OriginComposerTranslation<MessageSchema, SupportedLocaleCode>
+async function getAllLocaleValues(instance: ReturnType<typeof _useI18n<MessageSchema, SupportedLocaleCode>>, key: TranslationKey) {
+  const result: { locale: SupportedLocaleCode, message: string }[] = []
 
-export async function getAllLocaleValues(key: string) {
-  const i18n = await createI18nInstance()
-  const result: string[] = []
-
-  for (const locale of i18n.global.availableLocales) {
-    const messages = i18n.global.getLocaleMessage(locale) // Get the complete message object for this locale
-    // Support nested keys, e.g., "home.title"
-    // FIXME
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const value = key.split('.').reduce((obj, k) => obj?.[k], messages as any)
-    if (value !== undefined) {
-      result.push(value)
+  for (const locale of instance.availableLocales) {
+    const messages = instance.getLocaleMessage(locale) // Get the complete message object for this locale
+    const value = getValueOfPath(messages, key)
+    if (typeof value === 'string') {
+      result.push({
+        locale,
+        message: value,
+      })
     }
   }
 

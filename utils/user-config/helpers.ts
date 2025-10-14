@@ -1,4 +1,4 @@
-import { customRef, Ref, ref, toRaw, watch } from 'vue'
+import { customRef, isRef, MaybeRef, Ref, ref, toRaw, unref, UnwrapRef, watch, watchEffect } from 'vue'
 import { storage, StorageItemKey } from 'wxt/utils/storage'
 
 const getItem = async <T>(key: StorageItemKey) => {
@@ -18,11 +18,9 @@ export class ValidateError extends Error {
 
 export type ExtendedRef<T, D> = Ref<T> & { defaultValue: D }
 
-export class Config<Value, DefaultValue extends Value | undefined> {
-  defaultValue?: DefaultValue
+export class Config<Value, DefaultValue extends MaybeRef<Value | undefined>> {
+  defaultValue?: Ref<UnwrapRef<DefaultValue>>
   isSession = false
-  transformer?: (value: Value | DefaultValue) => Value | DefaultValue
-  validator?: (value: Value | DefaultValue) => { isValid: boolean, displayMessage?: string }
   migrations: {
     fromKey: string
     migrate: (value: Value | DefaultValue | undefined) => Value | DefaultValue | undefined
@@ -34,18 +32,13 @@ export class Config<Value, DefaultValue extends Value | undefined> {
     return `local:${this.key}` as const
   }
 
-  default<D extends DefaultValue>(defaultValue: D) {
-    this.defaultValue = defaultValue
-    return this as unknown as Config<D, D>
+  default<D extends DefaultValue>(defaultValue: MaybeRef<D>) {
+    this.defaultValue = (isRef<D>(defaultValue) ? defaultValue : ref(defaultValue)) as Ref<UnwrapRef<D>>
+    return this as unknown as Config<UnwrapRef<D>, UnwrapRef<D>>
   }
 
   migrateFrom(fromKey: string, migration: (value: Value | DefaultValue | undefined) => Value | DefaultValue | undefined) {
     this.migrations.push({ fromKey, migrate: migration })
-    return this
-  }
-
-  validate(validator: (value: Value | DefaultValue) => { isValid: boolean, displayMessage?: string }) {
-    this.validator = validator
     return this
   }
 
@@ -73,47 +66,54 @@ export class Config<Value, DefaultValue extends Value | undefined> {
     return lastValue
   }
 
-  async build() {
+  getClonedDefaultValue() {
     const defaultValue = this.defaultValue
-    const clonedDefaultValue = structuredClone(defaultValue)
+    return structuredClone(toRaw(unref(defaultValue))) as DefaultValue
+  }
+
+  async build() {
     const localValue = (await this.getItem()) ?? undefined
     const migratedValue = await this.execMigration() ?? localValue
     if (migratedValue) await this.setItem(migratedValue)
-    const v = migratedValue ?? clonedDefaultValue
-    const refValue = ref(v)
+    const v = migratedValue ?? localValue
+    const boundStorageValue = ref(v)
     let ignoreSetLocalStorage = false
-    watch(refValue, async (newValue) => {
+    const clonedDefaultValue = ref<DefaultValue>()
+    watchEffect(() => {
+      ignoreSetLocalStorage = true
+      clonedDefaultValue.value = this.getClonedDefaultValue()
+      ignoreSetLocalStorage = false
+    })
+    watch(boundStorageValue, async (newValue) => {
       if (ignoreSetLocalStorage) return
       this.setItem(toRaw(newValue))
     }, { deep: true, flush: 'sync' })
-    const r = customRef<Value | DefaultValue>((track, trigger) => {
+    watch(clonedDefaultValue, async (newValue) => {
+      // if default value is changed, it should be saved to storage when there is no user value
+      if (boundStorageValue.value || ignoreSetLocalStorage) return
+      boundStorageValue.value = newValue
+    }, { deep: true, flush: 'sync' })
+    const r = customRef<UnwrapRef<Value | DefaultValue>>((track, trigger) => {
       return {
-        get() {
+        get: () => {
           track()
-          return refValue.value
+          const defaultValue = clonedDefaultValue.value
+          const storageValue = boundStorageValue.value
+          return storageValue ?? defaultValue
         },
         set: (value) => {
-          if (this.transformer) {
-            value = this.transformer(value)
-          }
-          if (this.validator) {
-            const { isValid, displayMessage } = this.validator(value)
-            if (!isValid) {
-              throw new ValidateError(displayMessage || 'Invalid value')
-            }
-          }
-          refValue.value = value
+          boundStorageValue.value = value
           trigger()
         },
       }
     }) as ExtendedRef<Value | DefaultValue, DefaultValue>
-    r.defaultValue = structuredClone(defaultValue) as DefaultValue
+    r.defaultValue = this.getClonedDefaultValue()
 
     storage.watch(this.areaKey, async (newValue, oldValue) => {
       newValue = newValue ?? undefined
       if (newValue !== oldValue) {
         ignoreSetLocalStorage = true
-        refValue.value = (newValue === undefined || newValue === null) ? structuredClone(defaultValue) : newValue
+        boundStorageValue.value = newValue
         ignoreSetLocalStorage = false
       }
     })
@@ -125,15 +125,18 @@ export class Config<Value, DefaultValue extends Value | undefined> {
     return {
       get key() { return key },
       get areaKey() { return areaKey },
-      getDefault() {
-        return structuredClone(defaultValue) as DefaultValue
+      getDefault: () => {
+        return this.getClonedDefaultValue()
       },
-      resetDefault() {
-        r.value = structuredClone(defaultValue) as DefaultValue
+      resetDefault: () => {
+        clonedDefaultValue.value = this.getClonedDefaultValue()
+        boundStorageValue.value = undefined
         removeItem()
       },
       toRef: () => r,
-      get: () => r.value,
+      get: () => {
+        return r.value
+      },
       set: (value: Value | DefaultValue) => {
         r.value = value
       },

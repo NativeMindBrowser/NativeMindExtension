@@ -1,12 +1,14 @@
 import { computed, onScopeDispose, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import LogoSvg from '@/assets/icons/logo-custom-color.svg?raw'
+import LogoSvg from '@/assets/icons/logo-for-gmail-tools.svg?raw'
 import { useDocumentLoaded } from '@/composables/useDocumentLoaded'
+import { ThemeType } from '@/types/theme'
 import Logger from '@/utils/logger'
 import { c2bRpc } from '@/utils/rpc'
 import { toggleContainer } from '@/utils/rpc/content-main-world-fns'
 import { sleep } from '@/utils/sleep'
+import { getDocumentTheme } from '@/utils/theme'
 import { getUserConfig } from '@/utils/user-config'
 
 import { useGmailDetector } from '../../composables/useGmailDetector'
@@ -19,84 +21,183 @@ const NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS = 'nativemind-gmail-compose-btn'
 
 const LogoIcon = LogoSvg.replace('<svg', '<svg width="14" height="14" style="display: block;"')
 
+type GmailButtonThemeColors = {
+  background: string
+  text: string
+  hoverBackground: string
+  disabledBackground: string
+  disabledText: string
+  baseShadow: string
+  hoverShadow: string
+  spinnerBar: string
+  spinnerShadow: string
+}
+
+const GMAIL_BUTTON_THEME_COLORS: Record<ThemeType, GmailButtonThemeColors> = {
+  light: {
+    background: '#FBF8F4',
+    text: '#1f2326',
+    hoverBackground: '#EAECEF',
+    disabledBackground: '#F2F2F2',
+    disabledText: '#9EA3A8',
+    baseShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 2px 0px rgba(0, 0, 0, 0.12)',
+    hoverShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 2px 0px rgba(0, 0, 0, 0.12)',
+    spinnerBar: '#18181B',
+    spinnerShadow: 'rgba(0, 0, 0, 0.2)',
+  },
+  dark: {
+    background: '#8E8C8C',
+    text: '#FFFFFF',
+    hoverBackground: '#7A7777',
+    disabledBackground: '#1F2326',
+    disabledText: '#7D8590',
+    baseShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 2px 0px rgba(0, 0, 0, 0.12)',
+    hoverShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 2px 0px rgba(0, 0, 0, 0.12)',
+    spinnerBar: '#F8F9FA',
+    spinnerShadow: 'rgba(0, 0, 0, 0.2)',
+  },
+}
+
+type GmailButtonStyleOptions = {
+  includeSpinner?: boolean
+  extraBaseRules?: string
+}
+
+function buildGmailButtonStyles(className: string, options: GmailButtonStyleOptions = {}) {
+  const lightColors = GMAIL_BUTTON_THEME_COLORS.light
+  const darkColors = GMAIL_BUTTON_THEME_COLORS.dark
+
+  const baseRules = `
+.${className} {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  background: ${lightColors.background};
+  color: ${lightColors.text};
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: ${lightColors.baseShadow};
+  transition: all 0.2s ease;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  white-space: nowrap;
+  ${options.extraBaseRules ?? ''}
+}
+
+.${className}:hover:not(:disabled) {
+  background: ${lightColors.hoverBackground};
+  box-shadow: ${lightColors.hoverShadow};
+}
+
+.${className}:disabled {
+  background: ${lightColors.disabledBackground};
+  color: ${lightColors.disabledText};
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.${className} svg {
+  color: ${lightColors.text};
+}
+
+/* Dark mode styles */
+.${className}[data-nm-theme="dark"] {
+  background: ${darkColors.background};
+  color: ${darkColors.text};
+  box-shadow: ${darkColors.baseShadow};
+}
+
+.${className}[data-nm-theme="dark"]:hover:not(:disabled) {
+  background: ${darkColors.hoverBackground};
+  box-shadow: ${darkColors.hoverShadow};
+}
+
+.${className}[data-nm-theme="dark"]:disabled {
+  background: ${darkColors.disabledBackground};
+  color: ${darkColors.disabledText};
+}
+
+.${className}[data-nm-theme="dark"] svg {
+  color: ${darkColors.text};
+}
+`
+
+  if (!options.includeSpinner) {
+    return baseRules
+  }
+
+  return `
+${baseRules}
+
+.nativemind-loading-spinner {
+  position: relative;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+}
+
+.nativemind-loading-spinner .bar {
+  --duration: 1s;
+  --delay: calc(var(--duration) / 8 * -1);
+  --rotate: calc(360deg / 8 * -1);
+  width: 10%;
+  height: 26%;
+  background: ${lightColors.spinnerBar};
+  position: absolute;
+  left: 48%;
+  top: 36%;
+  opacity: 0;
+  border-radius: 50px;
+  box-shadow: 0 0 1px ${lightColors.spinnerShadow};
+  animation: nativemind-loading-fade var(--duration) linear infinite;
+  transform: rotate(calc(var(--rotate) * var(--bar-number))) translate(0, -130%);
+  animation-delay: calc(var(--delay) * var(--bar-number));
+}
+
+.${className}[data-nm-theme="dark"] .nativemind-loading-spinner .bar {
+  background: ${darkColors.spinnerBar};
+  box-shadow: 0 0 1px ${darkColors.spinnerShadow};
+}
+
+@keyframes nativemind-loading-fade {
+  from { opacity: 1; }
+  to { opacity: 0.25; }
+}
+`
+}
+
+function ensureGmailButtonStyle(styleId: string, className: string, options?: GmailButtonStyleOptions) {
+  const style = document.getElementById(styleId) as HTMLStyleElement | null
+  const cssText = buildGmailButtonStyles(className, options)
+  if (style) {
+    style.textContent = cssText
+    return
+  }
+  const styleEl = document.createElement('style')
+  styleEl.id = styleId
+  styleEl.textContent = cssText
+  document.head.appendChild(styleEl)
+}
+
 function makeSummaryButton(threadElement: HTMLElement, buttonText: string, externalStyle?: string) {
   const button = document.createElement('button')
   button.innerHTML = `
     ${LogoIcon}
     ${buttonText}
   `
-  // Inject CSS styles for the button
-  const styleId = 'nativemind-gmail-summary-btn-styles'
-  if (!document.getElementById(styleId)) {
-    const style = document.createElement('style')
-    style.id = styleId
-    style.textContent = `
-      .${NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS} {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        padding: 8px 10px;
-        background: #FBF8F4;
-        color: #3c4043;
-        border: 1px solid #dadce0;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.1);
-        transition: all 0.2s ease;
-        font-family: 'Google Sans', Roboto, Arial, sans-serif;
-        white-space: nowrap;
-      }
-      
-      .${NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS}:hover:not(:disabled) {
-        background: #EAECEF;
-        box-shadow: 0 2px 6px 0 rgba(60, 64, 67, 0.15);
-      }
-      
-      .${NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS}:disabled {
-        background: #f1f3f4;
-        color: #5f6368;
-        cursor: not-allowed;
-        opacity: 0.6;
-      }
+  ensureGmailButtonStyle('nativemind-gmail-summary-btn-styles', NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS, { includeSpinner: true })
 
-      .nativemind-loading-spinner {
-        position: relative;
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-      }
-
-      .nativemind-loading-spinner .bar {
-        --duration: 1s;
-        --delay: calc(var(--duration) / 8 * -1);
-        --rotate: calc(360deg / 8 * -1);
-        width: 10%;
-        height: 26%;
-        background: black;
-        position: absolute;
-        left: 48%;
-        top: 36%;
-        opacity: 0;
-        border-radius: 50px;
-        box-shadow: 0 0 1px rgba(0,0,0,0.2);
-        animation: nativemind-loading-fade var(--duration) linear infinite;
-        transform: rotate(calc(var(--rotate) * var(--bar-number))) translate(0, -130%);
-        animation-delay: calc(var(--delay) * var(--bar-number));
-      }
-
-      @keyframes nativemind-loading-fade {
-        from { opacity: 1; }
-        to { opacity: 0.25; }
-      }
-    `
-    document.head.appendChild(style)
+  if (externalStyle) {
+    button.style.cssText = externalStyle
   }
 
-  button.style.cssText = externalStyle || ''
+  const currentTheme = getDocumentTheme()
   button.className = NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS
+  button.setAttribute('data-nm-theme', currentTheme)
 
   button.addEventListener('mousedown', async (ev) => {
     // Return early if button is disabled
@@ -164,49 +265,13 @@ function makeReplyButton(buttonText: string) {
     ${buttonText}
   `
 
-  // Inject CSS styles for the button
-  const styleId = 'nativemind-gmail-reply-btn-styles'
-  if (!document.getElementById(styleId)) {
-    const style = document.createElement('style')
-    style.id = styleId
-    style.textContent = `
-      .${NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS} {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        padding: 8px 10px;
-        background: #FBF8F4;
-        color: #3c4043;
-        border: 1px solid #dadce0;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.1);
-        transition: all 0.2s ease;
-        font-family: 'Google Sans', Roboto, Arial, sans-serif;
-        white-space: nowrap;
-        margin-left: 8px;
-        z-index: 1;
-      }
-      
-      .${NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS}:hover:not(:disabled) {
-        background: #EAECEF;
-        box-shadow: 0 2px 6px 0 rgba(60, 64, 67, 0.15);
-      }
-      
-      .${NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS}:disabled {
-        background: #f1f3f4;
-        color: #5f6368;
-        cursor: not-allowed;
-        opacity: 0.6;
-      }
-    `
-    document.head.appendChild(style)
-  }
+  ensureGmailButtonStyle('nativemind-gmail-reply-btn-styles', NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS, {
+    extraBaseRules: 'margin-left: 8px; z-index: 1;',
+  })
 
+  const currentTheme = getDocumentTheme()
   button.className = NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS
+  button.setAttribute('data-nm-theme', currentTheme)
 
   button.addEventListener('click', async (ev) => {
     ev.stopImmediatePropagation()
@@ -245,49 +310,13 @@ function makeComposeButton(buttonText: string) {
     ${buttonText}
   `
 
-  // Inject CSS styles for the button
-  const styleId = 'nativemind-gmail-compose-btn-styles'
-  if (!document.getElementById(styleId)) {
-    const style = document.createElement('style')
-    style.id = styleId
-    style.textContent = `
-      .${NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS} {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        padding: 8px 10px;
-        background: #FBF8F4;
-        color: #3c4043;
-        border: 1px solid #dadce0;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.1);
-        transition: all 0.2s ease;
-        font-family: 'Google Sans', Roboto, Arial, sans-serif;
-        white-space: nowrap;
-        margin-left: 8px;
-        z-index: 1;
-      }
-      
-      .${NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS}:hover:not(:disabled) {
-        background: #EAECEF;
-        box-shadow: 0 2px 6px 0 rgba(60, 64, 67, 0.15);
-      }
-      
-      .${NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS}:disabled {
-        background: #f1f3f4;
-        color: #5f6368;
-        cursor: not-allowed;
-        opacity: 0.6;
-      }
-    `
-    document.head.appendChild(style)
-  }
+  ensureGmailButtonStyle('nativemind-gmail-compose-btn-styles', NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS, {
+    extraBaseRules: 'margin-left: 8px; z-index: 1;',
+  })
 
+  const currentTheme = getDocumentTheme()
   button.className = NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS
+  button.setAttribute('data-nm-theme', currentTheme)
 
   button.addEventListener('click', async (ev) => {
     ev.stopImmediatePropagation()

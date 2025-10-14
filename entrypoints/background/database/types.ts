@@ -10,6 +10,7 @@ export interface ChatHistoryRecord {
   history: string // JSON serialized HistoryItemV1[]
   contextUpdateInfo?: string // JSON serialized contextUpdateInfo from ChatHistoryV1
   reasoningEnabled?: boolean // reasoning setting for this chat
+  onlineSearchEnabled?: boolean // online search setting for this chat, default is true
   createdAt: number
   updatedAt: number
 }

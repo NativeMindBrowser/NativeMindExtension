@@ -77,6 +77,11 @@
         "error_click_before_view_tab": "Hãy thử nhấp vào một liên kết trang trước khi xem bất kỳ trang nào",
         "error_click_incorrect_link": "Hãy thử nhấp vào liên kết trang không chính xác"
       }
+    },
+    "tools": {
+      "online_search": {
+        "title": "Tìm kiếm"
+      }
     }
   },
   "chat_history": {
@@ -100,17 +105,15 @@
       "title": "AI trên thiết bị, được xây dựng chỉ dành cho bạn"
     },
     "guide": {
-      "already_installed": "Bạn đã cài đặt và chạy Ollama?",
+      "already_installed": "Đã cài đặt và chạy {endpointType}?",
       "features": {
         "1": "Chạy các mô hình tiên tiến như gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Tùy chỉnh và chuyển đổi các mô hình với toàn bộ điều khiển",
         "3": "Dữ liệu của bạn vẫn riêng tư, trên thiết bị của bạn"
       },
       "follow_our_tutorial": "Thực hiện theo hướng dẫn cài đặt của chúng tôi",
-      "get_ollama": "Nhận Ollama",
-      "install_desc": "Cài đặt Ollama để thiết lập AI cục bộ của bạn.",
+      "install_desc": "Bạn muốn chạy AI cục bộ như thế nào?",
       "need_help": "Cần giúp đỡ?",
-      "ollama_desc": "Mở khóa toàn bộ sức mạnh của AI trên thiết bị với Ollama.",
       "setup": "Cài đặt",
       "step1": "Bước 1",
       "download_model_to_begin": "Tải xuống một mô hình để bắt đầu.",
@@ -120,7 +123,11 @@
       "no_sure_which_one": "🤔 Không chắc chọn cái nào?",
       "learn_about_models": "Tìm hiểu về các mô hình",
       "looking_for_more_options": "🔍 Đang tìm kiếm thêm tùy chọn?",
-      "browse_more_models": "Duyệt qua các mô hình khác"
+      "browse_more_models": "Duyệt qua các mô hình khác",
+      "get_endpoint": "Lấy {endpointType}",
+      "lm_studio_select_desc": "Ứng dụng Desktop dễ sử dụng",
+      "ollama_select_desc": "Công cụ Phát triển Chuyên nghiệp",
+      "unlock_full_power_with": "Mở khóa toàn bộ sức mạnh AI cục bộ với {endpointType}."
     },
     "webllm_tutorial": {
       "desc": "Sử dụng mô hình nhẹ (QWEN 0,6B) ngay trong trình duyệt của bạn - không thiết lập, không chờ đợi.",
@@ -132,7 +139,8 @@
       "title": "👋 Chào mừng bạn đến với **NativeMind**",
       "body": "NativeMind là tiện ích mở rộng trình duyệt AI đầu tiên riêng tư giúp bạn trò chuyện, tìm kiếm và dịch - tất cả được cung cấp bởi các mô hình ngôn ngữ trên thiết bị.\n\nĐây là những gì bạn có thể làm với NativeMind:\n\n- Trò chuyện qua nhiều tab để theo dõi các trang khác nhau.\n- Tìm kiếm web trực tiếp trong trò chuyện để biết thêm bối cảnh.\n- Nhấp chuột phải để dịch bất kỳ phần nào của trang ngay lập tức.\n- Chuyển đổi hoặc tải xuống mô hình bất cứ lúc nào trong cài đặt.\n\nBạn có thể bắt đầu bằng cách thử các thao tác nhanh dưới đây."
     },
-    "ollama_is_running": "Ollama đang chạy"
+    "ollama_is_running": "Ollama đang chạy",
+    "backend_is_running": "{endpointType} đang chạy"
   },
   "settings": {
     "cache": {
@@ -160,7 +168,9 @@
       "title": "Mô hình",
       "discover_more": "Khám phá thêm các mô hình",
       "no_model": "⚠️ Không có mô hình",
-      "add_model_to_start": "Thêm một mô hình để bắt đầu"
+      "add_model_to_start": "Thêm một mô hình để bắt đầu",
+      "ollama_models": "Các Mô hình Ollama ({count})",
+      "lmstudio_models": "LM Studio Models ({count}) → Các Mô hình LM Studio ({count})"
     },
     "ollama": {
       "already_installed": "Bạn đã cài đặt và chạy Ollama?",
@@ -182,18 +192,14 @@
       "unload": "Dỡ tải",
       "expires_in": "Hết hạn trong {duration}",
       "running": "Chạy",
-      "running_models": "Mô hình đang chạy"
+      "running_models": "Mô hình đang chạy",
+      "model_management": "Quản lý Mô hình",
+      "downloaded_models": "Các Mô hình Đã tải xuống"
     },
     "prompts": {
       "chat_system_prompt": "Nhắc hệ thống trò chuyện",
       "title": "Nhắc nhở",
       "translation_system_prompt": "Prompt hệ thống dịch thuật"
-    },
-    "provider": {
-      "title": "Kết nối"
-    },
-    "provider_model": {
-      "title": "Cấu hình Ollama"
     },
     "quick_actions": {
       "description": "Thiết lập các thao tác nhanh để chạy lời nhắc yêu thích của bạn nhanh hơn - từ trò chuyện mới hoặc menu chuột phải.",
@@ -236,8 +242,11 @@
         "quant": "{level} định lượng",
         "thinking": "Suy nghĩ",
         "no_active_models": "Ollama đã kết nối, nhưng không có mô hình nào đang hoạt động",
-        "not_connected_to_ollama": "Không kết nối với Ollama"
-      }
+        "not_connected_to_ollama": "Không kết nối với Ollama",
+        "lm_studio_no_active_models": "LM Studio đã kết nối, nhưng không có mô hình nào đang hoạt động",
+        "not_connected_to_lm_studio": "Không kết nối với LM Studio"
+      },
+      "delete_model_confirm": "Bạn có chắc chắn muốn xóa mô hình \"{model}\" không?"
     },
     "title": "Cài đặt",
     "model_downloader": {
@@ -248,7 +257,7 @@
       "download": "Tải xuống",
       "retry": "Thử lại",
       "unable_to_download": "Không thể bắt đầu tải xuống",
-      "could_not_connect_ollama": "Chúng tôi không thể kết nối với Ollama. Vui lòng đảm bảo Ollama đang chạy và thử lại."
+      "could_not_connect": "Chúng tôi không thể kết nối tới {endpointType}. Vui lòng đảm bảo {endpointType} đang chạy và thử lại."
     },
     "webllm_downloader": {
       "description": "Để sử dụng chế độ Cục bộ, bạn cần tải xuống mô hình {model} ({size}). Bạn có muốn tải xuống ngay bây giờ không?"
@@ -312,12 +321,32 @@
     "interface": {
       "title": "Giao diện",
       "interface_language": "Ngôn ngữ giao diện",
-      "interface_language_desc": "Chọn ngôn ngữ hiển thị cho giao diện NativeMind"
+      "theme": "Giao diện",
+      "theme_light": "Sáng",
+      "theme_dark": "Tối",
+      "theme_system": "Hệ thống"
     },
     "header": {
       "starts_on_github": "Sao trên GitHub",
       "goto_website": "Đi đến Trang web"
     },
+    "providers": {
+      "lm_studio": {
+        "title": "Cấu hình LM Studio",
+        "already_installed": "Đã cài đặt và chạy LM Studio chưa?",
+        "model_management_desc": "Việc tải xuống, tải và xóa mô hình phải được thực hiện trong ứng dụng desktop LM Studio. Đây chỉ hiển thị trạng thái đang chạy hiện tại."
+      },
+      "ollama": {
+        "title": "Cấu hình Ollama"
+      }
+    },
+    "get_lm_studio": "Tải LM Studio",
+    "delete": "Xóa",
+    "lm_studio": {
+      "server_address": "Địa chỉ máy chủ",
+      "server_address_desc": "Điểm cuối API máy chủ LM Studio"
+    },
+    "webllm_desc_lm_studio": "Bạn hiện đang sử dụng WebLLM: qwen3:0.6b để dùng thử nhanh. Để có hỗ trợ mô hình đầy đủ và hiệu suất tốt hơn, vui lòng cài đặt LM Studio.",
     "gmail_tools": {
       "title": "Công cụ Gmail",
       "description": "Cấu hình các tính năng hỗ trợ viết khác nhau",
@@ -370,9 +399,9 @@
     }
   },
   "errors": {
-    "model_not_found": "Ối! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối Ollama của bạn trong cài đặt và thử lại.",
-    "model_request_error": "Ối! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối Ollama của bạn trong cài đặt và thử lại.",
-    "model_request_timeout": "Yêu cầu đã hết thời gian. Vui lòng kiểm tra kết nối Ollama của bạn hoặc xem xét bắt đầu một phiên mới, vì bối cảnh dài có thể ảnh hưởng đến thời gian phản hồi.",
+    "model_not_found": "Ôi! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối trong cài đặt và thử lại.",
+    "model_request_error": "Ôi! Đã xảy ra lỗi. Vui lòng kiểm tra kết nối trong cài đặt và thử lại.",
+    "model_request_timeout": "Hết thời gian chờ yêu cầu, vui lòng kiểm tra kết nối của bạn hoặc cân nhắc bắt đầu phiên mới vì ngữ cảnh dài có thể ảnh hưởng đến thời gian phản hồi.",
     "timeout_error": "Thao tác đã hết thời gian: {message}",
     "unknown_error": "Đã xảy ra lỗi không xác định: {message}",
     "webllm_not_supported": "WebLLM không được hỗ trợ trên thiết bị của bạn.",

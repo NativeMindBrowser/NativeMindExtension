@@ -1,6 +1,6 @@
-import { useGlobalI18n } from './i18n'
+import { LLMEndpointType } from './llm/models'
 
-export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType' | 'fetchError' | 'parseFunctionCallError' | 'aiSDKError' | 'generateObjectSchemaError'
+export type ErrorCode = 'unknown' | 'requestError' | 'requestTimeout' | 'abortError' | 'timeoutError' | 'modelNotFound' | 'createTabStreamCaptureError' | 'translateError' | 'unsupportedEndpointType' | 'fetchError' | 'parseFunctionCallError' | 'aiSDKError' | 'generateObjectSchemaError' | 'lmStudioLoadModelError' | 'lmStudioDownloadModelError'
 
 // we use a base AppError class instead of extending the native Error class directly because of Firefox compatibility issues of error instance transform in postMessage
 export abstract class AppError<Code extends ErrorCode = ErrorCode> {
@@ -18,10 +18,6 @@ export abstract class AppError<Code extends ErrorCode = ErrorCode> {
     this.message = message ?? ''
   }
 
-  async toLocaleMessage(_locale?: string): Promise<string> {
-    return this.message
-  }
-
   get stack(): string | undefined {
     return this.nativeError.stack
   }
@@ -31,42 +27,32 @@ export class FetchError extends AppError<'fetchError'> {
   constructor(message: string) {
     super('fetchError', message)
   }
-
-  async toLocaleMessage() {
-    return this.message
-  }
 }
 
 export class UnknownError extends AppError<'unknown'> {
   constructor(message: string) {
     super('unknown', message)
   }
-
-  async toLocaleMessage() {
-    const { t } = await useGlobalI18n()
-    return t('errors.unknown_error', { message: this.message })
-  }
 }
 
 export class ModelRequestError extends AppError<'requestError'> {
-  constructor(message: string) {
+  constructor(message: string, public endpointType?: LLMEndpointType) {
     super('requestError', message)
   }
-
-  async toLocaleMessage() {
-    const { t } = await useGlobalI18n()
-    return t('errors.model_request_error')
+}
+export class LMStudioLoadModelError extends AppError<'lmStudioLoadModelError'> {
+  constructor(message: string) {
+    super('lmStudioLoadModelError', message)
   }
 }
-
-export class ModelNotFoundError extends AppError<'modelNotFound'> {
-  constructor(public model?: string) {
-    super('modelNotFound')
+export class LMStudioDownloadModelError extends AppError<'lmStudioDownloadModelError'> {
+  constructor(message: string) {
+    super('lmStudioDownloadModelError', message)
   }
-
-  async toLocaleMessage() {
-    const { t } = await useGlobalI18n()
-    return t('errors.model_not_found')
+}
+export class ModelNotFoundError extends AppError<'modelNotFound'> {
+  constructor(message: string | undefined, public endpointType?: LLMEndpointType) {
+    super('modelNotFound', message)
   }
 }
 
@@ -74,20 +60,11 @@ export class ModelRequestTimeoutError extends AppError<'requestTimeout'> {
   constructor() {
     super('requestTimeout')
   }
-
-  async toLocaleMessage() {
-    const { t } = await useGlobalI18n()
-    return t('errors.model_request_timeout')
-  }
 }
 
 export class UnsupportedEndpointType extends AppError<'unsupportedEndpointType'> {
   constructor(public endpointType: string) {
     super('unsupportedEndpointType')
-  }
-
-  async toLocaleMessage() {
-    return 'Unsupported endpoint type: ' + this.endpointType
   }
 }
 
@@ -95,29 +72,17 @@ export class AbortError extends AppError<'abortError'> {
   constructor(message: string) {
     super('abortError', message)
   }
-
-  async toLocaleMessage() {
-    return 'Request aborted: ' + this.message
-  }
 }
 
 export class CreateTabStreamCaptureError extends AppError<'createTabStreamCaptureError'> {
   constructor(message?: string) {
     super('createTabStreamCaptureError', message)
   }
-
-  async toLocaleMessage() {
-    return 'Failed to create tab stream capture'
-  }
 }
 
 export class TranslateError extends AppError<'translateError'> {
   constructor(message?: string) {
     super('translateError', message)
-  }
-
-  async toLocaleMessage() {
-    return 'Translation failed: ' + this.message
   }
 }
 
@@ -126,20 +91,11 @@ export class TimeoutError extends AppError<'timeoutError'> {
   constructor(message: string) {
     super('timeoutError', message)
   }
-
-  async toLocaleMessage() {
-    const { t } = await useGlobalI18n()
-    return t('errors.timeout_error', { message: this.message })
-  }
 }
 
 export class ParseFunctionCallError extends AppError<'parseFunctionCallError'> {
   constructor(message: string, public type?: 'toolNotFound' | 'invalidFormat', public toolName?: string) {
     super('parseFunctionCallError', message)
-  }
-
-  async toLocaleMessage() {
-    return this.message
   }
 }
 
@@ -147,19 +103,11 @@ export class GenerateObjectSchemaError extends AppError<'generateObjectSchemaErr
   constructor(message: string) {
     super('generateObjectSchemaError', message)
   }
-
-  async toLocaleMessage() {
-    return this.message
-  }
 }
 
 export class AiSDKError extends AppError<'aiSDKError'> {
   constructor(message: string) {
     super('aiSDKError', message)
-  }
-
-  async toLocaleMessage() {
-    return this.message
   }
 }
 
@@ -177,10 +125,15 @@ const errors = {
   parseFunctionCallError: ParseFunctionCallError,
   aiSDKError: AiSDKError,
   generateObjectSchemaError: GenerateObjectSchemaError,
+  lmStudioLoadModelError: LMStudioLoadModelError,
+  lmStudioDownloadModelError: LMStudioDownloadModelError,
 } satisfies Record<ErrorCode, typeof AppError<ErrorCode>>
 
 export function fromError(error: unknown): AppError<ErrorCode> {
   if (!AppError.isAppError(error)) {
+    if (error instanceof Error) {
+      return new UnknownError(error.message)
+    }
     return new UnknownError('An unknown error occurred')
   }
   const ctor = errors[error.code] || UnknownError

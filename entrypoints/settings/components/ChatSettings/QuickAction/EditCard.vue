@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-[0px_0px_0px_1px_#24B96080] p-4">
+  <div class="rounded-lg shadow-[0px_0px_0px_1px_var(--color-border-selection)] p-4">
     <div
       class="flex flex-col gap-2"
     >

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card w-80 max-w-screen text-xs">
+    <div class="card w-80 max-w-screen text-xs bg-bg-component text-text-primary rounded-md shadow-01 border border-border-light">
       <div class="title flex items-center justify-between h-9 px-3">
         <Text
           size="small"
@@ -38,18 +38,18 @@
           <ExhaustiveError v-else />
         </Text>
         <IconClose
-          class="text-[#71717A] cursor-pointer"
+          class="text-text-tertiary cursor-pointer"
           @click="emit('close')"
         />
       </div>
       <Divider />
       <div class="output p-3 rounded-md">
-        <div class="bg-[#DCFFEA] rounded-sm p-2 flex gap-2">
+        <div class="bg-bg-accent-green rounded-sm p-2 flex gap-2">
           <div class="shrink-0 h-[18px] flex items-center">
             <Loading
               :done="runningStatus === 'idle'"
               :size="12"
-              strokeColor="#000000"
+              strokeColor="var(--color-foreground-base)"
             />
           </div>
           <div class="min-w-0 flex-1">
@@ -63,7 +63,7 @@
               class="max-h-[min(90vh,500px)] overflow-y-auto"
             >
               <MarkdownViewer
-                class="text-[#03943D]"
+                class="text-text-accent-green"
                 :text="output"
               />
             </div>
@@ -110,7 +110,7 @@ import { useToast } from '@/composables/useToast'
 import { fromError } from '@/utils/error'
 import { useI18n } from '@/utils/i18n'
 import logger from '@/utils/logger'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { writingToolList, writingToolProofread, writingToolRewrite, writingToolSparkle } from '@/utils/prompts'
 import { Prompt } from '@/utils/prompts/helpers'
 import { showSettings } from '@/utils/settings'
@@ -137,7 +137,7 @@ const output = ref<string>(``)
 const abortControllers: AbortController[] = []
 const runningStatus = ref<'pending' | 'streaming' | 'idle'>('idle')
 const toast = useToast()
-const ollamaStatusStore = useOllamaStatusStore()
+const llmBackendStatusStore = useLLMBackendStatusStore()
 const userConfig = await getUserConfig()
 const abortExistingStreams = () => {
   abortControllers.forEach((controller) => controller.abort())
@@ -152,29 +152,27 @@ const prompts: Record<WritingToolType, (text: string) => PromiseLike<Prompt> | P
   sparkle: writingToolSparkle,
 }
 
-async function checkOllamaStatus() {
-  if (userConfig.llm.endpointType.get() !== 'ollama') return true
-  if (!(await ollamaStatusStore.updateConnectionStatus())) {
-    toast(t('errors.model_request_error'), { duration: 2000 })
-    showSettings({ scrollTarget: 'server-address-section' })
+async function checkLLMBackendStatus() {
+  if (userConfig.llm.endpointType.get() === 'web-llm') return true
+  const { status, endpointType } = await llmBackendStatusStore.checkCurrentBackendStatus()
+  if (status === 'no-model') {
+    toast(t('errors.model_not_found'), { duration: 2000 })
+    showSettings({ scrollTarget: 'model-download-section' })
     emit('close')
     return false
   }
-  else {
-    const { modelList } = await ollamaStatusStore.initDefaultModel()
-    if (modelList.length === 0) {
-      toast(t('errors.model_not_found'), { duration: 2000 })
-      showSettings({ scrollTarget: 'model-download-section' })
-      emit('close')
-      return false
-    }
+  else if (status === 'backend-unavailable') {
+    toast(t('errors.model_request_error'), { duration: 2000 })
+    endpointType === 'ollama' ? showSettings({ scrollTarget: 'ollama-server-address-section' }) : showSettings({ scrollTarget: 'lm-studio-server-address-section' })
+    emit('close')
+    return false
   }
   return true
 }
 
 const start = async () => {
   abortExistingStreams()
-  if (!(await checkOllamaStatus())) return
+  if (!(await checkLLMBackendStatus())) return
   const abortController = new AbortController()
   abortControllers.push(abortController)
   try {

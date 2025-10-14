@@ -6,7 +6,7 @@ import { getTranslatorEnv, handleTranslatorEnvUpdated, init, setTranslatorEnv, t
 import { useI18n } from '@/utils/i18n'
 import { LanguageCode } from '@/utils/language/detect'
 import logger from '@/utils/logger'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { registerContentScriptRpcEvent } from '@/utils/rpc'
 import { getCommonAncestorElement } from '@/utils/selection'
 import { showSettings } from '@/utils/settings'
@@ -22,7 +22,7 @@ async function _useTranslator() {
   const isTranslating = ref(false)
   const userConfig = await getUserConfig()
   const targetLocale = userConfig.translation.targetLocale.toRef()
-  const ollamaStatusStore = useOllamaStatusStore()
+  const llmBackendStatusStore = useLLMBackendStatusStore()
   setTranslationMenuTargetLanguage(enabled.value, targetLocale.value)
   watch(targetLocale, async (targetLocale) => {
     logger.debug('targetLocale changed', targetLocale)
@@ -69,19 +69,17 @@ async function _useTranslator() {
     if (isWaiting) return
     isWaiting = true
     try {
-      if (!enabled.value && userConfig.llm.endpointType.get() === 'ollama') {
-        if (!(await ollamaStatusStore.updateConnectionStatus())) {
+      if (!enabled.value) {
+        const { status, endpointType } = await llmBackendStatusStore.checkCurrentBackendStatus()
+        if (status === 'backend-unavailable') {
           toast('Failed to connect to Ollama server, please check your Ollama connection', { duration: 2000 })
-          showSettings({ scrollTarget: 'server-address-section' })
+          endpointType === 'ollama' ? showSettings({ scrollTarget: `ollama-server-address-section` }) : showSettings({ scrollTarget: `lm-studio-server-address-section` })
           return
         }
-        else {
-          const { modelList } = await ollamaStatusStore.initDefaultModel()
-          if (modelList.length === 0) {
-            toast('No model found, please download a model.', { duration: 2000 })
-            showSettings({ scrollTarget: 'model-download-section' })
-            return
-          }
+        else if (status === 'no-model') {
+          toast('No model found, please download a model.', { duration: 2000 })
+          showSettings({ scrollTarget: 'model-download-section' })
+          return
         }
       }
       if (e.menuItemId === 'native-mind-page-translate') {

@@ -77,6 +77,11 @@
         "error_click_before_view_tab": "Essayez de cliquer sur un lien de page avant de consulter des pages",
         "error_click_incorrect_link": "Essayez de cliquer sur le lien de page incorrect"
       }
+    },
+    "tools": {
+      "online_search": {
+        "title": "Recherche"
+      }
     }
   },
   "chat_history": {
@@ -100,17 +105,15 @@
       "title": "IA sur appareil, conçue spécialement pour vous"
     },
     "guide": {
-      "already_installed": "Ollama est déjà installé et en cours d'exécution ?",
+      "already_installed": "Déjà installé et exécuté {endpointType} ?",
       "features": {
         "1": "Exécutez des modèles avancés comme gpt-oss, DeepSeek, Qwen, Llama",
         "2": "Personnalisez et changez de modèles avec un contrôle total",
         "3": "Vos données restent privées, sur votre appareil"
       },
       "follow_our_tutorial": "Suivez notre guide d'installation",
-      "get_ollama": "Obtenir Ollama",
-      "install_desc": "Installez Ollama pour configurer votre IA locale.",
+      "install_desc": "Comment voulez-vous exécuter l'IA localement ?",
       "need_help": "Besoin d'aide ?",
-      "ollama_desc": "Libérez toute la puissance de l'IA locale avec Ollama.",
       "setup": "Configuration",
       "step1": "ÉTAPE 1",
       "download_model_to_begin": "Téléchargez un modèle pour commencer.",
@@ -120,7 +123,11 @@
       "no_sure_which_one": "🤔 Pas sûr lequel choisir ?",
       "learn_about_models": "En savoir plus sur les modèles",
       "looking_for_more_options": "🔍 Vous cherchez plus d'options ?",
-      "browse_more_models": "Parcourir plus de modèles"
+      "browse_more_models": "Parcourir plus de modèles",
+      "get_endpoint": "Obtenir {endpointType}",
+      "lm_studio_select_desc": "Application de bureau facile à utiliser",
+      "ollama_select_desc": "Outil de Développement Professionnel",
+      "unlock_full_power_with": "Débloquez toute la puissance de l'IA locale avec {endpointType}."
     },
     "webllm_tutorial": {
       "desc": "Utilisez un modèle léger (Qwen 0.6b) directement dans votre navigateur - sans configuration, sans attente.",
@@ -132,7 +139,8 @@
       "title": "👋 Bienvenue sur **NativeMind**",
       "body": "NativeMind est une extension de navigateur IA qui privilégie la confidentialité et vous aide à discuter, rechercher et traduire - le tout alimenté par des modèles de langage fonctionnant sur votre appareil.\n\n\nVoici ce que vous pouvez faire avec NativeMind :\n\n\n\n- Discuter à travers plusieurs onglets pour suivre différentes pages.\n\n- Rechercher sur le Web directement dans le chat pour plus de contexte.\n\n- Cliquer avec le bouton droit pour traduire instantanément n'importe quelle partie de la page.\n\n- Changer ou télécharger des modèles à tout moment dans les Paramètres.\n\n\nVous pouvez commencer par essayer les actions rapides ci-dessous."
     },
-    "ollama_is_running": "Ollama est en cours d'exécution"
+    "ollama_is_running": "Ollama est en cours d'exécution",
+    "backend_is_running": "{endpointType} est en cours d'exécution"
   },
   "settings": {
     "cache": {
@@ -160,7 +168,9 @@
       "title": "Modèles",
       "discover_more": "Découvrez plus de modèles",
       "no_model": "⚠️ Aucun modèle",
-      "add_model_to_start": "Ajouter un modèle pour commencer"
+      "add_model_to_start": "Ajouter un modèle pour commencer",
+      "ollama_models": "Modèles Ollama ({count})",
+      "lmstudio_models": "LM Studio Modèles ({count})"
     },
     "ollama": {
       "already_installed": "Ollama est déjà installé et en cours d'exécution ?",
@@ -182,18 +192,14 @@
       "unload": "Décharger",
       "expires_in": "Expire dans {duration}",
       "running": "En cours d'exécution",
-      "running_models": "Modèles en cours d'exécution"
+      "running_models": "Modèles en cours d'exécution",
+      "model_management": "Gestion des modèles",
+      "downloaded_models": "Modèles Téléchargés"
     },
     "prompts": {
       "chat_system_prompt": "Instruction système de chat",
       "title": "Instructions",
       "translation_system_prompt": "Prompt système de traduction"
-    },
-    "provider": {
-      "title": "Connexion"
-    },
-    "provider_model": {
-      "title": "Configurer Ollama"
     },
     "quick_actions": {
       "description": "Configurez des actions rapides pour exécuter vos instructions préférées plus rapidement - depuis le nouveau chat ou le menu contextuel.",
@@ -236,8 +242,11 @@
         "quant": "{level} quant",
         "thinking": "Réflexion",
         "no_active_models": "Ollama connecté, mais aucun modèle actif",
-        "not_connected_to_ollama": "Pas connecté à Ollama"
-      }
+        "not_connected_to_ollama": "Pas connecté à Ollama",
+        "lm_studio_no_active_models": "LM Studio connecté, mais aucun modèle actif",
+        "not_connected_to_lm_studio": "Pas connecté à LM Studio"
+      },
+      "delete_model_confirm": "Êtes-vous sûr de vouloir supprimer le modèle \"{model}\" ?"
     },
     "title": "Paramètres",
     "model_downloader": {
@@ -248,7 +257,7 @@
       "download": "Télécharger",
       "retry": "Réessayer",
       "unable_to_download": "Impossible de démarrer le téléchargement",
-      "could_not_connect_ollama": "Nous n'avons pas pu nous connecter à Ollama. Veuillez vous assurer qu'Ollama est en cours d'exécution et réessayer."
+      "could_not_connect": "Nous n'avons pas pu nous connecter à {endpointType}. Veuillez vous assurer que {endpointType} est en cours d'exécution et réessayer."
     },
     "webllm_downloader": {
       "description": "Pour utiliser le mode Local, vous devez télécharger le modèle {model} ({size}). Souhaitez-vous le télécharger maintenant ?"
@@ -312,12 +321,32 @@
     "interface": {
       "title": "Interface",
       "interface_language": "Langue d'interface",
-      "interface_language_desc": "Choisissez la langue d'affichage pour l'interface NativeMind"
+      "theme": "Thème",
+      "theme_light": "Clair",
+      "theme_dark": "Sombre",
+      "theme_system": "Système"
     },
     "header": {
       "starts_on_github": "Étoiles sur GitHub",
       "goto_website": "Aller sur le site Web"
     },
+    "providers": {
+      "lm_studio": {
+        "title": "Configurer LM Studio",
+        "already_installed": "Déjà installé et exécuté LM Studio ?",
+        "model_management_desc": "Le téléchargement, le chargement et la suppression de modèles doivent être effectués dans l'application de bureau LM Studio. Ceci affiche uniquement l'état d'exécution actuel."
+      },
+      "ollama": {
+        "title": "Configurer Ollama"
+      }
+    },
+    "get_lm_studio": "Obtenez LM Studio",
+    "delete": "Supprimer",
+    "lm_studio": {
+      "server_address": "Adresse du serveur",
+      "server_address_desc": "Point de terminaison de l'API du serveur LM Studio"
+    },
+    "webllm_desc_lm_studio": "Vous utilisez maintenant WebLLM : qwen3:0.6b pour un essai rapide. Pour un support complet des modèles et de meilleures performances, veuillez installer LM Studio.",
     "gmail_tools": {
       "title": "Outils Gmail",
       "description": "Configurer diverses fonctionnalités d'assistance à la rédaction",
@@ -370,11 +399,11 @@
     }
   },
   "errors": {
-    "model_not_found": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier votre connexion Ollama dans les paramètres et réessayer.",
-    "model_request_error": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier votre connexion Ollama dans les paramètres et réessayer.",
+    "model_not_found": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier votre connexion dans les paramètres et réessayer.",
+    "model_request_error": "Oups ! Quelque chose s'est mal passé. Veuillez vérifier votre connexion dans les paramètres et réessayer.",
     "timeout_error": "Opération expirée : {message}",
     "unknown_error": "Une erreur inattendue s'est produite : {message}",
-    "model_request_timeout": "Délai de requête expiré. Veuillez vérifier votre connexion Ollama ou envisager de démarrer une nouvelle session, car les contextes longs peuvent affecter les temps de réponse.",
+    "model_request_timeout": "Délai d'attente de la requête dépassé, veuillez vérifier votre connexion ou envisager de démarrer une nouvelle session car les contextes longs peuvent affecter les temps de réponse.",
     "webllm_not_supported": "WebLLM n'est pas pris en charge sur votre appareil.",
     "max_characters_error": "Maximum {count} caractères autorisés"
   },

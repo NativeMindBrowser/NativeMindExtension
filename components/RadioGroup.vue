@@ -10,13 +10,13 @@
         <div
           class="h-[15px] w-[15px] rounded-full cursor-pointer grow-0 shrink-0 flex items-center justify-center mt-0.5"
           :class="classNames({
-            'bg-[#24B960] shadow-[0px_1px_2px_0px_#0E6B33,0px_0px_0px_1px_#24B960]': selectedValue === option.value,
-            'bg-bg-component shadow-[0px_0px_0px_1px_#00000014,0px_1px_2px_0px_#0000001F]': selectedValue !== option.value,
+            'bg-accent-primary shadow-[0px_1px_2px_0px_var(--color-accent-primary-shadow),0px_0px_0px_1px_var(--color-accent-primary)]': selectedValue === option.value,
+            'bg-bg-component shadow-[0px_0px_0px_1px_var(--color-shadow-medium),0px_1px_2px_0px_var(--color-shadow-strong)]': selectedValue !== option.value,
           }, props.class)"
         >
           <div
             v-if="selectedValue === option.value"
-            class="h-[6px] w-[6px] rounded-full bg-white"
+            class="h-[6px] w-[6px] rounded-full bg-bg-primary"
           />
         </div>
         <div class="flex flex-col">

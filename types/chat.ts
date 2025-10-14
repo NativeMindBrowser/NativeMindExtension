@@ -181,6 +181,7 @@ export type ChatHistoryV1 = {
     lastAttachmentIds: string[]
   }
   reasoningEnabled?: boolean // reasoning setting for this chat
+  onlineSearchEnabled: boolean // online search setting for this chat, default is true
   history: HistoryItemV1[]
 }
 

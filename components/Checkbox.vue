@@ -6,8 +6,8 @@
     <div
       class="h-[15px] w-[15px] rounded-[3px] cursor-pointer grow-0 shrink-0"
       :class="classNames({
-        'bg-[#24B960] shadow-[0px_1px_2px_0px_#0E6B33,0px_0px_0px_1px_#24B960]': checked,
-        'bg-bg-component shadow-[0px_0px_0px_1px_#00000014,0px_1px_2px_0px_#0000001F]': !checked,
+        'bg-accent-primary shadow-[0px_1px_2px_0px_var(--color-accent-primary-shadow),0px_0px_0px_1px_var(--color-accent-primary)]': checked,
+        'bg-bg-component shadow-[0px_0px_0px_1px_var(--color-shadow-medium),0px_1px_2px_0px_var(--color-shadow-strong)]': !checked,
       }, props.class)"
     >
       <IconTick v-if="checked" />

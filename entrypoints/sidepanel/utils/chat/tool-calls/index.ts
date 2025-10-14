@@ -6,7 +6,7 @@ import { markdownSectionDiff } from '@/utils/diff'
 import { useGlobalI18n } from '@/utils/i18n'
 import Logger from '@/utils/logger'
 import { makeIcon, makeRawHtmlTag } from '@/utils/markdown/content'
-import { useOllamaStatusStore } from '@/utils/pinia-store/store'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { Tab } from '@/utils/tab'
 import { timeout } from '@/utils/timeout'
 import { isUrlEqual } from '@/utils/url'
@@ -21,6 +21,18 @@ const logger = Logger.child('tool-calls-execute')
 
 export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async ({ params, abortSignal, taskMessageModifier }) => {
   const { t } = await useGlobalI18n()
+  const userConfig = await getUserConfig()
+  const enableOnlineSearch = userConfig.chat.onlineSearch.enable.get()
+  if (!enableOnlineSearch) {
+    return [{
+      type: 'tool-result',
+      results: {
+        query: params.query,
+        status: 'failed',
+        error_message: 'Online search is disabled in settings',
+      },
+    }]
+  }
   const log = logger.child('tool:executeSearchOnline')
   const HARD_MAX_RESULTS = 10
   const { query, max_results } = params
@@ -50,8 +62,14 @@ export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async 
   taskMsg.details = {
     content: filteredLinks.map((link) => {
       const faviconUrl = link.favicon?.startsWith('data:') ? link.favicon : undefined
-      const faviconPart = faviconUrl ? makeRawHtmlTag('img', '', { src: faviconUrl, style: 'width: 16px; height: 16px;' }) : makeIcon('web', { color: '#596066' })
-      const linkPart = makeRawHtmlTag('a', link.title || link.url, { href: link.url, target: '_blank', style: 'color: #596066; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' })
+      const faviconPart = faviconUrl
+        ? makeRawHtmlTag('img', '', { src: faviconUrl, style: 'width: 16px; height: 16px;' })
+        : makeIcon('web', { color: 'var(--color-text-secondary, #596066)' })
+      const linkPart = makeRawHtmlTag('a', link.title || link.url, {
+        href: link.url,
+        target: '_blank',
+        style: 'color: var(--color-text-secondary, #596066); text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;',
+      })
       return makeRawHtmlTag('div', `${faviconPart} ${linkPart}`, { style: 'display: flex; align-items: center; gap: 8px;' })
     }).join('\n'),
     expanded: true,
@@ -265,7 +283,7 @@ export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ par
       },
     }]
   }
-  const supportVision = await useOllamaStatusStore().checkCurrentModelSupportVision()
+  const supportVision = await useLLMBackendStatusStore().checkCurrentModelSupportVision()
   if (!supportVision) {
     taskMsg.icon = 'warningColored'
     taskMsg.summary = `Current model does not support image processing`
