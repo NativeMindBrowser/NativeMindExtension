@@ -1,6 +1,5 @@
 # Changelog
 
-
 ## v1.10.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.2...v1.10.1)
@@ -267,6 +266,24 @@
 ### 🩹 Fixes
 
 - **lm-studio:** Return consistent structured response format ([24d9636](https://github.com/NativeMindBrowser/NativeMindExtension/commit/24d9636))
+
+## v1.10.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.2...v1.10.0-beta.1)
+
+## v1.9.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.4...v1.9.5)
+
+### 🩹 Fixes
+
+- **pattern-extractor:** Ensure extracted values are strings and handle undefined keys ([b95e17f](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b95e17f))
+- **web-llm:** Fix infinite loading when local model cache is invalid ([66239b1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/66239b1))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.9.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.12...v1.9.4)
@@ -301,9 +318,6 @@
 
 - Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
 
-## v1.10.0-beta.1
-
-[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.0-beta.2...v1.10.0-beta.1)
 ## v1.9.3-beta.11
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.9.3-beta.10...v1.9.3-beta.11)
@@ -1278,6 +1292,7 @@
 ### 🚀 Enhancements
 
 - **agent:** Add methods to persist and check current tab in AgentStorage ([510c90a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/510c90a))
+
 ## v1.6.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.4...v1.6.5)
@@ -1393,6 +1408,7 @@
 ### 🏡 Chore
 
 - **package:** Update version to 1.7.0-beta.0 ([1947b6b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/1947b6b))
+
 ## v1.6.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0...v1.6.1)
@@ -1560,6 +1576,7 @@
 ### 🩹 Fixes
 
 - **pdf:** Implement PDF file parsing from URL and enhance file handling for Firefox ([bc9ebf6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bc9ebf6))
+
 ## v1.6.0-beta.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.1...v1.6.0-beta.2)
@@ -1579,6 +1596,7 @@
 ### 🩹 Fixes
 
 - **pdf:** Add Firefox support for PDF text extraction and page count ([a621ca8](https://github.com/NativeMindBrowser/NativeMindExtension/commit/a621ca8))
+
 ## v1.6.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.6.0-beta.0...v1.6.0-beta.1)
@@ -1602,6 +1620,7 @@
 ### 📖 Documentation
 
 - **browser-llm-api:** Add feature detection section for API availability check ([716657e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/716657e))
+
 ## v1.6.0-beta.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.5.0...v1.6.0-beta.0)
@@ -2415,7 +2434,6 @@
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.2.0-beta.1...v1.2.0-beta.2)
 
 ## v1.2.0-beta.1
-
 
 ### 🚀 Enhancements
 
