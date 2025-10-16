@@ -266,7 +266,8 @@ export const executeViewPdf: AgentToolCallExecute<'view_pdf'> = async ({ params,
 export const executeViewImage: AgentToolCallExecute<'view_image'> = async ({ params, taskMessageModifier, agentStorage, loopImages }) => {
   const { image_id: imageId } = params
   const { t } = await useGlobalI18n()
-  const image = agentStorage.getById('image', imageId)
+  const capturedPage = agentStorage.getById('captured-page', imageId)
+  const image = agentStorage.getById('image', imageId) ?? capturedPage
   const taskMsg = taskMessageModifier.addTaskMessage({ summary: t('chat.tool_calls.view_image.analyzing', { title: imageId }) })
   taskMsg.icon = 'taskReadFile'
   if (!image) {

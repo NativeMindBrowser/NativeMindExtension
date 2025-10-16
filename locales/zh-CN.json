@@ -268,7 +268,9 @@
         "pdf_text_extract_error": "文本提取失败 - 此PDF可能是扫描版或基于图像的。",
         "too_many_pdfs": "最多允许 {max} 个 PDF 文件",
         "pdf_page_count_exceeded": "PDF 页数不能超过 {max} 页",
-        "only_load_partial_pages": "由于文件大小限制，仅加载前 {max} 页"
+        "only_load_partial_pages": "由于文件大小限制，仅加载前 {max} 页",
+        "selected_text_prefix": "已选择文本：",
+        "captured_page_prefix": "已捕获页面："
       }
     },
     "prompt": {

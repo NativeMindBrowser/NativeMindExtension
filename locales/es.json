@@ -16,7 +16,9 @@
         "pdf_text_extract_error": "La extracción de texto falló - este PDF puede estar escaneado o basado en imágenes.",
         "too_many_pdfs": "Máximo {max} archivo PDF permitido",
         "pdf_page_count_exceeded": "El PDF debe tener menos de {max} páginas",
-        "only_load_partial_pages": "Solo se cargan las primeras {max} páginas debido al tamaño del archivo"
+        "only_load_partial_pages": "Solo se cargan las primeras {max} páginas debido al tamaño del archivo",
+        "selected_text_prefix": "Texto seleccionado:",
+        "captured_page_prefix": "Página capturada:"
       }
     },
     "messages": {

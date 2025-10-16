@@ -50,6 +50,15 @@ export type SelectedTextAttachment = {
   }
 }
 
+export type CapturedPageAttachment = {
+  type: 'captured-page'
+  value: Base64ImageData & {
+    id: string
+    name: string
+    size?: number
+  }
+}
+
 // this is a placeholder for attachment that is still loading
 export type LoadingAttachment = {
   type: 'loading'
@@ -60,7 +69,7 @@ export type LoadingAttachment = {
   }
 }
 
-export type ContextAttachment = ImageAttachment | PDFAttachment | TabAttachment | SelectedTextAttachment | LoadingAttachment
+export type ContextAttachment = ImageAttachment | PDFAttachment | TabAttachment | SelectedTextAttachment | LoadingAttachment | CapturedPageAttachment
 export type ContextAttachmentStorage = {
   id: string
   lastInteractedAt?: number // last time user interacted with this context(attach/detach)

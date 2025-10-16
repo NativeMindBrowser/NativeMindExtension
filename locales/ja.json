@@ -28,7 +28,9 @@
         "pdf_text_extract_error": "テキスト抽出に失敗しました - このPDFはスキャンされたものか画像ベースの可能性があります。",
         "too_many_pdfs": "最大{max}個のPDFファイルまで許可されています",
         "pdf_page_count_exceeded": "PDFは{max}ページ以下である必要があります",
-        "only_load_partial_pages": "ファイルサイズのため、最初の{max}ページのみが読み込まれました"
+        "only_load_partial_pages": "ファイルサイズのため、最初の{max}ページのみが読み込まれました",
+        "selected_text_prefix": "選択テキスト：",
+        "captured_page_prefix": "キャプチャページ："
       }
     },
     "prompt": {

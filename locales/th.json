@@ -28,7 +28,9 @@
         "pdf_text_extract_error": "การดึงข้อความล้มเหลว - PDF นี้อาจเป็นไฟล์สแกนหรือเป็นรูปภาพ",
         "too_many_pdfs": "อนุญาตไฟล์ PDF สูงสุด {max} ไฟล์",
         "pdf_page_count_exceeded": "PDF ต้องมีจำนวนหน้าไม่เกิน {max} หน้า",
-        "only_load_partial_pages": "โหลดเฉพาะ {max} หน้าแรกเท่านั้นเนื่องจากขนาดไฟล์"
+        "only_load_partial_pages": "โหลดเฉพาะ {max} หน้าแรกเท่านั้นเนื่องจากขนาดไฟล์",
+        "selected_text_prefix": "ข้อความที่เลือก:",
+        "captured_page_prefix": "หน้าที่จับภาพ:"
       }
     },
     "prompt": {

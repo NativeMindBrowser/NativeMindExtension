@@ -28,7 +28,9 @@
         "pdf_text_extract_error": "Извлечение текста не удалось - этот PDF может быть отсканированным или основанным на изображениях.",
         "too_many_pdfs": "Максимально разрешено {max} PDF файлов",
         "pdf_page_count_exceeded": "PDF должен содержать менее {max} страниц",
-        "only_load_partial_pages": "Загружены только первые {max} страниц из-за размера файла"
+        "only_load_partial_pages": "Загружены только первые {max} страниц из-за размера файла",
+        "selected_text_prefix": "Выделенный текст:",
+        "captured_page_prefix": "Захваченная страница:"
       }
     },
     "prompt": {

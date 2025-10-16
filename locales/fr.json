@@ -28,7 +28,9 @@
         "pdf_text_extract_error": "L'extraction de texte a échoué - ce PDF peut être numérisé ou basé sur des images.",
         "too_many_pdfs": "Maximum {max} fichier PDF autorisé",
         "pdf_page_count_exceeded": "Le PDF doit contenir moins de {max} pages",
-        "only_load_partial_pages": "Seules les {max} premières pages sont chargées en raison de la taille du fichier"
+        "only_load_partial_pages": "Seules les {max} premières pages sont chargées en raison de la taille du fichier",
+        "selected_text_prefix": "Texte sélectionné :",
+        "captured_page_prefix": "Page capturée :"
       }
     },
     "prompt": {

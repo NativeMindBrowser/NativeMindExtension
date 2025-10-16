@@ -1,5 +1,35 @@
 <template>
   <div class="relative">
+    <!-- Image Preview Tooltip -->
+    <Transition
+      enterActiveClass="transition-opacity duration-200"
+      leaveActiveClass="transition-opacity duration-200"
+      enterFromClass="opacity-0"
+      leaveToClass="opacity-0"
+      enterToClass="opacity-100"
+      leaveFromClass="opacity-100"
+    >
+      <div
+        v-if="hoveredImageData"
+        :style="{
+          position: 'fixed',
+          left: `${hoveredImageData.x}px`,
+          top: `${hoveredImageData.y - 16}px`,
+          transform: 'translate(-50%, -100%)',
+          zIndex: 100,
+          pointerEvents: 'none'
+        }"
+        @mouseenter="() => { hoveredImageData = null }"
+      >
+        <div class="rounded-lg shadow-lg overflow-hidden bg-transparent">
+          <img
+            :src="`data:${hoveredImageData.imageType};base64,${hoveredImageData.data}`"
+            alt="Preview"
+            class="max-w-[172px] max-h-64 rounded bg-transparent"
+          >
+        </div>
+      </div>
+    </Transition>
     <Transition
       enterActiveClass="transition-all duration-300 ease-cubic-1"
       leaveActiveClass="transition-all duration-300 ease-cubic-1"
@@ -118,7 +148,11 @@
         <div
           v-for="(attachment, index) in attachmentsToShow"
           :key="index"
-          class="items-center gap-2 grow-0 text-xs shrink-0"
+          :ref="el => setItemRef(el, index)"
+          class="items-center gap-2 grow-0 text-xs shrink-0 relative"
+          @mouseenter="() => handleImageHover(attachment, index)"
+          @mouseleave="handleImageLeave"
+          @click="handleImageLeave"
         >
           <Tag class="inline-flex bg-bg-tertiary border border-border">
             <template #icon>
@@ -153,7 +187,13 @@
                 v-else-if="attachment.type === 'selected-text'"
                 class="flex items-center justify-center w-3 h-4 shrink-0 grow-0 ml-[2px]"
               >
-                <IconHighlight class="w-3 h-3 text-text-secondary" />
+                <IconSelectedText class="w-3 h-3 text-text-secondary" />
+              </div>
+              <div
+                v-else-if="attachment.type === 'captured-page'"
+                class="flex items-center justify-center w-3 h-4 shrink-0 grow-0 ml-[2px]"
+              >
+                <IconCapturedPage class="w-3 h-3 text-text-secondary" />
               </div>
               <div
                 v-else-if="attachment.type === 'loading'"
@@ -172,7 +212,10 @@
                 class="text-xs text-text-secondary whitespace-nowrap max-w-28 overflow-hidden text-ellipsis"
               >
                 <template v-if="attachment.type === 'selected-text'">
-                  Selected Text: {{ attachment.value.text }}
+                  {{ t('chat.input.attachment_selector.selected_text_prefix') }} {{ attachment.value.text }}
+                </template>
+                <template v-else-if="attachment.type === 'captured-page'">
+                  {{ t('chat.input.attachment_selector.captured_page_prefix') }} {{ attachment.value.name }}
                 </template>
                 <template v-else>
                   {{ attachment.type === 'tab' ? attachment.value.title : attachment.value.name }}
@@ -196,14 +239,15 @@
 
 <script setup lang="ts">
 import { useEventListener, useFileDialog, useVModel } from '@vueuse/core'
-import { computed, onBeforeUnmount, onMounted, ref, toRef } from 'vue'
+import { ComponentPublicInstance, computed, onBeforeUnmount, onMounted, ref, toRef } from 'vue'
 import { browser } from 'wxt/browser'
 
 import IconAdd from '@/assets/icons/add.svg?component'
 import IconAttachmentImage from '@/assets/icons/attachment-image.svg?component'
 import IconAttachmentPDF from '@/assets/icons/attachment-pdf.svg?component'
 import IconAttachmentUpload from '@/assets/icons/attachment-upload.svg?component'
-import IconHighlight from '@/assets/icons/md-highlight-action.svg?component'
+import IconCapturedPage from '@/assets/icons/captured-page.svg?component'
+import IconSelectedText from '@/assets/icons/selected-text.svg?component'
 import IconTab from '@/assets/icons/tab.svg?component'
 import IconClose from '@/assets/icons/tag-close.svg?component'
 import IconWarningSolid from '@/assets/icons/warning-solid.svg?component'
@@ -218,7 +262,7 @@ import Text from '@/components/ui/Text.vue'
 import { useExtensionEventListener } from '@/composables/useExtensionEventListener'
 import { useLogger } from '@/composables/useLogger'
 import { useTimeoutValue } from '@/composables/useTimeoutValue'
-import { AttachmentItem, ContextAttachment, ContextAttachmentStorage, LoadingAttachment, TabAttachment } from '@/types/chat'
+import { AttachmentItem, CapturedPageAttachment, ContextAttachment, ContextAttachmentStorage, LoadingAttachment, TabAttachment } from '@/types/chat'
 import { TabInfo } from '@/types/tab'
 import { nonNullable } from '@/utils/array'
 import { INVALID_URLS } from '@/utils/constants'
@@ -239,6 +283,16 @@ import { getValidTabs } from '../utils/tabs'
 
 const logger = useLogger()
 const { t } = useI18n()
+
+// Image preview state
+const hoveredImageData = ref<{ data: string, imageType: string, x: number, y: number } | null>(null)
+const itemRefs = ref<(HTMLElement | null)[]>([])
+
+const setItemRef = (el: Element | ComponentPublicInstance | null, index: number) => {
+  if (el) {
+    itemRefs.value[index] = el as HTMLElement
+  }
+}
 
 useExtensionEventListener(browser.tabs.onUpdated, async (_tabId, changeInfo) => {
   if (changeInfo.status === 'complete') {
@@ -485,6 +539,18 @@ defineExpose({
     attachmentStorage.value.lastInteractedAt = Date.now()
     addAttachmentsFromFiles(...args)
   },
+  addCapturedPageAttachment: (attachment: CapturedPageAttachment) => {
+    attachmentStorage.value.lastInteractedAt = Date.now()
+    // Remove existing captured-page with same id if exists
+    const existingIndex = attachments.value.findIndex(
+      (a) => a.type === 'captured-page' && a.value.id === attachment.value.id,
+    )
+    if (existingIndex >= 0) {
+      attachments.value.splice(existingIndex, 1)
+    }
+    // Add new captured-page attachment at the beginning
+    attachments.value.unshift(attachment)
+  },
 })
 
 onChange(async (files) => {
@@ -638,6 +704,25 @@ const removeAttachment = (attachment: ContextAttachment) => {
     }
   }
   attachments.value = attachments.value.filter((a) => a.value.id !== attachment.value.id)
+}
+
+const handleImageHover = (attachment: ContextAttachment, index: number) => {
+  if (attachment.type === 'image' || attachment.type === 'captured-page') {
+    const itemElement = itemRefs.value[index]
+    if (itemElement) {
+      const rect = itemElement.getBoundingClientRect()
+      hoveredImageData.value = {
+        data: attachment.value.data,
+        imageType: attachment.value.type,
+        x: rect.left + rect.width / 2, // 中心点
+        y: rect.top, // 元素顶部
+      }
+    }
+  }
+}
+
+const handleImageLeave = () => {
+  hoveredImageData.value = null
 }
 
 const updateCurrentTabAttachment = async () => {

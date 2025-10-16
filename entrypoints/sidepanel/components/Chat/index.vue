@@ -99,25 +99,31 @@
               <ThinkingModeSwitch />
               <OnlineSearchSwitch />
             </div>
-            <div
-              ref="sendButtonContainerRef"
-            >
-              <Button
-                v-if="chat.isAnswering()"
-                variant="secondary"
-                class="size-6 rounded-md flex items-center justify-center hover:bg-border-strong/80 bg-border-strong cursor-pointer shadow-none"
-                @click="onStop"
+            <div class="flex gap-2 flex-row">
+              <CameraButton
+                :attachmentSelectorRef="attachmentSelectorRef"
+                :contextAttachmentStorage="contextAttachmentStorage"
+              />
+              <div
+                ref="sendButtonContainerRef"
               >
-                <IconStop class="size-[15px] text-white" />
-              </Button>
-              <button
-                v-else
-                :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-accent-primary-hover bg-accent-primary cursor-pointer' : 'cursor-not-allowed')"
-                :disabled="!allowAsk"
-                @click="onSubmit"
-              >
-                <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-text-quaternary')" />
-              </button>
+                <Button
+                  v-if="chat.isAnswering()"
+                  variant="secondary"
+                  class="size-6 rounded-md flex items-center justify-center hover:bg-border-strong/80 bg-border-strong cursor-pointer shadow-none"
+                  @click="onStop"
+                >
+                  <IconStop class="size-[15px] text-white" />
+                </Button>
+                <button
+                  v-else
+                  :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-accent-primary-hover bg-accent-primary cursor-pointer' : 'cursor-not-allowed')"
+                  :disabled="!allowAsk"
+                  @click="onSubmit"
+                >
+                  <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-text-quaternary')" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -150,6 +156,7 @@ import {
   initChatSideEffects,
 } from '../../utils/chat/index'
 import AttachmentSelector from '../AttachmentSelector.vue'
+import CameraButton from './CameraButton.vue'
 import MessageAction from './Messages/Action.vue'
 import MessageTaskGroup from './Messages/AgentTaskGroup.vue'
 import MessageAssistant from './Messages/Assistant.vue'

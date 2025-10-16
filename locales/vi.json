@@ -28,7 +28,9 @@
         "pdf_text_extract_error": "Trích xuất văn bản thất bại - tệp PDF này có thể được quét hoặc dựa trên hình ảnh.",
         "too_many_pdfs": "Tối đa {max} tệp PDF được phép",
         "pdf_page_count_exceeded": "PDF phải có ít hơn {max} trang",
-        "only_load_partial_pages": "Chỉ {max} trang đầu tiên được tải do kích thước tệp"
+        "only_load_partial_pages": "Chỉ {max} trang đầu tiên được tải do kích thước tệp",
+        "selected_text_prefix": "Văn bản đã chọn:",
+        "captured_page_prefix": "Trang đã chụp:"
       }
     },
     "prompt": {

@@ -28,7 +28,9 @@
         "pdf_text_extract_error": "Textextraktion fehlgeschlagen - diese PDF könnte gescannt oder bildbasiert sein.",
         "too_many_pdfs": "Maximal {max} PDF-Datei erlaubt",
         "pdf_page_count_exceeded": "PDF muss weniger als {max} Seiten haben",
-        "only_load_partial_pages": "Aufgrund der Dateigröße werden nur die ersten {max} Seiten geladen"
+        "only_load_partial_pages": "Aufgrund der Dateigröße werden nur die ersten {max} Seiten geladen",
+        "selected_text_prefix": "Ausgewählter Text:",
+        "captured_page_prefix": "Erfasste Seite:"
       }
     },
     "prompt": {

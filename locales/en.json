@@ -268,7 +268,9 @@
         "pdf_oversize": "PDF file size must be less than {size}",
         "too_many_pdfs": "Maximum {max} PDF file allowed",
         "pdf_text_extract_error": "Text extraction failed - this PDF may be scanned or image-based.",
-        "only_load_partial_pages": "Only the first {max} pages are loaded due to file size"
+        "only_load_partial_pages": "Only the first {max} pages are loaded due to file size",
+        "selected_text_prefix": "Selected Text:",
+        "captured_page_prefix": "Page Captured:"
       }
     },
     "prompt": {

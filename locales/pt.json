@@ -28,7 +28,9 @@
         "pdf_text_extract_error": "A extração de texto falhou - este PDF pode estar digitalizado ou ser baseado em imagem.",
         "too_many_pdfs": "Máximo de {max} arquivo PDF permitido",
         "pdf_page_count_exceeded": "O PDF deve ter menos de {max} páginas",
-        "only_load_partial_pages": "Apenas as primeiras {max} páginas são carregadas devido ao tamanho do arquivo"
+        "only_load_partial_pages": "Apenas as primeiras {max} páginas são carregadas devido ao tamanho do arquivo",
+        "selected_text_prefix": "Texto selecionado:",
+        "captured_page_prefix": "Página capturada:"
       }
     },
     "prompt": {
