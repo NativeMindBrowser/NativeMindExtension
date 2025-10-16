@@ -14,6 +14,7 @@ export type Events = {
   gmailAction(options: { action: 'summary' | 'reply' | 'compose', data: unknown, tabInfo: TabInfo }): void
   updateModelList(): void
   updateChatList(): void
+  selectionChanged(options: { tabId: number, selectedText: string }): void
 }
 
 export type EventKey = keyof Events

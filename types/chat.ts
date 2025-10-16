@@ -42,6 +42,14 @@ export type TabAttachment = {
   value: TabInfo & { id: string }
 }
 
+export type SelectedTextAttachment = {
+  type: 'selected-text'
+  value: {
+    id: string
+    text: string
+  }
+}
+
 // this is a placeholder for attachment that is still loading
 export type LoadingAttachment = {
   type: 'loading'
@@ -52,7 +60,7 @@ export type LoadingAttachment = {
   }
 }
 
-export type ContextAttachment = ImageAttachment | PDFAttachment | TabAttachment | LoadingAttachment
+export type ContextAttachment = ImageAttachment | PDFAttachment | TabAttachment | SelectedTextAttachment | LoadingAttachment
 export type ContextAttachmentStorage = {
   id: string
   lastInteractedAt?: number // last time user interacted with this context(attach/detach)

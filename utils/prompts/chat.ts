@@ -1,4 +1,4 @@
-import { ContextAttachment, ContextAttachmentStorage, ImageAttachment, PDFAttachment, TabAttachment } from '@/types/chat'
+import { ContextAttachment, ContextAttachmentStorage, ImageAttachment, PDFAttachment, SelectedTextAttachment, TabAttachment } from '@/types/chat'
 import { Base64ImageData } from '@/types/image'
 import dayjs from '@/utils/time'
 
@@ -71,6 +71,9 @@ export class EnvironmentDetailsBuilder {
   }
 
   generateFull() {
+    // Check for selected text
+    const selectedTextAttachment = this.contextAttachmentStorage.attachments.find((a): a is SelectedTextAttachment => a.type === 'selected-text')
+
     const tabContextBuilder = new TextBuilder('# Available Tabs')
     const currentTab = this.contextAttachmentStorage.currentTab?.type === 'tab' ? this.contextAttachmentStorage.currentTab : undefined
     const tabs = this.contextAttachmentStorage.attachments.filter((a): a is TabAttachment => a.type === 'tab' && a.value.tabId !== currentTab?.value.tabId)
@@ -116,6 +119,12 @@ ${tabContextBuilder}
 ${pdfContextBuilder}
 ${imageContextBuilder}
 `.trim())
+
+    // Build the result with optional selected text before environment details
+    if (selectedTextAttachment) {
+      const selectedTextTag = new TagBuilder('user_selection').insertContent(selectedTextAttachment.value.text.trim())
+      return `${selectedTextTag.build()}\n\n${environmentTagBuilder.build()}`
+    }
 
     return environmentTagBuilder.build()
   }

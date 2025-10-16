@@ -150,6 +150,12 @@
                 <IconAttachmentPDF class="w-3 h-3 text-text-secondary" />
               </div>
               <div
+                v-else-if="attachment.type === 'selected-text'"
+                class="flex items-center justify-center w-3 h-4 shrink-0 grow-0 ml-[2px]"
+              >
+                <IconHighlight class="w-3 h-3 text-text-secondary" />
+              </div>
+              <div
                 v-else-if="attachment.type === 'loading'"
                 class="flex items-center justify-center w-3 h-4 shrink-0 grow-0 ml-[2px]"
               >
@@ -162,10 +168,15 @@
             </template>
             <template #text>
               <span
-                :title="attachment.type === 'tab' ? attachment.value.title : attachment.value.name"
+                :title="attachment.type === 'tab' ? attachment.value.title : (attachment.type === 'selected-text' ? attachment.value.text : attachment.value.name)"
                 class="text-xs text-text-secondary whitespace-nowrap max-w-28 overflow-hidden text-ellipsis"
               >
-                {{ attachment.type === 'tab' ? attachment.value.title : attachment.value.name }}
+                <template v-if="attachment.type === 'selected-text'">
+                  Selected Text: {{ attachment.value.text }}
+                </template>
+                <template v-else>
+                  {{ attachment.type === 'tab' ? attachment.value.title : attachment.value.name }}
+                </template>
               </span>
             </template>
             <template #button>
@@ -185,13 +196,14 @@
 
 <script setup lang="ts">
 import { useEventListener, useFileDialog, useVModel } from '@vueuse/core'
-import { computed, onMounted, ref, toRef } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, toRef } from 'vue'
 import { browser } from 'wxt/browser'
 
 import IconAdd from '@/assets/icons/add.svg?component'
 import IconAttachmentImage from '@/assets/icons/attachment-image.svg?component'
 import IconAttachmentPDF from '@/assets/icons/attachment-pdf.svg?component'
 import IconAttachmentUpload from '@/assets/icons/attachment-upload.svg?component'
+import IconHighlight from '@/assets/icons/md-highlight-action.svg?component'
 import IconTab from '@/assets/icons/tab.svg?component'
 import IconClose from '@/assets/icons/tag-close.svg?component'
 import IconWarningSolid from '@/assets/icons/warning-solid.svg?component'
@@ -218,6 +230,7 @@ import { convertImageFileToJpegBase64 } from '@/utils/image'
 import { checkReadableTextContent, extractPdfText } from '@/utils/pdf'
 import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { s2bRpc } from '@/utils/rpc'
+import { registerSidepanelRpcEvent } from '@/utils/rpc/sidepanel-fns'
 import { ByteSize } from '@/utils/sizes'
 import { tabToTabInfo } from '@/utils/tab'
 
@@ -674,6 +687,46 @@ const updateCurrentTabAttachment = async () => {
   }
 }
 
+// Handle selection change events from content scripts
+const handleSelectionChanged = async (opts: { tabId: number, selectedText: string }) => {
+  logger.debug('AttachmentSelector handleSelectionChanged')
+  const currentTab = await browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => tabs[0])
+
+  // Only process if this is the active tab
+  if (!currentTab?.id || currentTab.id !== opts.tabId) return
+
+  const { selectedText } = opts
+
+  if (selectedText && selectedText.length > 0) {
+    // Check if we already have a selected-text attachment
+    const existingIndex = attachments.value.findIndex((a) => a.type === 'selected-text')
+
+    const selectedTextAttachment = {
+      type: 'selected-text' as const,
+      value: {
+        id: existingIndex !== -1 ? attachments.value[existingIndex].value.id : generateRandomId(),
+        text: selectedText,
+      },
+    }
+
+    if (existingIndex !== -1) {
+      // Update existing
+      attachments.value[existingIndex] = selectedTextAttachment
+    }
+    else {
+      // Add new
+      attachments.value.unshift(selectedTextAttachment)
+    }
+  }
+  else {
+    // Remove selected-text attachment if no text is selected
+    const existingIndex = attachments.value.findIndex((a) => a.type === 'selected-text')
+    if (existingIndex !== -1) {
+      attachments.value.splice(existingIndex, 1)
+    }
+  }
+}
+
 useEventListener(window, 'click', (e: MouseEvent) => {
   const target = (e.composed ? e.composedPath()[0] : e.target) as HTMLElement
   if (!selectorListContainer.value?.contains(target)) {
@@ -693,8 +746,16 @@ useEventListener(tabsContainerRef, 'wheel', (e: WheelEvent) => {
   }
 })
 
+// Register event listener for selection changes from content scripts
+const unregisterSelectionEvent = registerSidepanelRpcEvent('selectionChanged', handleSelectionChanged)
+
 onMounted(async () => {
   updateAllTabs()
   updateCurrentTabAttachment()
+})
+
+onBeforeUnmount(() => {
+  // Clean up event listener
+  unregisterSelectionEvent()
 })
 </script>

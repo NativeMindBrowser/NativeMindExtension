@@ -17,11 +17,13 @@ import { useTranslator } from './composables/useTranslator'
 import { initContextMenu } from './utils/context-menu'
 import { useInjectGmailTools } from './utils/page-injection/gmail-tools'
 import { useInjectOllamaDownloadButtons } from './utils/page-injection/ollama-search-page'
+import { useInjectSelectionTracker } from './utils/page-injection/selection-tracker'
 
 // init translator global event listeners
 useTranslator()
 useInjectOllamaDownloadButtons()
 useInjectGmailTools()
+useInjectSelectionTracker()
 initContextMenu()
 const toast = useToast()
 

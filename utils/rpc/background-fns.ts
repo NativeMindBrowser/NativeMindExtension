@@ -1075,6 +1075,17 @@ async function forwardGmailAction(action: 'summary' | 'reply' | 'compose', data:
   }
 }
 
+async function forwardSelectionText(tabId: number, selectedText: string) {
+  try {
+    b2sRpc.emit('selectionChanged', { tabId, selectedText })
+    return { success: true }
+  }
+  catch (error) {
+    logger.error('Failed to forward selection text to sidepanel:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
 export const backgroundFunctions = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)
@@ -1146,5 +1157,7 @@ export const backgroundFunctions = {
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,
   forwardGmailAction,
+  // Selected Text
+  forwardSelectionText,
 }
   ; (self as unknown as { backgroundFunctions: unknown }).backgroundFunctions = backgroundFunctions

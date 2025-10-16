@@ -209,18 +209,22 @@ ${tools.map((tool) => renderPrompt`${new PromptBasedToolBuilder(tool)}`).join('\
 
 # WORKFLOW
 
-Simple two-step process for ALL queries:
+Simple step-by-step process for ALL queries:
 
-### Step 1: Always Check Selected Tab First
-- Start with brief explanation: "Let me first check the selected tab to see if it contains relevant information"
+### Step 1: Check for Selected Text First
+- If user_message contains <user_selection> tags, prioritize understanding and responding to the selected content
+- The selected text indicates the user's specific focus area and should guide all subsequent tool usage
+
+### Step 2: Always Check Selected Tab First
+- Start with brief explanation: "Let me first check the selected tab to see if it contains relevant information about [selected text topic]"
 - Use view_tab for the SELECTED tab (marked as SELECTED in available tabs)
 - This is mandatory regardless of query type
 
-### Step 2: Click on Relevant Links Found  
+### Step 3: Click on Relevant Links Found
 - If the selected tab shows relevant interactive elements, use click to explore them
 - Prioritize click over other tools when relevant links are available
 
-### Step 3: Other Tools as Needed
+### Step 4: Other Tools as Needed
 - Use other available resources: view_pdf, view_image, other tabs
 ${hasOnlineSearch ? '- Use search_online only if existing resources don\'t provide sufficient information' : '- Note: Web search is currently disabled. Focus on available local resources.'}
 - Use fetch_page for specific URLs mentioned by user
