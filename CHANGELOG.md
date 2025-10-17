@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.11.0-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1...v1.11.0-beta.0)
+
+### 🚀 Enhancements
+
+- **chat:** Implement message editing and copying functionality in User component ([5ed4d64](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5ed4d64))
+- **chat:** Enhance message editing UI with scroll container and improved button functionality ([88ed48d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/88ed48d))
+- **selection:** Implement selection text tracking and integrate with llm ([ccdf982](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ccdf982))
+- Add camera functionality and support for captured pages ([2c551a3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2c551a3))
+- Introduce effort selection for gpt-oss in chat ([11d3e19](https://github.com/NativeMindBrowser/NativeMindExtension/commit/11d3e19))
+
+### 🩹 Fixes
+
+- **web-llm:** Fix infinite loading when local model cache is invalid ([66239b1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/66239b1))
+
+### 🏡 Chore
+
+- **release:** V1.9.5 ([c7afaef](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c7afaef))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+- Neko Liu ([@NekoWings](http://github.com/NekoWings))
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.2...v1.10.1)
