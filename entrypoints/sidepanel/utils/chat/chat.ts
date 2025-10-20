@@ -280,6 +280,17 @@ export class ReactiveHistoryManager extends EventEmitter {
   cleanupLoadingMessages() {
     this.cleanUp(this.chatHistory.value.history)
   }
+
+  cleanupLoadingAttachments(contextAttachmentStorage: Ref<ContextAttachmentStorage>) {
+    // Remove loading attachments from the attachments array
+    contextAttachmentStorage.value.attachments = contextAttachmentStorage.value.attachments.filter(
+      (attachment) => attachment.type !== 'loading',
+    )
+    // Remove loading attachment from currentTab if it exists
+    if (contextAttachmentStorage.value.currentTab?.type === 'loading') {
+      contextAttachmentStorage.value.currentTab = undefined
+    }
+  }
 }
 
 type ChatStatus = 'idle' | 'pending' | 'streaming'
@@ -401,6 +412,8 @@ export class Chat {
 
           // Clean up any loading messages
           instance.historyManager.cleanupLoadingMessages()
+          // Clean up any loading attachments
+          instance.historyManager.cleanupLoadingAttachments(contextAttachments)
 
           // Update the chat list to reflect any changes
           updateChatList()
@@ -645,6 +658,8 @@ export class Chat {
       abortController.abort()
     })
     this.abortControllers.length = 0
+    // Clean up any loading attachments when stopping
+    this.historyManager.cleanupLoadingAttachments(this.contextAttachmentStorage)
   }
 
   /**
