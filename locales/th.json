@@ -4,7 +4,8 @@
       "thought_for_seconds": "กำลังคิด {second} วินาที | กำลังคิด {second} วินาที",
       "thinking": "กำลังคิด...",
       "reading": "กำลังอ่าน",
-      "search_locally": "กำลังค้นหาในเบราว์เซอร์..."
+      "search_locally": "กำลังค้นหาในเบราว์เซอร์...",
+      "used_model": "ใช้ {model}"
     },
     "quick_actions": {
       "title": "การกระทำที่รวดเร็ว"
@@ -461,7 +462,8 @@
     "new_chat": "แชทใหม่",
     "back": "กลับ",
     "copy_message": "คัดลอกข้อความ",
-    "edit_message": "แก้ไขข้อความ"
+    "edit_message": "แก้ไขข้อความ",
+    "retry_message": "ลองอีกครั้ง"
   },
   "gmail_tools": {
     "buttons": {

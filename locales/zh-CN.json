@@ -244,7 +244,8 @@
       "thought_for_seconds": "思考了{second}秒 | 思考了{second}秒",
       "thinking": "正在思考...",
       "reading": "正在阅读",
-      "search_locally": "正在浏览器中本地搜索..."
+      "search_locally": "正在浏览器中本地搜索...",
+      "used_model": "使用了 {model}"
     },
     "quick_actions": {
       "title": "快捷操作"
@@ -460,8 +461,9 @@
     "chat_history": "历史",
     "new_chat": "新聊天",
     "back": "返回",
-    "copy_message": "复制消息",
-    "edit_message": "编辑消息"
+    "copy_message": "复制",
+    "edit_message": "编辑",
+    "retry_message": "重试"
   },
   "gmail_tools": {
     "buttons": {

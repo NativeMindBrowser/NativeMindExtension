@@ -31,6 +31,9 @@
           <MessageAssistant
             v-else-if="item.role === 'assistant' || item.role === 'agent'"
             :message="item"
+            :disabled="chat.isAnswering()"
+            :showActions="assistantActionMessageIds.has(item.id)"
+            @retry="(modelId, endpointType) => onRetryAssistantMessage(item.id, modelId, endpointType)"
           />
           <div v-else-if="item.role === 'task'">
             <MessageTask :message="item" />
@@ -195,6 +198,31 @@ const contextAttachmentStorage = chat.contextAttachmentStorage
 
 initChatSideEffects()
 
+// Track the final assistant/agent message for each reply block (between user turns) FOR triggering retry action
+const assistantActionMessageIds = computed(() => {
+  const ids = new Set<string>()
+  const history = chat.historyManager.history.value
+  let lastAssistantId: string | null = null
+
+  for (const item of history) {
+    if (item.role === 'assistant' || item.role === 'agent') {
+      lastAssistantId = item.id
+    }
+    else if (item.role === 'user') {
+      if (lastAssistantId) {
+        ids.add(lastAssistantId)
+        lastAssistantId = null
+      }
+    }
+  }
+
+  if (lastAssistantId) {
+    ids.add(lastAssistantId)
+  }
+
+  return ids
+})
+
 const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
   if (actionEvent.action === 'customInput') {
     chat.ask((actionEvent as ActionEvent<'customInput'>).data.prompt)
@@ -232,6 +260,60 @@ const onSubmitEdit = async (messageId: string, value: string) => {
   }
   catch (error) {
     log.error('Failed to re-send edited message', error)
+  }
+  finally {
+    editingInFlight.value = false
+  }
+}
+
+const onRetryAssistantMessage = async (assistantMessageId: string, modelId: string, endpointType: string) => {
+  if (chat.isAnswering() || editingInFlight.value) return
+
+  const messageIndex = chat.historyManager.history.value.findIndex((item) => item.id === assistantMessageId)
+  if (messageIndex === -1) {
+    log.error('Assistant message not found', assistantMessageId)
+    return
+  }
+
+  // Find the last user message before this assistant message
+  let userMessageIndex = -1
+  for (let i = messageIndex - 1; i >= 0; i--) {
+    if (chat.historyManager.history.value[i].role === 'user') {
+      userMessageIndex = i
+      break
+    }
+  }
+
+  if (userMessageIndex === -1) {
+    log.error('No user message found before assistant message')
+    return
+  }
+
+  const userMessage = chat.historyManager.history.value[userMessageIndex]
+  if (userMessage.role !== 'user') return
+
+  // Stop any ongoing chat
+  chat.stop()
+  editingInFlight.value = true
+
+  try {
+    // Remove all messages after and including the assistant message
+    chat.historyManager.history.value.splice(messageIndex)
+
+    // Set temporary model override
+    chat.historyManager.temporaryModelOverride = { model: modelId, endpointType }
+
+    try {
+      // Re-generate the response with the new model
+      await chat.editUserMessage(userMessage.id, userMessage.displayContent ?? userMessage.content)
+    }
+    finally {
+      // Clear temporary model override
+      chat.historyManager.temporaryModelOverride = null
+    }
+  }
+  catch (error) {
+    log.error('Failed to retry assistant message', error)
   }
   finally {
     editingInFlight.value = false

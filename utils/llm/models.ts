@@ -15,14 +15,19 @@ import { getReasoningOptionForModel, isGptOssModel } from './reasoning'
 import { isToggleableThinkingModel } from './thinking-models'
 import { getWebLLMEngine, WebLLMSupportedModel } from './web-llm'
 
-export async function getModelUserConfig() {
+export async function getModelUserConfig(overrides?: { model?: string, endpointType?: LLMEndpointType }) {
   const userConfig = await getUserConfig()
-  const model = userConfig.llm.model.get()
-  const endpointType = userConfig.llm.endpointType.get()
-  const baseUrl = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].baseUrl.get()
+  const endpointType = overrides?.endpointType ?? userConfig.llm.endpointType.get()
+  const model = overrides?.model ?? userConfig.llm.model.get()
+  const backendConfig = endpointType === 'lm-studio'
+    ? userConfig.llm.backends.lmStudio
+    : endpointType === 'ollama'
+      ? userConfig.llm.backends.ollama
+      : undefined
+  const baseUrl = backendConfig ? backendConfig.baseUrl.get() : ''
   const apiKey = userConfig.llm.apiKey.get()
-  const numCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].numCtx.get()
-  const enableNumCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].enableNumCtx.get()
+  const numCtx = backendConfig ? backendConfig.numCtx.get() : 0
+  const enableNumCtx = backendConfig ? backendConfig.enableNumCtx.get() : false
   const reasoningPreference = userConfig.llm.reasoning.get()
   const reasoning = getReasoningOptionForModel(reasoningPreference, model)
   if (!model) {

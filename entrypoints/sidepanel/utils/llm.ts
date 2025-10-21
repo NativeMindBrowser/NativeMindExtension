@@ -7,6 +7,7 @@ import { browser } from 'wxt/browser'
 import { readPortMessageIntoIterator, toAsyncIter } from '@/utils/async'
 import { AbortError, fromError, ModelRequestTimeoutError } from '@/utils/error'
 import { BackgroundAliveKeeper } from '@/utils/keepalive'
+import type { LLMEndpointType } from '@/utils/llm/models'
 import { SchemaName } from '@/utils/llm/output-schema'
 import { getReasoningOptionForModel } from '@/utils/llm/reasoning'
 import { WebLLMSupportedModel } from '@/utils/llm/web-llm'
@@ -22,10 +23,11 @@ interface ExtraOptions {
   timeout?: number
 }
 
-export async function* streamTextInBackground(options: Parameters<typeof s2bRpc.streamText>[0] & ExtraOptions) {
-  const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, ...restOptions } = options
+export async function* streamTextInBackground(options: Parameters<typeof s2bRpc.streamText>[0] & ExtraOptions & { temporaryModelOverride?: { model: string, endpointType: string } | null }) {
+  const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, temporaryModelOverride, ...restOptions } = options
   const userConfig = await getUserConfig()
-  const modelId = userConfig.llm.model.get()
+  const modelId = temporaryModelOverride?.model ?? userConfig.llm.model.get()
+  const endpointType = (temporaryModelOverride?.endpointType as LLMEndpointType | undefined) ?? userConfig.llm.endpointType.get()
   const reasoningPreference = userConfig.llm.reasoning.get()
   const computedReasoning = restOptions.autoThinking
     ? restOptions.reasoning
@@ -33,6 +35,8 @@ export async function* streamTextInBackground(options: Parameters<typeof s2bRpc.
   const requestOptions = {
     ...restOptions,
     ...(computedReasoning !== undefined ? { reasoning: computedReasoning } : {}),
+    modelId,
+    endpointType,
   }
   const { portName } = await s2bRpc.streamText(requestOptions)
   const aliveKeeper = new BackgroundAliveKeeper()

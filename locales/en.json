@@ -244,7 +244,8 @@
       "thought_for_seconds": "Thought for {second} second | Thought for {second} seconds",
       "thinking": "Thinking...",
       "search_locally": "Searching locally in browser…",
-      "reading": "Reading"
+      "reading": "Reading",
+      "used_model": "Used {model}"
     },
     "quick_actions": {
       "title": "Quick Actions"
@@ -460,8 +461,9 @@
     "chat_history": "History",
     "new_chat": "New Chat",
     "back": "Back",
-    "copy_message": "Copy message",
-    "edit_message": "Edit message"
+    "copy_message": "Copy",
+    "edit_message": "Edit",
+    "retry_message": "Retry"
   },
   "gmail_tools": {
     "buttons": {

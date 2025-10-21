@@ -70,7 +70,7 @@
           position="bottom"
         >
           <button
-            class="size-5 flex items-center justify-center rounded-md transition-colors"
+            class="size-6 flex items-center justify-center rounded-md transition-colors"
             :class="disabled
               ? 'text-text-disabled cursor-not-allowed'
               : 'text-text-secondary hover:bg-bg-hover'"
@@ -86,7 +86,7 @@
           position="bottom"
         >
           <button
-            class="size-5 flex items-center justify-center rounded-md text-text-secondary hover:bg-bg-hover transition-colors"
+            class="size-6 flex items-center justify-center rounded-md text-text-secondary hover:bg-bg-hover transition-colors"
             type="button"
             @click="copyMessage"
           >

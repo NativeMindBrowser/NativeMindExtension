@@ -4,7 +4,8 @@
       "thought_for_seconds": "Думаю {second} секунду | Думаю {second} секунд",
       "thinking": "Думаю...",
       "reading": "Читаю",
-      "search_locally": "Ищу локально в браузере..."
+      "search_locally": "Ищу локально в браузере...",
+      "used_model": "Используется {model}"
     },
     "quick_actions": {
       "title": "Быстрые действия"
@@ -461,7 +462,8 @@
     "new_chat": "Новый чат",
     "back": "Назад",
     "copy_message": "Скопировать сообщение",
-    "edit_message": "Редактировать сообщение"
+    "edit_message": "Редактировать сообщение",
+    "retry_message": "Повторить"
   },
   "gmail_tools": {
     "buttons": {

@@ -25,7 +25,8 @@
       "reading": "Leyendo",
       "search_locally": "Buscando localmente en el navegador...",
       "thinking": "Pensando...",
-      "thought_for_seconds": "Pensando durante {second} segundo | Pensando durante {second} segundos"
+      "thought_for_seconds": "Pensando durante {second} segundo | Pensando durante {second} segundos",
+      "used_model": "Usó {model}"
     },
     "quick_actions": {
       "title": "Acciones Rápidas"
@@ -460,8 +461,9 @@
     "chat_history": "Historia",
     "new_chat": "Nuevo chat",
     "back": "Atrás",
-    "copy_message": "Copiar mensaje",
-    "edit_message": "Editar mensaje"
+    "copy_message": "Copiar",
+    "edit_message": "Editar",
+    "retry_message": "Reintentar"
   },
   "gmail_tools": {
     "buttons": {

@@ -4,7 +4,8 @@
       "thought_for_seconds": "思考了{second}秒 | 思考了{second}秒",
       "thinking": "正在思考...",
       "reading": "讀取中",
-      "search_locally": "在瀏覽器中本地搜尋…"
+      "search_locally": "在瀏覽器中本地搜尋…",
+      "used_model": "使用了 {model}"
     },
     "quick_actions": {
       "title": "快捷操作"
@@ -461,7 +462,8 @@
     "new_chat": "新聊天",
     "back": "返回",
     "copy_message": "複製訊息",
-    "edit_message": "編輯訊息"
+    "edit_message": "編輯訊息",
+    "retry_message": "重試"
   },
   "gmail_tools": {
     "buttons": {

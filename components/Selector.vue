@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative"
+    class="relative flex"
     data-nativemind-selector
   >
     <div
@@ -31,6 +31,18 @@
         </slot>
       </div>
     </div>
+    <div
+      v-else-if="isCustomizedBtn"
+      ref="selectorRef"
+      :class="classNames('inline-flex items-center cursor-pointer', containerClass)"
+      @click="toggleDropdown"
+    >
+      <slot
+        name="button"
+        :option="selectedOption"
+      />
+    </div>
+
     <Button
       v-else
       variant="secondary"
@@ -151,7 +163,7 @@ interface Props {
   disabled?: boolean
   listenScrollElements?: HTMLElement[]
   onChange?: (value: Option, oldValue?: Option) => Promise<boolean> | boolean // function to call when the value changes, return false to prevent the change
-  triggerStyle?: 'normal' | 'ghost'
+  triggerStyle?: 'normal' | 'ghost' | 'customized'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -170,6 +182,7 @@ const emit = defineEmits<{
 }>()
 
 const isGhostBtn = computed(() => props.triggerStyle === 'ghost')
+const isCustomizedBtn = computed(() => props.triggerStyle === 'customized')
 
 const options = computed(() => {
   return props.options

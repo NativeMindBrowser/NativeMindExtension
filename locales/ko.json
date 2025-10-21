@@ -4,7 +4,8 @@
       "thought_for_seconds": "{second}초 동안 생각 중 | {second}초 동안 생각 중",
       "thinking": "생각하는 중...",
       "reading": "읽는 중",
-      "search_locally": "브라우저에서 검색 중..."
+      "search_locally": "브라우저에서 검색 중...",
+      "used_model": "{model} 사용"
     },
     "quick_actions": {
       "title": "빠른 액션"
@@ -461,7 +462,8 @@
     "new_chat": "새로운 채팅",
     "back": "뒤로",
     "copy_message": "메시지 복사",
-    "edit_message": "메시지 수정"
+    "edit_message": "메시지 수정",
+    "retry_message": "재시도"
   },
   "gmail_tools": {
     "buttons": {

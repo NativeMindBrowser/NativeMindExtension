@@ -77,6 +77,7 @@ interface AgentOptions<T extends PromptBasedToolName> {
   agentStorage: AgentStorage
   tools: AgentToolCall<T>
   maxIterations?: number
+  temporaryModelOverride?: { model: string, endpointType: string } | null
 }
 
 type AgentStatus = 'idle' | 'running' | 'error'
@@ -87,6 +88,7 @@ export class Agent<T extends PromptBasedToolName> {
   tools: AgentOptions<T>['tools']
   agentStorage: AgentStorage
   maxIterations: number
+  temporaryModelOverride: { model: string, endpointType: string } | null
   status: Ref<AgentStatus> = ref('idle')
   log = logger.child('Agent')
   constructor(public options: AgentOptions<T>) {
@@ -94,6 +96,7 @@ export class Agent<T extends PromptBasedToolName> {
     this.tools = options.tools
     this.agentStorage = options.agentStorage
     this.maxIterations = options.maxIterations || 6
+    this.temporaryModelOverride = options.temporaryModelOverride || null
   }
 
   createAbortController() {
@@ -191,8 +194,8 @@ export class Agent<T extends PromptBasedToolName> {
     const getAgentMessage = () => {
       return agentMessage
     }
-    const getOrAddAgentMessage = () => {
-      if (!agentMessage) agentMessage = this.historyManager.appendAgentMessage()
+    const getOrAddAgentMessage = async () => {
+      if (!agentMessage) agentMessage = await this.historyManager.appendAgentMessage()
       return agentMessage
     }
     const deleteAgentMessageIfEmpty = (includeReasoning = true) => {
@@ -204,8 +207,8 @@ export class Agent<T extends PromptBasedToolName> {
       }
     }
     // make this message available to the next user task
-    const convertToAssistantMessage = (): AssistantMessageV1 => {
-      const agentMessage = getOrAddAgentMessage()
+    const convertToAssistantMessage = async (): Promise<AssistantMessageV1> => {
+      const agentMessage = await getOrAddAgentMessage()
       agentMessage.done = true
       ;(agentMessage as unknown as AssistantMessageV1).role = 'assistant'
       return agentMessage as unknown as AssistantMessageV1
@@ -302,10 +305,11 @@ export class Agent<T extends PromptBasedToolName> {
       if (shouldForceAnswer) thisLoopMessages.push({ role: 'user', content: AGENT_FORCE_FINAL_ANSWER })
       let taskMessageModifier = this.makeTaskMessageGroupProxy(abortController.signal)
       const agentMessageManager = this.makeTempAgentMessageManager()
-      const agentMessage = agentMessageManager.getOrAddAgentMessage()
+      const agentMessage = await agentMessageManager.getOrAddAgentMessage()
       const response = streamTextInBackground({
         abortSignal: abortController.signal,
         messages: this.injectImagesToLastMessage(thisLoopMessages, loopImages),
+        temporaryModelOverride: this.temporaryModelOverride,
       })
       let hasError = false
       let text = ''
@@ -384,7 +388,7 @@ export class Agent<T extends PromptBasedToolName> {
       this.log.debug('Agent iteration end', iteration, { currentLoopToolCalls, text, normalizedText, hasError })
       if ((currentLoopToolCalls.length === 0 && normalizedText && !hasError) || shouldForceAnswer) {
         this.log.debug('No tool call, ending iteration')
-        const lastMsg = agentMessageManager.convertToAssistantMessage()
+        const lastMsg = await agentMessageManager.convertToAssistantMessage()
         eventBus.emit('onAgentFinished')
         return lastMsg
       }
@@ -412,7 +416,7 @@ export class Agent<T extends PromptBasedToolName> {
     }
     else if (error instanceof ModelNotFoundError) {
       const { t } = await useGlobalI18n()
-      const errorMsg = agentMessageManager.convertToAssistantMessage()
+      const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
       errorMsg.content = t('errors.model_not_found', { endpointType: error.endpointType === 'ollama' ? 'Ollama' : 'LM Studio' })
       // unresolvable error, break the loop
@@ -420,14 +424,14 @@ export class Agent<T extends PromptBasedToolName> {
     }
     else if (error instanceof ModelRequestError) {
       const { t } = await useGlobalI18n()
-      const errorMsg = agentMessageManager.convertToAssistantMessage()
+      const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
       errorMsg.content = t('errors.model_request_error', { endpointType: error.endpointType === 'ollama' ? 'Ollama' : 'LM Studio' })
       return false
     }
     else if (error instanceof LMStudioLoadModelError) {
       const { t } = await useGlobalI18n()
-      const errorMsg = agentMessageManager.convertToAssistantMessage()
+      const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
       const msg = error.message.split('\n')[0]
       const trimmedMsg = msg.length > 300 ? msg.slice(0, 300) + '...' : msg
@@ -436,7 +440,7 @@ export class Agent<T extends PromptBasedToolName> {
     }
     else if (error instanceof AppError) {
       const { t } = await useGlobalI18n()
-      const errorMsg = agentMessageManager.convertToAssistantMessage()
+      const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
       errorMsg.content = t('errors.unknown_error', { message: error.message })
       return false

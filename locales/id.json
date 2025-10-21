@@ -4,7 +4,8 @@
       "thought_for_seconds": "Berpikir selama {second} detik | Berpikir selama {second} detik",
       "thinking": "Sedang berpikir...",
       "reading": "Sedang membaca...",
-      "search_locally": "Mencari secara lokal di browser..."
+      "search_locally": "Mencari secara lokal di browser...",
+      "used_model": "Menggunakan {model}"
     },
     "quick_actions": {
       "title": "Tindakan cepat"
@@ -460,8 +461,9 @@
     "chat_history": "Sejarah",
     "new_chat": "Obrolan baru",
     "back": "Kembali",
-    "copy_message": "Salin pesan",
-    "edit_message": "Edit pesan"
+    "copy_message": "Salin",
+    "edit_message": "Edit",
+    "retry_message": "Coba lagi"
   },
   "gmail_tools": {
     "buttons": {

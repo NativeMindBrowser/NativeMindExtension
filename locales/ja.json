@@ -4,7 +4,8 @@
       "thought_for_seconds": "{second}秒間考えています | {second}秒間考えています",
       "thinking": "考え中...",
       "reading": "読み込み中",
-      "search_locally": "ブラウザ内で検索中..."
+      "search_locally": "ブラウザ内で検索中...",
+      "used_model": "{model}を使用"
     },
     "quick_actions": {
       "title": "クイックアクション"
@@ -461,7 +462,8 @@
     "new_chat": "新しいチャット",
     "back": "戻る",
     "copy_message": "メッセージをコピー",
-    "edit_message": "メッセージを編集"
+    "edit_message": "メッセージを編集",
+    "retry_message": "再試行"
   },
   "gmail_tools": {
     "buttons": {

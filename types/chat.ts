@@ -112,6 +112,8 @@ export interface AssistantMessageV1 extends BaseMessage {
   reasoningTime?: number
   isError?: boolean
   timestamp?: number
+  model?: string
+  endpointType?: string
   style?: {
     backgroundColor?: CSS.Property.BackgroundColor
   }
@@ -124,6 +126,8 @@ export interface AgentMessageV1 extends BaseMessage {
   reasoningTime?: number
   isError?: boolean
   timestamp?: number
+  model?: string
+  endpointType?: string
   style?: {
     backgroundColor?: CSS.Property.BackgroundColor
   }

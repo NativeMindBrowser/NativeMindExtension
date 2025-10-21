@@ -30,6 +30,8 @@ const log = logger.child('chat')
 export type MessageIdScope = 'quickActions' | 'welcomeMessage'
 
 export class ReactiveHistoryManager extends EventEmitter {
+  public temporaryModelOverride: { model: string, endpointType: string } | null = null
+
   constructor(public chatHistory: Ref<ChatHistoryV1>) {
     super()
     this.cleanUp()
@@ -152,26 +154,38 @@ export class ReactiveHistoryManager extends EventEmitter {
     return newMsg as UserMessageV1
   }
 
-  appendAssistantMessage(content: string = '') {
+  async appendAssistantMessage(content: string = '') {
+    const userConfig = await getUserConfig()
+    const model = this.temporaryModelOverride?.model ?? userConfig.llm.model.get()
+    const endpointType = this.temporaryModelOverride?.endpointType ?? userConfig.llm.endpointType.get()
+
     this.history.value.push({
       id: this.generateId(),
       role: 'assistant',
       content,
       done: false,
       timestamp: Date.now(),
+      model,
+      endpointType,
     })
     const newMsg = this.history.value[this.history.value.length - 1]
     this.emit('messageAdded', newMsg)
     return newMsg as AssistantMessageV1
   }
 
-  appendAgentMessage(content: string = '') {
+  async appendAgentMessage(content: string = '') {
+    const userConfig = await getUserConfig()
+    const model = this.temporaryModelOverride?.model ?? userConfig.llm.model.get()
+    const endpointType = this.temporaryModelOverride?.endpointType ?? userConfig.llm.endpointType.get()
+
     this.history.value.push({
       id: this.generateId(),
       role: 'agent',
       content,
       done: false,
       timestamp: Date.now(),
+      model,
+      endpointType,
     })
     const newMsg = this.history.value[this.history.value.length - 1]
     this.emit('messageAdded', newMsg)
@@ -611,6 +625,7 @@ export class Chat {
       historyManager: this.historyManager,
       agentStorage: new AgentStorage(this.contextAttachmentStorage.value),
       maxIterations,
+      temporaryModelOverride: this.historyManager.temporaryModelOverride,
       tools: {
         search_online: { execute: executeSearchOnline },
         fetch_page: { execute: executeFetchPage },

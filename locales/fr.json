@@ -4,7 +4,8 @@
       "thought_for_seconds": "Réflexion pendant {second} seconde | Réflexion pendant {second} secondes",
       "thinking": "Réflexion en cours...",
       "reading": "Lecture en cours",
-      "search_locally": "Recherche locale dans le navigateur..."
+      "search_locally": "Recherche locale dans le navigateur...",
+      "used_model": "Utilisé {model}"
     },
     "quick_actions": {
       "title": "Actions rapides"
@@ -461,7 +462,8 @@
     "new_chat": "Nouveau chat",
     "back": "Retour",
     "copy_message": "Copier le message",
-    "edit_message": "Modifier le message"
+    "edit_message": "Modifier le message",
+    "retry_message": "Réessayer"
   },
   "gmail_tools": {
     "buttons": {

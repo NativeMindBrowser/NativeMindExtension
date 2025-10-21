@@ -35,7 +35,7 @@ import { preparePortConnection, shouldGenerateChatTitle } from './utils'
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
 type GenerateObjectOptions = Omit<Parameters<typeof originalGenerateObject>[0], 'tools'>
-type ExtraGenerateOptions = { modelId?: string, reasoning?: ReasoningOption, autoThinking?: boolean }
+type ExtraGenerateOptions = { modelId?: string, endpointType?: LLMEndpointType, reasoning?: ReasoningOption, autoThinking?: boolean }
 type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
 
@@ -80,6 +80,7 @@ const parseSchema = <S extends SchemaName>(options: SchemaOptions<S>) => {
 const generateExtraModelOptions = (options: ExtraGenerateOptions) => {
   return {
     ...(options.modelId !== undefined ? { model: options.modelId } : {}),
+    ...(options.endpointType !== undefined ? { endpointType: options.endpointType } : {}),
     ...(options.reasoning !== undefined ? { reasoning: options.reasoning } : {}),
     ...(options.autoThinking !== undefined ? { autoThinking: options.autoThinking } : {}),
   }
@@ -125,7 +126,7 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
     })
 
     try {
-      const userConfig = await getModelUserConfig()
+      const userConfig = await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })
       const modelInfo = await getModel({
         ...userConfig,
         onLoadingModel: makeLoadingModelListener(port),
@@ -166,7 +167,7 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
 const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens'> & ExtraGenerateOptionsWithTools) => {
   try {
     const response = originalGenerateText({
-      model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+      model: await getModel({ ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), ...generateExtraModelOptions(options) }),
       messages: options.messages,
       prompt: options.prompt,
       system: options.system,
@@ -195,7 +196,7 @@ const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'pro
     })
     try {
       const response = await originalGenerateText({
-        model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+        model: await getModel({ ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), ...generateExtraModelOptions(options) }),
         messages: options.messages,
         prompt: options.prompt,
         system: options.system,
@@ -235,7 +236,7 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
       abortController.abort()
     })
     try {
-      const model = await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) })
+      const model = await getModel({ ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) })
       if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(model.modelId))) {
         const schema = parseSchema(options)
         const s = zodSchema(schema)
@@ -306,7 +307,7 @@ export const generateObjectFromSchema = async <S extends SchemaName>(options: Pi
   const isEnum = s instanceof z.ZodEnum
   let ret
   try {
-    const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
+    const modelInfo = { ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), ...generateExtraModelOptions(options) }
     if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(modelInfo.model))) {
       const jsonSchema = zodSchema(s).jsonSchema
       const injectSchemaToSystemPrompt = (prompt?: string) => {

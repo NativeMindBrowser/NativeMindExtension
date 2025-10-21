@@ -4,7 +4,8 @@
       "thought_for_seconds": "Suy nghĩ trong {second} giây | Suy nghĩ trong {second} giây",
       "thinking": "Đang suy nghĩ...",
       "reading": "Đang đọc...",
-      "search_locally": "Đang tìm kiếm trong trình duyệt..."
+      "search_locally": "Đang tìm kiếm trong trình duyệt...",
+      "used_model": "Đã sử dụng {model}"
     },
     "quick_actions": {
       "title": "Thao tác nhanh"
@@ -461,7 +462,8 @@
     "new_chat": "Trò chuyện mới",
     "back": "Quay lại",
     "copy_message": "Sao chép tin nhắn",
-    "edit_message": "Chỉnh sửa tin nhắn"
+    "edit_message": "Chỉnh sửa tin nhắn",
+    "retry_message": "Thử lại"
   },
   "gmail_tools": {
     "buttons": {
