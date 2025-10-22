@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.11.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.2...v1.11.0-beta.3)
+
+### 🩹 Fixes
+
+- Update attachment limit to include captured-page type and improve error handling ([911d45d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/911d45d))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0-beta.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.1...v1.11.0-beta.2)
