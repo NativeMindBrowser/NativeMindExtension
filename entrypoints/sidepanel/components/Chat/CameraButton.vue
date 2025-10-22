@@ -20,6 +20,7 @@ import { browser } from 'wxt/browser'
 
 import IconCamera from '@/assets/icons/camera.svg?component'
 import { CapturedPageAttachment, ContextAttachmentStorage } from '@/types/chat'
+import { useI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import logger from '@/utils/logger'
 import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
@@ -36,9 +37,13 @@ const props = defineProps<{
 }>()
 
 const llmBackendStatusStore = useLLMBackendStatusStore()
+const { t } = useI18n()
 
 const isCapturing = ref(false)
 const supportsVision = ref(false)
+
+// Maximum number of images and screenshots allowed combined
+const MAX_IMAGE_COUNT = 5
 
 // Check if there's a captured-page attachment
 const hasCapturedPage = computed(() => {
@@ -63,6 +68,17 @@ const showButton = computed(() => supportsVision.value)
 
 const handleCapture = async () => {
   if (isCapturing.value || !props.attachmentSelectorRef) return
+
+  // Check if adding a screenshot would exceed the combined limit
+  const currentAttachments = props.contextAttachmentStorage?.attachments ?? []
+  const imageAndScreenshotCount = currentAttachments.filter(
+    (attachment) => attachment.type === 'image' || attachment.type === 'captured-page',
+  ).length
+
+  if (imageAndScreenshotCount >= MAX_IMAGE_COUNT) {
+    props.attachmentSelectorRef?.showErrorMessage(t('chat.input.attachment_selector.too_many_images', { max: MAX_IMAGE_COUNT }))
+    return
+  }
 
   isCapturing.value = true
 

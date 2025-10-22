@@ -388,7 +388,7 @@ const SUPPORTED_ATTACHMENT_TYPES: AttachmentItem[] = [
         showErrorMessage(t('chat.input.attachment_selector.unsupported_image_type'))
         return false
       }
-      else if (attachments.filter((attachment) => attachment.type === 'image').length >= MAX_IMAGE_COUNT) {
+      else if (attachments.filter((attachment) => attachment.type === 'image' || attachment.type === 'captured-page').length >= MAX_IMAGE_COUNT) {
         showErrorMessage(t('chat.input.attachment_selector.too_many_images', { max: MAX_IMAGE_COUNT }))
         return false
       }
@@ -551,6 +551,7 @@ defineExpose({
     // Add new captured-page attachment at the beginning
     attachments.value.unshift(attachment)
   },
+  showErrorMessage,
 })
 
 onChange(async (files) => {
