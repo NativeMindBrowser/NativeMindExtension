@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.11.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.0...v1.11.0-beta.1)
+
+### 🚀 Enhancements
+
+- Add copy and retry actions for AI messages component. ([eec015b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/eec015b))
+
+### 🩹 Fixes
+
+- **chat:** Add cleanup method for loading attachments in ReactiveHistoryManager ([befb170](https://github.com/NativeMindBrowser/NativeMindExtension/commit/befb170))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0-beta.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1...v1.11.0-beta.0)
