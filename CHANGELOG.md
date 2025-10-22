@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.11.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.1...v1.11.0-beta.2)
+
+### 🩹 Fixes
+
+- Enhance tab capture functionality with cached window ID and optional host permissions ([32d389d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/32d389d))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.0...v1.11.0-beta.1)
