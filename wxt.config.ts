@@ -110,5 +110,6 @@ export default defineConfig({
       },
     ],
     host_permissions: ['*://*/*', 'ws://*/*', 'wss://*/*'],
+    optional_host_permissions: ['<all_urls>'],
   },
 })

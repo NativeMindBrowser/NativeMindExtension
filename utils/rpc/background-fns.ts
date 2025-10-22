@@ -761,10 +761,16 @@ function getTabCaptureMediaStreamId(tabId: number, consumerTabId?: number) {
   })
 }
 
-function captureVisibleTab(windowId?: number, options?: Browser.tabs.CaptureVisibleTabOptions) {
-  const wid = windowId ?? browser.windows.WINDOW_ID_CURRENT
-  const screenCaptureBase64Url = browser.tabs.captureVisibleTab(wid, options ?? {})
-  return screenCaptureBase64Url
+function captureVisibleTab(options?: Browser.tabs.CaptureVisibleTabOptions) {
+  const cachedWindowId = BackgroundWindowManager.getCurrentWindowId()
+  browser.permissions.request({ origins: ['<all_urls>'] })
+  if (cachedWindowId) {
+    const screenCaptureBase64Url = browser.tabs.captureVisibleTab(cachedWindowId, options ?? {})
+    return screenCaptureBase64Url
+  }
+  else {
+    throw new Error('No cached window ID available for capturing visible tab')
+  }
 }
 
 function getTabInfoByTabId(tabId: number) {
