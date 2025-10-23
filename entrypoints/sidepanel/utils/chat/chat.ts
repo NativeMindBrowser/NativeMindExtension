@@ -46,6 +46,10 @@ export class ReactiveHistoryManager extends EventEmitter {
       if (item.role === 'task' && item.subTasks) {
         this.cleanUp(item.subTasks)
       }
+      if (item.role === 'agent-task-group' && item.tasks) {
+        // if task-group not done, remove the group
+        item.tasks = item.tasks.filter((task) => task.done)
+      }
       return item
     })
     history.length = 0
