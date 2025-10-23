@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.11.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.3...v1.11.0-beta.4)
+
+### 🩹 Fixes
+
+- Clean up incomplete agent task groups in history management ([97fcf41](https://github.com/NativeMindBrowser/NativeMindExtension/commit/97fcf41))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0-beta.3
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.2...v1.11.0-beta.3)
