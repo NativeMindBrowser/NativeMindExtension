@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.11.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.4...v1.11.0-beta.5)
+
+### 🩹 Fixes
+
+- Improve tooltip boundary detection with container bounds for sidepanel ([03b4115](https://github.com/NativeMindBrowser/NativeMindExtension/commit/03b4115))
+- Exclude welcome and quick action messages from assistant action history ([0803ee2](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0803ee2))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0-beta.4
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.3...v1.11.0-beta.4)
