@@ -206,7 +206,10 @@ const assistantActionMessageIds = computed(() => {
 
   for (const item of history) {
     if (item.role === 'assistant' || item.role === 'agent') {
-      lastAssistantId = item.id
+      // Only consider messages scoped not including welcome or quick actions
+      if (!item.id.includes('welcomeMessage') && !item.id.includes('quickActions')) {
+        lastAssistantId = item.id
+      }
     }
     else if (item.role === 'user') {
       if (lastAssistantId) {
