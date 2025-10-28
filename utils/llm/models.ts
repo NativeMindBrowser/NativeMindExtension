@@ -112,6 +112,7 @@ export async function getModel(options: {
       },
     })
     options.onLoadingModel?.({ type: 'finished' })
+    // WebLLM does not support reasoning parameter, so we do not pass it
     model = new WebLLMChatLanguageModel(
       options.model,
       engine,

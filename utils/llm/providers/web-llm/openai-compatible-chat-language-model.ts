@@ -144,7 +144,8 @@ export class WebLLMChatLanguageModel implements LanguageModelV1 {
       seed,
       ...providerMetadata?.[this.providerOptionsName],
 
-      reasoning_effort: providerMetadata?.[this.providerOptionsName]?.reasoningEffort ?? providerMetadata?.['openai-compatible']?.reasoningEffort,
+      // Note: WebLLM does not support reasoning_effort parameter
+      // This parameter is ignored for WebLLM models
 
       // messages:
       messages: convertToOpenAICompatibleChatMessages(prompt),
