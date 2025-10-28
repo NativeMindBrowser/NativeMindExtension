@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.11.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.5...v1.11.0-beta.6)
+
+### 🚀 Enhancements
+
+- **writing-tools:** Add button to open writing tools settings ([9b397f9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9b397f9))
+
+### 🩹 Fixes
+
+- Exclude reasoning parameter for WebLLM model compatibility ([f7c0a93](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f7c0a93))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0-beta.5
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.4...v1.11.0-beta.5)
