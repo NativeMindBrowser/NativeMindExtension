@@ -51,6 +51,13 @@
             <IconSparkle class="w-4 h-4" />
             {{ t('writing_tools.sparkle') }}
           </button>
+          <button
+            class="bg-bg-primary border-0 cursor-pointer hover:bg-bg-hover h-7 w-7 flex items-center justify-center"
+            aria-label="Open writing tools settings"
+            @click.stop="onOpenSettings"
+          >
+            <IconDotsVertical class="w-4 h-4" />
+          </button>
           <!-- <button
             class="mr-1 text-text-secondary bg-bg-neutral-subtle hover:bg-bg-hover border-0 cursor-pointer p-1 rounded-full"
             @click="onCloseToolBar"
@@ -82,6 +89,7 @@
 import { useElementBounding, useEventListener } from '@vueuse/core'
 import { computed, ref, UnwrapRef, watch } from 'vue'
 
+import IconDotsVertical from '@/assets/icons/dots-vertical.svg?component'
 import IconList from '@/assets/icons/writing-tools-list.svg?component'
 import IconProofread from '@/assets/icons/writing-tools-proofread.svg?component'
 // import IconClose from '@/assets/icons/close.svg?component'
@@ -95,6 +103,7 @@ import { useRefSnapshot } from '@/composables/useRefSnapshot'
 import { MIN_SELECTION_LENGTH_TO_SHOW_WRITING_TOOLS } from '@/utils/constants'
 import { useI18n } from '@/utils/i18n'
 import { getCommonAncestorElement, getEditableElementSelectedText, getSelectionBoundingRectWithinElement, isContentEditableElement, isEditorFrameworkElement, isInputOrTextArea, replaceContentInRange } from '@/utils/selection'
+import { showSettings } from '@/utils/settings'
 import { extendedComputed } from '@/utils/vue/utils'
 
 import SuggestionCard from './SuggestionCard.vue'
@@ -191,6 +200,10 @@ const snapshotForGeneratePopup = useRefSnapshot(computed(() => {
 
 const onMouseEnterToolBar = () => {
   snapshotForEnterToolBar.updateSnapshot()
+}
+
+const onOpenSettings = async () => {
+  await showSettings({ path: 'writing-tools' })
 }
 
 const updateEditableElementText = () => {
