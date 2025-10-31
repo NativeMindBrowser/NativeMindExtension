@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.11.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.6...v1.11.0-beta.7)
+
+### 🩹 Fixes
+
+- Add fill attribute to path in dots-vertical icon for color consistency ([277e38a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/277e38a))
+- Improve model user config handling and fix webllm broken issue ([ee19549](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ee19549))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0-beta.6
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.5...v1.11.0-beta.6)
