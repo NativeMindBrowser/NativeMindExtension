@@ -5,6 +5,7 @@ import { getUserConfig } from '@/utils/user-config'
 
 import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
+import logger from '../logger'
 import { loadModel as loadLMStudioModel } from './lm-studio'
 import { middlewares } from './middlewares'
 import { checkModelSupportThinking } from './ollama'
@@ -16,18 +17,15 @@ import { isToggleableThinkingModel } from './thinking-models'
 import { getWebLLMEngine, WebLLMSupportedModel } from './web-llm'
 
 export async function getModelUserConfig(overrides?: { model?: string, endpointType?: LLMEndpointType }) {
+  logger.debug('Detected override model', { overrides })
   const userConfig = await getUserConfig()
   const endpointType = overrides?.endpointType ?? userConfig.llm.endpointType.get()
   const model = overrides?.model ?? userConfig.llm.model.get()
-  const backendConfig = endpointType === 'lm-studio'
-    ? userConfig.llm.backends.lmStudio
-    : endpointType === 'ollama'
-      ? userConfig.llm.backends.ollama
-      : undefined
-  const baseUrl = backendConfig ? backendConfig.baseUrl.get() : ''
+
+  const baseUrl = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].baseUrl.get()
   const apiKey = userConfig.llm.apiKey.get()
-  const numCtx = backendConfig ? backendConfig.numCtx.get() : 0
-  const enableNumCtx = backendConfig ? backendConfig.enableNumCtx.get() : false
+  const numCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].numCtx.get()
+  const enableNumCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].enableNumCtx.get()
   const reasoningPreference = userConfig.llm.reasoning.get()
   const reasoning = getReasoningOptionForModel(reasoningPreference, model)
   if (!model) {
@@ -112,7 +110,6 @@ export async function getModel(options: {
       },
     })
     options.onLoadingModel?.({ type: 'finished' })
-    // WebLLM does not support reasoning parameter, so we do not pass it
     model = new WebLLMChatLanguageModel(
       options.model,
       engine,
