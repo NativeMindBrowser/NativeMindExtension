@@ -762,8 +762,9 @@ function getTabCaptureMediaStreamId(tabId: number, consumerTabId?: number) {
 }
 
 function captureVisibleTab(options?: Browser.tabs.CaptureVisibleTabOptions) {
-  const cachedWindowId = BackgroundWindowManager.getCurrentWindowId()
+  // For firefox, some feature need reload extension after permission granted
   browser.permissions.request({ origins: ['<all_urls>'] })
+  const cachedWindowId = BackgroundWindowManager.getCurrentWindowId()
   if (cachedWindowId) {
     const screenCaptureBase64Url = browser.tabs.captureVisibleTab(cachedWindowId, options ?? {})
     return screenCaptureBase64Url

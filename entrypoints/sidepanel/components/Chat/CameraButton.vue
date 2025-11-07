@@ -67,24 +67,25 @@ watch(currentModel, async () => {
 const showButton = computed(() => supportsVision.value)
 
 const handleCapture = async () => {
-  if (isCapturing.value || !props.attachmentSelectorRef) return
-
-  // Check if adding a screenshot would exceed the combined limit
-  const currentAttachments = props.contextAttachmentStorage?.attachments ?? []
-  const imageAndScreenshotCount = currentAttachments.filter(
-    (attachment) => attachment.type === 'image' || attachment.type === 'captured-page',
-  ).length
-
-  if (imageAndScreenshotCount >= MAX_IMAGE_COUNT) {
-    props.attachmentSelectorRef?.showErrorMessage(t('chat.input.attachment_selector.too_many_images', { max: MAX_IMAGE_COUNT }))
-    return
-  }
-
-  isCapturing.value = true
-
   try {
-    // Capture the visible tab
+    if (isCapturing.value || !props.attachmentSelectorRef) return
+
+    // Permission request should be handled instantly when user clicks the button, so put it here
+    // Request permission and Capture the visible tab
     const dataUrl = await s2bRpc.captureVisibleTab()
+
+    // Check if adding a screenshot would exceed the combined limit
+    const currentAttachments = props.contextAttachmentStorage?.attachments ?? []
+    const imageAndScreenshotCount = currentAttachments.filter(
+      (attachment) => attachment.type === 'image' || attachment.type === 'captured-page',
+    ).length
+
+    if (imageAndScreenshotCount >= MAX_IMAGE_COUNT) {
+      props.attachmentSelectorRef?.showErrorMessage(t('chat.input.attachment_selector.too_many_images', { max: MAX_IMAGE_COUNT }))
+      return
+    }
+
+    isCapturing.value = true
 
     if (!dataUrl) {
       throw new Error('Failed to capture screenshot')
