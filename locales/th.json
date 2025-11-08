@@ -88,6 +88,11 @@
       "online_search": {
         "title": "ค้นหา"
       }
+    },
+    "camera": {
+      "permission_reload_title": "ต้องโหลดใหม่",
+      "permission_reload_description": "หลังจากให้สิทธิ์ โปรดเปิดใช้ส่วนขยาย NativeMind ใหม่ใน Firefox เพื่อเปิดใช้คุณลักษณะภาพหน้าจอ",
+      "reload_extension": "โหลดส่วนขยายใหม่"
     }
   },
   "chat_history": {

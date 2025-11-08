@@ -88,6 +88,11 @@
       "online_search": {
         "title": "Поиск"
       }
+    },
+    "camera": {
+      "permission_reload_title": "Требуется перезагрузка",
+      "permission_reload_description": "После предоставления разрешения переактивируйте расширение NativeMind в Firefox для включения функции скриншота.",
+      "reload_extension": "Перезагрузить расширение"
     }
   },
   "chat_history": {

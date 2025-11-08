@@ -277,6 +277,11 @@
         "captured_page_prefix": "Page Captured:"
       }
     },
+    "camera": {
+      "permission_reload_title": "Reload Required",
+      "permission_reload_description": "After granting permission, please re-enable the NativeMind extension in Firefox to enable the screenshot feature.",
+      "reload_extension": "Reload Extension"
+    },
     "prompt": {
       "summarize_page_content": {
         "title": "Summarize the page"

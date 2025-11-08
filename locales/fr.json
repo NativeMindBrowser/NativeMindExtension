@@ -88,6 +88,11 @@
       "online_search": {
         "title": "Recherche"
       }
+    },
+    "camera": {
+      "permission_reload_title": "Rechargement requis",
+      "permission_reload_description": "Après avoir accordé la permission, veuillez réactiver l'extension NativeMind dans Firefox pour activer la fonction de capture d'écran.",
+      "reload_extension": "Recharger l'extension"
     }
   },
   "chat_history": {

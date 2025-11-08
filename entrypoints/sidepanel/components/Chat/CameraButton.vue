@@ -1,17 +1,24 @@
 <template>
-  <button
-    v-if="showButton"
-    :class="classNames(
-      'size-6 rounded-md flex items-center justify-center transition-colors',
-      isCapturing
-        ? 'cursor-wait opacity-50'
-        : 'hover:bg-bg-tertiary cursor-pointer'
-    )"
-    :disabled="isCapturing"
-    @click="handleCapture"
-  >
-    <IconCamera :class="classNames('size-6', hasCapturedPage ? 'text-accent-primary' : 'text-text-tertiary')" />
-  </button>
+  <div>
+    <button
+      v-if="showButton"
+      :class="classNames(
+        'size-6 rounded-md flex items-center justify-center transition-colors',
+        isCapturing
+          ? 'cursor-wait opacity-50'
+          : 'hover:bg-bg-tertiary cursor-pointer'
+      )"
+      :disabled="isCapturing"
+      @click="handleCapture"
+    >
+      <IconCamera :class="classNames('size-6', hasCapturedPage ? 'text-accent-primary' : 'text-text-tertiary')" />
+    </button>
+
+    <!-- Permission Reload Modal for Firefox -->
+    <Modal v-model="isShowPermissionReloadModal">
+      <PermissionReloadModal @close="isShowPermissionReloadModal = false" />
+    </Modal>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -19,6 +26,7 @@ import { computed, ref, watch } from 'vue'
 import { browser } from 'wxt/browser'
 
 import IconCamera from '@/assets/icons/camera.svg?component'
+import Modal from '@/components/Modal.vue'
 import { CapturedPageAttachment, ContextAttachmentStorage } from '@/types/chat'
 import { useI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
@@ -30,6 +38,7 @@ import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
 import type AttachmentSelector from '../AttachmentSelector.vue'
+import PermissionReloadModal from './PermissionReloadModal.vue'
 
 const props = defineProps<{
   attachmentSelectorRef?: InstanceType<typeof AttachmentSelector>
@@ -41,6 +50,8 @@ const { t } = useI18n()
 
 const isCapturing = ref(false)
 const supportsVision = ref(false)
+const isFirefox = import.meta.env.FIREFOX
+const isShowPermissionReloadModal = ref(false)
 
 // Maximum number of images and screenshots allowed combined
 const MAX_IMAGE_COUNT = 5
@@ -121,6 +132,9 @@ const handleCapture = async () => {
   }
   catch (error) {
     logger.error('Failed to capture screenshot:', error)
+    if (isFirefox) {
+      isShowPermissionReloadModal.value = true
+    }
   }
   finally {
     isCapturing.value = false

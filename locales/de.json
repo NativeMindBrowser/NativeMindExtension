@@ -88,6 +88,11 @@
       "online_search": {
         "title": "Suchen"
       }
+    },
+    "camera": {
+      "permission_reload_title": "Neustart erforderlich",
+      "permission_reload_description": "Nach der Genehmigung aktivieren Sie bitte die NativeMind-Erweiterung in Firefox erneut, um die Screenshot-Funktion zu aktivieren.",
+      "reload_extension": "Erweiterung neu laden"
     }
   },
   "chat_history": {

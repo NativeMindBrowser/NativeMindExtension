@@ -328,6 +328,11 @@
       "online_search": {
         "title": "搜索"
       }
+    },
+    "camera": {
+      "permission_reload_title": "需要重新加载",
+      "permission_reload_description": "授予权限后，请在 Firefox 中重新启用 NativeMind 扩展以启用截图功能。",
+      "reload_extension": "重新加载扩展"
     }
   },
   "chat_history": {

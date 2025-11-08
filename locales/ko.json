@@ -88,6 +88,11 @@
       "online_search": {
         "title": "검색"
       }
+    },
+    "camera": {
+      "permission_reload_title": "다시 로드 필요",
+      "permission_reload_description": "권한을 부여한 후 Firefox에서 NativeMind 확장 프로그램을 다시 활성화하여 스크린샷 기능을 활성화하세요.",
+      "reload_extension": "확장 프로그램 다시 로드"
     }
   },
   "chat_history": {

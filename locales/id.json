@@ -88,6 +88,11 @@
       "online_search": {
         "title": "Cari"
       }
+    },
+    "camera": {
+      "permission_reload_title": "Muat ulang diperlukan",
+      "permission_reload_description": "Setelah memberikan izin, silakan aktifkan kembali ekstensi NativeMind di Firefox untuk mengaktifkan fitur tangkapan layar.",
+      "reload_extension": "Muat ulang ekstensi"
     }
   },
   "chat_history": {

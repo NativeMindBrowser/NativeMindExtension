@@ -88,6 +88,11 @@
       "online_search": {
         "title": "Tìm kiếm"
       }
+    },
+    "camera": {
+      "permission_reload_title": "Cần tải lại",
+      "permission_reload_description": "Sau khi cấp quyền, vui lòng kích hoạt lại tiện ích mở rộng NativeMind trong Firefox để bật tính năng chụp ảnh màn hình.",
+      "reload_extension": "Tải lại tiện ích mở rộng"
     }
   },
   "chat_history": {

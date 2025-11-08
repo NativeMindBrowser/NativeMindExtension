@@ -88,6 +88,11 @@
       "online_search": {
         "title": "検索"
       }
+    },
+    "camera": {
+      "permission_reload_title": "再読み込みが必要です",
+      "permission_reload_description": "権限を付与した後、スクリーンショット機能を有効にするためにFirefoxでNativeMind拡張機能を再度有効にしてください。",
+      "reload_extension": "拡張機能を再読み込み"
     }
   },
   "chat_history": {
