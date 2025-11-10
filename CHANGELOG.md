@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.12.0-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0...v1.12.0-beta.0)
+
+### 🚀 Enhancements
+
+- Add permission reload modal for Firefox and update localization strings ([b8eddec](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b8eddec))
+
+### 🩹 Fixes
+
+- Enhance AutoExpandTextArea width handling and add minimum width calculation for Firefox ([0d9e92a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0d9e92a))
+- Improve capture handling in CameraButton and ensure permission request is processed correctly ([bf8b882](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bf8b882))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.7...v1.11.0)
