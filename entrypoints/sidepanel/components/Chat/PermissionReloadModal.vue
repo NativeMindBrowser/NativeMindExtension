@@ -2,7 +2,7 @@
   <div class="bg-bg-primary text-text-primary py-6 px-6 rounded-md max-w-sm flex flex-col gap-4">
     <!-- Title -->
     <div class="font-bold text-base flex flex-row gap-2 items-center">
-      <IconCamera class="size-4 text-accent-primary" />
+      <IconCamera class="size-6 text-text-primary" />
       {{ t('chat.camera.permission_reload_title') }}
     </div>
 
