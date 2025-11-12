@@ -476,6 +476,12 @@
       "ai_reply": "AI Reply",
       "ai_polish": "AI Polish"
     },
+    "modals": {
+      "open_sidebar_title": "Open Sidebar Required",
+      "open_sidebar_description": "Please manually open the NativeMind Sidebar to use this feature.",
+      "confirm": "OK",
+      "close": "Close"
+    },
     "cards": {
       "reply": {
         "title": "Reply Suggestion",

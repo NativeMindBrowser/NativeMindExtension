@@ -476,6 +476,12 @@
       "ai_reply": "AI 답장",
       "ai_polish": "AI 다듬기"
     },
+    "modals": {
+      "open_sidebar_title": "사이드바 열기 필요",
+      "open_sidebar_description": "이 기능을 사용하려면 NativeMind 사이드바를 수동으로 열어주세요.",
+      "confirm": "확인",
+      "close": "닫기"
+    },
     "cards": {
       "reply": {
         "title": "답장 제안",

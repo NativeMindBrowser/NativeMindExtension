@@ -1,11 +1,11 @@
 declare module 'wxt/browser' {
   namespace Browser {
-    // this namespace is only for Opera
+    // this namespace is for Opera, Firefox
     export namespace sidebarAction {
       export const setPanel: (options: { panel: string }) => Promise<void>
       export const open: () => Promise<void>
       export const close: () => Promise<void>
-      export const isOpen: () => Promise<boolean>
+      export const isOpen: (options?: object) => Promise<boolean>
       export const setTitle: (options: { title: string }) => Promise<void>
       export const getTitle: () => Promise<string>
       export const toggle: () => Promise<void>

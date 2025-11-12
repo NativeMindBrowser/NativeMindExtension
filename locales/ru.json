@@ -476,6 +476,12 @@
       "ai_reply": "ИИ ответ",
       "ai_polish": "ИИ полировка"
     },
+    "modals": {
+      "open_sidebar_title": "Требуется открытие боковой панели",
+      "open_sidebar_description": "Пожалуйста, вручную откройте боковую панель NativeMind, чтобы использовать эту функцию.",
+      "confirm": "OK",
+      "close": "Закрыть"
+    },
     "cards": {
       "reply": {
         "title": "Предложение ответа",

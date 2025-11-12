@@ -476,6 +476,12 @@
       "ai_reply": "AI-Antwort",
       "ai_polish": "AI-Polieren"
     },
+    "modals": {
+      "open_sidebar_title": "Seitenleiste öffnen erforderlich",
+      "open_sidebar_description": "Bitte öffnen Sie die NativeMind-Seitenleiste manuell, um diese Funktion zu nutzen.",
+      "confirm": "OK",
+      "close": "Schließen"
+    },
     "cards": {
       "reply": {
         "title": "Antwortvorschlag",

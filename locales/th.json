@@ -476,6 +476,12 @@
       "ai_reply": "ตอบกลับ AI",
       "ai_polish": "ปรับปรุงด้วย AI"
     },
+    "modals": {
+      "open_sidebar_title": "จำเป็นต้องเปิดแถบด้านข้าง",
+      "open_sidebar_description": "โปรดเปิดแถบด้านข้าง NativeMind ด้วยตนเองเพื่อใช้คุณสมบัตินี้",
+      "confirm": "ตกลง",
+      "close": "ปิด"
+    },
     "cards": {
       "reply": {
         "title": "ข้อเสนอแนะการตอบกลับ",

@@ -476,6 +476,12 @@
       "ai_reply": "Trả lời AI",
       "ai_polish": "Hoàn thiện AI"
     },
+    "modals": {
+      "open_sidebar_title": "Cần mở thanh bên",
+      "open_sidebar_description": "Vui lòng mở thanh bên NativeMind theo cách thủ công để sử dụng tính năng này.",
+      "confirm": "OK",
+      "close": "Đóng"
+    },
     "cards": {
       "reply": {
         "title": "Gợi ý trả lời",

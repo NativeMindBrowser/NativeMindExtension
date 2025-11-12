@@ -476,6 +476,12 @@
       "ai_reply": "AI返信",
       "ai_polish": "AI添削"
     },
+    "modals": {
+      "open_sidebar_title": "サイドバーを開く必要があります",
+      "open_sidebar_description": "この機能を使用するには、NativeMind サイドバーを手動で開いてください。",
+      "confirm": "OK",
+      "close": "閉じる"
+    },
     "cards": {
       "reply": {
         "title": "返信提案",

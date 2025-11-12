@@ -476,6 +476,12 @@
       "ai_reply": "Réponse IA",
       "ai_polish": "Polir par IA"
     },
+    "modals": {
+      "open_sidebar_title": "Ouverture de la barre latérale requise",
+      "open_sidebar_description": "Veuillez ouvrir manuellement la barre latérale NativeMind pour utiliser cette fonctionnalité.",
+      "confirm": "OK",
+      "close": "Fermer"
+    },
     "cards": {
       "reply": {
         "title": "Suggestion de réponse",

@@ -476,6 +476,12 @@
       "ai_reply": "Balasan AI",
       "ai_polish": "Poles AI"
     },
+    "modals": {
+      "open_sidebar_title": "Perlu Membuka Sidebar",
+      "open_sidebar_description": "Silakan buka sidebar NativeMind secara manual untuk menggunakan fitur ini.",
+      "confirm": "OK",
+      "close": "Tutup"
+    },
     "cards": {
       "reply": {
         "title": "Saran balasan",

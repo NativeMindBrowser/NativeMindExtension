@@ -115,6 +115,10 @@ export async function toggleContainer() {
   await c2bRpc.showSidepanel()
 }
 
+export async function isFirefoxSidebarOpen() {
+  return await c2bRpc.isFirefoxSidebarOpen()
+}
+
 export const contentFnsForMainWorld = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)

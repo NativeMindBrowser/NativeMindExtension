@@ -476,6 +476,12 @@
       "ai_reply": "AI 回覆",
       "ai_polish": "AI 潤色"
     },
+    "modals": {
+      "open_sidebar_title": "需要開啟側邊欄",
+      "open_sidebar_description": "請手動開啟 NativeMind 側邊欄以使用此功能。",
+      "confirm": "確定",
+      "close": "關閉"
+    },
     "cards": {
       "reply": {
         "title": "回覆建議",
