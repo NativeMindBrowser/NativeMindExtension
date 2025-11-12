@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.12.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.1...v1.12.0-beta.2)
+
+### 🩹 Fixes
+
+- Add function to check if Firefox sidebar is open ([e10b6c5](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e10b6c5))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.12.0-beta.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.0...v1.12.0-beta.1)
