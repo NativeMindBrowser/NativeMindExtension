@@ -744,6 +744,10 @@ export async function showSidepanel() {
   }
 }
 
+export function isFirefoxSidebarOpen() {
+  return browser.sidebarAction.isOpen({})
+}
+
 function getTabCaptureMediaStreamId(tabId: number, consumerTabId?: number) {
   return new Promise<string | undefined>((resolve, reject) => {
     browser.tabCapture.getMediaStreamId(
@@ -1163,6 +1167,7 @@ export const backgroundFunctions = {
   getPinnedChats,
   clearAllChatHistory,
   showSidepanel,
+  isFirefoxSidebarOpen,
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,
   forwardGmailAction,
