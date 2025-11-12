@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.12.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.2...v1.12.0-beta.3)
+
+### 💅 Refactors
+
+- Use current browser lang as extension default lang on first installation ([d2ce4b6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d2ce4b6))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.12.0-beta.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.1...v1.12.0-beta.2)
