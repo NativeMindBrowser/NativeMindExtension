@@ -21,7 +21,7 @@ import { lazyInitialize } from '../memo'
 import { only } from '../runtime'
 import { JsonPaths } from '../type-utils'
 import { getUserConfig } from '../user-config'
-import { getAcceptLanguages } from './browser-locale'
+import { useCurrentBrowserLocale } from './browser-locale'
 import { SUPPORTED_LOCALES, SupportedLocaleCode } from './constants'
 
 // Type-define 'en-US' as the master schema for the resource
@@ -75,7 +75,7 @@ function formatDuration(t: ComposerTranslation, seconds: number) {
 export const createI18nInstance = lazyInitialize(async () => {
   const userConfig = await getUserConfig()
   const localeInConfig = userConfig?.locale.current.toRef()
-  const defaultLocale = localeInConfig.value ?? await getAcceptLanguages(SUPPORTED_LOCALES.map((l) => l.code), 'en')
+  const defaultLocale = localeInConfig.value ?? useCurrentBrowserLocale(SUPPORTED_LOCALES.map((l) => l.code), 'en')
 
   const i18n = createI18n<[MessageSchema], SupportedLocaleCode>({
     legacy: false,
