@@ -148,7 +148,7 @@
     },
     "welcome_msg": {
       "title": "👋 Willkommen bei **NativeMind**",
-      "body": "NATIVEMIND ist eine Datenschutz-AI-Browser-Erweiterung, die Ihnen hilft, zu chatten, zu suchen und zu übersetzen-alles mit Sprachmodellen für das Gerät.\n\n\nFolgendes können Sie mit Nativemind machen:\n\n\n\n- Chatten Sie über mehrere Registerkarten hinweg, um verschiedene Seiten im Auge zu behalten.\n\n- Durchsuchen Sie das Web direkt im Chat, um einen weiteren Kontext zu erhalten.\n\n- Klicken Sie mit der rechten Maustaste, um einen Teil der Seite sofort zu übersetzen.\n\n- Modelle jederzeit in Einstellungen wechseln oder herunterladen.\n\n\nSie können zunächst die schnellen Aktionen unten ausprobieren."
+      "body": "NativeMind läuft vollständig auf Ihrem Gerät und hält jeden Chat privat und sicher.\n\nDas können Sie tun:\n• Über Tabs hinweg chatten und während des Browsens den Kontext behalten.\n• Beliebige Webseiten lokal zusammenfassen, durchsuchen und übersetzen.\n• Intelligente Agenten für Schreiben, Recherche oder tiefgehende Analysen nutzen.\n• PDFs oder Bilder für sofortiges Verständnis auf dem Gerät hochladen.\n\nSie können mit den schnellen Aktionen unten beginnen."
     },
     "ollama_is_running": "Ollama läuft",
     "backend_is_running": "{endpointType} läuft"

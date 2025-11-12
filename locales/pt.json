@@ -148,7 +148,7 @@
     },
     "welcome_msg": {
       "title": "👋 Bem-vindo ao **NativeMind**",
-      "body": "O NativeMind é uma extensão de navegador com foco em privacidade que ajuda você a conversar, pesquisar e traduzir - tudo alimentado por modelos de linguagem no dispositivo.\n\n\nAqui está o que você pode fazer com o NativeMind:\n\n\n\n- Converse através de várias abas para acompanhar diferentes páginas.\n\n- Pesquise na web diretamente no chat para obter mais contexto.\n\n- Clique com o botão direito para traduzir instantaneamente qualquer parte da página.\n\n- Alterne ou baixe modelos a qualquer momento nas configurações.\n\n\nVocê pode começar experimentando as ações rápidas abaixo."
+      "body": "O NativeMind funciona inteiramente no seu dispositivo, mantendo cada conversa privada e segura.\n\nVeja o que você pode fazer:\n• Conversar entre abas e manter o contexto enquanto navega.\n• Resumir, pesquisar e traduzir qualquer página web localmente.\n• Usar Agentes inteligentes para escrita, pesquisa ou análise profunda.\n• Carregar PDFs ou imagens para compreensão instantânea no dispositivo.\n\nVocê pode começar experimentando as ações rápidas abaixo."
     },
     "ollama_is_running": "Ollama está executando",
     "backend_is_running": "{endpointType} está em execução"
