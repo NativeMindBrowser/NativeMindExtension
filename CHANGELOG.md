@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.12.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.0...v1.12.0-beta.1)
+
+### 🚀 Enhancements
+
+- Update welcome message ([acbf3e0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/acbf3e0))
+- Add sidebar modal for Firefox users ([6b9f88e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6b9f88e))
+
+### 🩹 Fixes
+
+- Update IconClose class in Modal and adjust IconCamera size in PermissionReloadModal ([f0287ca](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f0287ca))
+- Correct permissions assignment for Firefox and other browsers ([8644c7e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8644c7e))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.12.0-beta.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0...v1.12.0-beta.0)
