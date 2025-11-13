@@ -148,7 +148,7 @@
     },
     "welcome_msg": {
       "title": "👋 Bienvenue sur **NativeMind**",
-      "body": "NativeMind fonctionne entièrement sur votre appareil, gardant chaque conversation privée et sécurisée.\n\nVoici ce que vous pouvez faire :\n• Discuter entre les onglets et garder le contexte pendant que vous naviguez.\n• Résumer, rechercher et traduire n'importe quelle page web localement.\n• Utiliser des Agents intelligents pour l'écriture, la recherche ou l'analyse approfondie.\n• Télécharger des PDF ou des images pour une compréhension instantanée sur l'appareil.\n\nVous pouvez commencer par essayer les actions rapides ci-dessous."
+      "body": "NativeMind fonctionne entièrement sur votre appareil, gardant chaque conversation privée et sécurisée.\n\nVoici ce que vous pouvez faire :\n- Discuter entre les onglets et garder le contexte pendant que vous naviguez.\n- Résumer, rechercher et traduire n'importe quelle page web localement.\n- Utiliser des Agents intelligents pour l'écriture, la recherche ou l'analyse approfondie.\n- Télécharger des PDF ou des images pour une compréhension instantanée sur l'appareil.\n\nVous pouvez commencer par essayer les actions rapides ci-dessous."
     },
     "ollama_is_running": "Ollama est en cours d'exécution",
     "backend_is_running": "{endpointType} est en cours d'exécution"

@@ -148,7 +148,7 @@
     },
     "welcome_msg": {
       "title": "👋 Willkommen bei **NativeMind**",
-      "body": "NativeMind läuft vollständig auf Ihrem Gerät und hält jeden Chat privat und sicher.\n\nDas können Sie tun:\n• Über Tabs hinweg chatten und während des Browsens den Kontext behalten.\n• Beliebige Webseiten lokal zusammenfassen, durchsuchen und übersetzen.\n• Intelligente Agenten für Schreiben, Recherche oder tiefgehende Analysen nutzen.\n• PDFs oder Bilder für sofortiges Verständnis auf dem Gerät hochladen.\n\nSie können mit den schnellen Aktionen unten beginnen."
+      "body": "NativeMind läuft vollständig auf Ihrem Gerät und hält jeden Chat privat und sicher.\n\nDas können Sie tun:\n- Über Tabs hinweg chatten und während des Browsens den Kontext behalten.\n- Beliebige Webseiten lokal zusammenfassen, durchsuchen und übersetzen.\n- Intelligente Agenten für Schreiben, Recherche oder tiefgehende Analysen nutzen.\n- PDFs oder Bilder für sofortiges Verständnis auf dem Gerät hochladen.\n\nSie können mit den schnellen Aktionen unten beginnen."
     },
     "ollama_is_running": "Ollama läuft",
     "backend_is_running": "{endpointType} läuft"

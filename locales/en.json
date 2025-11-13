@@ -388,7 +388,7 @@
     },
     "welcome_msg": {
       "title": "👋 Welcome to **NativeMind**",
-      "body": "NativeMind runs entirely on your device, keeping every chat private and secure.\n\nHere's what you can do:\n• Chat across tabs and keep context as you browse.\n• Summarize, search, and translate any webpage locally.\n• Use smart Agents for writing, research, or deep analysis.\n• Upload PDFs or images for instant on-device understanding.\n\nYou can start by trying out the quick actions below."
+      "body": "NativeMind runs entirely on your device, keeping every chat private and secure.\n\nHere's what you can do:\n- Chat across tabs and keep context as you browse.\n- Summarize, search, and translate any webpage locally.\n- Use smart Agents for writing, research, or deep analysis.\n- Upload PDFs or images for instant on-device understanding.\n\nYou can start by trying out the quick actions below."
     },
     "ollama_is_running": "Ollama is running",
     "backend_is_running": "{endpointType} is running"

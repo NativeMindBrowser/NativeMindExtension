@@ -148,7 +148,7 @@
     },
     "welcome_msg": {
       "title": "👋 Chào mừng bạn đến với **NativeMind**",
-      "body": "NativeMind chạy hoàn toàn trên thiết bị của bạn, giữ cho mọi cuộc trò chuyện riêng tư và an toàn.\n\nĐây là những gì bạn có thể làm:\n• Trò chuyện qua các tab và giữ nguyên ngữ cảnh khi bạn duyệt web.\n• Tóm tắt, tìm kiếm và dịch bất kỳ trang web nào trên máy.\n• Sử dụng các Tác nhân thông minh để viết, nghiên cứu hoặc phân tích sâu.\n• Tải lên PDF hoặc hình ảnh để hiểu ngay lập tức trên thiết bị.\n\nBạn có thể bắt đầu bằng cách thử các thao tác nhanh bên dưới."
+      "body": "NativeMind chạy hoàn toàn trên thiết bị của bạn, giữ cho mọi cuộc trò chuyện riêng tư và an toàn.\n\nĐây là những gì bạn có thể làm:\n- Trò chuyện qua các tab và giữ nguyên ngữ cảnh khi bạn duyệt web.\n- Tóm tắt, tìm kiếm và dịch bất kỳ trang web nào trên máy.\n- Sử dụng các Tác nhân thông minh để viết, nghiên cứu hoặc phân tích sâu.\n- Tải lên PDF hoặc hình ảnh để hiểu ngay lập tức trên thiết bị.\n\nBạn có thể bắt đầu bằng cách thử các thao tác nhanh bên dưới."
     },
     "ollama_is_running": "Ollama đang chạy",
     "backend_is_running": "{endpointType} đang chạy"
