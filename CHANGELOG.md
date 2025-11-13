@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.12.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.3...v1.12.0-beta.4)
+
+### 🩹 Fixes
+
+- Update welcome message formatting in multiple locale files ([289a966](https://github.com/NativeMindBrowser/NativeMindExtension/commit/289a966))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.12.0-beta.3
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.2...v1.12.0-beta.3)
