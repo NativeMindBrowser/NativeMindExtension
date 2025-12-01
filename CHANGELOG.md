@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.12.1-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0...v1.12.1-beta.0)
+
+### 🩹 Fixes
+
+- Add more language entries to SUPPORTED_LANGUAGES for translation ([5d1a911](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5d1a911))
+
+### ❤️ Contributors
+
+- Neko Liu <neko@xmind.org>
+
 ## v1.12.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.4...v1.12.0)
