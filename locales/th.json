@@ -4,13 +4,17 @@
       "thought_for_seconds": "กำลังคิด {second} วินาที | กำลังคิด {second} วินาที",
       "thinking": "กำลังคิด...",
       "reading": "กำลังอ่าน",
-      "search_locally": "กำลังค้นหาในเบราว์เซอร์..."
+      "search_locally": "กำลังค้นหาในเบราว์เซอร์...",
+      "used_model": "ใช้ {model}"
     },
     "quick_actions": {
       "title": "การกระทำที่รวดเร็ว"
     },
     "thinking_mode": {
-      "label": "กำลังคิด"
+      "label": "กำลังคิด",
+      "low": "ต่ำ",
+      "medium": "ปานกลาง",
+      "high": "สูง"
     },
     "input": {
       "placeholder": {
@@ -28,7 +32,9 @@
         "pdf_text_extract_error": "การดึงข้อความล้มเหลว - PDF นี้อาจเป็นไฟล์สแกนหรือเป็นรูปภาพ",
         "too_many_pdfs": "อนุญาตไฟล์ PDF สูงสุด {max} ไฟล์",
         "pdf_page_count_exceeded": "PDF ต้องมีจำนวนหน้าไม่เกิน {max} หน้า",
-        "only_load_partial_pages": "โหลดเฉพาะ {max} หน้าแรกเท่านั้นเนื่องจากขนาดไฟล์"
+        "only_load_partial_pages": "โหลดเฉพาะ {max} หน้าแรกเท่านั้นเนื่องจากขนาดไฟล์",
+        "selected_text_prefix": "ข้อความที่เลือก:",
+        "captured_page_prefix": "หน้าที่จับภาพ:"
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year} ปี | {year} ปี",
       "months": "{month} เดือน | {month} เดือน"
     },
-    "confirm": "ยืนยัน"
+    "confirm": "ยืนยัน",
+    "send": "ส่ง"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "ปิด",
     "chat_history": "ประวัติศาสตร์",
     "new_chat": "แชทใหม่",
-    "back": "กลับ"
+    "back": "กลับ",
+    "copy_message": "คัดลอกข้อความ",
+    "edit_message": "แก้ไขข้อความ",
+    "retry_message": "ลองอีกครั้ง"
   },
   "gmail_tools": {
     "buttons": {

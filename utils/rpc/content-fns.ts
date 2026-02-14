@@ -15,6 +15,7 @@ export type Events = {
   tabUpdated(opts: { tabId: number, url?: string, faviconUrl?: string, title?: string }): void
   tabRemoved(opts: { tabId: number } & Browser.tabs.TabRemoveInfo): void
   contextMenuClicked(opts: { _toTab?: number } & Browser.contextMenus.OnClickData & { menuItemId: ContextMenuId }): void
+  selectionChanged(opts: { tabId: number, selectedText: string }): void
 }
 
 export type EventKey = keyof Events
@@ -53,6 +54,12 @@ export function ping(_: { _toTab?: number }) {
   return 'pong'
 }
 
+export function getSelectedText(_: { _toTab?: number }) {
+  const selection = window.getSelection()
+  const selectedText = selection?.toString().trim() || ''
+  return selectedText
+}
+
 export const contentFunctions = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)
@@ -63,6 +70,7 @@ export const contentFunctions = {
   getPagePDFContent,
   getPageContentType,
   getDocumentContent,
+  getSelectedText,
   ping,
 } as const
 

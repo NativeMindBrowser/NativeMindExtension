@@ -96,13 +96,13 @@ const onBackendInstalled = async (backend: 'ollama' | 'lm-studio') => {
     panel.value = 'model-downloader'
   }
   else {
-    close()
+    await close()
   }
 }
 
 const onOpenSettings = async () => {
   endpointType.value = 'ollama'
-  close()
+  await close()
   showSettings()
 }
 
@@ -110,17 +110,17 @@ const onModelDownloaderFinished = async () => {
   endpointType.value = 'ollama'
   await llmBackendStatusStore.updateOllamaConnectionStatus()
   await llmBackendStatusStore.updateOllamaModelList()
-  close()
+  await close()
 }
 
-const onWebLLMInstalled = () => {
+const onWebLLMInstalled = async () => {
   endpointType.value = 'web-llm'
-  close()
+  await close()
 }
 
-const setWelcomeChatMessage = () => {
+const setWelcomeChatMessage = async () => {
   // FYI: this message will also be modified by side-effects.ts for locale changes
-  const msg = chat.historyManager.appendAssistantMessage(welcomeMessage(t))
+  const msg = await chat.historyManager.appendAssistantMessage(welcomeMessage(t))
   msg.style = {
     backgroundColor: 'transparent',
   }
@@ -131,8 +131,8 @@ const setWelcomeChatMessage = () => {
   chat.historyManager.insertMessageAt(msg, 0)
 }
 
-const close = () => {
-  setWelcomeChatMessage()
+const close = async () => {
+  await setWelcomeChatMessage()
   onboardingVersion.value = TARGET_ONBOARDING_VERSION
 }
 

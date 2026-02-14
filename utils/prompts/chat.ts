@@ -1,4 +1,4 @@
-import { ContextAttachment, ContextAttachmentStorage, ImageAttachment, PDFAttachment, TabAttachment } from '@/types/chat'
+import { CapturedPageAttachment, ContextAttachment, ContextAttachmentStorage, ImageAttachment, PDFAttachment, SelectedTextAttachment, TabAttachment } from '@/types/chat'
 import { Base64ImageData } from '@/types/image'
 import dayjs from '@/utils/time'
 
@@ -31,6 +31,12 @@ export class EnvironmentDetailsBuilder {
   generateUpdates(usedIds: string[] = []) {
     const ensureUnused = <T extends ContextAttachment>(attachment?: T) => this.ensureUnused(usedIds, attachment)
 
+    // Check for selected text (always include it, regardless of usedIds)
+    const selectedTextAttachment = this.contextAttachmentStorage.attachments.find((a): a is SelectedTextAttachment => a.type === 'selected-text')
+
+    // Check for Captured page (always include it, regardless of usedIds)
+    const capturedPageAttachment = this.contextAttachmentStorage.attachments.find((a): a is CapturedPageAttachment => a.type === 'captured-page')
+
     const envBuilder = new TagBuilder('environment_updates')
     const currentTab = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'tab' ? this.contextAttachmentStorage.currentTab : undefined)
     const attachments = this.contextAttachmentStorage.attachments.filter((a) => !!ensureUnused(a))
@@ -58,8 +64,14 @@ export class EnvironmentDetailsBuilder {
     }
 
     const currentTabImage = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'image' ? this.contextAttachmentStorage.currentTab : undefined)
-    const imagesMeta = attachments.filter((a): a is ImageAttachment => a.type === 'image')
-    const allImages = [currentTabImage, ...imagesMeta].filter(Boolean) as ImageAttachment[]
+    const currentTabCapturedPage = ensureUnused(this.contextAttachmentStorage.currentTab?.type === 'captured-page' ? this.contextAttachmentStorage.currentTab : undefined)
+    const imagesMeta = attachments.filter((a): a is ImageAttachment | CapturedPageAttachment => a.type === 'image' || a.type === 'captured-page')
+    const allImages = [currentTabImage, currentTabCapturedPage, ...imagesMeta].filter(Boolean) as (ImageAttachment | CapturedPageAttachment)[]
+
+    if (capturedPageAttachment) {
+      allImages.unshift(capturedPageAttachment)
+    }
+
     if (allImages.length) {
       envBuilder.insertContent(`# Updated Images`)
       for (const img of allImages) {
@@ -67,10 +79,21 @@ export class EnvironmentDetailsBuilder {
       }
     }
 
-    return envBuilder.hasContent() ? envBuilder.build() : undefined
+    const envUpdates = envBuilder.hasContent() ? envBuilder.build() : undefined
+
+    // Include selected text if present
+    if (selectedTextAttachment) {
+      const selectedTextTag = new TagBuilder('user_selection').insertContent(selectedTextAttachment.value.text.trim())
+      return envUpdates ? `${selectedTextTag.build()}\n\n${envUpdates}` : selectedTextTag.build()
+    }
+
+    return envUpdates
   }
 
   generateFull() {
+    // Check for selected text
+    const selectedTextAttachment = this.contextAttachmentStorage.attachments.find((a): a is SelectedTextAttachment => a.type === 'selected-text')
+
     const tabContextBuilder = new TextBuilder('# Available Tabs')
     const currentTab = this.contextAttachmentStorage.currentTab?.type === 'tab' ? this.contextAttachmentStorage.currentTab : undefined
     const tabs = this.contextAttachmentStorage.attachments.filter((a): a is TabAttachment => a.type === 'tab' && a.value.tabId !== currentTab?.value.tabId)
@@ -99,8 +122,9 @@ export class EnvironmentDetailsBuilder {
 
     const imageContextBuilder = new TextBuilder('# Available Images')
     const currentTabImage = this.contextAttachmentStorage.currentTab?.type === 'image' ? this.contextAttachmentStorage.currentTab : undefined
-    const attachmentImages = this.contextAttachmentStorage.attachments.filter((a): a is ImageAttachment => a.type === 'image')
-    const allImages = [currentTabImage, ...attachmentImages].filter(Boolean) as ImageAttachment[]
+    const currentTabCapturedPage = this.contextAttachmentStorage.currentTab?.type === 'captured-page' ? this.contextAttachmentStorage.currentTab : undefined
+    const attachmentImages = this.contextAttachmentStorage.attachments.filter((a): a is ImageAttachment | CapturedPageAttachment => a.type === 'image' || a.type === 'captured-page')
+    const allImages = [currentTabImage, currentTabCapturedPage, ...attachmentImages].filter(Boolean) as (ImageAttachment | CapturedPageAttachment)[]
     if (allImages.length === 0) {
       imageContextBuilder.insertContent('(No available images)')
     }
@@ -116,6 +140,12 @@ ${tabContextBuilder}
 ${pdfContextBuilder}
 ${imageContextBuilder}
 `.trim())
+
+    // Build the result with optional selected text before environment details
+    if (selectedTextAttachment) {
+      const selectedTextTag = new TagBuilder('user_selection').insertContent(selectedTextAttachment.value.text.trim())
+      return `${selectedTextTag.build()}\n\n${environmentTagBuilder.build()}`
+    }
 
     return environmentTagBuilder.build()
   }

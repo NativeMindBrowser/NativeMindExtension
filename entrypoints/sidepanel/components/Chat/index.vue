@@ -19,19 +19,21 @@
           :class="[item.role === 'user' ? 'self-end' : 'self-start', { 'w-full': ['agent-task-group', 'assistant', 'agent'].includes(item.role) ,'mt-2': ['agent-task-group', 'assistant', 'agent'].includes(item.role) }]"
           class="max-w-full relative flex"
         >
-          <div
+          <MessageUser
             v-if="item.role === 'user'"
-            class="flex flex-col items-end"
-          >
-            <div class="text-sm inline-block bg-accent-primary rounded-md p-3 max-w-full">
-              <div class="wrap-anywhere text-white">
-                <MarkdownViewer :text="item.displayContent ?? item.content" />
-              </div>
-            </div>
-          </div>
+            :message="item"
+            :isEditing="editingMessageId === item.id"
+            :disabled="chat.isAnswering() || editingInFlight"
+            @startEdit="onStartEdit(item.id)"
+            @cancelEdit="() => onCancelEdit(item.id)"
+            @submitEdit="(value) => onSubmitEdit(item.id, value)"
+          />
           <MessageAssistant
             v-else-if="item.role === 'assistant' || item.role === 'agent'"
             :message="item"
+            :disabled="chat.isAnswering()"
+            :showActions="assistantActionMessageIds.has(item.id)"
+            @retry="(modelId, endpointType) => onRetryAssistantMessage(item.id, modelId, endpointType)"
           />
           <div v-else-if="item.role === 'task'">
             <MessageTask :message="item" />
@@ -97,28 +99,35 @@
           <!-- Toolbar -->
           <div class="absolute bottom-0 left-0 right-0 flex flex-row justify-between w-full h-9 pl-3 pr-1.5 items-center">
             <div class="flex grow items-center gap-1">
-              <ThinkingModeSwitch />
+              <ThinkingEffortSelector v-if="showReasoningEffortSelector" />
+              <ThinkingModeSwitch v-else />
               <OnlineSearchSwitch />
             </div>
-            <div
-              ref="sendButtonContainerRef"
-            >
-              <Button
-                v-if="chat.isAnswering()"
-                variant="secondary"
-                class="size-6 rounded-md flex items-center justify-center hover:bg-border-strong/80 bg-border-strong cursor-pointer shadow-none"
-                @click="onStop"
+            <div class="flex gap-2 flex-row">
+              <CameraButton
+                :attachmentSelectorRef="attachmentSelectorRef"
+                :contextAttachmentStorage="contextAttachmentStorage"
+              />
+              <div
+                ref="sendButtonContainerRef"
               >
-                <IconStop class="size-[15px] text-white" />
-              </Button>
-              <button
-                v-else
-                :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-accent-primary-hover bg-accent-primary cursor-pointer' : 'cursor-not-allowed')"
-                :disabled="!allowAsk"
-                @click="onSubmit"
-              >
-                <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-text-quaternary')" />
-              </button>
+                <Button
+                  v-if="chat.isAnswering()"
+                  variant="secondary"
+                  class="size-6 rounded-md flex items-center justify-center hover:bg-border-strong/80 bg-border-strong cursor-pointer shadow-none"
+                  @click="onStop"
+                >
+                  <IconStop class="size-[15px] text-white" />
+                </Button>
+                <button
+                  v-else
+                  :class="classNames('size-6 rounded-md flex items-center justify-center', allowAsk ? 'hover:bg-accent-primary-hover bg-accent-primary cursor-pointer' : 'cursor-not-allowed')"
+                  :disabled="!allowAsk"
+                  @click="onSubmit"
+                >
+                  <IconSendFill :class="classNames('size-[15px]', allowAsk ? 'text-white' : 'text-text-quaternary')" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -140,10 +149,12 @@ import ScrollContainer from '@/components/ScrollContainer.vue'
 import Button from '@/components/ui/Button.vue'
 import { FileGetter } from '@/utils/file'
 import { useI18n } from '@/utils/i18n'
+import { isGptOssModel } from '@/utils/llm/reasoning'
+import logger from '@/utils/logger'
 import { setSidepanelStatus } from '@/utils/sidepanel-status'
+import { getUserConfig } from '@/utils/user-config'
 import { classNames } from '@/utils/vue/utils'
 
-import MarkdownViewer from '../../../../components/MarkdownViewer.vue'
 import { showSettings } from '../../../../utils/settings'
 import {
   ActionEvent,
@@ -151,11 +162,14 @@ import {
   initChatSideEffects,
 } from '../../utils/chat/index'
 import AttachmentSelector from '../AttachmentSelector.vue'
+import CameraButton from './CameraButton.vue'
 import MessageAction from './Messages/Action.vue'
 import MessageTaskGroup from './Messages/AgentTaskGroup.vue'
 import MessageAssistant from './Messages/Assistant.vue'
 import MessageTask from './Messages/Task.vue'
+import MessageUser from './Messages/User.vue'
 import OnlineSearchSwitch from './OnlineSearchSwitch.vue'
+import ThinkingEffortSelector from './ThinkingEffortSelector.vue'
 import ThinkingModeSwitch from './ThinkingModeSwitch.vue'
 
 const inputContainerRef = ref<HTMLDivElement>()
@@ -167,15 +181,50 @@ const userInput = ref('')
 const isComposing = ref(false)
 const attachmentSelectorRef = ref<InstanceType<typeof AttachmentSelector>>()
 const scrollContainerRef = ref<InstanceType<typeof ScrollContainer>>()
+const editingMessageId = ref<string | null>(null)
+const editingInFlight = ref(false)
+const log = logger.child('chat-sidepanel')
 
 defineExpose({
   attachmentSelectorRef,
 })
 
+const userConfig = await getUserConfig()
+const currentModel = userConfig.llm.model.toRef()
+const showReasoningEffortSelector = computed(() => isGptOssModel(currentModel.value))
+
 const chat = await Chat.getInstance()
 const contextAttachmentStorage = chat.contextAttachmentStorage
 
 initChatSideEffects()
+
+// Track the final assistant/agent message for each reply block (between user turns) FOR triggering retry action
+const assistantActionMessageIds = computed(() => {
+  const ids = new Set<string>()
+  const history = chat.historyManager.history.value
+  let lastAssistantId: string | null = null
+
+  for (const item of history) {
+    if (item.role === 'assistant' || item.role === 'agent') {
+      // Only consider messages scoped not including welcome or quick actions
+      if (!item.id.includes('welcomeMessage') && !item.id.includes('quickActions')) {
+        lastAssistantId = item.id
+      }
+    }
+    else if (item.role === 'user') {
+      if (lastAssistantId) {
+        ids.add(lastAssistantId)
+        lastAssistantId = null
+      }
+    }
+  }
+
+  if (lastAssistantId) {
+    ids.add(lastAssistantId)
+  }
+
+  return ids
+})
 
 const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
   if (actionEvent.action === 'customInput') {
@@ -193,6 +242,86 @@ const actionEventHandler = Chat.createActionEventHandler((actionEvent) => {
 const allowAsk = computed(() => {
   return !chat.isAnswering() && userInput.value.trim().length > 0
 })
+
+const onStartEdit = (messageId: string) => {
+  if (chat.isAnswering() || editingInFlight.value) return
+  editingMessageId.value = messageId
+}
+
+const onCancelEdit = (messageId: string) => {
+  if (editingMessageId.value === messageId) {
+    editingMessageId.value = null
+  }
+}
+
+const onSubmitEdit = async (messageId: string, value: string) => {
+  if (editingInFlight.value) return
+  editingMessageId.value = null
+  editingInFlight.value = true
+  try {
+    await chat.editUserMessage(messageId, value)
+  }
+  catch (error) {
+    log.error('Failed to re-send edited message', error)
+  }
+  finally {
+    editingInFlight.value = false
+  }
+}
+
+const onRetryAssistantMessage = async (assistantMessageId: string, modelId: string, endpointType: string) => {
+  if (chat.isAnswering() || editingInFlight.value) return
+
+  const messageIndex = chat.historyManager.history.value.findIndex((item) => item.id === assistantMessageId)
+  if (messageIndex === -1) {
+    log.error('Assistant message not found', assistantMessageId)
+    return
+  }
+
+  // Find the last user message before this assistant message
+  let userMessageIndex = -1
+  for (let i = messageIndex - 1; i >= 0; i--) {
+    if (chat.historyManager.history.value[i].role === 'user') {
+      userMessageIndex = i
+      break
+    }
+  }
+
+  if (userMessageIndex === -1) {
+    log.error('No user message found before assistant message')
+    return
+  }
+
+  const userMessage = chat.historyManager.history.value[userMessageIndex]
+  if (userMessage.role !== 'user') return
+
+  // Stop any ongoing chat
+  chat.stop()
+  editingInFlight.value = true
+
+  try {
+    // Remove all messages after and including the assistant message
+    chat.historyManager.history.value.splice(messageIndex)
+
+    // Set temporary model override
+    chat.historyManager.temporaryModelOverride = { model: modelId, endpointType }
+
+    try {
+      // Re-generate the response with the new model
+      await chat.editUserMessage(userMessage.id, userMessage.displayContent ?? userMessage.content)
+    }
+    finally {
+      // Clear temporary model override
+      chat.historyManager.temporaryModelOverride = null
+    }
+  }
+  catch (error) {
+    log.error('Failed to retry assistant message', error)
+  }
+  finally {
+    editingInFlight.value = false
+  }
+}
 
 const cleanUp = chat.historyManager.onMessageAdded(() => {
   scrollContainerRef.value?.snapToBottom()

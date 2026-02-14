@@ -4,13 +4,17 @@
       "thought_for_seconds": "Berpikir selama {second} detik | Berpikir selama {second} detik",
       "thinking": "Sedang berpikir...",
       "reading": "Sedang membaca...",
-      "search_locally": "Mencari secara lokal di browser..."
+      "search_locally": "Mencari secara lokal di browser...",
+      "used_model": "Menggunakan {model}"
     },
     "quick_actions": {
       "title": "Tindakan cepat"
     },
     "thinking_mode": {
-      "label": "Berpikir"
+      "label": "Berpikir",
+      "low": "Rendah",
+      "medium": "Sedang",
+      "high": "Tinggi"
     },
     "input": {
       "placeholder": {
@@ -28,7 +32,9 @@
         "pdf_text_extract_error": "Ekstraksi teks gagal - PDF ini mungkin hasil scan atau berbasis gambar.",
         "too_many_pdfs": "Maksimal {max} file PDF diizinkan",
         "pdf_page_count_exceeded": "PDF harus kurang dari {max} halaman",
-        "only_load_partial_pages": "Hanya {max} halaman pertama yang dimuat karena ukuran file"
+        "only_load_partial_pages": "Hanya {max} halaman pertama yang dimuat karena ukuran file",
+        "selected_text_prefix": "Teks terpilih:",
+        "captured_page_prefix": "Halaman tertangkap:"
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year} tahun | {year} tahun",
       "months": "{month} bulan | {month} bulan"
     },
-    "confirm": "Konfirmasi"
+    "confirm": "Konfirmasi",
+    "send": "Kirim"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "Tutup",
     "chat_history": "Sejarah",
     "new_chat": "Obrolan baru",
-    "back": "Kembali"
+    "back": "Kembali",
+    "copy_message": "Salin",
+    "edit_message": "Edit",
+    "retry_message": "Coba lagi"
   },
   "gmail_tools": {
     "buttons": {

@@ -4,13 +4,17 @@
       "thought_for_seconds": "{second}초 동안 생각 중 | {second}초 동안 생각 중",
       "thinking": "생각하는 중...",
       "reading": "읽는 중",
-      "search_locally": "브라우저에서 검색 중..."
+      "search_locally": "브라우저에서 검색 중...",
+      "used_model": "{model} 사용"
     },
     "quick_actions": {
       "title": "빠른 액션"
     },
     "thinking_mode": {
-      "label": "사고"
+      "label": "사고",
+      "low": "낮음",
+      "medium": "중간",
+      "high": "높음"
     },
     "input": {
       "placeholder": {
@@ -28,7 +32,9 @@
         "pdf_text_extract_error": "PDF에서 텍스트 추출에 실패했습니다 - 이 PDF는 스캔되었거나 이미지 기반일 수 있습니다.",
         "too_many_pdfs": "최대 {max}개의 PDF 파일이 허용됩니다",
         "pdf_page_count_exceeded": "PDF는 {max}페이지 미만이어야 합니다",
-        "only_load_partial_pages": "파일 크기로 인해 처음 {max}페이지만 로드됩니다"
+        "only_load_partial_pages": "파일 크기로 인해 처음 {max}페이지만 로드됩니다",
+        "selected_text_prefix": "선택된 텍스트:",
+        "captured_page_prefix": "캡처된 페이지:"
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year}년 | {year}년",
       "months": "{month}개월 | {month}개월"
     },
-    "confirm": "확인"
+    "confirm": "확인",
+    "send": "보내기"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "닫기",
     "chat_history": "역사",
     "new_chat": "새로운 채팅",
-    "back": "뒤로"
+    "back": "뒤로",
+    "copy_message": "메시지 복사",
+    "edit_message": "메시지 수정",
+    "retry_message": "재시도"
   },
   "gmail_tools": {
     "buttons": {

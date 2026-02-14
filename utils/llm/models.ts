@@ -1,27 +1,33 @@
 import { LanguageModelV1, wrapLanguageModel } from 'ai'
 
+import type { ReasoningOption } from '@/types/reasoning'
 import { getUserConfig } from '@/utils/user-config'
 
 import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
+import logger from '../logger'
 import { loadModel as loadLMStudioModel } from './lm-studio'
 import { middlewares } from './middlewares'
 import { checkModelSupportThinking } from './ollama'
 import { LMStudioChatLanguageModel } from './providers/lm-studio/chat-language-model'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
+import { getReasoningOptionForModel, isGptOssModel } from './reasoning'
 import { isToggleableThinkingModel } from './thinking-models'
 import { getWebLLMEngine, WebLLMSupportedModel } from './web-llm'
 
-export async function getModelUserConfig() {
+export async function getModelUserConfig(overrides?: { model?: string, endpointType?: LLMEndpointType }) {
+  logger.debug('Detected override model', { overrides })
   const userConfig = await getUserConfig()
-  const model = userConfig.llm.model.get()
-  const endpointType = userConfig.llm.endpointType.get()
+  const endpointType = overrides?.endpointType ?? userConfig.llm.endpointType.get()
+  const model = overrides?.model ?? userConfig.llm.model.get()
+
   const baseUrl = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].baseUrl.get()
   const apiKey = userConfig.llm.apiKey.get()
   const numCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].numCtx.get()
   const enableNumCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].enableNumCtx.get()
-  const reasoning = userConfig.llm.reasoning.get()
+  const reasoningPreference = userConfig.llm.reasoning.get()
+  const reasoning = getReasoningOptionForModel(reasoningPreference, model)
   if (!model) {
     throw new ModelNotFoundError(undefined, endpointType)
   }
@@ -44,7 +50,7 @@ export async function getModel(options: {
   apiKey: string
   numCtx: number
   enableNumCtx: boolean
-  reasoning: boolean
+  reasoning: ReasoningOption
   autoThinking?: boolean
   endpointType: LLMEndpointType
   onLoadingModel?: (prg: ModelLoadingProgressEvent) => void
@@ -58,6 +64,17 @@ export async function getModel(options: {
     const currentModel = options.model
     const supportsThinking = await checkModelSupportThinking(currentModel)
     const supportsToggleThinking = isToggleableThinkingModel(endpointType, currentModel)
+    const isCurrentGptOss = isGptOssModel(currentModel)
+    const reasoningValue = options.reasoning
+    let thinkValue: ReasoningOption | undefined
+    if (supportsThinking && reasoningValue !== undefined) {
+      if (isCurrentGptOss) {
+        thinkValue = reasoningValue
+      }
+      else if (supportsToggleThinking) {
+        thinkValue = typeof reasoningValue === 'boolean' ? reasoningValue : true
+      }
+    }
     const customFetch = makeCustomFetch({
       bodyTransformer: (body) => {
         // process thinking capability by ollama itself, using on translation feature
@@ -67,7 +84,7 @@ export async function getModel(options: {
         const parsedBody = JSON.parse(body)
         return JSON.stringify({
           ...parsedBody,
-          think: supportsThinking && supportsToggleThinking ? options.reasoning : undefined,
+          think: thinkValue,
         })
       },
     })

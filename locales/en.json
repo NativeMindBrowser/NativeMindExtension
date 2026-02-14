@@ -244,13 +244,17 @@
       "thought_for_seconds": "Thought for {second} second | Thought for {second} seconds",
       "thinking": "Thinking...",
       "search_locally": "Searching locally in browser…",
-      "reading": "Reading"
+      "reading": "Reading",
+      "used_model": "Used {model}"
     },
     "quick_actions": {
       "title": "Quick Actions"
     },
     "thinking_mode": {
-      "label": "Thinking"
+      "label": "Thinking",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
     },
     "input": {
       "placeholder": {
@@ -268,7 +272,9 @@
         "pdf_oversize": "PDF file size must be less than {size}",
         "too_many_pdfs": "Maximum {max} PDF file allowed",
         "pdf_text_extract_error": "Text extraction failed - this PDF may be scanned or image-based.",
-        "only_load_partial_pages": "Only the first {max} pages are loaded due to file size"
+        "only_load_partial_pages": "Only the first {max} pages are loaded due to file size",
+        "selected_text_prefix": "Selected Text:",
+        "captured_page_prefix": "Page Captured:"
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year} year | {year} years",
       "months": "{month} month | {month} months"
     },
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "send": "Send"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "Close",
     "chat_history": "History",
     "new_chat": "New Chat",
-    "back": "Back"
+    "back": "Back",
+    "copy_message": "Copy",
+    "edit_message": "Edit",
+    "retry_message": "Retry"
   },
   "gmail_tools": {
     "buttons": {

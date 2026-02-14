@@ -60,6 +60,7 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
     stopSequences,
     seed,
     abortSignal,
+    providerMetadata,
   }: Parameters<LanguageModelV1['doGenerate']>[0]) {
     const warnings: LanguageModelV1CallWarning[] = []
 
@@ -90,6 +91,8 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
 
       stop: stopSequences,
       seed,
+      // reasoning_effort support for gpt-oss models
+      reasoningEffort: providerMetadata?.['lm-studio']?.reasoningEffort ?? providerMetadata?.['openai-compatible']?.reasoningEffort,
       // messages:
       messages: await convertToLMStudioMessages(this.client, prompt),
     }
@@ -107,6 +110,9 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
 
     log.debug('doGenerate called', { args, options })
 
+    // Note: LM Studio SDK types don't include reasoningEffort yet, but we pass it anyway
+    // in case the runtime supports it (for gpt-oss models)
+
     const responseBody = await this.model.respond(args.messages, {
       signal: body.signal,
       maxTokens: body.maxTokens,
@@ -116,6 +122,7 @@ export class LMStudioChatLanguageModel implements LanguageModelV1 {
       stopStrings: body.stop,
       contextOverflowPolicy: 'truncateMiddle',
       structured: body.structured,
+      // reasoningEffort: body.reasoningEffort, //TODO
     })
 
     const { messages: rawPrompt, ...rawSettings } = args

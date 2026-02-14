@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { convertJsonSchemaToZod, JSONSchema } from 'zod-from-json-schema'
 
 import { ChatHistoryV1, ContextAttachmentStorage } from '@/types/chat'
+import type { ReasoningOption } from '@/types/reasoning'
 import { TabInfo } from '@/types/tab'
 import logger from '@/utils/logger'
 
@@ -34,7 +35,7 @@ import { preparePortConnection, shouldGenerateChatTitle } from './utils'
 type StreamTextOptions = Omit<Parameters<typeof originalStreamText>[0], 'tools'>
 type GenerateTextOptions = Omit<Parameters<typeof originalGenerateText>[0], 'tools'>
 type GenerateObjectOptions = Omit<Parameters<typeof originalGenerateObject>[0], 'tools'>
-type ExtraGenerateOptions = { modelId?: string, reasoning?: boolean, autoThinking?: boolean }
+type ExtraGenerateOptions = { modelId?: string, endpointType?: LLMEndpointType, reasoning?: ReasoningOption, autoThinking?: boolean }
 type ExtraGenerateOptionsWithTools = ExtraGenerateOptions
 type SchemaOptions<S extends SchemaName> = { schema: S } | { jsonSchema: JSONSchema }
 
@@ -79,7 +80,8 @@ const parseSchema = <S extends SchemaName>(options: SchemaOptions<S>) => {
 const generateExtraModelOptions = (options: ExtraGenerateOptions) => {
   return {
     ...(options.modelId !== undefined ? { model: options.modelId } : {}),
-    ...(options.reasoning !== undefined ? { reasoningEffort: options.reasoning } : {}),
+    ...(options.endpointType !== undefined ? { endpointType: options.endpointType } : {}),
+    ...(options.reasoning !== undefined ? { reasoning: options.reasoning } : {}),
     ...(options.autoThinking !== undefined ? { autoThinking: options.autoThinking } : {}),
   }
 }
@@ -124,7 +126,7 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
     })
 
     try {
-      const userConfig = await getModelUserConfig()
+      const userConfig = await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })
       const modelInfo = await getModel({
         ...userConfig,
         onLoadingModel: makeLoadingModelListener(port),
@@ -165,7 +167,7 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
 const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens'> & ExtraGenerateOptionsWithTools) => {
   try {
     const response = originalGenerateText({
-      model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+      model: await getModel({ ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), ...generateExtraModelOptions(options) }),
       messages: options.messages,
       prompt: options.prompt,
       system: options.system,
@@ -194,7 +196,7 @@ const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'pro
     })
     try {
       const response = await originalGenerateText({
-        model: await getModel({ ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }),
+        model: await getModel({ ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), ...generateExtraModelOptions(options) }),
         messages: options.messages,
         prompt: options.prompt,
         system: options.system,
@@ -234,7 +236,7 @@ const streamObjectFromSchema = async <S extends SchemaName>(options: Pick<Genera
       abortController.abort()
     })
     try {
-      const model = await getModel({ ...(await getModelUserConfig()), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) })
+      const model = await getModel({ ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), onLoadingModel: makeLoadingModelListener(port), ...generateExtraModelOptions(options) })
       if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(model.modelId))) {
         const schema = parseSchema(options)
         const s = zodSchema(schema)
@@ -305,7 +307,7 @@ export const generateObjectFromSchema = async <S extends SchemaName>(options: Pi
   const isEnum = s instanceof z.ZodEnum
   let ret
   try {
-    const modelInfo = { ...(await getModelUserConfig()), ...generateExtraModelOptions(options) }
+    const modelInfo = { ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), ...generateExtraModelOptions(options) }
     if (MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT.some((pattern) => pattern.test(modelInfo.model))) {
       const jsonSchema = zodSchema(s).jsonSchema
       const injectSchemaToSystemPrompt = (prompt?: string) => {
@@ -759,10 +761,16 @@ function getTabCaptureMediaStreamId(tabId: number, consumerTabId?: number) {
   })
 }
 
-function captureVisibleTab(windowId?: number, options?: Browser.tabs.CaptureVisibleTabOptions) {
-  const wid = windowId ?? browser.windows.WINDOW_ID_CURRENT
-  const screenCaptureBase64Url = browser.tabs.captureVisibleTab(wid, options ?? {})
-  return screenCaptureBase64Url
+function captureVisibleTab(options?: Browser.tabs.CaptureVisibleTabOptions) {
+  const cachedWindowId = BackgroundWindowManager.getCurrentWindowId()
+  browser.permissions.request({ origins: ['<all_urls>'] })
+  if (cachedWindowId) {
+    const screenCaptureBase64Url = browser.tabs.captureVisibleTab(cachedWindowId, options ?? {})
+    return screenCaptureBase64Url
+  }
+  else {
+    throw new Error('No cached window ID available for capturing visible tab')
+  }
 }
 
 function getTabInfoByTabId(tabId: number) {
@@ -1075,6 +1083,17 @@ async function forwardGmailAction(action: 'summary' | 'reply' | 'compose', data:
   }
 }
 
+async function forwardSelectionText(tabId: number, selectedText: string) {
+  try {
+    b2sRpc.emit('selectionChanged', { tabId, selectedText })
+    return { success: true }
+  }
+  catch (error) {
+    logger.error('Failed to forward selection text to sidepanel:', error)
+    return { success: false, error: String(error) }
+  }
+}
+
 export const backgroundFunctions = {
   emit: <E extends keyof Events>(ev: E, ...args: Parameters<Events[E]>) => {
     eventEmitter.emit(ev, ...args)
@@ -1146,5 +1165,7 @@ export const backgroundFunctions = {
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,
   forwardGmailAction,
+  // Selected Text
+  forwardSelectionText,
 }
   ; (self as unknown as { backgroundFunctions: unknown }).backgroundFunctions = backgroundFunctions

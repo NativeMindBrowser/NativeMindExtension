@@ -32,7 +32,7 @@ export class AgentStorage {
     if (this.attachmentStorage.currentTab?.type === 'image') {
       imageAttachments.push(this.attachmentStorage.currentTab)
     }
-    imageAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'image'))
+    imageAttachments.push(...this.attachmentStorage.attachments.filter((attachment) => attachment.type === 'image' || attachment.type === 'captured-page'))
     return imageAttachments
   }
 

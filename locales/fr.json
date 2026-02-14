@@ -4,13 +4,17 @@
       "thought_for_seconds": "Réflexion pendant {second} seconde | Réflexion pendant {second} secondes",
       "thinking": "Réflexion en cours...",
       "reading": "Lecture en cours",
-      "search_locally": "Recherche locale dans le navigateur..."
+      "search_locally": "Recherche locale dans le navigateur...",
+      "used_model": "Utilisé {model}"
     },
     "quick_actions": {
       "title": "Actions rapides"
     },
     "thinking_mode": {
-      "label": "Réflexion"
+      "label": "Réflexion",
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé"
     },
     "input": {
       "placeholder": {
@@ -28,7 +32,9 @@
         "pdf_text_extract_error": "L'extraction de texte a échoué - ce PDF peut être numérisé ou basé sur des images.",
         "too_many_pdfs": "Maximum {max} fichier PDF autorisé",
         "pdf_page_count_exceeded": "Le PDF doit contenir moins de {max} pages",
-        "only_load_partial_pages": "Seules les {max} premières pages sont chargées en raison de la taille du fichier"
+        "only_load_partial_pages": "Seules les {max} premières pages sont chargées en raison de la taille du fichier",
+        "selected_text_prefix": "Texte sélectionné :",
+        "captured_page_prefix": "Page capturée :"
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year} an | {year} ans",
       "months": "{month} mois | {month} mois"
     },
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "send": "Envoyer"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "Fermer",
     "chat_history": "Histoire",
     "new_chat": "Nouveau chat",
-    "back": "Retour"
+    "back": "Retour",
+    "copy_message": "Copier le message",
+    "edit_message": "Modifier le message",
+    "retry_message": "Réessayer"
   },
   "gmail_tools": {
     "buttons": {

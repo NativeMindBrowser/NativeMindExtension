@@ -4,6 +4,7 @@ import { type Ref, ref, toRaw, toRef, watch } from 'vue'
 
 import type { ActionMessageV1, ActionTypeV1, ActionV1, AgentMessageV1, AgentTaskGroupMessageV1, AgentTaskMessageV1, AssistantMessageV1, ChatHistoryV1, ChatList, HistoryItemV1, TaskMessageV1, UserMessageV1 } from '@/types/chat'
 import { ContextAttachmentStorage } from '@/types/chat'
+import { normalizeReasoningPreference, StoredReasoningPreference } from '@/types/reasoning'
 import { nonNullable } from '@/utils/array'
 import { debounce } from '@/utils/debounce'
 import { useGlobalI18n } from '@/utils/i18n'
@@ -29,6 +30,8 @@ const log = logger.child('chat')
 export type MessageIdScope = 'quickActions' | 'welcomeMessage'
 
 export class ReactiveHistoryManager extends EventEmitter {
+  public temporaryModelOverride: { model: string, endpointType: string } | null = null
+
   constructor(public chatHistory: Ref<ChatHistoryV1>) {
     super()
     this.cleanUp()
@@ -42,6 +45,10 @@ export class ReactiveHistoryManager extends EventEmitter {
     const newHistory = history.filter((item) => item.done).map((item) => {
       if (item.role === 'task' && item.subTasks) {
         this.cleanUp(item.subTasks)
+      }
+      if (item.role === 'agent-task-group' && item.tasks) {
+        // if task-group not done, remove the group
+        item.tasks = item.tasks.filter((task) => task.done)
       }
       return item
     })
@@ -151,26 +158,38 @@ export class ReactiveHistoryManager extends EventEmitter {
     return newMsg as UserMessageV1
   }
 
-  appendAssistantMessage(content: string = '') {
+  async appendAssistantMessage(content: string = '') {
+    const userConfig = await getUserConfig()
+    const model = this.temporaryModelOverride?.model ?? userConfig.llm.model.get()
+    const endpointType = this.temporaryModelOverride?.endpointType ?? userConfig.llm.endpointType.get()
+
     this.history.value.push({
       id: this.generateId(),
       role: 'assistant',
       content,
       done: false,
       timestamp: Date.now(),
+      model,
+      endpointType,
     })
     const newMsg = this.history.value[this.history.value.length - 1]
     this.emit('messageAdded', newMsg)
     return newMsg as AssistantMessageV1
   }
 
-  appendAgentMessage(content: string = '') {
+  async appendAgentMessage(content: string = '') {
+    const userConfig = await getUserConfig()
+    const model = this.temporaryModelOverride?.model ?? userConfig.llm.model.get()
+    const endpointType = this.temporaryModelOverride?.endpointType ?? userConfig.llm.endpointType.get()
+
     this.history.value.push({
       id: this.generateId(),
       role: 'agent',
       content,
       done: false,
       timestamp: Date.now(),
+      model,
+      endpointType,
     })
     const newMsg = this.history.value[this.history.value.length - 1]
     this.emit('messageAdded', newMsg)
@@ -279,6 +298,17 @@ export class ReactiveHistoryManager extends EventEmitter {
   cleanupLoadingMessages() {
     this.cleanUp(this.chatHistory.value.history)
   }
+
+  cleanupLoadingAttachments(contextAttachmentStorage: Ref<ContextAttachmentStorage>) {
+    // Remove loading attachments from the attachments array
+    contextAttachmentStorage.value.attachments = contextAttachmentStorage.value.attachments.filter(
+      (attachment) => attachment.type !== 'loading',
+    )
+    // Remove loading attachment from currentTab if it exists
+    if (contextAttachmentStorage.value.currentTab?.type === 'loading') {
+      contextAttachmentStorage.value.currentTab = undefined
+    }
+  }
 }
 
 type ChatStatus = 'idle' | 'pending' | 'streaming'
@@ -316,7 +346,18 @@ export class Chat {
           onlineSearchEnabled: true, // Default to true for new chats
         })
 
-        userConfig.llm.reasoning.set(chatHistory.value.reasoningEnabled ?? true)
+        const applyReasoningPreference = (preference?: StoredReasoningPreference) => {
+          if (preference === undefined) {
+            const normalized = normalizeReasoningPreference(userConfig.llm.reasoning.get())
+            userConfig.llm.reasoning.set(normalized)
+            return
+          }
+          const normalized = normalizeReasoningPreference(preference)
+          chatHistory.value.reasoningEnabled = normalized
+          userConfig.llm.reasoning.set(normalized)
+        }
+
+        applyReasoningPreference(chatHistory.value.reasoningEnabled)
         userConfig.chat.onlineSearch.enable.set(chatHistory.value.onlineSearchEnabled ?? true)
         const contextAttachments = ref<ContextAttachmentStorage>(await s2bRpc.getContextAttachments(chatHistoryId.value) ?? { attachments: [], id: chatHistoryId.value, lastInteractedAt: Date.now() })
         const chatList = ref<ChatList>([])
@@ -384,11 +425,13 @@ export class Chat {
           Object.assign(chatHistory.value, newChatHistory)
           Object.assign(contextAttachments.value, newContextAttachments)
 
-          userConfig.llm.reasoning.set(newChatHistory.reasoningEnabled ?? true)
+          applyReasoningPreference(newChatHistory.reasoningEnabled)
           userConfig.chat.onlineSearch.enable.set(newChatHistory.onlineSearchEnabled ?? true)
 
           // Clean up any loading messages
           instance.historyManager.cleanupLoadingMessages()
+          // Clean up any loading attachments
+          instance.historyManager.cleanupLoadingAttachments(contextAttachments)
 
           // Update the chat list to reflect any changes
           updateChatList()
@@ -536,6 +579,48 @@ export class Chat {
     await this.runWithAgent(baseMessages)
   }
 
+  async editUserMessage(messageId: string, question: string) {
+    const trimmedQuestion = question.trim()
+    if (!trimmedQuestion) throw new Error('Question cannot be empty.')
+
+    const messageIndex = this.historyManager.history.value.findIndex((item) => item.id === messageId)
+    if (messageIndex === -1) throw new Error(`Message with id ${messageId} not found.`)
+    const message = this.historyManager.history.value[messageIndex]
+    if (message.role !== 'user') throw new Error(`Message with id ${messageId} is not a user message.`)
+
+    this.stop()
+    using _s = this.statusScope('pending')
+    const abortController = new AbortController()
+    this.abortControllers.push(abortController)
+
+    this.historyManager.chatHistory.value.lastInteractedAt = Date.now()
+
+    if (messageIndex < this.historyManager.history.value.length - 1) {
+      this.historyManager.history.value.splice(messageIndex + 1)
+    }
+
+    const contextInfo = this.historyManager.chatHistory.value.contextUpdateInfo
+    if (contextInfo?.lastFullUpdateMessageId) {
+      const exists = this.historyManager.history.value.some((item) => item.id === contextInfo.lastFullUpdateMessageId)
+      if (!exists) {
+        contextInfo.lastFullUpdateMessageId = undefined
+      }
+    }
+
+    const environmentDetails = await this.generateEnvironmentDetails(message.id)
+    const prompt = await chatWithEnvironment(trimmedQuestion, environmentDetails)
+
+    message.displayContent = trimmedQuestion
+    message.content = prompt.user.extractText()
+    message.timestamp = Date.now()
+    message.done = true
+
+    const baseMessages = this.historyManager.getLLMMessages({ system: prompt.system, lastUser: prompt.user })
+    await this.prepareModel()
+    if (this.contextPDFs.length > 1) log.warn('Multiple PDFs are attached, only the first one will be used for the chat context.')
+    await this.runWithAgent(baseMessages)
+  }
+
   private async runWithAgent(baseMessages: CoreMessage[]) {
     const userConfig = await getUserConfig()
     const maxIterations = userConfig.chat.agent.maxIterations.get()
@@ -544,6 +629,7 @@ export class Chat {
       historyManager: this.historyManager,
       agentStorage: new AgentStorage(this.contextAttachmentStorage.value),
       maxIterations,
+      temporaryModelOverride: this.historyManager.temporaryModelOverride,
       tools: {
         search_online: { execute: executeSearchOnline },
         fetch_page: { execute: executeFetchPage },
@@ -591,6 +677,8 @@ export class Chat {
       abortController.abort()
     })
     this.abortControllers.length = 0
+    // Clean up any loading attachments when stopping
+    this.historyManager.cleanupLoadingAttachments(this.contextAttachmentStorage)
   }
 
   /**

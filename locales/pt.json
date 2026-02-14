@@ -4,13 +4,17 @@
       "thought_for_seconds": "Pensando por {second} segundo | Pensando por {second} segundos",
       "thinking": "Pensando...",
       "reading": "Lendo",
-      "search_locally": "Pesquisando localmente no navegador..."
+      "search_locally": "Pesquisando localmente no navegador...",
+      "used_model": "Usado {model}"
     },
     "quick_actions": {
       "title": "Ações rápidas"
     },
     "thinking_mode": {
-      "label": "Pensando"
+      "label": "Pensando",
+      "low": "Baixo",
+      "medium": "Médio",
+      "high": "Alto"
     },
     "input": {
       "placeholder": {
@@ -28,7 +32,9 @@
         "pdf_text_extract_error": "A extração de texto falhou - este PDF pode estar digitalizado ou ser baseado em imagem.",
         "too_many_pdfs": "Máximo de {max} arquivo PDF permitido",
         "pdf_page_count_exceeded": "O PDF deve ter menos de {max} páginas",
-        "only_load_partial_pages": "Apenas as primeiras {max} páginas são carregadas devido ao tamanho do arquivo"
+        "only_load_partial_pages": "Apenas as primeiras {max} páginas são carregadas devido ao tamanho do arquivo",
+        "selected_text_prefix": "Texto selecionado:",
+        "captured_page_prefix": "Página capturada:"
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year} ano | {year} anos",
       "months": "{month} mês | {month} meses"
     },
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "send": "Enviar"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "Fechar",
     "chat_history": "História",
     "new_chat": "Novo bate -papo",
-    "back": "Voltar"
+    "back": "Voltar",
+    "copy_message": "Copiar mensagem",
+    "edit_message": "Editar mensagem",
+    "retry_message": "Tentar novamente"
   },
   "gmail_tools": {
     "buttons": {

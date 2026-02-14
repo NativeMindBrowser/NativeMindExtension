@@ -129,6 +129,35 @@ const hideTooltip = () => {
 }
 
 /**
+ * Get container bounds for boundary detection
+ * Works with both regular containers and sidepanel
+ */
+const getContainerBounds = () => {
+  const container = rootElement as HTMLElement
+  if (!container || !container.getBoundingClientRect) {
+    // Fallback to window bounds if container is not available
+    return {
+      left: 0,
+      right: window.innerWidth,
+      top: 0,
+      bottom: window.innerHeight,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    }
+  }
+
+  const containerRect = container.getBoundingClientRect()
+  return {
+    left: containerRect.left,
+    right: containerRect.right,
+    top: containerRect.top,
+    bottom: containerRect.bottom,
+    width: containerRect.width,
+    height: containerRect.height,
+  }
+}
+
+/**
  * Update tooltip position
  * @param useEstimatedSize - Whether to use estimated size
  */
@@ -136,6 +165,7 @@ const updateTooltipPosition = (useEstimatedSize = false) => {
   if (!triggerRef.value) return
 
   const triggerRect = triggerRef.value.getBoundingClientRect()
+  const containerBounds = getContainerBounds()
 
   // Get tooltip dimensions
   let tooltipWidth: number
@@ -202,23 +232,35 @@ const updateTooltipPosition = (useEstimatedSize = false) => {
       break
   }
 
-  // Boundary checks
+  // Boundary checks based on container bounds
   if (['top', 'bottom', 'auto'].includes(positionToUse)) {
-    if (left < BOUNDARY_PADDING) left = BOUNDARY_PADDING
-    if (left + tooltipWidth / 2 > window.innerWidth - BOUNDARY_PADDING) {
-      left = window.innerWidth - tooltipWidth / 2 - BOUNDARY_PADDING
+    // For top/bottom positions with centered left: left value is center point
+    const leftEdge = left - tooltipWidth / 2
+    const rightEdge = left + tooltipWidth / 2
+
+    if (leftEdge < containerBounds.left + BOUNDARY_PADDING) {
+      left = containerBounds.left + BOUNDARY_PADDING + tooltipWidth / 2
+    }
+    if (rightEdge > containerBounds.right - BOUNDARY_PADDING) {
+      left = containerBounds.right - BOUNDARY_PADDING - tooltipWidth / 2
     }
   }
   else {
-    if (left < BOUNDARY_PADDING) left = BOUNDARY_PADDING
-    if (left + tooltipWidth > window.innerWidth - BOUNDARY_PADDING) {
-      left = window.innerWidth - tooltipWidth - BOUNDARY_PADDING
+    // For left/right positions: left value is the actual left edge
+    if (left < containerBounds.left + BOUNDARY_PADDING) {
+      left = containerBounds.left + BOUNDARY_PADDING
+    }
+    if (left + tooltipWidth > containerBounds.right - BOUNDARY_PADDING) {
+      left = containerBounds.right - tooltipWidth - BOUNDARY_PADDING
     }
   }
 
-  if (top < BOUNDARY_PADDING) top = BOUNDARY_PADDING
-  if (top + tooltipHeight > window.innerHeight - BOUNDARY_PADDING) {
-    top = window.innerHeight - tooltipHeight - BOUNDARY_PADDING
+  // Vertical boundary checks
+  if (top < containerBounds.top + BOUNDARY_PADDING) {
+    top = containerBounds.top + BOUNDARY_PADDING
+  }
+  if (top + tooltipHeight > containerBounds.bottom - BOUNDARY_PADDING) {
+    top = containerBounds.bottom - tooltipHeight - BOUNDARY_PADDING
   }
 
   tooltipStyle.value = {

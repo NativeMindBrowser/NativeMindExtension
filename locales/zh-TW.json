@@ -4,13 +4,17 @@
       "thought_for_seconds": "思考了{second}秒 | 思考了{second}秒",
       "thinking": "正在思考...",
       "reading": "讀取中",
-      "search_locally": "在瀏覽器中本地搜尋…"
+      "search_locally": "在瀏覽器中本地搜尋…",
+      "used_model": "使用了 {model}"
     },
     "quick_actions": {
       "title": "快捷操作"
     },
     "thinking_mode": {
-      "label": "推理"
+      "label": "推理",
+      "low": "低",
+      "medium": "中",
+      "high": "高"
     },
     "input": {
       "placeholder": {
@@ -28,7 +32,9 @@
         "pdf_text_extract_error": "文字擷取失敗 - 此 PDF 可能是掃描檔或圖像格式。",
         "too_many_pdfs": "最多允許 {max} 個 PDF 檔案",
         "pdf_page_count_exceeded": "PDF 必須少於 {max} 頁",
-        "only_load_partial_pages": "由於檔案大小限制，僅載入前 {max} 頁"
+        "only_load_partial_pages": "由於檔案大小限制，僅載入前 {max} 頁",
+        "selected_text_prefix": "已選擇文字：",
+        "captured_page_prefix": "已擷取頁面："
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year} 年 | {year} 年",
       "months": "{month} 個月 | {month} 個月"
     },
-    "confirm": "確認"
+    "confirm": "確認",
+    "send": "傳送"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "關閉",
     "chat_history": "歷史",
     "new_chat": "新聊天",
-    "back": "返回"
+    "back": "返回",
+    "copy_message": "複製訊息",
+    "edit_message": "編輯訊息",
+    "retry_message": "重試"
   },
   "gmail_tools": {
     "buttons": {

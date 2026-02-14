@@ -244,13 +244,17 @@
       "thought_for_seconds": "思考了{second}秒 | 思考了{second}秒",
       "thinking": "正在思考...",
       "reading": "正在阅读",
-      "search_locally": "正在浏览器中本地搜索..."
+      "search_locally": "正在浏览器中本地搜索...",
+      "used_model": "使用了 {model}"
     },
     "quick_actions": {
       "title": "快捷操作"
     },
     "thinking_mode": {
-      "label": "思考"
+      "label": "思考",
+      "low": "低",
+      "medium": "中",
+      "high": "高"
     },
     "input": {
       "placeholder": {
@@ -268,7 +272,9 @@
         "pdf_text_extract_error": "文本提取失败 - 此PDF可能是扫描版或基于图像的。",
         "too_many_pdfs": "最多允许 {max} 个 PDF 文件",
         "pdf_page_count_exceeded": "PDF 页数不能超过 {max} 页",
-        "only_load_partial_pages": "由于文件大小限制，仅加载前 {max} 页"
+        "only_load_partial_pages": "由于文件大小限制，仅加载前 {max} 页",
+        "selected_text_prefix": "已选择文本：",
+        "captured_page_prefix": "已捕获页面："
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year} 年 | {year} 年",
       "months": "{month} 个月 | {month} 个月"
     },
-    "confirm": "确认"
+    "confirm": "确认",
+    "send": "发送"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "关闭",
     "chat_history": "历史",
     "new_chat": "新聊天",
-    "back": "返回"
+    "back": "返回",
+    "copy_message": "复制",
+    "edit_message": "编辑",
+    "retry_message": "重试"
   },
   "gmail_tools": {
     "buttons": {

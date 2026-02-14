@@ -1,5 +1,129 @@
 # Changelog
 
+## v1.11.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.7...v1.11.0)
+
+## v1.11.0-beta.7
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.6...v1.11.0-beta.7)
+
+### 🩹 Fixes
+
+- Add fill attribute to path in dots-vertical icon for color consistency ([277e38a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/277e38a))
+- Improve model user config handling and fix webllm broken issue ([ee19549](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ee19549))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.11.0-beta.6
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.5...v1.11.0-beta.6)
+
+### 🚀 Enhancements
+
+- **writing-tools:** Add button to open writing tools settings ([9b397f9](https://github.com/NativeMindBrowser/NativeMindExtension/commit/9b397f9))
+
+### 🩹 Fixes
+
+- Exclude reasoning parameter for WebLLM model compatibility ([f7c0a93](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f7c0a93))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.11.0-beta.5
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.4...v1.11.0-beta.5)
+
+### 🩹 Fixes
+
+- Improve tooltip boundary detection with container bounds for sidepanel ([03b4115](https://github.com/NativeMindBrowser/NativeMindExtension/commit/03b4115))
+- Exclude welcome and quick action messages from assistant action history ([0803ee2](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0803ee2))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.11.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.3...v1.11.0-beta.4)
+
+### 🩹 Fixes
+
+- Clean up incomplete agent task groups in history management ([97fcf41](https://github.com/NativeMindBrowser/NativeMindExtension/commit/97fcf41))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.11.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.2...v1.11.0-beta.3)
+
+### 🩹 Fixes
+
+- Update attachment limit to include captured-page type and improve error handling ([911d45d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/911d45d))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.11.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.1...v1.11.0-beta.2)
+
+### 🩹 Fixes
+
+- Enhance tab capture functionality with cached window ID and optional host permissions ([32d389d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/32d389d))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.11.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.0...v1.11.0-beta.1)
+
+### 🚀 Enhancements
+
+- Add copy and retry actions for AI messages component. ([eec015b](https://github.com/NativeMindBrowser/NativeMindExtension/commit/eec015b))
+
+### 🩹 Fixes
+
+- **chat:** Add cleanup method for loading attachments in ReactiveHistoryManager ([befb170](https://github.com/NativeMindBrowser/NativeMindExtension/commit/befb170))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.11.0-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1...v1.11.0-beta.0)
+
+### 🚀 Enhancements
+
+- **chat:** Implement message editing and copying functionality in User component ([5ed4d64](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5ed4d64))
+- **chat:** Enhance message editing UI with scroll container and improved button functionality ([88ed48d](https://github.com/NativeMindBrowser/NativeMindExtension/commit/88ed48d))
+- **selection:** Implement selection text tracking and integrate with llm ([ccdf982](https://github.com/NativeMindBrowser/NativeMindExtension/commit/ccdf982))
+- Add camera functionality and support for captured pages ([2c551a3](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2c551a3))
+- Introduce effort selection for gpt-oss in chat ([11d3e19](https://github.com/NativeMindBrowser/NativeMindExtension/commit/11d3e19))
+
+### 🩹 Fixes
+
+- **web-llm:** Fix infinite loading when local model cache is invalid ([66239b1](https://github.com/NativeMindBrowser/NativeMindExtension/commit/66239b1))
+
+### 🏡 Chore
+
+- **release:** V1.9.5 ([c7afaef](https://github.com/NativeMindBrowser/NativeMindExtension/commit/c7afaef))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+- Neko Liu ([@NekoWings](http://github.com/NekoWings))
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
 ## v1.10.1
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.10.1-beta.2...v1.10.1)

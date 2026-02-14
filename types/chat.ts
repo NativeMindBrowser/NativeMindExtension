@@ -4,6 +4,7 @@ import { IconName } from '@/utils/icon'
 
 import { PromiseOr } from './common'
 import { Base64ImageData } from './image'
+import { StoredReasoningPreference } from './reasoning'
 import { SettingsScrollTarget } from './scroll-targets'
 import { TabInfo } from './tab'
 
@@ -42,6 +43,23 @@ export type TabAttachment = {
   value: TabInfo & { id: string }
 }
 
+export type SelectedTextAttachment = {
+  type: 'selected-text'
+  value: {
+    id: string
+    text: string
+  }
+}
+
+export type CapturedPageAttachment = {
+  type: 'captured-page'
+  value: Base64ImageData & {
+    id: string
+    name: string
+    size?: number
+  }
+}
+
 // this is a placeholder for attachment that is still loading
 export type LoadingAttachment = {
   type: 'loading'
@@ -52,7 +70,7 @@ export type LoadingAttachment = {
   }
 }
 
-export type ContextAttachment = ImageAttachment | PDFAttachment | TabAttachment | LoadingAttachment
+export type ContextAttachment = ImageAttachment | PDFAttachment | TabAttachment | SelectedTextAttachment | LoadingAttachment | CapturedPageAttachment
 export type ContextAttachmentStorage = {
   id: string
   lastInteractedAt?: number // last time user interacted with this context(attach/detach)
@@ -94,6 +112,8 @@ export interface AssistantMessageV1 extends BaseMessage {
   reasoningTime?: number
   isError?: boolean
   timestamp?: number
+  model?: string
+  endpointType?: string
   style?: {
     backgroundColor?: CSS.Property.BackgroundColor
   }
@@ -106,6 +126,8 @@ export interface AgentMessageV1 extends BaseMessage {
   reasoningTime?: number
   isError?: boolean
   timestamp?: number
+  model?: string
+  endpointType?: string
   style?: {
     backgroundColor?: CSS.Property.BackgroundColor
   }
@@ -180,7 +202,7 @@ export type ChatHistoryV1 = {
     lastFullUpdateMessageId?: string // last message id that was fully updated with context info
     lastAttachmentIds: string[]
   }
-  reasoningEnabled?: boolean // reasoning setting for this chat
+  reasoningEnabled?: StoredReasoningPreference // reasoning setting for this chat
   onlineSearchEnabled: boolean // online search setting for this chat, default is true
   history: HistoryItemV1[]
 }

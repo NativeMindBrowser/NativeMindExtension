@@ -16,20 +16,26 @@
         "pdf_text_extract_error": "La extracción de texto falló - este PDF puede estar escaneado o basado en imágenes.",
         "too_many_pdfs": "Máximo {max} archivo PDF permitido",
         "pdf_page_count_exceeded": "El PDF debe tener menos de {max} páginas",
-        "only_load_partial_pages": "Solo se cargan las primeras {max} páginas debido al tamaño del archivo"
+        "only_load_partial_pages": "Solo se cargan las primeras {max} páginas debido al tamaño del archivo",
+        "selected_text_prefix": "Texto seleccionado:",
+        "captured_page_prefix": "Página capturada:"
       }
     },
     "messages": {
       "reading": "Leyendo",
       "search_locally": "Buscando localmente en el navegador...",
       "thinking": "Pensando...",
-      "thought_for_seconds": "Pensando durante {second} segundo | Pensando durante {second} segundos"
+      "thought_for_seconds": "Pensando durante {second} segundo | Pensando durante {second} segundos",
+      "used_model": "Usó {model}"
     },
     "quick_actions": {
       "title": "Acciones Rápidas"
     },
     "thinking_mode": {
-      "label": "Pensando"
+      "label": "Pensando",
+      "low": "Bajo",
+      "medium": "Medio",
+      "high": "Alto"
     },
     "prompt": {
       "highlight_key_insights": {
@@ -417,7 +423,8 @@
       "years": "{year} año | {year} años",
       "months": "{month} mes | {month} meses"
     },
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "send": "Enviar"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "Cerrar",
     "chat_history": "Historia",
     "new_chat": "Nuevo chat",
-    "back": "Atrás"
+    "back": "Atrás",
+    "copy_message": "Copiar",
+    "edit_message": "Editar",
+    "retry_message": "Reintentar"
   },
   "gmail_tools": {
     "buttons": {

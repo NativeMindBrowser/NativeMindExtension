@@ -4,13 +4,17 @@
       "thought_for_seconds": "{second}秒間考えています | {second}秒間考えています",
       "thinking": "考え中...",
       "reading": "読み込み中",
-      "search_locally": "ブラウザ内で検索中..."
+      "search_locally": "ブラウザ内で検索中...",
+      "used_model": "{model}を使用"
     },
     "quick_actions": {
       "title": "クイックアクション"
     },
     "thinking_mode": {
-      "label": "思考"
+      "label": "思考",
+      "low": "低",
+      "medium": "中",
+      "high": "高"
     },
     "input": {
       "placeholder": {
@@ -28,7 +32,9 @@
         "pdf_text_extract_error": "テキスト抽出に失敗しました - このPDFはスキャンされたものか画像ベースの可能性があります。",
         "too_many_pdfs": "最大{max}個のPDFファイルまで許可されています",
         "pdf_page_count_exceeded": "PDFは{max}ページ以下である必要があります",
-        "only_load_partial_pages": "ファイルサイズのため、最初の{max}ページのみが読み込まれました"
+        "only_load_partial_pages": "ファイルサイズのため、最初の{max}ページのみが読み込まれました",
+        "selected_text_prefix": "選択テキスト：",
+        "captured_page_prefix": "キャプチャページ："
       }
     },
     "prompt": {
@@ -417,7 +423,8 @@
       "years": "{year}年 | {year}年",
       "months": "{month}ヶ月 | {month}ヶ月"
     },
-    "confirm": "確認"
+    "confirm": "確認",
+    "send": "送信"
   },
   "ollama": {
     "sites": {
@@ -453,7 +460,10 @@
     "close": "閉じる",
     "chat_history": "歴史",
     "new_chat": "新しいチャット",
-    "back": "戻る"
+    "back": "戻る",
+    "copy_message": "メッセージをコピー",
+    "edit_message": "メッセージを編集",
+    "retry_message": "再試行"
   },
   "gmail_tools": {
     "buttons": {
