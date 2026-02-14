@@ -62,7 +62,7 @@ export default defineConfig({
     artifactTemplate: '{{name}}-{{packageVersion}}-{{browser}}-{{mode}}.zip',
   },
   exposeWebResources: {
-    paths: ['/assets/*.woff2', '/content-scripts/*.css', '/main-world-injected.js'],
+    paths: ['/assets/*.woff2', '/fonts/*.woff2', '/content-scripts/*.css', '/main-world-injected.js'],
   },
   vite: (_env) => {
     return {

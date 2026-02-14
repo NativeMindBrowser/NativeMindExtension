@@ -68,13 +68,9 @@ export function replaceFontFaceUrl(sheet: CSSStyleSheet, converter: (url: string
     if (rule instanceof CSSFontFaceRule) {
       const src = rule.style.getPropertyValue('src')
       if (src) {
-        const newSrc = src.split(',').map((url) => {
-          const match = url.match(/url\(['"]?([^'"]+)['"]?\)/)
-          if (match && match[1]) {
-            return `url('${converter(match[1])}')`
-          }
-          return url
-        }).join(', ')
+        const newSrc = src.replace(/url\(['"]?([^'")]+)['"]?\)/g, (_match, url) => {
+          return `url('${converter(url)}')`
+        })
         rule.style.setProperty('src', newSrc)
       }
     }
