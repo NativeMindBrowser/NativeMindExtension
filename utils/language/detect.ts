@@ -11,6 +11,30 @@ export const SUPPORTED_LANGUAGES = [
     code: 'es',
   },
   {
+    name: 'Français',
+    code: 'fr',
+  },
+  {
+    name: 'Deutsch',
+    code: 'de',
+  },
+  {
+    name: 'Português',
+    code: 'pt',
+  },
+  {
+    name: 'Italiano',
+    code: 'it',
+  },
+  {
+    name: 'Русский',
+    code: 'ru',
+  },
+  {
+    name: 'Nederlands',
+    code: 'nl',
+  },
+  {
     name: '日本語',
     code: 'ja',
   },
@@ -21,6 +45,22 @@ export const SUPPORTED_LANGUAGES = [
   {
     code: 'zh',
     name: '简体中文',
+  },
+  {
+    code: 'zh-TW',
+    name: '繁體中文',
+  },
+  {
+    code: 'tr',
+    name: 'Türkçe',
+  },
+  {
+    code: 'vi',
+    name: 'TiếngViệt',
+  },
+  {
+    code: 'th',
+    name: 'ภาษาไทย',
   },
 ] as const
 

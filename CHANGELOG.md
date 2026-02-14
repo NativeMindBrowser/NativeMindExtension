@@ -1,5 +1,37 @@
 # Changelog
 
+## v1.12.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.1...v1.12.2)
+
+### 🚀 Enhancements
+
+- Add Inter and InterDisplay font families with various styles and weights; update font paths in CSS and config; enhance font face URL handling in stylesheets ([5cec648](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5cec648))
+
+### 💅 Refactors
+
+- Streamline font face URL handling in stylesheets by consolidating extraction and replacement logic ([d9ab298](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d9ab298))
+
+### ❤️ Contributors
+
+- Tony Hu ([@tonyhu-012](http://github.com/tonyhu-012))
+
+## v1.12.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.1-beta.0...v1.12.1)
+
+## v1.12.1-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0...v1.12.1-beta.0)
+
+### 🩹 Fixes
+
+- Add more language entries to SUPPORTED_LANGUAGES for translation ([5d1a911](https://github.com/NativeMindBrowser/NativeMindExtension/commit/5d1a911))
+
+### ❤️ Contributors
+
+- Neko Liu <neko@xmind.org>
+
 ## v1.12.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.4...v1.12.0)

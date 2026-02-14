@@ -1,24 +1,47 @@
 import { createPinia } from 'pinia'
 import type { Component } from 'vue'
 import { createApp } from 'vue'
+import { browser, PublicPath } from 'wxt/browser'
 import { ContentScriptContext } from 'wxt/utils/content-script-context'
 import { createShadowRootUi } from 'wxt/utils/content-script-ui/shadow-root'
 
 import { initToast } from '@/composables/useToast'
 import { CONTENT_UI_SHADOW_ROOT_NAME } from '@/utils/constants'
-import { extractFontFace, injectStyleSheetToDocument, loadContentScriptStyleSheet } from '@/utils/css'
+import {
+  extractFontFace,
+  injectStyleSheetToDocument,
+  loadContentScriptStyleSheet,
+  replaceFontFaceUrl,
+} from '@/utils/css'
 import { createI18nInstance } from '@/utils/i18n/index'
 import logger from '@/utils/logger'
 
 async function loadStyleSheet(shadowRoot: ShadowRoot) {
-  const styleSheet = await loadContentScriptStyleSheet(import.meta.env.ENTRYPOINT)
+  const styleSheet = await loadContentScriptStyleSheet(
+    import.meta.env.ENTRYPOINT,
+  )
   injectStyleSheetToDocument(shadowRoot, styleSheet)
   // font-face can only be applied to the document, not the shadow root
-  const fontFaceStyleSheet = extractFontFace(styleSheet)
+  const fontFaceStyleSheet = replaceFontFaceUrl(extractFontFace(styleSheet), (url) => {
+    if (
+      url.startsWith('data:')
+      || url.startsWith('moz-extension://')
+      || url.startsWith('chrome-extension://')
+      || url.startsWith('http://')
+      || url.startsWith('https://')
+      || url.startsWith('blob:')
+    ) {
+      return url
+    }
+    return browser.runtime.getURL(url as PublicPath)
+  })
   injectStyleSheetToDocument(document, fontFaceStyleSheet)
 }
 
-export async function createShadowRootOverlay(ctx: ContentScriptContext, component: Component<{ rootElement: HTMLDivElement }>) {
+export async function createShadowRootOverlay(
+  ctx: ContentScriptContext,
+  component: Component<{ rootElement: HTMLDivElement }>,
+) {
   const existingUI = document.querySelector(CONTENT_UI_SHADOW_ROOT_NAME)
   if (existingUI) {
     try {
