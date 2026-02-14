@@ -45,7 +45,7 @@
               <slot name="closeButton">
                 <IconClose
                   v-if="!noCloseButton"
-                  class="z-50 text-fg-01-light dark:text-fg-03-light w-4 h-4"
+                  class="z-50 text-text-primary w-4 h-4"
                 />
               </slot>
             </div>

@@ -88,6 +88,11 @@
       "online_search": {
         "title": "Buscar"
       }
+    },
+    "camera": {
+      "permission_reload_title": "Recarga requerida",
+      "permission_reload_description": "Después de otorgar el permiso, vuelva a habilitar la extensión NativeMind en Firefox para habilitar la función de captura de pantalla.",
+      "reload_extension": "Recargar extensión"
     }
   },
   "chat_history": {
@@ -167,7 +172,7 @@
       "title": "¿No estás listo para instalar? Pruébalo al instante."
     },
     "welcome_msg": {
-      "body": "NativeMind es una extensión de navegador con IA que prioriza la privacidad y te ayuda a chatear, buscar y traducir — todo impulsado por modelos de lenguaje en el dispositivo.\n\nEsto es lo que puedes hacer con NativeMind:\n\n- Chatear en múltiples pestañas para hacer seguimiento de diferentes páginas.\n- Buscar en la web directamente dentro del chat para más contexto.\n- Hacer clic derecho para traducir cualquier parte de la página al instante.\n- Cambiar o descargar modelos en cualquier momento en Configuración.\n\nPuedes empezar probando las acciones rápidas a continuación.",
+      "body": "NativeMind se ejecuta completamente en tu dispositivo, manteniendo cada chat privado y seguro.\n\nEsto es lo que puedes hacer:\n- Chatear entre pestañas y mantener el contexto mientras navegas.\n- Resumir, buscar y traducir cualquier página web localmente.\n- Usar Agentes inteligentes para escribir, investigar o hacer análisis profundos.\n- Subir PDFs o imágenes para comprensión instantánea en el dispositivo.\n\nPuedes empezar probando las acciones rápidas a continuación.",
       "title": "👋 Bienvenido a **NativeMind**"
     },
     "ollama_is_running": "Ollama está ejecutándose",
@@ -470,6 +475,12 @@
       "ai_summary": "Resumen IA",
       "ai_reply": "Respuesta IA",
       "ai_polish": "Pulir con IA"
+    },
+    "modals": {
+      "open_sidebar_title": "Se requiere abrir la barra lateral",
+      "open_sidebar_description": "Por favor, abra manualmente la barra lateral de NativeMind para usar esta función.",
+      "confirm": "Aceptar",
+      "close": "Cerrar"
     },
     "cards": {
       "reply": {

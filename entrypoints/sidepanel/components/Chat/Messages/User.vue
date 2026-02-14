@@ -11,7 +11,8 @@
       </div>
       <div
         v-else
-        class="flex relative rounded-md border border-border-chat-input bg-bg-chat-input text-text-primary p-2 max-w-full min-w-[220px] focus-within:shadow-[0px_0px_0px_1px_var(--color-border-accent)] max-h-24"
+        class="flex relative rounded-md border border-border-chat-input bg-bg-chat-input text-text-primary p-2 max-w-full focus-within:shadow-[0px_0px_0px_1px_var(--color-border-accent)] max-h-24"
+        :style="{width: calcMinWidth}"
       >
         <ScrollContainer
           class="overflow-hidden w-full"
@@ -133,6 +134,8 @@ const emit = defineEmits<{
   (e: 'submitEdit', value: string): void
 }>()
 
+const isFirefox = import.meta.env.FIREFOX
+
 const { t } = useI18n()
 const draft = ref(props.message.displayContent ?? props.message.content)
 const editTextareaRef = ref<InstanceType<typeof AutoExpandTextArea>>()
@@ -146,6 +149,15 @@ const canSubmit = computed(() => draft.value.trim().length > 0)
 const ensureDraftFromMessage = () => {
   draft.value = props.message.displayContent ?? props.message.content
 }
+
+const calcMinWidth = computed(() => {
+  // For fixing firefox edit textarea cannot full width issue, if browser is firefox, use window width and it will auto clip and fill container
+
+  if (isFirefox) {
+    return `${window.innerWidth}px`
+  }
+  return 'auto'
+})
 
 watch(() => [props.message.displayContent, props.message.content], () => {
   if (!props.isEditing) ensureDraftFromMessage()

@@ -744,6 +744,10 @@ export async function showSidepanel() {
   }
 }
 
+export function isFirefoxSidebarOpen() {
+  return browser.sidebarAction.isOpen({})
+}
+
 function getTabCaptureMediaStreamId(tabId: number, consumerTabId?: number) {
   return new Promise<string | undefined>((resolve, reject) => {
     browser.tabCapture.getMediaStreamId(
@@ -762,8 +766,9 @@ function getTabCaptureMediaStreamId(tabId: number, consumerTabId?: number) {
 }
 
 function captureVisibleTab(options?: Browser.tabs.CaptureVisibleTabOptions) {
-  const cachedWindowId = BackgroundWindowManager.getCurrentWindowId()
+  // For firefox, some feature need reload extension after permission granted
   browser.permissions.request({ origins: ['<all_urls>'] })
+  const cachedWindowId = BackgroundWindowManager.getCurrentWindowId()
   if (cachedWindowId) {
     const screenCaptureBase64Url = browser.tabs.captureVisibleTab(cachedWindowId, options ?? {})
     return screenCaptureBase64Url
@@ -1162,6 +1167,7 @@ export const backgroundFunctions = {
   getPinnedChats,
   clearAllChatHistory,
   showSidepanel,
+  isFirefoxSidebarOpen,
   showSettings: showSettingsForBackground,
   updateSidepanelModelList,
   forwardGmailAction,

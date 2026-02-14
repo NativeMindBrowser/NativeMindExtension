@@ -10,6 +10,7 @@ interface FakeBrowserOptions {
     usage: number
   }
   fakeAcceptedLanguages?: string[]
+  fakeUILanguage?: string
 }
 
 export function resetFakeBrowser(options: FakeBrowserOptions = {}) {
@@ -28,6 +29,7 @@ export function resetFakeBrowser(options: FakeBrowserOptions = {}) {
   // @ts-expect-error - for test env
   browser.i18n = {
     getAcceptLanguages: () => options.fakeAcceptedLanguages ?? ['en'],
+    getUILanguage: () => options.fakeUILanguage ?? 'en',
   }
 }
 

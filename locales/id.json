@@ -88,6 +88,11 @@
       "online_search": {
         "title": "Cari"
       }
+    },
+    "camera": {
+      "permission_reload_title": "Muat ulang diperlukan",
+      "permission_reload_description": "Setelah memberikan izin, silakan aktifkan kembali ekstensi NativeMind di Firefox untuk mengaktifkan fitur tangkapan layar.",
+      "reload_extension": "Muat ulang ekstensi"
     }
   },
   "chat_history": {
@@ -143,7 +148,7 @@
     },
     "welcome_msg": {
       "title": "👋 Selamat datang di **NativeMind**",
-      "body": "NativeMind adalah ekstensi browser AI yang mengutamakan privasi dan membantu Anda mengobrol, mencari, dan menerjemahkan — semuanya didukung oleh model bahasa yang berjalan di perangkat Anda.\n\nInilah yang dapat Anda lakukan dengan NativeMind:\n\n- Mengobrol di beberapa tab untuk melacak berbagai halaman.\n- Mencari di web secara langsung dalam obrolan untuk mendapatkan konteks lebih banyak.\n- Klik kanan untuk menerjemahkan bagian mana pun dari halaman secara instan.\n- Beralih atau mengunduh model kapan saja di Pengaturan.\n\nAnda dapat mulai dengan mencoba tindakan cepat di bawah ini."
+      "body": "NativeMind berjalan sepenuhnya di perangkat Anda, menjaga setiap obrolan tetap privat dan aman.\n\nBerikut yang dapat Anda lakukan:\n- Mengobrol di berbagai tab dan menjaga konteks saat Anda menjelajah.\n- Meringkas, mencari, dan menerjemahkan halaman web apa pun secara lokal.\n- Menggunakan Agen cerdas untuk menulis, riset, atau analisis mendalam.\n- Mengunggah PDF atau gambar untuk pemahaman instan di perangkat.\n\nAnda dapat memulai dengan mencoba tindakan cepat di bawah ini."
     },
     "ollama_is_running": "Ollama sedang berjalan",
     "backend_is_running": "{endpointType} sedang berjalan"
@@ -470,6 +475,12 @@
       "ai_summary": "Ringkasan AI",
       "ai_reply": "Balasan AI",
       "ai_polish": "Poles AI"
+    },
+    "modals": {
+      "open_sidebar_title": "Perlu Membuka Sidebar",
+      "open_sidebar_description": "Silakan buka sidebar NativeMind secara manual untuk menggunakan fitur ini.",
+      "confirm": "OK",
+      "close": "Tutup"
     },
     "cards": {
       "reply": {

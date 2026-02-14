@@ -88,6 +88,11 @@
       "online_search": {
         "title": "Tìm kiếm"
       }
+    },
+    "camera": {
+      "permission_reload_title": "Cần tải lại",
+      "permission_reload_description": "Sau khi cấp quyền, vui lòng kích hoạt lại tiện ích mở rộng NativeMind trong Firefox để bật tính năng chụp ảnh màn hình.",
+      "reload_extension": "Tải lại tiện ích mở rộng"
     }
   },
   "chat_history": {
@@ -143,7 +148,7 @@
     },
     "welcome_msg": {
       "title": "👋 Chào mừng bạn đến với **NativeMind**",
-      "body": "NativeMind là tiện ích mở rộng trình duyệt AI đầu tiên riêng tư giúp bạn trò chuyện, tìm kiếm và dịch - tất cả được cung cấp bởi các mô hình ngôn ngữ trên thiết bị.\n\nĐây là những gì bạn có thể làm với NativeMind:\n\n- Trò chuyện qua nhiều tab để theo dõi các trang khác nhau.\n- Tìm kiếm web trực tiếp trong trò chuyện để biết thêm bối cảnh.\n- Nhấp chuột phải để dịch bất kỳ phần nào của trang ngay lập tức.\n- Chuyển đổi hoặc tải xuống mô hình bất cứ lúc nào trong cài đặt.\n\nBạn có thể bắt đầu bằng cách thử các thao tác nhanh dưới đây."
+      "body": "NativeMind chạy hoàn toàn trên thiết bị của bạn, giữ cho mọi cuộc trò chuyện riêng tư và an toàn.\n\nĐây là những gì bạn có thể làm:\n- Trò chuyện qua các tab và giữ nguyên ngữ cảnh khi bạn duyệt web.\n- Tóm tắt, tìm kiếm và dịch bất kỳ trang web nào trên máy.\n- Sử dụng các Tác nhân thông minh để viết, nghiên cứu hoặc phân tích sâu.\n- Tải lên PDF hoặc hình ảnh để hiểu ngay lập tức trên thiết bị.\n\nBạn có thể bắt đầu bằng cách thử các thao tác nhanh bên dưới."
     },
     "ollama_is_running": "Ollama đang chạy",
     "backend_is_running": "{endpointType} đang chạy"
@@ -470,6 +475,12 @@
       "ai_summary": "Tóm tắt AI",
       "ai_reply": "Trả lời AI",
       "ai_polish": "Hoàn thiện AI"
+    },
+    "modals": {
+      "open_sidebar_title": "Cần mở thanh bên",
+      "open_sidebar_description": "Vui lòng mở thanh bên NativeMind theo cách thủ công để sử dụng tính năng này.",
+      "confirm": "OK",
+      "close": "Đóng"
     },
     "cards": {
       "reply": {

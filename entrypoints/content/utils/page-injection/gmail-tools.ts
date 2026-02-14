@@ -13,13 +13,17 @@ import { getUserConfig } from '@/utils/user-config'
 
 import { useGmailDetector } from '../../composables/useGmailDetector'
 import { EmailExtractor } from '../gmail/email-extractor'
+import ImgOpenToClickBase64 from './base64/clickToOpen'
 
 const logger = Logger.child('gmail-tools')
 const NATIVEMIND_GMAIL_SUMMARY_BUTTON_CLASS = 'nativemind-gmail-summary-btn'
 const NATIVEMIND_GMAIL_REPLY_BUTTON_CLASS = 'nativemind-gmail-reply-btn'
 const NATIVEMIND_GMAIL_COMPOSE_BUTTON_CLASS = 'nativemind-gmail-compose-btn'
+const NATIVEMIND_GMAIL_SIDEPANEL_MODAL_CLASS = 'nativemind-gmail-sidepanel-modal'
+const isFirefox = import.meta.env.FIREFOX
 
 const LogoIcon = LogoSvg.replace('<svg', '<svg width="14" height="14" style="display: block;"')
+const LogoIconM = LogoSvg.replace('<svg', '<svg width="20" height="20" style="display: block;"')
 
 type GmailButtonThemeColors = {
   background: string
@@ -58,9 +62,312 @@ const GMAIL_BUTTON_THEME_COLORS: Record<ThemeType, GmailButtonThemeColors> = {
   },
 }
 
+type GmailModalThemeColors = {
+  overlayBg: string
+  modalBg: string
+  modalText: string
+  modalTextSecondary: string
+  borderColor: string
+  buttonPrimaryBg: string
+  buttonPrimaryText: string
+  buttonPrimaryHoverBg: string
+  buttonSecondaryBg: string
+  buttonSecondaryText: string
+  buttonSecondaryHoverBg: string
+  shadow: string
+}
+
+const GMAIL_MODAL_THEME_COLORS: Record<ThemeType, GmailModalThemeColors> = {
+  light: {
+    overlayBg: 'rgba(0, 0, 0, 0.55)',
+    modalBg: '#FFFFFF',
+    modalText: '#1f2326',
+    modalTextSecondary: '#5F6368',
+    borderColor: 'rgba(0, 0, 0, 0.12)',
+    buttonPrimaryBg: '#1F2326',
+    buttonPrimaryText: '#FFFFFF',
+    buttonPrimaryHoverBg: '#3C4043',
+    buttonSecondaryBg: '#F8F9FA',
+    buttonSecondaryText: '#1f2326',
+    buttonSecondaryHoverBg: '#F0F0F0',
+    shadow: '0px 8px 24px rgba(0, 0, 0, 0.15)',
+  },
+  dark: {
+    overlayBg: 'rgba(0, 0, 0, 0.75)',
+    modalBg: '#1F2326',
+    modalText: '#E8EAED',
+    modalTextSecondary: '#9AA0A6',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+    buttonPrimaryBg: '#8AB4F8',
+    buttonPrimaryText: '#1F2326',
+    buttonPrimaryHoverBg: '#AECBFA',
+    buttonSecondaryBg: '#3C4043',
+    buttonSecondaryText: '#E8EAED',
+    buttonSecondaryHoverBg: '#5F6368',
+    shadow: '0px 8px 24px rgba(0, 0, 0, 0.5)',
+  },
+}
+
 type GmailButtonStyleOptions = {
   includeSpinner?: boolean
   extraBaseRules?: string
+}
+
+function buildGmailModalStyles() {
+  const lightColors = GMAIL_MODAL_THEME_COLORS.light
+  const darkColors = GMAIL_MODAL_THEME_COLORS.dark
+
+  return `
+.nativemind-gmail-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: ${lightColors.overlayBg};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  animation: nativemind-fade-in 0.2s ease-in-out;
+}
+
+.nativemind-gmail-modal-overlay[data-nm-theme="dark"] {
+  background: ${darkColors.overlayBg};
+}
+
+.nativemind-gmail-sidepanel-modal {
+  background: ${lightColors.modalBg};
+  color: ${lightColors.modalText};
+  border-radius: 12px;
+  box-shadow: ${lightColors.shadow};
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  animation: nativemind-slide-up 0.3s ease-out;
+}
+
+.nativemind-gmail-sidepanel-modal[data-nm-theme="dark"] {
+  background: ${darkColors.modalBg};
+  color: ${darkColors.modalText};
+  box-shadow: ${darkColors.shadow};
+}
+
+.nativemind-gmail-sidepanel-modal .modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nativemind-gmail-sidepanel-modal .modal-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.nativemind-gmail-sidepanel-modal .modal-description {
+  font-size: 14px;
+  color: ${lightColors.modalTextSecondary};
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+.nativemind-gmail-sidepanel-modal[data-nm-theme="dark"] .modal-description {
+  color: ${darkColors.modalTextSecondary};
+}
+
+.nativemind-gmail-sidepanel-modal .modal-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 20px 0;
+}
+
+.nativemind-gmail-sidepanel-modal .modal-image {
+  width: 50%;
+  height: auto;
+  display: block;
+}
+
+.nativemind-gmail-sidepanel-modal .modal-divider {
+  height: 1px;
+  background: ${lightColors.borderColor};
+  margin: 16px 0;
+}
+
+.nativemind-gmail-sidepanel-modal[data-nm-theme="dark"] .modal-divider {
+  background: ${darkColors.borderColor};
+}
+
+.nativemind-gmail-sidepanel-modal .modal-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.nativemind-gmail-sidepanel-modal .modal-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  white-space: nowrap;
+}
+
+.nativemind-gmail-sidepanel-modal .modal-button-primary {
+  background: ${lightColors.buttonPrimaryBg};
+  color: ${lightColors.buttonPrimaryText};
+}
+
+.nativemind-gmail-sidepanel-modal .modal-button-primary:hover {
+  background: ${lightColors.buttonPrimaryHoverBg};
+}
+
+.nativemind-gmail-sidepanel-modal[data-nm-theme="dark"] .modal-button-primary {
+  background: ${darkColors.buttonPrimaryBg};
+  color: ${darkColors.buttonPrimaryText};
+}
+
+.nativemind-gmail-sidepanel-modal[data-nm-theme="dark"] .modal-button-primary:hover {
+  background: ${darkColors.buttonPrimaryHoverBg};
+}
+
+.nativemind-gmail-sidepanel-modal .modal-button-secondary {
+  background: ${lightColors.buttonSecondaryBg};
+  color: ${lightColors.buttonSecondaryText};
+}
+
+.nativemind-gmail-sidepanel-modal .modal-button-secondary:hover {
+  background: ${lightColors.buttonSecondaryHoverBg};
+}
+
+.nativemind-gmail-sidepanel-modal[data-nm-theme="dark"] .modal-button-secondary {
+  background: ${darkColors.buttonSecondaryBg};
+  color: ${darkColors.buttonSecondaryText};
+}
+
+.nativemind-gmail-sidepanel-modal[data-nm-theme="dark"] .modal-button-secondary:hover {
+  background: ${darkColors.buttonSecondaryHoverBg};
+}
+
+@keyframes nativemind-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes nativemind-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+`
+}
+
+function ensureGmailModalStyle() {
+  const styleId = 'nativemind-gmail-modal-styles'
+  const existingStyle = document.getElementById(styleId)
+  if (existingStyle) {
+    return
+  }
+  const styleEl = document.createElement('style')
+  styleEl.id = styleId
+  styleEl.textContent = buildGmailModalStyles()
+  document.head.appendChild(styleEl)
+}
+
+function makeOpenSidebarModal(titleText: string, descriptionText: string, openText: string, closeText: string, onOpen: () => void) {
+  const currentTheme = getDocumentTheme()
+
+  // Create overlay
+  const overlay = document.createElement('div')
+  overlay.className = 'nativemind-gmail-modal-overlay'
+  overlay.setAttribute('data-nm-theme', currentTheme)
+
+  // Create modal container
+  const modal = document.createElement('div')
+  modal.className = NATIVEMIND_GMAIL_SIDEPANEL_MODAL_CLASS
+  modal.setAttribute('data-nm-theme', currentTheme)
+
+  // Create title
+  const titleEl = document.createElement('div')
+  titleEl.className = 'modal-title'
+  titleEl.innerHTML = `
+    ${LogoIconM}
+    <span>${titleText}</span>
+  `
+
+  // Create description
+  const descriptionEl = document.createElement('div')
+  descriptionEl.className = 'modal-description'
+  descriptionEl.textContent = descriptionText
+
+  // Create image container
+  const imageContainer = document.createElement('div')
+  imageContainer.className = 'modal-image-container'
+  const img = document.createElement('img')
+  img.src = `data:image/png;base64,${ImgOpenToClickBase64}`
+  img.alt = 'Click extension to open sidebar'
+  img.className = 'modal-image'
+  imageContainer.appendChild(img)
+
+  // Create divider
+  const divider = document.createElement('div')
+  divider.className = 'modal-divider'
+
+  // Create buttons container
+  const buttonsContainer = document.createElement('div')
+  buttonsContainer.className = 'modal-buttons'
+
+  // Create close button
+  const closeBtn = document.createElement('button')
+  closeBtn.className = 'modal-button modal-button-secondary'
+  closeBtn.textContent = closeText
+  closeBtn.addEventListener('click', () => {
+    overlay.remove()
+  })
+
+  // Create open button
+  const openBtn = document.createElement('button')
+  openBtn.className = 'modal-button modal-button-primary'
+  openBtn.textContent = openText
+  openBtn.addEventListener('click', () => {
+    onOpen()
+    overlay.remove()
+  })
+
+  buttonsContainer.appendChild(closeBtn)
+  buttonsContainer.appendChild(openBtn)
+
+  // Assemble modal
+  modal.appendChild(titleEl)
+  modal.appendChild(descriptionEl)
+  modal.appendChild(imageContainer)
+  modal.appendChild(divider)
+  modal.appendChild(buttonsContainer)
+
+  // Close on overlay click
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.remove()
+    }
+  })
+
+  overlay.appendChild(modal)
+
+  return overlay
 }
 
 function buildGmailButtonStyles(className: string, options: GmailButtonStyleOptions = {}) {
@@ -183,7 +490,7 @@ function ensureGmailButtonStyle(styleId: string, className: string, options?: Gm
   document.head.appendChild(styleEl)
 }
 
-function makeSummaryButton(threadElement: HTMLElement, buttonText: string, externalStyle?: string) {
+function makeSummaryButton(threadElement: HTMLElement, buttonText: string, externalStyle?: string, t?: (key: string) => string) {
   const button = document.createElement('button')
   button.innerHTML = `
     ${LogoIcon}
@@ -207,7 +514,32 @@ function makeSummaryButton(threadElement: HTMLElement, buttonText: string, exter
     ev.stopImmediatePropagation()
     ev.preventDefault()
 
-    await toggleContainer()
+    if (isFirefox) {
+      // if sidebar is closed, show dialog to notify user open it
+      const isSidebarOpen = await c2bRpc.isFirefoxSidebarOpen()
+      if (!isSidebarOpen) {
+        // Show dialog to notify user to open sidebar
+        if (t) {
+          ensureGmailModalStyle()
+          const modal = makeOpenSidebarModal(
+            t('gmail_tools.modals.open_sidebar_title'),
+            t('gmail_tools.modals.open_sidebar_description'),
+            t('gmail_tools.modals.confirm'),
+            t('gmail_tools.modals.close'),
+            async () => {
+              // User clicked "Open Sidebar" - trigger the sidebar open
+              await toggleContainer()
+            },
+          )
+          document.body.appendChild(modal)
+        }
+        return
+      }
+      // Otherwise, continue
+    }
+    else {
+      await toggleContainer()
+    }
 
     // wait 2 seconds for sidepanel to load
     await sleep(2000)
@@ -427,7 +759,7 @@ function injectComposeButton(buttonText: string) {
   })
 }
 
-function injectSummaryButton(currentThreadElement: HTMLElement | null, buttonText: string) {
+function injectSummaryButton(currentThreadElement: HTMLElement | null, buttonText: string, t?: (key: string) => string) {
   if (location.hostname !== 'mail.google.com' || !currentThreadElement) return
 
   // Check if our summary button already exists in this thread
@@ -439,12 +771,12 @@ function injectSummaryButton(currentThreadElement: HTMLElement | null, buttonTex
   const injectionInfo = findSummaryButtonInjectionPoint(currentThreadElement)
   if (injectionInfo) {
     if (injectionInfo.insertAfter) {
-      const summaryButton = makeSummaryButton(currentThreadElement, buttonText, 'margin: 8px 0 0 72px') // align with title
+      const summaryButton = makeSummaryButton(currentThreadElement, buttonText, 'margin: 8px 0 0 72px', t) // align with title
       // Insert after the specified element (Rule 2)
       injectionInfo.insertAfter.insertAdjacentElement('afterend', summaryButton)
     }
     else {
-      const summaryButton = makeSummaryButton(currentThreadElement, buttonText)
+      const summaryButton = makeSummaryButton(currentThreadElement, buttonText, undefined, t)
       // Append to parent (Rule 1)
       injectionInfo.parent.appendChild(summaryButton)
     }
@@ -476,7 +808,7 @@ export function useInjectGmailSummaryButtons() {
     // Watch for currentThread changes and inject when it changes
     watchEffect(() => {
       if (currentThread.value?.element) {
-        injectSummaryButton(currentThread.value.element, t('gmail_tools.buttons.ai_summary'))
+        injectSummaryButton(currentThread.value.element, t('gmail_tools.buttons.ai_summary'), t)
       }
     })
   }

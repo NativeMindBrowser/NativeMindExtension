@@ -277,6 +277,11 @@
         "captured_page_prefix": "Page Captured:"
       }
     },
+    "camera": {
+      "permission_reload_title": "Reload Required",
+      "permission_reload_description": "After granting permission, please re-enable the NativeMind extension in Firefox to enable the screenshot feature.",
+      "reload_extension": "Reload Extension"
+    },
     "prompt": {
       "summarize_page_content": {
         "title": "Summarize the page"
@@ -383,7 +388,7 @@
     },
     "welcome_msg": {
       "title": "👋 Welcome to **NativeMind**",
-      "body": "NativeMind is a privacy-first AI browser extension that helps you chat, search, and translate — all powered by on-device language models.\n\nHere’s what you can do with NativeMind:\n\n\n- Chat across multiple tabs to keep track of different pages.\n- Search the web directly within the chat for more context.\n- Right-click to translate any part of the page instantly.\n- Switch or download models anytime in Settings.\n\nYou can start by trying out the quick actions below."
+      "body": "NativeMind runs entirely on your device, keeping every chat private and secure.\n\nHere's what you can do:\n- Chat across tabs and keep context as you browse.\n- Summarize, search, and translate any webpage locally.\n- Use smart Agents for writing, research, or deep analysis.\n- Upload PDFs or images for instant on-device understanding.\n\nYou can start by trying out the quick actions below."
     },
     "ollama_is_running": "Ollama is running",
     "backend_is_running": "{endpointType} is running"
@@ -470,6 +475,12 @@
       "ai_summary": "AI Summary",
       "ai_reply": "AI Reply",
       "ai_polish": "AI Polish"
+    },
+    "modals": {
+      "open_sidebar_title": "Open Sidebar Required",
+      "open_sidebar_description": "Please manually open the NativeMind Sidebar to use this feature.",
+      "confirm": "OK",
+      "close": "Close"
     },
     "cards": {
       "reply": {

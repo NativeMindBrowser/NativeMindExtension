@@ -33,3 +33,16 @@ export async function getAcceptLanguages<L extends string>(languages: L[], fallb
   }
   return fallback
 }
+
+/**
+ * get current browser UI language, if matched, normalize and return it
+ * @returns the normalized browser locale string
+ */
+export function useCurrentBrowserLocale<L extends string>(languages: L[], fallback: L): L {
+  const currentLocale = browser.i18n.getUILanguage()
+  const normalizedLocale = normalizeLocale(currentLocale)
+  if (languages.includes(normalizedLocale as L)) {
+    return normalizedLocale as L
+  }
+  return fallback
+}

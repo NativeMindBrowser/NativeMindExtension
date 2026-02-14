@@ -88,6 +88,11 @@
       "online_search": {
         "title": "検索"
       }
+    },
+    "camera": {
+      "permission_reload_title": "再読み込みが必要です",
+      "permission_reload_description": "権限を付与した後、スクリーンショット機能を有効にするためにFirefoxでNativeMind拡張機能を再度有効にしてください。",
+      "reload_extension": "拡張機能を再読み込み"
     }
   },
   "chat_history": {
@@ -143,7 +148,7 @@
     },
     "welcome_msg": {
       "title": "👋 **NativeMind** へようこそ",
-      "body": "NativeMindは、プライバシー重視のAIブラウザ拡張機能で、オンデバイス言語モデルを活用したチャット、検索、翻訳機能を提供します。\n\nNativeMindでできることは次のとおりです：\n\n- 複数のタブでチャットし、異なるページを管理できます。\n- チャット内で直接ウェブ検索を行い、より多くのコンテキストを得られます。\n- 右クリックでページの任意の部分を即座に翻訳できます。\n- 設定からいつでもモデルの切り替えやダウンロードが可能です。\n\n下記のクイックアクションを試してみましょう。"
+      "body": "NativeMindは完全にお使いのデバイス上で動作し、すべてのチャットをプライベートかつ安全に保ちます。\n\nできることは次のとおりです：\n- タブを跨いでチャットし、閲覧中にコンテキストを保持します。\n- 任意のウェブページをローカルで要約、検索、翻訳します。\n- ライティング、リサーチ、深い分析のためにスマートエージェントを使用します。\n- PDFや画像をアップロードして、デバイス上で即座に理解します。\n\n下記のクイックアクションから始めることができます。"
     },
     "ollama_is_running": "Ollamaが実行中です",
     "backend_is_running": "{endpointType}が実行中です"
@@ -470,6 +475,12 @@
       "ai_summary": "AI要約",
       "ai_reply": "AI返信",
       "ai_polish": "AI添削"
+    },
+    "modals": {
+      "open_sidebar_title": "サイドバーを開く必要があります",
+      "open_sidebar_description": "この機能を使用するには、NativeMind サイドバーを手動で開いてください。",
+      "confirm": "OK",
+      "close": "閉じる"
     },
     "cards": {
       "reply": {

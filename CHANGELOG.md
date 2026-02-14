@@ -1,5 +1,80 @@
 # Changelog
 
+## v1.12.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.4...v1.12.0)
+
+## v1.12.0-beta.4
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.3...v1.12.0-beta.4)
+
+### 🩹 Fixes
+
+- Update welcome message formatting in multiple locale files ([289a966](https://github.com/NativeMindBrowser/NativeMindExtension/commit/289a966))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.12.0-beta.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.2...v1.12.0-beta.3)
+
+### 💅 Refactors
+
+- Use current browser lang as extension default lang on first installation ([d2ce4b6](https://github.com/NativeMindBrowser/NativeMindExtension/commit/d2ce4b6))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.12.0-beta.2
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.1...v1.12.0-beta.2)
+
+### 🩹 Fixes
+
+- Add function to check if Firefox sidebar is open ([e10b6c5](https://github.com/NativeMindBrowser/NativeMindExtension/commit/e10b6c5))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.12.0-beta.1
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.0-beta.0...v1.12.0-beta.1)
+
+### 🚀 Enhancements
+
+- Update welcome message ([acbf3e0](https://github.com/NativeMindBrowser/NativeMindExtension/commit/acbf3e0))
+- Add sidebar modal for Firefox users ([6b9f88e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/6b9f88e))
+
+### 🩹 Fixes
+
+- Update IconClose class in Modal and adjust IconCamera size in PermissionReloadModal ([f0287ca](https://github.com/NativeMindBrowser/NativeMindExtension/commit/f0287ca))
+- Correct permissions assignment for Firefox and other browsers ([8644c7e](https://github.com/NativeMindBrowser/NativeMindExtension/commit/8644c7e))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
+## v1.12.0-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0...v1.12.0-beta.0)
+
+### 🚀 Enhancements
+
+- Add permission reload modal for Firefox and update localization strings ([b8eddec](https://github.com/NativeMindBrowser/NativeMindExtension/commit/b8eddec))
+
+### 🩹 Fixes
+
+- Enhance AutoExpandTextArea width handling and add minimum width calculation for Firefox ([0d9e92a](https://github.com/NativeMindBrowser/NativeMindExtension/commit/0d9e92a))
+- Improve capture handling in CameraButton and ensure permission request is processed correctly ([bf8b882](https://github.com/NativeMindBrowser/NativeMindExtension/commit/bf8b882))
+
+### ❤️ Contributors
+
+- NekoWings ([@NekoWings](http://github.com/NekoWings))
+
 ## v1.11.0
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.11.0-beta.7...v1.11.0)
