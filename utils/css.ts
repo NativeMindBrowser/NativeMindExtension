@@ -64,18 +64,18 @@ export function createStyleSheetByCssText(cssText: string) {
 }
 
 export function replaceFontFaceUrl(sheet: CSSStyleSheet, converter: (url: string) => string) {
+  let cssText = ''
   for (const rule of sheet.cssRules) {
     if (rule instanceof CSSFontFaceRule) {
-      const src = rule.style.getPropertyValue('src')
-      if (src) {
-        const newSrc = src.replace(/url\(['"]?([^'")]+)['"]?\)/g, (_match, url) => {
-          return `url('${converter(url)}')`
-        })
-        rule.style.setProperty('src', newSrc)
-      }
+      cssText += rule.cssText.replace(/url\(['"]?([^'")]+)['"]?\)/g, (_match, url) => {
+        return `url('${converter(url)}')`
+      }) + '\n'
+    }
+    else {
+      cssText += rule.cssText + '\n'
     }
   }
-  return sheet
+  return createStyleSheetByCssText(cssText)
 }
 
 export function extractFontFace(sheet: CSSStyleSheet) {

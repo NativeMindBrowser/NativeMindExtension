@@ -22,11 +22,7 @@ async function loadStyleSheet(shadowRoot: ShadowRoot) {
   )
   injectStyleSheetToDocument(shadowRoot, styleSheet)
   // font-face can only be applied to the document, not the shadow root
-  const fontFaceStyleSheet = extractFontFace(styleSheet)
-  // Content script stylesheets are parsed via new CSSStyleSheet() + replaceSync(),
-  // so @font-face URLs (e.g. /fonts/Inter.woff2) resolve against the page URL
-  // instead of the extension URL. Convert to absolute extension URLs.
-  replaceFontFaceUrl(fontFaceStyleSheet, (url) => {
+  const fontFaceStyleSheet = replaceFontFaceUrl(extractFontFace(styleSheet), (url) => {
     if (
       url.startsWith('data:')
       || url.startsWith('moz-extension://')
