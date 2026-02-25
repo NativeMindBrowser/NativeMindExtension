@@ -16,7 +16,7 @@ import { s2bRpc } from '@/utils/rpc'
 import { getUserConfig } from '@/utils/user-config'
 const log = logger.child('llm')
 
-const DEFAULT_PENDING_TIMEOUT = 60_000 // 60 seconds
+const DEFAULT_PENDING_TIMEOUT = 120_000 // 120 seconds
 
 interface ExtraOptions {
   abortSignal?: AbortSignal
