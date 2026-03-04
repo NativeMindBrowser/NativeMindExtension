@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.12.3
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.2...v1.12.3)
+
+### 🩹 Fixes
+
+- Increase first-token pending timeout to 120s ([2eaafa4](https://github.com/NativeMindBrowser/NativeMindExtension/commit/2eaafa4))
+
+### ❤️ Contributors
+
+- Neko Liu <neko@xmind.org>
+
 ## v1.12.2
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.1...v1.12.2)
