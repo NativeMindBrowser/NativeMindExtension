@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import IconOpenAILogo from '@/assets/icons/model-logo-openai.svg?component'
 import Checkbox from '@/components/Checkbox.vue'
 import Input from '@/components/Input.vue'
 import ScrollTarget from '@/components/ScrollTarget.vue'
@@ -78,6 +79,16 @@ const useOpenAI = () => {
     title="OpenAI API"
     collapsible
   >
+    <template #title>
+      <div class="flex items-center gap-3">
+        <div class="size-6 rounded-md flex items-center justify-center overflow-hidden shadow-02">
+          <IconOpenAILogo class="size-5" />
+        </div>
+        <span class="font-medium text-base">
+          OpenAI API
+        </span>
+      </div>
+    </template>
     <div class="flex flex-col gap-4">
       <Section>
         <div class="flex items-center justify-between gap-3">

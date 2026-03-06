@@ -7,6 +7,9 @@ import LogoDeepseekUrl from '@/assets/icons/model-logo-deepseek.svg?url'
 import LogoFallback from '@/assets/icons/model-logo-fallback.svg?component'
 import LogoFallbackSvg from '@/assets/icons/model-logo-fallback.svg?raw'
 import LogoFallbackUrl from '@/assets/icons/model-logo-fallback.svg?url'
+import LogoGemini from '@/assets/icons/model-logo-gemini.svg?component'
+import LogoGeminiSvg from '@/assets/icons/model-logo-gemini.svg?raw'
+import LogoGeminiUrl from '@/assets/icons/model-logo-gemini.svg?url'
 import LogoGemma from '@/assets/icons/model-logo-gemma.svg?component'
 import LogoGemmaSvg from '@/assets/icons/model-logo-gemma.svg?raw'
 import LogoGemmaUrl from '@/assets/icons/model-logo-gemma.svg?url'
@@ -19,6 +22,9 @@ import LogoLlavaUrl from '@/assets/icons/model-logo-llava.svg?url'
 import LogoMistral from '@/assets/icons/model-logo-mistral.svg?component'
 import LogoMistralSvg from '@/assets/icons/model-logo-mistral.svg?raw'
 import LogoMistralUrl from '@/assets/icons/model-logo-mistral.svg?url'
+import LogoOpenai from '@/assets/icons/model-logo-openai.svg?component'
+import LogoOpenaiSvg from '@/assets/icons/model-logo-openai.svg?raw'
+import LogoOpenaiUrl from '@/assets/icons/model-logo-openai.svg?url'
 import LogoPhi from '@/assets/icons/model-logo-phi.svg?component'
 import LogoPhiSvg from '@/assets/icons/model-logo-phi.svg?raw'
 import LogoPhiUrl from '@/assets/icons/model-logo-phi.svg?url'
@@ -38,6 +44,12 @@ const matcher = [
     component: LogoDeepseek,
     svg: LogoDeepseekSvg,
     url: LogoDeepseekUrl,
+  },
+  {
+    match: /gemini/i,
+    component: LogoGemini,
+    svg: LogoGeminiSvg,
+    url: LogoGeminiUrl,
   },
   {
     match: /gemma/i,
@@ -68,6 +80,12 @@ const matcher = [
     component: LogoLlava,
     svg: LogoLlavaSvg,
     url: LogoLlavaUrl,
+  },
+  {
+    match: /openai|chatgpt|gpt-|^o[1-9](?:$|[-_])/i,
+    component: LogoOpenai,
+    svg: LogoOpenaiSvg,
+    url: LogoOpenaiUrl,
   },
   {
     match: /phi/i,
