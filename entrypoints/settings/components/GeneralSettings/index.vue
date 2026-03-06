@@ -28,6 +28,7 @@
     <div class="flex flex-col gap-4">
       <OllamaConfiguration :scrollTarget="settingsQuery.scrollTarget.value" />
       <LMStudioConfiguration :scrollTarget="settingsQuery.scrollTarget.value" />
+      <GeminiConfiguration :scrollTarget="settingsQuery.scrollTarget.value" />
       <Block :title="t('settings.interface.title')">
         <div class="flex flex-col gap-4">
           <Section
@@ -71,6 +72,7 @@ import BlockTitle from '../BlockTitle.vue'
 import DownloadConfirmModal from '../OllamaDownloadModal.vue'
 import Section from '../Section.vue'
 import DownloadWebLLMModel from '../WebLLMDownloadModal.vue'
+import GeminiConfiguration from './Blocks/GeminiConfiguration.vue'
 import LMStudioConfiguration from './Blocks/LMStudioConfiguration.vue'
 import OllamaConfiguration from './Blocks/OllamaConfiguration.vue'
 

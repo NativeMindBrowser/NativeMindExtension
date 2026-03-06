@@ -73,7 +73,11 @@ async function _useTranslator() {
         const { status, endpointType } = await llmBackendStatusStore.checkCurrentBackendStatus()
         if (status === 'backend-unavailable') {
           toast('Failed to connect to Ollama server, please check your Ollama connection', { duration: 2000 })
-          endpointType === 'ollama' ? showSettings({ scrollTarget: `ollama-server-address-section` }) : showSettings({ scrollTarget: `lm-studio-server-address-section` })
+          endpointType === 'ollama'
+            ? showSettings({ scrollTarget: 'ollama-server-address-section' })
+            : endpointType === 'lm-studio'
+              ? showSettings({ scrollTarget: 'lm-studio-server-address-section' })
+              : showSettings({ scrollTarget: 'gemini-api-config-section' })
           return
         }
         else if (status === 'no-model') {

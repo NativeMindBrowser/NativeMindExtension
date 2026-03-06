@@ -1,3 +1,4 @@
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
 import { LanguageModelV1, wrapLanguageModel } from 'ai'
 
 import type { ReasoningOption } from '@/types/reasoning'
@@ -6,6 +7,7 @@ import { getUserConfig } from '@/utils/user-config'
 import { ModelNotFoundError } from '../error'
 import { makeCustomFetch } from '../fetch'
 import logger from '../logger'
+import { GEMINI_MODELS, isGeminiModel } from './gemini'
 import { loadModel as loadLMStudioModel } from './lm-studio'
 import { middlewares } from './middlewares'
 import { checkModelSupportThinking } from './ollama'
@@ -22,10 +24,15 @@ export async function getModelUserConfig(overrides?: { model?: string, endpointT
   const endpointType = overrides?.endpointType ?? userConfig.llm.endpointType.get()
   const model = overrides?.model ?? userConfig.llm.model.get()
 
-  const baseUrl = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].baseUrl.get()
+  const backendKey = endpointType === 'lm-studio'
+    ? 'lmStudio'
+    : endpointType === 'gemini'
+      ? 'gemini'
+      : 'ollama'
+  const baseUrl = userConfig.llm.backends[backendKey].baseUrl.get()
   const apiKey = userConfig.llm.apiKey.get()
-  const numCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].numCtx.get()
-  const enableNumCtx = userConfig.llm.backends[endpointType === 'lm-studio' ? 'lmStudio' : 'ollama'].enableNumCtx.get()
+  const numCtx = userConfig.llm.backends[backendKey].numCtx.get()
+  const enableNumCtx = userConfig.llm.backends[backendKey].enableNumCtx.get()
   const reasoningPreference = userConfig.llm.reasoning.get()
   const reasoning = getReasoningOptionForModel(reasoningPreference, model)
   if (!model) {
@@ -117,6 +124,15 @@ export async function getModel(options: {
       { supportsStructuredOutputs: true, provider: 'web-llm', defaultObjectGenerationMode: 'json' },
     )
   }
+  else if (endpointType === 'gemini') {
+    const normalizedBaseUrl = options.baseUrl.endsWith('/') ? options.baseUrl.slice(0, -1) : options.baseUrl
+    const gemini = createOpenAICompatible({
+      name: 'gemini',
+      baseURL: normalizedBaseUrl,
+      apiKey: options.apiKey,
+    })
+    model = gemini.chatModel(options.model)
+  }
   else {
     throw new Error('Unsupported endpoint type ' + endpointType)
   }
@@ -126,7 +142,7 @@ export async function getModel(options: {
   })
 }
 
-export type LLMEndpointType = 'ollama' | 'lm-studio' | 'web-llm'
+export type LLMEndpointType = 'ollama' | 'lm-studio' | 'web-llm' | 'gemini'
 
 export function parseErrorMessageFromChunk(error: unknown): string | null {
   if (error && typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string') {
@@ -140,3 +156,9 @@ export function isModelSupportPDFToImages(_model: string): boolean {
   // but it's too slow to process large number of image so we disable this feature temporarily by returning false here
   return false
 }
+
+export function getGeminiModels() {
+  return GEMINI_MODELS
+}
+
+export { isGeminiModel }

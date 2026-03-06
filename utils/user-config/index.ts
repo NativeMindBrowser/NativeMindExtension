@@ -119,6 +119,11 @@ export async function _getUserConfig() {
           enableNumCtx: await new Config('llm.backends.lmStudio.enableNumCtx').default(enableNumCtx).build(),
           baseUrl: await new Config('llm.backends.lmStudio.baseUrl').default('http://localhost:1234/api').build(),
         },
+        gemini: {
+          numCtx: await new Config('llm.backends.gemini.numCtx').default(1024 * 8).build(),
+          enableNumCtx: await new Config('llm.backends.gemini.enableNumCtx').default(false).build(),
+          baseUrl: await new Config('llm.backends.gemini.baseUrl').default('https://generativelanguage.googleapis.com/v1beta/openai').build(),
+        },
       },
     },
     browserAI: {
@@ -209,6 +214,9 @@ export async function _getUserConfig() {
         },
         lmStudioConfig: {
           open: await new Config('settings.blocks.lmStudioConfig.open').default(true).build(),
+        },
+        geminiConfig: {
+          open: await new Config('settings.blocks.geminiConfig.open').default(true).build(),
         },
       },
     },

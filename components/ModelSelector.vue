@@ -205,6 +205,7 @@ const modelListUpdating = computed(() => {
 const modelOptions = computed(() => {
   const ollamaModels = modelList.value.filter((model) => model.backend === 'ollama')
   const lmStudioModels = modelList.value.filter((model) => model.backend === 'lm-studio')
+  const geminiModels = modelList.value.filter((model) => model.backend === 'gemini')
   const webllmModels = modelList.value.filter((model) => model.backend === 'web-llm')
 
   const makeModelOptions = (model: typeof modelList.value[number]) => ({ type: 'option' as const, id: `${model.backend}#${model.model}`, label: model.name, model: { backend: model.backend, id: model.model } })
@@ -224,6 +225,12 @@ const modelOptions = computed(() => {
       options.push(
         makeHeader(t('settings.models.lmstudio_models', { count: lmStudioModels.length })),
         ...lmStudioModels.map((model) => makeModelOptions(model)),
+      )
+    }
+    if (geminiModels.length) {
+      options.push(
+        makeHeader(`Gemini Models (${geminiModels.length})`),
+        ...geminiModels.map((model) => makeModelOptions(model)),
       )
     }
     return options

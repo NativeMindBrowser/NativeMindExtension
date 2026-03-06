@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 
 import { LMStudioModelInfo } from '@/types/lm-studio-models'
 import { OllamaModelInfo } from '@/types/ollama-models'
+import { GEMINI_MODELS, isGeminiModel } from '@/utils/llm/gemini'
 import { logger } from '@/utils/logger'
 import { c2bRpc, s2bRpc, settings2bRpc } from '@/utils/rpc'
 
@@ -134,6 +135,7 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       return !!modelInfo?.vision
     }
     else {
+      if (endpointType === 'gemini') return isGeminiModel(currentModel)
       return false
     }
   }
@@ -161,6 +163,11 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
         backend: 'lm-studio' as const,
         model: m.modelKey,
         name: m.displayName ?? m.modelKey,
+      })),
+      ...GEMINI_MODELS.map((m) => ({
+        backend: 'gemini' as const,
+        model: m.id,
+        name: m.name,
       })),
     ]
   })
@@ -202,6 +209,18 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
         }
       }
       else { status = 'backend-unavailable' }
+    }
+    else if (endpointType === 'gemini') {
+      if (isGeminiModel(commonModelConfig.get())) {
+        status = 'ok'
+      }
+      else if (GEMINI_MODELS.length > 0) {
+        commonModelConfig.set(GEMINI_MODELS[0].id)
+        status = 'ok'
+      }
+      else {
+        status = 'no-model'
+      }
     }
     return { modelList, commonModel: commonModelConfig.get(), status, endpointType }
   }

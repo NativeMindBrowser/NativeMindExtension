@@ -299,7 +299,11 @@ async function checkLLMBackendStatus() {
   }
   else if (status === 'backend-unavailable') {
     toast(t('errors.model_request_error'), { duration: 2000 })
-    endpointType === 'ollama' ? showSettings({ scrollTarget: 'ollama-server-address-section' }) : showSettings({ scrollTarget: 'lm-studio-server-address-section' })
+    endpointType === 'ollama'
+      ? showSettings({ scrollTarget: 'ollama-server-address-section' })
+      : endpointType === 'lm-studio'
+        ? showSettings({ scrollTarget: 'lm-studio-server-address-section' })
+        : showSettings({ scrollTarget: 'gemini-api-config-section' })
     emit('close')
     return false
   }

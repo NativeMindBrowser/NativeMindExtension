@@ -630,6 +630,7 @@ const articles = ref<{ type: 'html' | 'pdf', url: string, title: string, content
 const modelProviderOptions = [
   { id: 'ollama' as const, label: 'Ollama' },
   { id: 'lm-studio' as const, label: 'LM Studio' },
+  { id: 'gemini' as const, label: 'Gemini API' },
   { id: 'web-llm' as const, label: 'Web LLM' },
 ]
 

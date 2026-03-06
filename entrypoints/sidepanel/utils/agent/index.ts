@@ -418,7 +418,8 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      errorMsg.content = t('errors.model_not_found', { endpointType: error.endpointType === 'ollama' ? 'Ollama' : 'LM Studio' })
+      const endpointTypeName = error.endpointType === 'ollama' ? 'Ollama' : error.endpointType === 'lm-studio' ? 'LM Studio' : 'Gemini'
+      errorMsg.content = t('errors.model_not_found', { endpointType: endpointTypeName })
       // unresolvable error, break the loop
       return false
     }
@@ -426,7 +427,8 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      errorMsg.content = t('errors.model_request_error', { endpointType: error.endpointType === 'ollama' ? 'Ollama' : 'LM Studio' })
+      const endpointTypeName = error.endpointType === 'ollama' ? 'Ollama' : error.endpointType === 'lm-studio' ? 'LM Studio' : 'Gemini'
+      errorMsg.content = t('errors.model_request_error', { endpointType: endpointTypeName })
       return false
     }
     else if (error instanceof LMStudioLoadModelError) {
