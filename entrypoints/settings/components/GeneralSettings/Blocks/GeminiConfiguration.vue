@@ -143,7 +143,7 @@ const useGemini = () => {
           </div>
           <Input
             v-model="modelInput"
-            placeholder="gemini-2.5-pro"
+            placeholder="gemini-flash-latest"
             class="w-full"
           />
           <SavedMessage :watch="modelInput" />

@@ -143,7 +143,7 @@ const useOpenAI = () => {
           </div>
           <Input
             v-model="modelInput"
-            placeholder="gpt-4.1"
+            placeholder="gpt-5.4"
             class="w-full"
           />
           <SavedMessage :watch="modelInput" />

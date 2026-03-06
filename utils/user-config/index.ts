@@ -121,14 +121,14 @@ export async function _getUserConfig() {
         },
         gemini: {
           apiKey: await new Config('llm.backends.gemini.apiKey').default('').build(),
-          model: await new Config('llm.backends.gemini.model').default('gemini-2.5-pro').build(),
+          model: await new Config('llm.backends.gemini.model').default('gemini-flash-latest').build(),
           numCtx: await new Config('llm.backends.gemini.numCtx').default(1024 * 8).build(),
           enableNumCtx: await new Config('llm.backends.gemini.enableNumCtx').default(false).build(),
           baseUrl: await new Config('llm.backends.gemini.baseUrl').default('https://generativelanguage.googleapis.com/v1beta/openai').build(),
         },
         openai: {
           apiKey: await new Config('llm.backends.openai.apiKey').default('').build(),
-          model: await new Config('llm.backends.openai.model').default('gpt-4.1').build(),
+          model: await new Config('llm.backends.openai.model').default('gpt-5.4').build(),
           numCtx: await new Config('llm.backends.openai.numCtx').default(1024 * 8).build(),
           enableNumCtx: await new Config('llm.backends.openai.enableNumCtx').default(false).build(),
           baseUrl: await new Config('llm.backends.openai.baseUrl').default('https://api.openai.com/v1').build(),
