@@ -11,6 +11,7 @@ import { GEMINI_MODELS, isGeminiModel } from './gemini'
 import { loadModel as loadLMStudioModel } from './lm-studio'
 import { middlewares } from './middlewares'
 import { checkModelSupportThinking } from './ollama'
+import { isOpenAIModel, OPENAI_MODELS } from './openai'
 import { LMStudioChatLanguageModel } from './providers/lm-studio/chat-language-model'
 import { createOllama } from './providers/ollama'
 import { WebLLMChatLanguageModel } from './providers/web-llm/openai-compatible-chat-language-model'
@@ -22,15 +23,27 @@ export async function getModelUserConfig(overrides?: { model?: string, endpointT
   logger.debug('Detected override model', { overrides })
   const userConfig = await getUserConfig()
   const endpointType = overrides?.endpointType ?? userConfig.llm.endpointType.get()
-  const model = overrides?.model ?? userConfig.llm.model.get()
+  const model = overrides?.model ?? (
+    endpointType === 'gemini'
+      ? userConfig.llm.backends.gemini.model.get() || userConfig.llm.model.get()
+      : endpointType === 'openai'
+        ? userConfig.llm.backends.openai.model.get() || userConfig.llm.model.get()
+        : userConfig.llm.model.get()
+  )
 
   const backendKey = endpointType === 'lm-studio'
     ? 'lmStudio'
     : endpointType === 'gemini'
       ? 'gemini'
-      : 'ollama'
+      : endpointType === 'openai'
+        ? 'openai'
+        : 'ollama'
   const baseUrl = userConfig.llm.backends[backendKey].baseUrl.get()
-  const apiKey = userConfig.llm.apiKey.get()
+  const apiKey = endpointType === 'gemini'
+    ? userConfig.llm.backends.gemini.apiKey.get() || userConfig.llm.apiKey.get()
+    : endpointType === 'openai'
+      ? userConfig.llm.backends.openai.apiKey.get() || userConfig.llm.apiKey.get()
+      : userConfig.llm.apiKey.get()
   const numCtx = userConfig.llm.backends[backendKey].numCtx.get()
   const enableNumCtx = userConfig.llm.backends[backendKey].enableNumCtx.get()
   const reasoningPreference = userConfig.llm.reasoning.get()
@@ -133,6 +146,15 @@ export async function getModel(options: {
     })
     model = gemini.chatModel(options.model)
   }
+  else if (endpointType === 'openai') {
+    const normalizedBaseUrl = options.baseUrl.endsWith('/') ? options.baseUrl.slice(0, -1) : options.baseUrl
+    const openai = createOpenAICompatible({
+      name: 'openai',
+      baseURL: normalizedBaseUrl,
+      apiKey: options.apiKey,
+    })
+    model = openai.chatModel(options.model)
+  }
   else {
     throw new Error('Unsupported endpoint type ' + endpointType)
   }
@@ -142,7 +164,7 @@ export async function getModel(options: {
   })
 }
 
-export type LLMEndpointType = 'ollama' | 'lm-studio' | 'web-llm' | 'gemini'
+export type LLMEndpointType = 'ollama' | 'lm-studio' | 'web-llm' | 'gemini' | 'openai'
 
 export function parseErrorMessageFromChunk(error: unknown): string | null {
   if (error && typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string') {
@@ -162,3 +184,9 @@ export function getGeminiModels() {
 }
 
 export { isGeminiModel }
+
+export function getOpenAIModels() {
+  return OPENAI_MODELS
+}
+
+export { isOpenAIModel }

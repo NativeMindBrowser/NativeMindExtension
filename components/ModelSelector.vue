@@ -176,6 +176,8 @@ const userConfig = await getUserConfig()
 const ollamaBaseUrl = userConfig.llm.backends.ollama.baseUrl.toRef()
 const lmStudioBaseUrl = userConfig.llm.backends.lmStudio.baseUrl.toRef()
 const commonModel = userConfig.llm.model.toRef()
+const geminiModel = userConfig.llm.backends.gemini.model.toRef()
+const openaiModel = userConfig.llm.backends.openai.model.toRef()
 const translationModel = userConfig.translation.model.toRef()
 const endpointType = userConfig.llm.endpointType.toRef()
 const translationEndpointType = userConfig.translation.endpointType.toRef()
@@ -206,6 +208,7 @@ const modelOptions = computed(() => {
   const ollamaModels = modelList.value.filter((model) => model.backend === 'ollama')
   const lmStudioModels = modelList.value.filter((model) => model.backend === 'lm-studio')
   const geminiModels = modelList.value.filter((model) => model.backend === 'gemini')
+  const openaiModels = modelList.value.filter((model) => model.backend === 'openai')
   const webllmModels = modelList.value.filter((model) => model.backend === 'web-llm')
 
   const makeModelOptions = (model: typeof modelList.value[number]) => ({ type: 'option' as const, id: `${model.backend}#${model.model}`, label: model.name, model: { backend: model.backend, id: model.model } })
@@ -233,6 +236,12 @@ const modelOptions = computed(() => {
         ...geminiModels.map((model) => makeModelOptions(model)),
       )
     }
+    if (openaiModels.length) {
+      options.push(
+        makeHeader(`OpenAI Models (${openaiModels.length})`),
+        ...openaiModels.map((model) => makeModelOptions(model)),
+      )
+    }
     return options
   }
 })
@@ -251,6 +260,12 @@ const selectedModel = computed({
     if (props.modelType === 'chat') {
       commonModel.value = modelInfo.model.id
       endpointType.value = modelInfo.model.backend as LLMEndpointType
+      if (modelInfo.model.backend === 'gemini') {
+        geminiModel.value = modelInfo.model.id
+      }
+      else if (modelInfo.model.backend === 'openai') {
+        openaiModel.value = modelInfo.model.id
+      }
     }
     else {
       translationModel.value = modelInfo.model.id

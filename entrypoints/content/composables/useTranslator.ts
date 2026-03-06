@@ -77,7 +77,9 @@ async function _useTranslator() {
             ? showSettings({ scrollTarget: 'ollama-server-address-section' })
             : endpointType === 'lm-studio'
               ? showSettings({ scrollTarget: 'lm-studio-server-address-section' })
-              : showSettings({ scrollTarget: 'gemini-api-config-section' })
+              : endpointType === 'gemini'
+                ? showSettings({ scrollTarget: 'gemini-api-config-section' })
+                : showSettings({ scrollTarget: 'openai-api-config-section' })
           return
         }
         else if (status === 'no-model') {

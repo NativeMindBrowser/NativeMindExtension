@@ -328,10 +328,13 @@ export class Agent<T extends PromptBasedToolName> {
             currentLoopAssistantRawMessage.content += chunk.textDelta
             agentMessage.content += chunk.textDelta
           }
-          else if (chunk.type === 'reasoning') {
-            reasoningStart = reasoningStart || Date.now()
-            agentMessage.reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
-            agentMessage.reasoning = (agentMessage.reasoning || '') + chunk.textDelta
+          else if ((chunk as { type: string }).type === 'reasoning' || (chunk as { type: string }).type === 'reasoning-delta') {
+            const reasoningChunk = chunk as { textDelta?: string }
+            if (reasoningChunk.textDelta) {
+              reasoningStart = reasoningStart || Date.now()
+              agentMessage.reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
+              agentMessage.reasoning = (agentMessage.reasoning || '') + reasoningChunk.textDelta
+            }
           }
           else if (chunk.type === 'tool-call') {
             this.log.debug('Tool call received', chunk)
@@ -418,7 +421,7 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      const endpointTypeName = error.endpointType === 'ollama' ? 'Ollama' : error.endpointType === 'lm-studio' ? 'LM Studio' : 'Gemini'
+      const endpointTypeName = error.endpointType === 'ollama' ? 'Ollama' : error.endpointType === 'lm-studio' ? 'LM Studio' : error.endpointType === 'gemini' ? 'Gemini' : 'OpenAI'
       errorMsg.content = t('errors.model_not_found', { endpointType: endpointTypeName })
       // unresolvable error, break the loop
       return false
@@ -427,7 +430,7 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      const endpointTypeName = error.endpointType === 'ollama' ? 'Ollama' : error.endpointType === 'lm-studio' ? 'LM Studio' : 'Gemini'
+      const endpointTypeName = error.endpointType === 'ollama' ? 'Ollama' : error.endpointType === 'lm-studio' ? 'LM Studio' : error.endpointType === 'gemini' ? 'Gemini' : 'OpenAI'
       errorMsg.content = t('errors.model_request_error', { endpointType: endpointTypeName })
       return false
     }

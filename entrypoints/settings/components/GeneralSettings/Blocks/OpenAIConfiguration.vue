@@ -7,7 +7,7 @@ import ScrollTarget from '@/components/ScrollTarget.vue'
 import Selector from '@/components/Selector.vue'
 import Button from '@/components/ui/Button.vue'
 import { SettingsScrollTarget } from '@/types/scroll-targets'
-import { GEMINI_MODELS, isGeminiModel } from '@/utils/llm/gemini'
+import { isOpenAIModel, OPENAI_MODELS } from '@/utils/llm/openai'
 import { getUserConfig } from '@/utils/user-config'
 
 import Block from '../../Block.vue'
@@ -20,18 +20,18 @@ defineProps<{
 
 const userConfig = await getUserConfig()
 const endpointType = userConfig.llm.endpointType.toRef()
-const model = userConfig.llm.backends.gemini.model.toRef()
+const model = userConfig.llm.backends.openai.model.toRef()
 const commonModel = userConfig.llm.model.toRef()
-const baseUrl = userConfig.llm.backends.gemini.baseUrl.toRef()
-const apiKey = userConfig.llm.backends.gemini.apiKey.toRef()
+const baseUrl = userConfig.llm.backends.openai.baseUrl.toRef()
+const apiKey = userConfig.llm.backends.openai.apiKey.toRef()
 const commonApiKey = userConfig.llm.apiKey.toRef()
-const numCtx = userConfig.llm.backends.gemini.numCtx.toRef()
-const enableNumCtx = userConfig.llm.backends.gemini.enableNumCtx.toRef()
-const open = userConfig.settings.blocks.geminiConfig.open.toRef()
+const numCtx = userConfig.llm.backends.openai.numCtx.toRef()
+const enableNumCtx = userConfig.llm.backends.openai.enableNumCtx.toRef()
+const open = userConfig.settings.blocks.openaiConfig.open.toRef()
 
-const isCurrentEndpoint = computed(() => endpointType.value === 'gemini')
+const isCurrentEndpoint = computed(() => endpointType.value === 'openai')
 const customModelOption = computed(() => {
-  if (!model.value || isGeminiModel(model.value)) return undefined
+  if (!model.value || isOpenAIModel(model.value)) return undefined
   return {
     id: model.value,
     label: `${model.value} (Custom)`,
@@ -39,7 +39,7 @@ const customModelOption = computed(() => {
   }
 })
 const presetModelOptions = computed(() => {
-  const presetOptions = GEMINI_MODELS.map((item) => ({
+  const presetOptions = OPENAI_MODELS.map((item) => ({
     id: item.id,
     label: item.name,
     value: item.id,
@@ -62,11 +62,11 @@ const modelInput = computed({
   },
 })
 
-const useGemini = () => {
-  endpointType.value = 'gemini'
+const useOpenAI = () => {
+  endpointType.value = 'openai'
   commonApiKey.value = apiKey.value
-  if (!isGeminiModel(model.value)) {
-    model.value = GEMINI_MODELS[0]?.id
+  if (!isOpenAIModel(model.value)) {
+    model.value = OPENAI_MODELS[0]?.id
   }
   commonModel.value = model.value
 }
@@ -75,39 +75,39 @@ const useGemini = () => {
 <template>
   <Block
     v-model:open="open"
-    title="Gemini API"
+    title="OpenAI API"
     collapsible
   >
     <div class="flex flex-col gap-4">
       <Section>
         <div class="flex items-center justify-between gap-3">
           <div class="text-sm text-text-secondary">
-            Configure Google Gemini using OpenAI-compatible API endpoint.
+            Configure OpenAI-compatible API access with custom base URL.
           </div>
           <Button
             size="sm"
             variant="secondary"
             :disabled="isCurrentEndpoint"
-            @click="useGemini"
+            @click="useOpenAI"
           >
-            {{ isCurrentEndpoint ? 'In Use' : 'Use Gemini' }}
+            {{ isCurrentEndpoint ? 'In Use' : 'Use OpenAI' }}
           </Button>
         </div>
       </Section>
 
       <ScrollTarget
-        :autoScrollIntoView="scrollTarget === 'gemini-api-config-section'"
-        targetId="gemini-api-config-section"
+        :autoScrollIntoView="scrollTarget === 'openai-api-config-section'"
+        targetId="openai-api-config-section"
       >
         <Section
           title="API Key"
-          description="Generate a key from Google AI Studio, then paste it here."
+          description="Paste your OpenAI API key here."
         >
           <div class="flex flex-col gap-1">
             <Input
               v-model="apiKey"
               type="password"
-              placeholder="AIza..."
+              placeholder="sk-..."
               class="w-full"
             />
             <SavedMessage :watch="apiKey" />
@@ -117,12 +117,12 @@ const useGemini = () => {
 
       <Section
         title="Base URL"
-        description="Default value uses Gemini OpenAI-compatible endpoint."
+        description="Supports custom OpenAI-compatible endpoints."
       >
         <div class="flex flex-col gap-1">
           <Input
             v-model="baseUrl"
-            placeholder="https://generativelanguage.googleapis.com/v1beta/openai"
+            placeholder="https://api.openai.com/v1"
             class="w-full"
           />
           <SavedMessage :watch="baseUrl" />
@@ -131,19 +131,19 @@ const useGemini = () => {
 
       <Section
         title="Model ID"
-        description="You can use preset Gemini models or enter a custom model ID."
+        description="Use preset OpenAI models or enter a custom model ID."
       >
         <div class="flex flex-col gap-2">
           <div class="w-64">
             <Selector
               v-model="selectedPresetModel"
               :options="presetModelOptions"
-              placeholder="Select Gemini model"
+              placeholder="Select OpenAI model"
             />
           </div>
           <Input
             v-model="modelInput"
-            placeholder="gemini-2.5-pro"
+            placeholder="gpt-4.1"
             class="w-full"
           />
           <SavedMessage :watch="modelInput" />
@@ -154,7 +154,7 @@ const useGemini = () => {
         <div class="flex flex-col gap-2">
           <Checkbox
             v-model="enableNumCtx"
-            name="gemini-enable-num-ctx"
+            name="openai-enable-num-ctx"
             text="Enable custom context window"
           />
           <Input

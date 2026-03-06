@@ -5,6 +5,7 @@ import { browser } from 'wxt/browser'
 import { readPortMessageIntoIterator } from '../async'
 import { UnsupportedEndpointType } from '../error'
 import { isGeminiModel } from '../llm/gemini'
+import { isOpenAIModel } from '../llm/openai'
 import { logger } from '../logger'
 import { showSettings } from '../settings'
 import { getUserConfig } from '../user-config'
@@ -102,6 +103,10 @@ export async function checkBackendModelReady(model?: string): Promise<{ backend:
     else if (userConfig.llm.endpointType.get() === 'gemini') {
       const configuredModel = model ?? userConfig.llm.model.get()
       return { backend: true, model: isGeminiModel(configuredModel) }
+    }
+    else if (userConfig.llm.endpointType.get() === 'openai') {
+      const configuredModel = model ?? userConfig.llm.model.get()
+      return { backend: true, model: isOpenAIModel(configuredModel) }
     }
     else {
       throw new UnsupportedEndpointType(userConfig.llm.endpointType.get())

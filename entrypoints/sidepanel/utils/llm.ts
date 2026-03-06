@@ -23,11 +23,21 @@ interface ExtraOptions {
   timeout?: number
 }
 
+const resolveModelForEndpoint = (userConfig: Awaited<ReturnType<typeof getUserConfig>>, endpointType: LLMEndpointType): string | undefined => {
+  if (endpointType === 'gemini') {
+    return userConfig.llm.backends.gemini.model.get() || userConfig.llm.model.get()
+  }
+  if (endpointType === 'openai') {
+    return userConfig.llm.backends.openai.model.get() || userConfig.llm.model.get()
+  }
+  return userConfig.llm.model.get()
+}
+
 export async function* streamTextInBackground(options: Parameters<typeof s2bRpc.streamText>[0] & ExtraOptions & { temporaryModelOverride?: { model: string, endpointType: string } | null }) {
   const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, temporaryModelOverride, ...restOptions } = options
   const userConfig = await getUserConfig()
-  const modelId = temporaryModelOverride?.model ?? userConfig.llm.model.get()
   const endpointType = (temporaryModelOverride?.endpointType as LLMEndpointType | undefined) ?? userConfig.llm.endpointType.get()
+  const modelId = temporaryModelOverride?.model ?? resolveModelForEndpoint(userConfig, endpointType)
   const reasoningPreference = userConfig.llm.reasoning.get()
   const computedReasoning = restOptions.autoThinking
     ? restOptions.reasoning
@@ -52,7 +62,8 @@ export async function* streamTextInBackground(options: Parameters<typeof s2bRpc.
 export async function* streamObjectInBackground(options: Parameters<typeof s2bRpc.streamObjectFromSchema>[0] & ExtraOptions) {
   const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, ...restOptions } = options
   const userConfig = await getUserConfig()
-  const modelId = userConfig.llm.model.get()
+  const endpointType = userConfig.llm.endpointType.get()
+  const modelId = resolveModelForEndpoint(userConfig, endpointType)
   const reasoningPreference = userConfig.llm.reasoning.get()
   const computedReasoning = restOptions.autoThinking
     ? restOptions.reasoning
@@ -77,7 +88,8 @@ export async function generateObjectInBackground<S extends SchemaName>(options: 
   const { promise: abortPromise, reject } = Promise.withResolvers<Awaited<ReturnType<typeof s2bRpc.generateObjectFromSchema<S>>>>()
   const { abortSignal, timeout = DEFAULT_PENDING_TIMEOUT, ...restOptions } = options
   const userConfig = await getUserConfig()
-  const modelId = userConfig.llm.model.get()
+  const endpointType = userConfig.llm.endpointType.get()
+  const modelId = resolveModelForEndpoint(userConfig, endpointType)
   const reasoningPreference = userConfig.llm.reasoning.get()
   const computedReasoning = restOptions.autoThinking
     ? restOptions.reasoning
