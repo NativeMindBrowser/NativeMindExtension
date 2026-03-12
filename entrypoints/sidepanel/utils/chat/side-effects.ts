@@ -1,12 +1,18 @@
 import { effectScope, watch } from 'vue'
 
 import { ActionMessageV1 } from '@/types/chat'
+import { getHostChatMap, getPageKeyFromUrl } from '@/utils/host-chat-map'
 import { useGlobalI18n } from '@/utils/i18n'
+import logger from '@/utils/logger'
 import { lazyInitialize } from '@/utils/memo'
+import { s2bRpc } from '@/utils/rpc'
+import { getTabStore } from '@/utils/tab-store'
 import { getUserConfig } from '@/utils/user-config'
 
 import { Chat } from './chat'
 import { welcomeMessage } from './texts'
+
+const log = logger.child('chat-side-effects')
 
 async function appendOrUpdateQuickActionsIfNeeded(chat: Chat) {
   const { t } = await useGlobalI18n()
@@ -74,3 +80,72 @@ async function _initChatSideEffects() {
 }
 
 export const initChatSideEffects = lazyInitialize(_initChatSideEffects)
+
+/**
+ * Switch the active chat to the one associated with the given page key.
+ * Creates a new chat if no mapping exists or the previously mapped chat was deleted.
+ * Updates the page-chat-map after any switch/creation.
+ * Skips silently if the chat is currently answering.
+ */
+async function switchChatForPage(chat: Chat, pageKey: string | null): Promise<void> {
+  if (!pageKey) return
+  // Don't interrupt an in-progress generation
+  if (chat.isAnswering()) return
+  const userConfig = await getUserConfig()
+  const map = await getHostChatMap()
+  const existingChatId = map.get(pageKey)
+
+  if (existingChatId) {
+    if (userConfig.chat.history.currentChatId.get() === existingChatId) return
+    // Verify the chat still exists in storage
+    const chatHistory = await s2bRpc.getChatHistory(existingChatId)
+    if (chatHistory) {
+      log.debug('switchChatForPage: switching to existing chat', { pageKey, existingChatId })
+      await chat.switchToChat(existingChatId)
+      return
+    }
+    // Chat was deleted; remove stale mapping
+    map.delete(pageKey)
+  }
+
+  // No valid chat for this page — create a fresh one
+  log.debug('switchChatForPage: creating new chat for page', { pageKey })
+  const newChatId = await chat.createNewChat()
+  map.set(pageKey, newChatId)
+}
+
+async function _initTabChatSync() {
+  const chat = await Chat.getInstance()
+  const tabStore = await getTabStore()
+  const currentTabInfo = tabStore.currentTabInfo
+
+  // Sync with the active tab immediately on startup
+  await switchChatForPage(chat, getPageKeyFromUrl(currentTabInfo.value.url))
+
+  // Re-sync when the sidepanel becomes visible again (user reopens the panel)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      switchChatForPage(chat, getPageKeyFromUrl(currentTabInfo.value.url))
+    }
+  })
+
+  runInDetachedScope(() => {
+    // Switch chat when the user activates a different browser tab
+    watch(() => currentTabInfo.value.tabId, async (newTabId, oldTabId) => {
+      if (newTabId === oldTabId) return
+      await switchChatForPage(chat, getPageKeyFromUrl(currentTabInfo.value.url))
+    })
+
+    // Keep the map up-to-date when the user manually switches / creates a chat
+    getUserConfig().then((userConfig) => {
+      watch(() => userConfig.chat.history.currentChatId.get(), async (newChatId) => {
+        const pageKey = getPageKeyFromUrl(currentTabInfo.value.url)
+        if (!pageKey) return
+        const map = await getHostChatMap()
+        map.set(pageKey, newChatId)
+      })
+    })
+  })
+}
+
+export const initTabChatSync = lazyInitialize(_initTabChatSync)
