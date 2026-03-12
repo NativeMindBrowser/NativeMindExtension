@@ -160,8 +160,12 @@ export class ReactiveHistoryManager extends EventEmitter {
 
   async appendAssistantMessage(content: string = '') {
     const userConfig = await getUserConfig()
-    const model = this.temporaryModelOverride?.model ?? userConfig.llm.model.get()
     const endpointType = this.temporaryModelOverride?.endpointType ?? userConfig.llm.endpointType.get()
+    const model = this.temporaryModelOverride?.model ?? (endpointType === 'gemini'
+      ? userConfig.llm.backends.gemini.model.get() || userConfig.llm.model.get()
+      : endpointType === 'openai'
+        ? userConfig.llm.backends.openai.model.get() || userConfig.llm.model.get()
+        : userConfig.llm.model.get())
 
     this.history.value.push({
       id: this.generateId(),
@@ -179,8 +183,12 @@ export class ReactiveHistoryManager extends EventEmitter {
 
   async appendAgentMessage(content: string = '') {
     const userConfig = await getUserConfig()
-    const model = this.temporaryModelOverride?.model ?? userConfig.llm.model.get()
     const endpointType = this.temporaryModelOverride?.endpointType ?? userConfig.llm.endpointType.get()
+    const model = this.temporaryModelOverride?.model ?? (endpointType === 'gemini'
+      ? userConfig.llm.backends.gemini.model.get() || userConfig.llm.model.get()
+      : endpointType === 'openai'
+        ? userConfig.llm.backends.openai.model.get() || userConfig.llm.model.get()
+        : userConfig.llm.model.get())
 
     this.history.value.push({
       id: this.generateId(),

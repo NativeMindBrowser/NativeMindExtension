@@ -21,10 +21,13 @@ export async function getBrowserAIConfig() {
 export async function checkBackendModel(model?: string) {
   const status = await m2cRpc.checkBackendModelReady(model)
   if (!status.backend || !status.model) {
+    const modelUnavailableMessage = model
+      ? `Model [${model}] is not available in current provider settings.`
+      : 'Model is not available in current provider settings.'
     await m2cRpc.emit('toast', {
-      message: !status.backend ? 'This page relies on the AI backend provided by Nativemind. Please ensure the backend is running.' : `Model [${model}] is not available. Please download the model from <a href="https://ollama.com/library/${model}" target="_blank">ollama.com</a>.`,
+      message: !status.backend ? 'This page relies on the AI backend provided by Nativemind. Please ensure the backend is running.' : modelUnavailableMessage,
       type: 'error',
-      isHTML: true,
+      isHTML: false,
       duration: 5000,
     })
   }

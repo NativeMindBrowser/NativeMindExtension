@@ -43,7 +43,7 @@ export class LLMResponses {
   async create(params: ResponseCreateParamsStreaming): Promise<StreamResponseObject>
   async create(params: ResponseCreateParamsBase): Promise<StreamResponseObject | NonStreamResponseObject | NonStreamStructuredResponseObject> {
     const readyStatus = await checkBackendModel(params.model)
-    if (!readyStatus.backend) throw new Error('ollama is not connected')
+    if (!readyStatus.backend) throw new Error('backend is not connected')
     if (!readyStatus.model) throw new Error('model is not ready')
     if (params.stream) {
       return this.createStreamingResponse(params as ResponseCreateParamsStreaming)

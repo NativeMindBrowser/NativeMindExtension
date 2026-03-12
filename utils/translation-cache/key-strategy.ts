@@ -94,7 +94,7 @@ function extractModelName(modelId: string): string {
   // Remove common prefixes first
   const modelName = modelId
     .toLowerCase()
-    .replace(/^(ollama|webllm|openai|anthropic|chrome-ai)[/:]?/, '')
+    .replace(/^(ollama|webllm|openai|anthropic|chrome-ai|gemini)[/:]?/, '')
 
   // Extract base model name by removing version suffixes and parameter specifications
   // Split on both '-' and ':' to handle patterns like "deepseek-r1:32b"

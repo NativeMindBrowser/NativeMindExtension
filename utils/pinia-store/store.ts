@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 
 import { LMStudioModelInfo } from '@/types/lm-studio-models'
 import { OllamaModelInfo } from '@/types/ollama-models'
+import { GEMINI_MODELS, isGeminiModel } from '@/utils/llm/gemini'
+import { isOpenAIModel, OPENAI_MODELS } from '@/utils/llm/openai'
 import { logger } from '@/utils/logger'
 import { c2bRpc, s2bRpc, settings2bRpc } from '@/utils/rpc'
 
@@ -19,6 +21,40 @@ const rpc = forRuntimes({
 })
 
 export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => {
+  const remoteCustomModelList = ref<Array<{ backend: 'gemini' | 'openai', model: string, name: string }>>([])
+
+  const updateRemoteCustomModelList = async () => {
+    const userConfig = await getUserConfig()
+    const pairs: Array<{ backend: 'gemini' | 'openai', model: string }> = []
+
+    const llmEndpointType = userConfig.llm.endpointType.get()
+    const llmModel = userConfig.llm.model.get()
+    if ((llmEndpointType === 'gemini' || llmEndpointType === 'openai') && llmModel) {
+      pairs.push({ backend: llmEndpointType, model: llmModel })
+    }
+
+    const translationEndpointType = userConfig.translation.endpointType.get()
+    const translationModel = userConfig.translation.model.get()
+    if ((translationEndpointType === 'gemini' || translationEndpointType === 'openai') && translationModel) {
+      pairs.push({ backend: translationEndpointType, model: translationModel })
+    }
+
+    const unique = new Map<string, { backend: 'gemini' | 'openai', model: string, name: string }>()
+    for (const pair of pairs) {
+      const isPreset = pair.backend === 'gemini' ? isGeminiModel(pair.model) : isOpenAIModel(pair.model)
+      if (isPreset) continue
+      const key = `${pair.backend}#${pair.model}`
+      unique.set(key, {
+        backend: pair.backend,
+        model: pair.model,
+        name: `${pair.model} (Custom)`,
+      })
+    }
+
+    remoteCustomModelList.value = [...unique.values()]
+    return remoteCustomModelList.value
+  }
+
   // Ollama model list and connection status
   const ollamaModelList = ref<OllamaModelInfo[]>([])
   const ollamaModelListUpdating = ref(false)
@@ -134,6 +170,8 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       return !!modelInfo?.vision
     }
     else {
+      if (endpointType === 'gemini') return isGeminiModel(currentModel)
+      if (endpointType === 'openai') return isOpenAIModel(currentModel)
       return false
     }
   }
@@ -162,6 +200,17 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
         model: m.modelKey,
         name: m.displayName ?? m.modelKey,
       })),
+      ...GEMINI_MODELS.map((m) => ({
+        backend: 'gemini' as const,
+        model: m.id,
+        name: m.name,
+      })),
+      ...OPENAI_MODELS.map((m) => ({
+        backend: 'openai' as const,
+        model: m.id,
+        name: m.name,
+      })),
+      ...remoteCustomModelList.value,
     ]
   })
 
@@ -203,6 +252,33 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       }
       else { status = 'backend-unavailable' }
     }
+    else if (endpointType === 'gemini') {
+      const currentModel = commonModelConfig.get()
+      if (currentModel) {
+        status = 'ok'
+      }
+      else if (GEMINI_MODELS.length > 0) {
+        commonModelConfig.set(GEMINI_MODELS[0].id)
+        status = 'ok'
+      }
+      else {
+        status = 'no-model'
+      }
+    }
+    else if (endpointType === 'openai') {
+      const currentModel = commonModelConfig.get()
+      if (currentModel) {
+        status = 'ok'
+      }
+      else if (OPENAI_MODELS.length > 0) {
+        commonModelConfig.set(OPENAI_MODELS[0].id)
+        status = 'ok'
+      }
+      else {
+        status = 'no-model'
+      }
+    }
+    await updateRemoteCustomModelList()
     return { modelList, commonModel: commonModelConfig.get(), status, endpointType }
   }
 
@@ -212,6 +288,7 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     // all available models when switching between backends in ModelSelector
     // WebLLM doesn't need updating as it uses static SUPPORTED_MODELS
     await Promise.allSettled([updateOllamaModelList(), updateLMStudioModelList()])
+    await updateRemoteCustomModelList()
     return modelList.value
   }
 
