@@ -284,10 +284,17 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
 
   const updateModelList = async () => {
     logger.debug('Updating model list...')
-    // Always update both Ollama and LMStudio backends so users can see
-    // all available models when switching between backends in ModelSelector
-    // WebLLM doesn't need updating as it uses static SUPPORTED_MODELS
-    await Promise.allSettled([updateOllamaModelList(), updateLMStudioModelList()])
+    const userConfig = await getUserConfig()
+    const llmEndpointType = userConfig.llm.endpointType.get()
+    const translationEndpointType = userConfig.translation.endpointType.get()
+    const updates: Promise<unknown>[] = []
+    if (llmEndpointType === 'ollama' || translationEndpointType === 'ollama') {
+      updates.push(updateOllamaModelList())
+    }
+    if (llmEndpointType === 'lm-studio' || translationEndpointType === 'lm-studio') {
+      updates.push(updateLMStudioModelList())
+    }
+    await Promise.allSettled(updates)
     await updateRemoteCustomModelList()
     return modelList.value
   }
