@@ -8,12 +8,8 @@ export const OPENAI_MODELS = [
     name: 'GPT-5 Mini',
   },
   {
-    id: 'gpt-5',
-    name: 'GPT-5',
-  },
-  {
-    id: 'gpt-5-nano',
-    name: 'GPT-5 Nano',
+    id: 'gpt-4o-mini',
+    name: 'GPT-4o Mini',
   },
 ] as const
 
