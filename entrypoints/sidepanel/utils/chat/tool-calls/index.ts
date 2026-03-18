@@ -18,6 +18,29 @@ import { BrowserSession } from './utils/browser-use'
 import { makeTaskSummary } from './utils/markdown'
 
 const logger = Logger.child('tool-calls-execute')
+const MAX_PAGE_CONTENT_CHARS = 24_000
+
+function truncateContentForToolResult(content: string, maxChars: number = MAX_PAGE_CONTENT_CHARS) {
+  if (content.length <= maxChars) {
+    return {
+      content,
+      truncated: false,
+    }
+  }
+  const headChars = Math.floor(maxChars * 0.75)
+  const tailChars = maxChars - headChars
+  const truncatedContent = [
+    content.slice(0, headChars),
+    `\n\n[Content truncated due to size: original=${content.length} chars, kept=${maxChars} chars]\n\n`,
+    content.slice(-tailChars),
+  ].join('')
+  return {
+    content: truncatedContent,
+    truncated: true,
+    originalLength: content.length,
+    truncatedLength: maxChars,
+  }
+}
 
 export const executeSearchOnline: AgentToolCallExecute<'search_online'> = async ({ params, abortSignal, taskMessageModifier }) => {
   const { t } = await useGlobalI18n()
@@ -132,13 +155,21 @@ export const executeFetchPage: AgentToolCallExecute<'fetch_page'> = async ({ par
     }]
   }
   else {
+    const normalizedPageContent = truncateContentForToolResult(content.content)
     taskMsg.summary = makeTaskSummary('page', t('chat.tool_calls.common.reading_success'), content.title, url)
     return [{
       type: 'tool-result',
       results: {
         url,
         status: 'completed',
-        page_content: `URL: ${content.url}\n\n ${content.content}`,
+        page_content: `URL: ${content.url}\n\n${normalizedPageContent.content}`,
+        ...(normalizedPageContent.truncated
+          ? {
+              page_content_truncated: 'true',
+              page_content_original_length: normalizedPageContent.originalLength?.toString() ?? '',
+              page_content_truncated_length: normalizedPageContent.truncatedLength?.toString() ?? '',
+            }
+          : {}),
       },
     }]
   }
@@ -210,12 +241,20 @@ export const executeViewTab: AgentToolCallExecute<'view_tab'> = async ({ params,
     }]
   }
   taskMsg.summary = makeTaskSummary('tab', t('chat.tool_calls.common.reading_success'), tab.value.title || tab.value.url)
+  const normalizedTabContent = truncateContentForToolResult(content.content)
   return [{
     type: 'tool-result',
     results: {
       tab_id: attachmentId,
       status: 'completed',
-      tab_content: `Title: ${content.title}\nURL: ${content.url}\n\n${content.content}`,
+      tab_content: `Title: ${content.title}\nURL: ${content.url}\n\n${normalizedTabContent.content}`,
+      ...(normalizedTabContent.truncated
+        ? {
+            tab_content_truncated: 'true',
+            tab_content_original_length: normalizedTabContent.originalLength?.toString() ?? '',
+            tab_content_truncated_length: normalizedTabContent.truncatedLength?.toString() ?? '',
+          }
+        : {}),
     },
   }]
 }
@@ -466,7 +505,7 @@ export const executePageClick: AgentToolCallExecute<'click'> = async ({ params, 
         current_tab_info: {
           title: result.title,
           url: result.url,
-          content: result.content,
+          content: truncateContentForToolResult(result.content).content,
         },
       },
     },
