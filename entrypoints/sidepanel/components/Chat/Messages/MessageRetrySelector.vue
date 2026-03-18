@@ -2,6 +2,7 @@
   <Selector
     v-model="selectedModelId"
     :options="modelOptions"
+    :emptyPlaceholder="t('settings.models.no_model')"
     containerClass="min-w-0"
     dropdownClass="text-xs text-text-primary w-52"
     dropdownAlign="left"
@@ -94,6 +95,8 @@ const modelOptions = computed(() => {
   const ollamaModels = modelList.value.filter((model) => model.backend === 'ollama')
   const lmStudioModels = modelList.value.filter((model) => model.backend === 'lm-studio')
   const webllmModels = modelList.value.filter((model) => model.backend === 'web-llm')
+  const geminiModels = modelList.value.filter((model) => model.backend === 'gemini')
+  const openaiModels = modelList.value.filter((model) => model.backend === 'openai')
 
   const makeModelOptions = (model: typeof modelList.value[number]) => ({ type: 'option' as const, id: `${model.backend}#${model.model}`, label: model.name, model: { backend: model.backend, id: model.model } })
   const makeHeader = (label: string) => ({ type: 'header' as const, id: `header-${label}`, label, selectable: false })
@@ -112,6 +115,18 @@ const modelOptions = computed(() => {
       options.push(
         makeHeader(t('settings.models.lmstudio_models', { count: lmStudioModels.length })),
         ...lmStudioModels.map((model) => makeModelOptions(model)),
+      )
+    }
+    if (geminiModels.length) {
+      options.push(
+        makeHeader(`Gemini Models (${geminiModels.length})`),
+        ...geminiModels.map((model) => makeModelOptions(model)),
+      )
+    }
+    if (openaiModels.length) {
+      options.push(
+        makeHeader(`OpenAI Models (${openaiModels.length})`),
+        ...openaiModels.map((model) => makeModelOptions(model)),
       )
     }
     return options
