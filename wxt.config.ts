@@ -56,6 +56,7 @@ export default defineConfig({
   imports: false,
   modules: ['@wxt-dev/module-vue'],
   webExt: {
+    disabled: true,
     chromiumArgs: ['--user-data-dir=./.wxt/chrome-data'],
   },
   zip: {
