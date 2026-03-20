@@ -9,7 +9,7 @@
         <div class="absolute right-4 h-full flex items-center gap-4">
           <IconClose
             class="w-4 h-4 cursor-pointer hover:text-text-tertiary"
-            @click="onModelDownloaderFinished"
+            @click="onCloseOnboarding"
           />
         </div>
       </div>
@@ -33,6 +33,7 @@
           class="bg-bg-primary rounded-lg overflow-hidden grow flex flex-col justify-between font"
         >
           <BackendSelectionTutorialCard
+            :initialEndpointType="downloadEndpointType"
             @installed="onBackendInstalled"
             @settings="onOpenSettings"
           />
@@ -83,9 +84,9 @@ const llmBackendStatusStore = useLLMBackendStatusStore()
 const endpointType = userConfig.llm.endpointType.toRef()
 const onboardingVersion = userConfig.ui.onboarding.version.toRef()
 const panel = ref<'tutorial' | 'model-downloader'>('tutorial')
-const downloadEndpointType = ref<'ollama' | 'lm-studio'>('ollama')
+const downloadEndpointType = ref<'ollama' | 'lm-studio'>(endpointType.value === 'lm-studio' ? 'lm-studio' : 'ollama')
 const isShow = computed(() => {
-  return onboardingVersion.value !== TARGET_ONBOARDING_VERSION
+  return false
 })
 
 const onBackendInstalled = async (backend: 'ollama' | 'lm-studio') => {
@@ -100,16 +101,28 @@ const onBackendInstalled = async (backend: 'ollama' | 'lm-studio') => {
   }
 }
 
-const onOpenSettings = async () => {
-  endpointType.value = 'ollama'
+const onOpenSettings = async (backend: 'ollama' | 'lm-studio') => {
+  endpointType.value = backend
+  downloadEndpointType.value = backend
   await close()
   showSettings()
 }
 
 const onModelDownloaderFinished = async () => {
-  endpointType.value = 'ollama'
-  await llmBackendStatusStore.updateOllamaConnectionStatus()
-  await llmBackendStatusStore.updateOllamaModelList()
+  const backend = downloadEndpointType.value
+  endpointType.value = backend
+  if (backend === 'ollama') {
+    await llmBackendStatusStore.updateOllamaConnectionStatus()
+    await llmBackendStatusStore.updateOllamaModelList()
+  }
+  else {
+    await llmBackendStatusStore.updateLMStudioConnectionStatus()
+    await llmBackendStatusStore.updateLMStudioModelList()
+  }
+  await close()
+}
+
+const onCloseOnboarding = async () => {
   await close()
 }
 
@@ -138,10 +151,22 @@ const close = async () => {
 
 onMounted(async () => {
   if (isShow.value) {
-    const ollamaSuccess = await llmBackendStatusStore.updateOllamaConnectionStatus()
-    if (ollamaSuccess) return onBackendInstalled('ollama')
-    const lmStudioSuccess = await llmBackendStatusStore.updateLMStudioConnectionStatus()
-    if (lmStudioSuccess) return onBackendInstalled('lm-studio')
+    if (endpointType.value !== 'ollama' && endpointType.value !== 'lm-studio') return
+
+    const preferredBackend = endpointType.value
+    const fallbackBackend = preferredBackend === 'ollama' ? 'lm-studio' : 'ollama'
+    const tryBackend = async (backend: 'ollama' | 'lm-studio') => {
+      const success = backend === 'ollama'
+        ? await llmBackendStatusStore.updateOllamaConnectionStatus()
+        : await llmBackendStatusStore.updateLMStudioConnectionStatus()
+      if (success) {
+        await onBackendInstalled(backend)
+        return true
+      }
+      return false
+    }
+    if (await tryBackend(preferredBackend)) return
+    if (await tryBackend(fallbackBackend)) return
   }
 })
 </script>

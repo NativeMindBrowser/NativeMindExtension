@@ -153,12 +153,18 @@ import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 
 const log = logger.child('BackendSelectionTutorialCard')
 
+const props = withDefaults(defineProps<{
+  initialEndpointType?: 'ollama' | 'lm-studio'
+}>(), {
+  initialEndpointType: 'ollama',
+})
+
 const emit = defineEmits<{
   (event: 'installed', backend: 'ollama' | 'lm-studio'): void
-  (event: 'settings'): void
+  (event: 'settings', backend: 'ollama' | 'lm-studio'): void
 }>()
 const llmBackendStatusStore = useLLMBackendStatusStore()
-const selectedEndpointType = ref<'ollama' | 'lm-studio'>('ollama')
+const selectedEndpointType = ref<'ollama' | 'lm-studio'>(props.initialEndpointType)
 const { t } = useI18n()
 
 const selectedEndpointName = computed(() => {
@@ -204,6 +210,6 @@ const reScanOllama = async () => {
 }
 
 const onClickOpenSettings = () => {
-  emit('settings')
+  emit('settings', selectedEndpointType.value)
 }
 </script>

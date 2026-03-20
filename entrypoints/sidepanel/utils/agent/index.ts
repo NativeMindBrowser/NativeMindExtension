@@ -8,7 +8,7 @@ import { AssistantMessageV1 } from '@/types/chat'
 import { PromiseOr } from '@/types/common'
 import { Base64ImageData, ImageDataWithId } from '@/types/image'
 import { TagBuilderJSON } from '@/types/prompt'
-import { AbortError, AiSDKError, AppError, ErrorCode, fromError, LMStudioLoadModelError, ModelNotFoundError, ModelRequestError, ParseFunctionCallError, UnknownError } from '@/utils/error'
+import { AbortError, AiSDKError, AppError, ErrorCode, fromError, LMStudioLoadModelError, ModelNotFoundError, ModelRequestError, ModelRequestTimeoutError, ParseFunctionCallError, UnknownError } from '@/utils/error'
 import { useGlobalI18n } from '@/utils/i18n'
 import { generateRandomId } from '@/utils/id'
 import { InferredParams } from '@/utils/llm/tools/prompt-based/helpers'
@@ -81,6 +81,26 @@ interface AgentOptions<T extends PromptBasedToolName> {
 }
 
 type AgentStatus = 'idle' | 'running' | 'error'
+const MAX_ERROR_DETAILS_LENGTH = 1200
+
+function sanitizeErrorDetails(message?: string) {
+  if (!message) return ''
+  const normalized = message.replace(/\s+/g, ' ').trim()
+  if (!normalized) return ''
+  return normalized
+    .replace(/Bearer\s+[A-Za-z0-9._-]+/gi, 'Bearer [REDACTED]')
+    .replace(/sk-[A-Za-z0-9_-]+/g, 'sk-[REDACTED]')
+    .replace(/AIza[0-9A-Za-z_-]{20,}/g, 'AIza[REDACTED]')
+}
+
+function appendErrorDetails(baseMessage: string, details?: string) {
+  const sanitized = sanitizeErrorDetails(details)
+  if (!sanitized) return baseMessage
+  const trimmed = sanitized.length > MAX_ERROR_DETAILS_LENGTH
+    ? `${sanitized.slice(0, MAX_ERROR_DETAILS_LENGTH)}...`
+    : sanitized
+  return `${baseMessage}\n\n\`\`\`\n${trimmed}\n\`\`\``
+}
 
 export class Agent<T extends PromptBasedToolName> {
   abortControllers: AbortController[] = []
@@ -328,10 +348,13 @@ export class Agent<T extends PromptBasedToolName> {
             currentLoopAssistantRawMessage.content += chunk.textDelta
             agentMessage.content += chunk.textDelta
           }
-          else if (chunk.type === 'reasoning') {
-            reasoningStart = reasoningStart || Date.now()
-            agentMessage.reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
-            agentMessage.reasoning = (agentMessage.reasoning || '') + chunk.textDelta
+          else if ((chunk as { type: string }).type === 'reasoning' || (chunk as { type: string }).type === 'reasoning-delta') {
+            const reasoningChunk = chunk as { textDelta?: string }
+            if (reasoningChunk.textDelta) {
+              reasoningStart = reasoningStart || Date.now()
+              agentMessage.reasoningTime = reasoningStart ? Date.now() - reasoningStart : undefined
+              agentMessage.reasoning = (agentMessage.reasoning || '') + reasoningChunk.textDelta
+            }
           }
           else if (chunk.type === 'tool-call') {
             this.log.debug('Tool call received', chunk)
@@ -418,7 +441,8 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      errorMsg.content = t('errors.model_not_found', { endpointType: error.endpointType === 'ollama' ? 'Ollama' : 'LM Studio' })
+      const endpointTypeName = error.endpointType === 'ollama' ? 'Ollama' : error.endpointType === 'lm-studio' ? 'LM Studio' : error.endpointType === 'gemini' ? 'Gemini' : 'OpenAI'
+      errorMsg.content = appendErrorDetails(t('errors.model_not_found', { endpointType: endpointTypeName }), error.message)
       // unresolvable error, break the loop
       return false
     }
@@ -426,7 +450,15 @@ export class Agent<T extends PromptBasedToolName> {
       const { t } = await useGlobalI18n()
       const errorMsg = await agentMessageManager.convertToAssistantMessage()
       errorMsg.isError = true
-      errorMsg.content = t('errors.model_request_error', { endpointType: error.endpointType === 'ollama' ? 'Ollama' : 'LM Studio' })
+      const endpointTypeName = error.endpointType === 'ollama' ? 'Ollama' : error.endpointType === 'lm-studio' ? 'LM Studio' : error.endpointType === 'gemini' ? 'Gemini' : 'OpenAI'
+      errorMsg.content = appendErrorDetails(t('errors.model_request_error', { endpointType: endpointTypeName }), error.message)
+      return false
+    }
+    else if (error instanceof ModelRequestTimeoutError) {
+      const { t } = await useGlobalI18n()
+      const errorMsg = await agentMessageManager.convertToAssistantMessage()
+      errorMsg.isError = true
+      errorMsg.content = appendErrorDetails(t('errors.model_request_timeout'), error.message)
       return false
     }
     else if (error instanceof LMStudioLoadModelError) {

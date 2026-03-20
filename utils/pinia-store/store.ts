@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 
 import { LMStudioModelInfo } from '@/types/lm-studio-models'
 import { OllamaModelInfo } from '@/types/ollama-models'
+import { GEMINI_MODELS, GeminiModelInfo } from '@/utils/llm/gemini'
+import { OPENAI_MODELS, OpenAIModelInfo } from '@/utils/llm/openai'
 import { logger } from '@/utils/logger'
 import { c2bRpc, s2bRpc, settings2bRpc } from '@/utils/rpc'
 
@@ -19,6 +21,42 @@ const rpc = forRuntimes({
 })
 
 export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => {
+  const remoteCustomModelList = ref<Array<{ backend: 'gemini' | 'openai', model: string, name: string }>>([])
+
+  const updateRemoteCustomModelList = async () => {
+    const userConfig = await getUserConfig()
+    const pairs: Array<{ backend: 'gemini' | 'openai', model: string }> = []
+
+    const llmEndpointType = userConfig.llm.endpointType.get()
+    const llmModel = userConfig.llm.model.get()
+    if ((llmEndpointType === 'gemini' || llmEndpointType === 'openai') && llmModel) {
+      pairs.push({ backend: llmEndpointType, model: llmModel })
+    }
+
+    const translationEndpointType = userConfig.translation.endpointType.get()
+    const translationModel = userConfig.translation.model.get()
+    if ((translationEndpointType === 'gemini' || translationEndpointType === 'openai') && translationModel) {
+      pairs.push({ backend: translationEndpointType, model: translationModel })
+    }
+
+    const unique = new Map<string, { backend: 'gemini' | 'openai', model: string, name: string }>()
+    for (const pair of pairs) {
+      const isPreset = pair.backend === 'gemini'
+        ? geminiModelList.value.some((model) => model.id === pair.model)
+        : openaiModelList.value.some((model) => model.id === pair.model)
+      if (isPreset) continue
+      const key = `${pair.backend}#${pair.model}`
+      unique.set(key, {
+        backend: pair.backend,
+        model: pair.model,
+        name: `${pair.model} (Custom)`,
+      })
+    }
+
+    remoteCustomModelList.value = [...unique.values()]
+    return remoteCustomModelList.value
+  }
+
   // Ollama model list and connection status
   const ollamaModelList = ref<OllamaModelInfo[]>([])
   const ollamaModelListUpdating = ref(false)
@@ -115,6 +153,46 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     return success
   }
 
+  // Gemini model list
+  const geminiModelList = ref<GeminiModelInfo[]>([...GEMINI_MODELS])
+  const geminiModelListUpdating = ref(false)
+  const updateGeminiModelList = async (): Promise<GeminiModelInfo[]> => {
+    try {
+      geminiModelListUpdating.value = true
+      const response = await rpc.getGeminiModelList()
+      log.debug('Gemini model list fetched:', response)
+      geminiModelList.value = response.models
+      return geminiModelList.value
+    }
+    catch (error) {
+      log.error('Failed to fetch Gemini model list:', error)
+      return geminiModelList.value
+    }
+    finally {
+      geminiModelListUpdating.value = false
+    }
+  }
+
+  // OpenAI model list
+  const openaiModelList = ref<OpenAIModelInfo[]>([...OPENAI_MODELS])
+  const openaiModelListUpdating = ref(false)
+  const updateOpenAIModelList = async (): Promise<OpenAIModelInfo[]> => {
+    try {
+      openaiModelListUpdating.value = true
+      const response = await rpc.getOpenAIModelList()
+      log.debug('OpenAI model list fetched:', response)
+      openaiModelList.value = response.models
+      return openaiModelList.value
+    }
+    catch (error) {
+      log.error('Failed to fetch OpenAI model list:', error)
+      return openaiModelList.value
+    }
+    finally {
+      openaiModelListUpdating.value = false
+    }
+  }
+
   const checkCurrentModelSupportVision = async () => {
     const userConfig = await getUserConfig()
     const endpointType = userConfig.llm.endpointType.get()
@@ -134,6 +212,20 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       return !!modelInfo?.vision
     }
     else {
+      if (endpointType === 'gemini') {
+        let models = geminiModelList.value
+        if (models.length === 0) {
+          models = await updateGeminiModelList()
+        }
+        return models.some((model) => model.id === currentModel)
+      }
+      if (endpointType === 'openai') {
+        let models = openaiModelList.value
+        if (models.length === 0) {
+          models = await updateOpenAIModelList()
+        }
+        return models.some((model) => model.id === currentModel)
+      }
       return false
     }
   }
@@ -162,11 +254,25 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
         model: m.modelKey,
         name: m.displayName ?? m.modelKey,
       })),
+      ...geminiModelList.value.map((m) => ({
+        backend: 'gemini' as const,
+        model: m.id,
+        name: m.name,
+      })),
+      ...openaiModelList.value.map((m) => ({
+        backend: 'openai' as const,
+        model: m.id,
+        name: m.name,
+      })),
+      ...remoteCustomModelList.value,
     ]
   })
 
   const modelListUpdating = computed(() => {
-    return ollamaModelListUpdating.value || lmStudioModelListUpdating.value
+    return ollamaModelListUpdating.value
+      || lmStudioModelListUpdating.value
+      || geminiModelListUpdating.value
+      || openaiModelListUpdating.value
   })
 
   // this function has side effects: it may change the common model in user config
@@ -203,15 +309,58 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       }
       else { status = 'backend-unavailable' }
     }
+    else if (endpointType === 'gemini') {
+      const availableGeminiModels = await updateGeminiModelList()
+      const currentModel = commonModelConfig.get()
+      if (currentModel) {
+        status = 'ok'
+      }
+      else if (availableGeminiModels.length > 0) {
+        commonModelConfig.set(availableGeminiModels[0].id)
+        status = 'ok'
+      }
+      else {
+        status = 'no-model'
+      }
+    }
+    else if (endpointType === 'openai') {
+      const availableOpenAIModels = await updateOpenAIModelList()
+      const currentModel = commonModelConfig.get()
+      if (currentModel) {
+        status = 'ok'
+      }
+      else if (availableOpenAIModels.length > 0) {
+        commonModelConfig.set(availableOpenAIModels[0].id)
+        status = 'ok'
+      }
+      else {
+        status = 'no-model'
+      }
+    }
+    await updateRemoteCustomModelList()
     return { modelList, commonModel: commonModelConfig.get(), status, endpointType }
   }
 
   const updateModelList = async () => {
     logger.debug('Updating model list...')
-    // Always update both Ollama and LMStudio backends so users can see
-    // all available models when switching between backends in ModelSelector
-    // WebLLM doesn't need updating as it uses static SUPPORTED_MODELS
-    await Promise.allSettled([updateOllamaModelList(), updateLMStudioModelList()])
+    const userConfig = await getUserConfig()
+    const llmEndpointType = userConfig.llm.endpointType.get()
+    const translationEndpointType = userConfig.translation.endpointType.get()
+    const updates: Promise<unknown>[] = []
+    if (llmEndpointType === 'ollama' || translationEndpointType === 'ollama') {
+      updates.push(updateOllamaModelList())
+    }
+    if (llmEndpointType === 'lm-studio' || translationEndpointType === 'lm-studio') {
+      updates.push(updateLMStudioModelList())
+    }
+    if (llmEndpointType === 'gemini' || translationEndpointType === 'gemini') {
+      updates.push(updateGeminiModelList())
+    }
+    if (llmEndpointType === 'openai' || translationEndpointType === 'openai') {
+      updates.push(updateOpenAIModelList())
+    }
+    await Promise.allSettled(updates)
+    await updateRemoteCustomModelList()
     return modelList.value
   }
 
@@ -235,6 +384,14 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     deleteOllamaModel,
     clearLMStudioModelList,
     updateLMStudioConnectionStatus,
+    // Gemini
+    geminiModelList,
+    geminiModelListUpdating,
+    updateGeminiModelList,
+    // OpenAI
+    openaiModelList,
+    openaiModelListUpdating,
+    updateOpenAIModelList,
     // Common
     checkCurrentModelSupportVision,
     checkModelSupportThinking,

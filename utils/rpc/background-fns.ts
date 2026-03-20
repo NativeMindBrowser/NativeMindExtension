@@ -17,9 +17,11 @@ import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
 import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, fromError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
 import { parsePartialJson } from '../json/parser/parse-partial-json'
+import * as geminiUtils from '../llm/gemini'
 import * as lmStudioUtils from '../llm/lm-studio'
 import { getModel, getModelUserConfig, LLMEndpointType, ModelLoadingProgressEvent } from '../llm/models'
 import * as ollamaUtils from '../llm/ollama'
+import * as openaiUtils from '../llm/openai'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
 import { PromptBasedTool } from '../llm/tools/prompt-based/helpers'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
@@ -112,6 +114,14 @@ const normalizeError = (_error: unknown, endpointType?: LLMEndpointType) => {
   return error
 }
 
+const resolveTemperatureForEndpoint = (endpointType: LLMEndpointType, temperature?: number) => {
+  // Some OpenAI-compatible models reject temperature 0 and only accept default temperature 1.
+  if (endpointType === 'openai') {
+    return temperature === undefined || temperature === 0 ? 1 : temperature
+  }
+  return temperature
+}
+
 const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens' | 'topK' | 'topP'> & ExtraGenerateOptionsWithTools) => {
   const abortController = new AbortController()
   const portName = `streamText-${Date.now().toString(32)}`
@@ -127,6 +137,7 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
 
     try {
       const userConfig = await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })
+      const temperature = resolveTemperatureForEndpoint(userConfig.endpointType)
       const modelInfo = await getModel({
         ...userConfig,
         onLoadingModel: makeLoadingModelListener(port),
@@ -141,6 +152,7 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
         tools: PromptBasedTool.createFakeAnyTools(),
         experimental_activeTools: [],
         maxTokens: options.maxTokens,
+        temperature,
         abortSignal: abortController.signal,
       })
       for await (const chunk of response.fullStream) {
@@ -166,12 +178,15 @@ const streamText = async (options: Pick<StreamTextOptions, 'messages' | 'prompt'
 
 const generateTextAsync = async (options: Pick<GenerateTextOptions, 'messages' | 'prompt' | 'system' | 'maxTokens'> & ExtraGenerateOptionsWithTools) => {
   try {
+    const userConfig = await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })
+    const temperature = resolveTemperatureForEndpoint(userConfig.endpointType)
     const response = originalGenerateText({
-      model: await getModel({ ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), ...generateExtraModelOptions(options) }),
+      model: await getModel({ ...userConfig, ...generateExtraModelOptions(options) }),
       messages: options.messages,
       prompt: options.prompt,
       system: options.system,
       tools: PromptBasedTool.createFakeAnyTools(),
+      temperature,
       maxTokens: options.maxTokens,
       experimental_activeTools: [],
     })
@@ -195,13 +210,15 @@ const generateText = async (options: Pick<GenerateTextOptions, 'messages' | 'pro
       abortController.abort()
     })
     try {
+      const userConfig = await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })
+      const temperature = resolveTemperatureForEndpoint(userConfig.endpointType, options.temperature)
       const response = await originalGenerateText({
-        model: await getModel({ ...(await getModelUserConfig({ model: options.modelId, endpointType: options.endpointType })), ...generateExtraModelOptions(options) }),
+        model: await getModel({ ...userConfig, ...generateExtraModelOptions(options) }),
         messages: options.messages,
         prompt: options.prompt,
         system: options.system,
         tools: PromptBasedTool.createFakeAnyTools(),
-        temperature: options.temperature,
+        temperature,
         topK: options.topK,
         topP: options.topP,
         toolChoice: options.toolChoice,
@@ -676,6 +693,8 @@ async function checkModelReady(modelId: string) {
     const endpointType = userConfig.llm.endpointType.get()
     if (endpointType === 'ollama') return true
     else if (endpointType === 'lm-studio') return true
+    else if (endpointType === 'gemini') return true
+    else if (endpointType === 'openai') return true
     else if (endpointType === 'web-llm') {
       return await hasWebLLMModelInCache(modelId as WebLLMSupportedModel)
     }
@@ -695,6 +714,12 @@ async function initCurrentModel() {
     return false
   }
   else if (endpointType === 'lm-studio') {
+    return false
+  }
+  else if (endpointType === 'gemini') {
+    return false
+  }
+  else if (endpointType === 'openai') {
     return false
   }
   else if (endpointType === 'web-llm') {
@@ -1118,6 +1143,8 @@ export const backgroundFunctions = {
   pullLMStudioModel,
   getLMStudioModelList: lmStudioUtils.getLocalModelList,
   getLMStudioRunningModelList: lmStudioUtils.getRunningModelList,
+  getGeminiModelList: geminiUtils.getGeminiModelList,
+  getOpenAIModelList: openaiUtils.getOpenAIModelList,
   testLMStudioConnection: lmStudioUtils.testConnection,
   unloadLMStudioModel,
   deleteOllamaModel,

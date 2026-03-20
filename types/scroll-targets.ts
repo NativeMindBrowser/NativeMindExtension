@@ -1,1 +1,1 @@
-export type SettingsScrollTarget = 'quick-actions-block' | 'model-download-section' | 'ollama-server-address-section' | 'lm-studio-server-address-section'
+export type SettingsScrollTarget = 'quick-actions-block' | 'model-download-section' | 'ollama-server-address-section' | 'lm-studio-server-address-section' | 'gemini-api-config-section' | 'openai-api-config-section'
