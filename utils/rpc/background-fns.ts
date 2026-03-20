@@ -17,9 +17,11 @@ import { MODELS_NOT_SUPPORTED_FOR_STRUCTURED_OUTPUT } from '../constants'
 import { ContextMenuManager } from '../context-menu'
 import { AiSDKError, AppError, CreateTabStreamCaptureError, FetchError, fromError, GenerateObjectSchemaError, ModelRequestError, UnknownError } from '../error'
 import { parsePartialJson } from '../json/parser/parse-partial-json'
+import * as geminiUtils from '../llm/gemini'
 import * as lmStudioUtils from '../llm/lm-studio'
 import { getModel, getModelUserConfig, LLMEndpointType, ModelLoadingProgressEvent } from '../llm/models'
 import * as ollamaUtils from '../llm/ollama'
+import * as openaiUtils from '../llm/openai'
 import { SchemaName, Schemas, selectSchema } from '../llm/output-schema'
 import { PromptBasedTool } from '../llm/tools/prompt-based/helpers'
 import { getWebLLMEngine, WebLLMSupportedModel } from '../llm/web-llm'
@@ -1141,6 +1143,8 @@ export const backgroundFunctions = {
   pullLMStudioModel,
   getLMStudioModelList: lmStudioUtils.getLocalModelList,
   getLMStudioRunningModelList: lmStudioUtils.getRunningModelList,
+  getGeminiModelList: geminiUtils.getGeminiModelList,
+  getOpenAIModelList: openaiUtils.getOpenAIModelList,
   testLMStudioConnection: lmStudioUtils.testConnection,
   unloadLMStudioModel,
   deleteOllamaModel,
