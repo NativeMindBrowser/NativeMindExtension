@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+import { computed, onMounted, toRefs, watch } from 'vue'
 
 import IconGeminiLogo from '@/assets/icons/model-logo-gemini.svg?component'
 import Checkbox from '@/components/Checkbox.vue'
@@ -8,7 +9,7 @@ import ScrollTarget from '@/components/ScrollTarget.vue'
 import Selector from '@/components/Selector.vue'
 import Button from '@/components/ui/Button.vue'
 import { SettingsScrollTarget } from '@/types/scroll-targets'
-import { GEMINI_MODELS, isGeminiModel } from '@/utils/llm/gemini'
+import { useLLMBackendStatusStore } from '@/utils/pinia-store/store'
 import { getUserConfig } from '@/utils/user-config'
 
 import Block from '../../Block.vue'
@@ -20,6 +21,9 @@ defineProps<{
 }>()
 
 const userConfig = await getUserConfig()
+const llmBackendStatusStore = useLLMBackendStatusStore()
+const { geminiModelList } = toRefs(llmBackendStatusStore)
+const { updateGeminiModelList } = llmBackendStatusStore
 const endpointType = userConfig.llm.endpointType.toRef()
 const model = userConfig.llm.backends.gemini.model.toRef()
 const commonModel = userConfig.llm.model.toRef()
@@ -31,8 +35,9 @@ const enableNumCtx = userConfig.llm.backends.gemini.enableNumCtx.toRef()
 const open = userConfig.settings.blocks.geminiConfig.open.toRef()
 
 const isCurrentEndpoint = computed(() => endpointType.value === 'gemini')
+const presetModelIdSet = computed(() => new Set(geminiModelList.value.map((item) => item.id)))
 const customModelOption = computed(() => {
-  if (!model.value || isGeminiModel(model.value)) return undefined
+  if (!model.value || presetModelIdSet.value.has(model.value)) return undefined
   return {
     id: model.value,
     label: `${model.value} (Custom)`,
@@ -40,7 +45,7 @@ const customModelOption = computed(() => {
   }
 })
 const presetModelOptions = computed(() => {
-  const presetOptions = GEMINI_MODELS.map((item) => ({
+  const presetOptions = geminiModelList.value.map((item) => ({
     id: item.id,
     label: item.name,
     value: item.id,
@@ -66,11 +71,23 @@ const modelInput = computed({
 const useGemini = () => {
   endpointType.value = 'gemini'
   commonApiKey.value = apiKey.value
-  if (!isGeminiModel(model.value)) {
-    model.value = GEMINI_MODELS[0]?.id
+  if (!presetModelIdSet.value.has(model.value)) {
+    model.value = geminiModelList.value[0]?.id
   }
   commonModel.value = model.value
 }
+
+const refreshPresetModels = useDebounceFn(() => {
+  updateGeminiModelList()
+}, 500)
+
+watch([baseUrl, apiKey, commonApiKey], () => {
+  refreshPresetModels()
+})
+
+onMounted(() => {
+  updateGeminiModelList()
+})
 </script>
 
 <template>

@@ -3,8 +3,8 @@ import { computed, ref } from 'vue'
 
 import { LMStudioModelInfo } from '@/types/lm-studio-models'
 import { OllamaModelInfo } from '@/types/ollama-models'
-import { GEMINI_MODELS, isGeminiModel } from '@/utils/llm/gemini'
-import { isOpenAIModel, OPENAI_MODELS } from '@/utils/llm/openai'
+import { GEMINI_MODELS, GeminiModelInfo } from '@/utils/llm/gemini'
+import { OPENAI_MODELS, OpenAIModelInfo } from '@/utils/llm/openai'
 import { logger } from '@/utils/logger'
 import { c2bRpc, s2bRpc, settings2bRpc } from '@/utils/rpc'
 
@@ -41,7 +41,9 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
 
     const unique = new Map<string, { backend: 'gemini' | 'openai', model: string, name: string }>()
     for (const pair of pairs) {
-      const isPreset = pair.backend === 'gemini' ? isGeminiModel(pair.model) : isOpenAIModel(pair.model)
+      const isPreset = pair.backend === 'gemini'
+        ? geminiModelList.value.some((model) => model.id === pair.model)
+        : openaiModelList.value.some((model) => model.id === pair.model)
       if (isPreset) continue
       const key = `${pair.backend}#${pair.model}`
       unique.set(key, {
@@ -151,6 +153,46 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     return success
   }
 
+  // Gemini model list
+  const geminiModelList = ref<GeminiModelInfo[]>([...GEMINI_MODELS])
+  const geminiModelListUpdating = ref(false)
+  const updateGeminiModelList = async (): Promise<GeminiModelInfo[]> => {
+    try {
+      geminiModelListUpdating.value = true
+      const response = await rpc.getGeminiModelList()
+      log.debug('Gemini model list fetched:', response)
+      geminiModelList.value = response.models
+      return geminiModelList.value
+    }
+    catch (error) {
+      log.error('Failed to fetch Gemini model list:', error)
+      return geminiModelList.value
+    }
+    finally {
+      geminiModelListUpdating.value = false
+    }
+  }
+
+  // OpenAI model list
+  const openaiModelList = ref<OpenAIModelInfo[]>([...OPENAI_MODELS])
+  const openaiModelListUpdating = ref(false)
+  const updateOpenAIModelList = async (): Promise<OpenAIModelInfo[]> => {
+    try {
+      openaiModelListUpdating.value = true
+      const response = await rpc.getOpenAIModelList()
+      log.debug('OpenAI model list fetched:', response)
+      openaiModelList.value = response.models
+      return openaiModelList.value
+    }
+    catch (error) {
+      log.error('Failed to fetch OpenAI model list:', error)
+      return openaiModelList.value
+    }
+    finally {
+      openaiModelListUpdating.value = false
+    }
+  }
+
   const checkCurrentModelSupportVision = async () => {
     const userConfig = await getUserConfig()
     const endpointType = userConfig.llm.endpointType.get()
@@ -170,8 +212,20 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       return !!modelInfo?.vision
     }
     else {
-      if (endpointType === 'gemini') return isGeminiModel(currentModel)
-      if (endpointType === 'openai') return isOpenAIModel(currentModel)
+      if (endpointType === 'gemini') {
+        let models = geminiModelList.value
+        if (models.length === 0) {
+          models = await updateGeminiModelList()
+        }
+        return models.some((model) => model.id === currentModel)
+      }
+      if (endpointType === 'openai') {
+        let models = openaiModelList.value
+        if (models.length === 0) {
+          models = await updateOpenAIModelList()
+        }
+        return models.some((model) => model.id === currentModel)
+      }
       return false
     }
   }
@@ -200,12 +254,12 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
         model: m.modelKey,
         name: m.displayName ?? m.modelKey,
       })),
-      ...GEMINI_MODELS.map((m) => ({
+      ...geminiModelList.value.map((m) => ({
         backend: 'gemini' as const,
         model: m.id,
         name: m.name,
       })),
-      ...OPENAI_MODELS.map((m) => ({
+      ...openaiModelList.value.map((m) => ({
         backend: 'openai' as const,
         model: m.id,
         name: m.name,
@@ -215,7 +269,10 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
   })
 
   const modelListUpdating = computed(() => {
-    return ollamaModelListUpdating.value || lmStudioModelListUpdating.value
+    return ollamaModelListUpdating.value
+      || lmStudioModelListUpdating.value
+      || geminiModelListUpdating.value
+      || openaiModelListUpdating.value
   })
 
   // this function has side effects: it may change the common model in user config
@@ -253,12 +310,13 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       else { status = 'backend-unavailable' }
     }
     else if (endpointType === 'gemini') {
+      const availableGeminiModels = await updateGeminiModelList()
       const currentModel = commonModelConfig.get()
       if (currentModel) {
         status = 'ok'
       }
-      else if (GEMINI_MODELS.length > 0) {
-        commonModelConfig.set(GEMINI_MODELS[0].id)
+      else if (availableGeminiModels.length > 0) {
+        commonModelConfig.set(availableGeminiModels[0].id)
         status = 'ok'
       }
       else {
@@ -266,12 +324,13 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
       }
     }
     else if (endpointType === 'openai') {
+      const availableOpenAIModels = await updateOpenAIModelList()
       const currentModel = commonModelConfig.get()
       if (currentModel) {
         status = 'ok'
       }
-      else if (OPENAI_MODELS.length > 0) {
-        commonModelConfig.set(OPENAI_MODELS[0].id)
+      else if (availableOpenAIModels.length > 0) {
+        commonModelConfig.set(availableOpenAIModels[0].id)
         status = 'ok'
       }
       else {
@@ -293,6 +352,12 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     }
     if (llmEndpointType === 'lm-studio' || translationEndpointType === 'lm-studio') {
       updates.push(updateLMStudioModelList())
+    }
+    if (llmEndpointType === 'gemini' || translationEndpointType === 'gemini') {
+      updates.push(updateGeminiModelList())
+    }
+    if (llmEndpointType === 'openai' || translationEndpointType === 'openai') {
+      updates.push(updateOpenAIModelList())
     }
     await Promise.allSettled(updates)
     await updateRemoteCustomModelList()
@@ -319,6 +384,14 @@ export const useLLMBackendStatusStore = defineStore('llm-backend-status', () => 
     deleteOllamaModel,
     clearLMStudioModelList,
     updateLMStudioConnectionStatus,
+    // Gemini
+    geminiModelList,
+    geminiModelListUpdating,
+    updateGeminiModelList,
+    // OpenAI
+    openaiModelList,
+    openaiModelListUpdating,
+    updateOpenAIModelList,
     // Common
     checkCurrentModelSupportVision,
     checkModelSupportThinking,

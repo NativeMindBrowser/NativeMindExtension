@@ -4,8 +4,6 @@ import { browser } from 'wxt/browser'
 
 import { readPortMessageIntoIterator } from '../async'
 import { UnsupportedEndpointType } from '../error'
-import { isGeminiModel } from '../llm/gemini'
-import { isOpenAIModel } from '../llm/openai'
 import { logger } from '../logger'
 import { showSettings } from '../settings'
 import { getUserConfig } from '../user-config'
@@ -101,12 +99,20 @@ export async function checkBackendModelReady(model?: string): Promise<{ backend:
       return { backend: true, model: await c2bRpc.hasWebLLMModelInCache('Qwen3-0.6B-q4f16_1-MLC') }
     }
     else if (userConfig.llm.endpointType.get() === 'gemini') {
+      const modelList = await c2bRpc.getGeminiModelList()
       const configuredModel = model ?? userConfig.llm.model.get()
-      return { backend: true, model: isGeminiModel(configuredModel) }
+      return {
+        backend: true,
+        model: configuredModel ? modelList.models.some((m) => m.id === configuredModel) : modelList.models.length > 0,
+      }
     }
     else if (userConfig.llm.endpointType.get() === 'openai') {
+      const modelList = await c2bRpc.getOpenAIModelList()
       const configuredModel = model ?? userConfig.llm.model.get()
-      return { backend: true, model: isOpenAIModel(configuredModel) }
+      return {
+        backend: true,
+        model: configuredModel ? modelList.models.some((m) => m.id === configuredModel) : modelList.models.length > 0,
+      }
     }
     else {
       throw new UnsupportedEndpointType(userConfig.llm.endpointType.get())
