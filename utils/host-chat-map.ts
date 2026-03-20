@@ -16,7 +16,7 @@ export function getPageKeyFromUrl(url: string | undefined): string | null {
   try {
     const urlObj = new URL(url)
     if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') return null
-    return urlObj.origin
+    return urlObj.origin + urlObj.pathname
   }
   catch {
     return null
