@@ -160,6 +160,7 @@ import {
   ActionEvent,
   Chat,
   initChatSideEffects,
+  initTabChatSync,
 } from '../../utils/chat/index'
 import AttachmentSelector from '../AttachmentSelector.vue'
 import CameraButton from './CameraButton.vue'
@@ -197,6 +198,7 @@ const chat = await Chat.getInstance()
 const contextAttachmentStorage = chat.contextAttachmentStorage
 
 initChatSideEffects()
+initTabChatSync()
 
 // Track the final assistant/agent message for each reply block (between user turns) FOR triggering retry action
 const assistantActionMessageIds = computed(() => {
