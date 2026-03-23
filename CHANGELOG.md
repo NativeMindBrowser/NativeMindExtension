@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.12.4-beta.0
+
+[compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.3...v1.12.4-beta.0)
+
+### 🩹 Fixes
+
+- **firefox:** Load dispose polyfill in extension pages ([25b0186](https://github.com/NativeMindBrowser/NativeMindExtension/commit/25b0186))
+
+### ❤️ Contributors
+
+- Neko Liu <neko@xmind.org>
+
 ## v1.12.3
 
 [compare changes](https://github.com/NativeMindBrowser/NativeMindExtension/compare/v1.12.2...v1.12.3)
