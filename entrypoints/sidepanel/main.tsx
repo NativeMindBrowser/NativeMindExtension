@@ -1,4 +1,5 @@
 import '@/styles/style.css'
+import '@/utils/polyfill'
 import '@/utils/rpc'
 
 import { createPinia } from 'pinia'
