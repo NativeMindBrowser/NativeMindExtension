@@ -7,7 +7,7 @@
       "requestHeaders": [{ "header": "Origin", "operation": "remove" }]
     },
     "condition": {
-      "regexFilter": "^https?://(?:localhost|127\\.0\\.0\\.1):11434/.*",
+      "regexFilter": "^https?://(?:localhost|127\\.0\\.0\\.1):(?:11434|17434)/.*",
       "resourceTypes": ["xmlhttprequest"]
     }
   }

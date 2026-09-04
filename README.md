@@ -136,6 +136,11 @@ NativeMind supports **Chrome**, **Firefox**, **Brave**, and **Edge** browsers wi
 - **WebAssembly-Powered**: Runs directly in browser using WebAssembly
 - **Trial Experience**: Perfect for evaluating the extension before setting up Ollama
 
+### 📦 **[llmman](https://github.com/llmmanorg/llmman) (Ollama-compatible)**
+- **Same API, Different Port**: llmman is a local model runner that serves the Ollama API (alongside OpenAI- and Anthropic-compatible ones) on port 17434
+- **OCI & Hugging Face Models**: Pull models as OCI artifacts from any registry or directly from Hugging Face (`hf.co/org/model`), served by `llama.cpp`, `vllm` or `mlx-lm`
+- **Setup**: Run `llmman serve` and `llmman pull gemma4`, then in NativeMind's Ollama settings set the **Server Address** to `http://localhost:17434/api`
+
 ## 🔮 Why On-Device AI？
 
 ### ⚠️ **The Problem with Cloud AI**
@@ -259,6 +264,7 @@ The built extension will be in the `.output/` directory.
 **AI Models Not Working**
 - **WebLLM**: Ensure sufficient RAM (8GB+ recommended) and modern browser
 - **Ollama**: Verify Ollama is running locally on port 11434
+- **llmman**: Verify `llmman serve` is running on port 17434 and the Ollama Server Address is set to `http://localhost:17434/api`
 - Clear browser cache and restart extension
 - Check browser console for error messages
 

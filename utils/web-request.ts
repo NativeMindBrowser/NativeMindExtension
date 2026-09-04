@@ -10,7 +10,8 @@ const RULE_ID_REMOVE_DISPOSITION = 2
 export function registerDeclarativeNetRequestRule() {
   // firefox has some bugs with declarativeNetRequest API, we use rules.json instead
   if (import.meta.env.FIREFOX) return
-  const OLLAMA_URL_FILTER = /https?:\/\/[^/]*:11434\/.*/
+  // 11434: Ollama, 17434: llmman (serves the Ollama API, https://github.com/llmmanorg/llmman)
+  const OLLAMA_URL_FILTER = /https?:\/\/[^/]*:(?:11434|17434)\/.*/
   const { resolve, promise } = Promise.withResolvers<void>()
 
   const timeout = setTimeout(() => {
